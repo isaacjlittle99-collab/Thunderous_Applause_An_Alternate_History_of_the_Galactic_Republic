@@ -63,7 +63,7 @@ if (Q.fc_passed) {
 [? if federal_compact : The Senate approves the Federal Compact. Seceded worlds may return with guarantees of autonomy, fair representation and an end to guild monopolies. Within weeks, system after system lowers the Confederate flag. The guns fall silent. ?][? if fc_sabotaged : The Senate approves the Compact, but on the night it is to be signed, a bomb destroys the Separatist delegation's ship. Each side blames the other. The war resumes, more bitter than before. Someone did not want peace. ?][? if not fc_passed : The Compact fails on the floor. The Chancellor's allies call it "surrender with a ribbon on it". ?]
 
 @recognise
-view-if: war and war_balance <= -3
+view-if: war and (war_balance <= -2 or war_weariness >= 60)
 subtitle: End the war by letting the Separatists go. The Republic would be smaller, and Palpatine would lose his war.
 on-arrival: {!
 var st = SW.stance(Q, {mod: 0.35, guild: 0.55, rim: 0.6, sec: 0.05, ind: 0.55, pal: 0.0, cis: 1}, false);

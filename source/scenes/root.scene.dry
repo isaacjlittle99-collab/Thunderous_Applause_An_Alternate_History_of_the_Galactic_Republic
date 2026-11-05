@@ -17,7 +17,7 @@ go-to: start_menu_2
 
 - @new_game: Begin a new game
 - @how_to_play: How to play
-- @credits: Credits and acknowledgements
+- @to_credits: Credits and acknowledgements
 - @game_over.achievements: Achievements
 
 @how_to_play
@@ -48,7 +48,7 @@ The **Holocron** link at the top of the page explains the factions, blocs and sy
 
 - @start_menu: Back
 
-@credits
+@to_credits
 go-to: credits
 
 @new_game

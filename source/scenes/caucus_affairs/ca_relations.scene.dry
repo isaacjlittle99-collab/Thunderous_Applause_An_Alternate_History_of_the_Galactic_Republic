@@ -19,6 +19,7 @@ No bloc in the Senate can govern alone. Which relationship should the Caucus inv
 - @pal: The Chancellor's allies.
 - @cis: The Separatist Caucus.
 - @rfc: The Rim Freedom Caucus.
+- @word: A friendly word in the corridors.
 - @easy_discard
 
 @mod
@@ -71,3 +72,9 @@ subtitle: +8 relations with the Rim Freedom Caucus. Currently [+ rfc_relation : 
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 on-arrival: capital -= 1; rfc_relation += 8
+
+@word
+subtitle: Free. +3 relations with the Core Moderates and the Independents.
+on-arrival: mod_relation += 3; ind_relation += 3
+
+A few kind words and a shared drink cost nothing, and are worth a little.

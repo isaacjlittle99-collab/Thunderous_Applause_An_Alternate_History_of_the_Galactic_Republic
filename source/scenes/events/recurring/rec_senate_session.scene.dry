@@ -6,7 +6,7 @@ priority: 8
 new-page: true
 on-arrival: {!
 SW.senateSession(Q);
-Q.session_legend = SW.parliamentLegend(Q);
+Q.session_legend = (typeof SW.parliamentLegend === 'function') ? SW.parliamentLegend(Q) : ' ';
 var ch = [];
 for (var i = 0; i < Q.parties.length; i++) {
     var b = Q.parties[i];

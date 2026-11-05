@@ -1,7 +1,7 @@
 title: A Hole in the Archives
 subtitle: A star system has been erased from the Jedi Archives.
 tags: event
-view-if: date >= 48 and (jedi_relation >= 52 or quigon_alive or adv_organa) and not archive_gap_known
+view-if: date >= 48 and (jedi_relation >= 58 or quigon_alive or (adv_organa and jedi_relation >= 52)) and not archive_gap_known
 max-visits: 1
 new-page: true
 face-image: img/ev_jedi.svg

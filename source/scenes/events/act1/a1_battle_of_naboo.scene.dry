@@ -11,7 +11,7 @@ var chance = (Q.naboo_jedi >= 2 ? 0.55 : 0.18) + (Q.relief_fleet && Q.vonc_faile
 Q.quigon_alive = Math.random() < chance ? 1 : 0;
 Q.anakin_found = 1;
 Q.anakin_fall = Q.quigon_alive ? 1 : 2;
-Q.jedi_suspicion += Q.quigon_alive ? 2.5 : 2;
+Q.jedi_suspicion += Q.quigon_alive ? 2 : 1.5;
 Q.naboo_crisis = 0;
 Q.naboo_free = 1;
 for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_guild'] -= 1;

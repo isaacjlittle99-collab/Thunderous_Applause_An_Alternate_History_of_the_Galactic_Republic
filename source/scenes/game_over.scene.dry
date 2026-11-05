@@ -1,14 +1,14 @@
 title: Game Over
 new-page: true
-
-= The End
-
-- @root.start_menu: Return to the title screen
+go-to: ending_slides
 
 @achievements
 title: Achievements
 new-page: true
+on-arrival: {! Q.all_ach_html = (typeof SW !== 'undefined' && SW.achievementsHTML) ? SW.achievementsHTML(Q, false) : ' '; !}
 
 = Achievements
+
+[+ all_ach_html +]
 
 - @root.start_menu: Back

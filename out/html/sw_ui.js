@@ -195,6 +195,90 @@
     return h;
   }
 
+
+  // Achievements, legacy and summary ----------------------------------------
+  SW.ACHIEVEMENTS = [
+    ['ending_reborn', 'The Republic Reborn', 'Stop the Sith and restore the Senate\'s authority.'],
+    ['ending_endures', 'The Republic Endures', 'Stop the Sith, even if the Republic is left fragile.'],
+    ['ending_blood', 'Victory in Blood', 'Win the war for the Republic.'],
+    ['ending_divided', 'The Galaxy Divided', 'Keep a Free Republic alive against the Empire.'],
+    ['ending_protectorate', 'The Jedi Protectorate', 'See the Jedi rule the Republic.'],
+    ['ending_admirals', 'The Admirals\' Republic', 'Destroy the Sith Lord but not his powers.'],
+    ['ending_hollow_crown', 'The Hollow Crown', 'Become what you fought.'],
+    ['ending_confederacy', 'Confederacy Triumphant', 'Lose the Clone Wars.'],
+    ['ending_dissolved', 'A Republic Dissolved', 'Let the Separatists go in peace.'],
+    ['ending_empire', 'The Galactic Empire', 'So this is how liberty dies.'],
+    ['caucus_chancellor', 'A Reformer in the Chair', 'Elect a Caucus Supreme Chancellor.'],
+    ['term_limit_held', 'Two Terms Means Two Terms', 'Stop the Chancellor\'s term from being extended.'],
+    ['sunset', 'Sunset Clause', 'Pass the Sunset Amendment.'],
+    ['oversight', 'Civilian Control', 'Bring the clone army under Senate oversight.'],
+    ['kamino_early', 'The Missing Planet', 'Find Kamino before the war.'],
+    ['no_army', 'No Army of Clones', 'Decommission the clone army.'],
+    ['false_flag', 'Fire and Lies', 'Expose the attack on Coruscant as a provocation.'],
+    ['gunray_convicted', 'Justice for Naboo', 'Convict Nute Gunray.'],
+    ['trust_buster', 'Trust Buster', 'Break up the Trade Federation.'],
+    ['abolition', 'No More Chains', 'Abolish slavery in Hutt space.'],
+    ['shmi_free', 'A Mother\'s Freedom', 'Free Shmi Skywalker.'],
+    ['enfranchised', 'A Voice for the Rim', 'Give the Outer Rim full representation.'],
+    ['defence_pact', 'Free Worlds', 'Found the Free Worlds Defence Pact.'],
+    ['citizens', 'Brothers and Citizens', 'Grant citizenship to the clone troopers.'],
+    ['fives', 'The Warning Heeded', 'Shelter Fives and uncover the chips.'],
+    ['chips_removed', 'Free Will', 'Remove every inhibitor chip.'],
+    ['federal_compact', 'The Federal Compact', 'End the Clone Wars with a negotiated peace.'],
+    ['dooku_turned', 'The Apprentice\'s Betrayal', 'Turn Count Dooku against his master.'],
+    ['delegation', 'The Two Thousand', 'Form the Delegation of 2000.'],
+    ['unmasked', 'J\'accuse', 'Unmask Darth Sidious before the Senate.'],
+    ['restoration', 'Restoration', 'Repeal every emergency power after the Sith fall.'],
+    ['anakin_saved', 'The Chosen One', 'End the game with Anakin Skywalker still a Jedi.']
+  ];
+
+  SW.achievementsHTML = function (Q, onlyThisGame) {
+    var h = '<table class="ach-table">';
+    var got = 0;
+    for (var i = 0; i < SW.ACHIEVEMENTS.length; i++) {
+      var a = SW.ACHIEVEMENTS[i];
+      var have = onlyThisGame ? Q['game_achievement_' + a[0]] : Q['achievement_' + a[0]];
+      if (have) got++;
+      if (onlyThisGame && !have) continue;
+      h += '<tr class="' + (have ? 'ach-on' : 'ach-off') + '"><td>' + (have ? '★' : '☆') + '</td><td><b>' + a[1] + '</b><br><span class="achievement_subtitle">' + a[2] + '</span></td></tr>';
+    }
+    h += '</table>';
+    if (!onlyThisGame) h = '<p>' + got + ' of ' + SW.ACHIEVEMENTS.length + ' achievements unlocked.</p>' + h;
+    else if (!got) h = '<p class="sb-note">No achievements this game.</p>';
+    return h;
+  };
+
+  SW.legacyHTML = function (Q) {
+    var cards = [
+      [Q.slavery_abolished, 'Slavery abolished', 'The slave markets of Hutt space are closed, and those freed will remember who freed them.'],
+      [Q.rim_enfranchised, 'The Rim enfranchised', 'The Outer Rim has the voice in the Senate it was denied for a thousand years.'],
+      [Q.tf_broken_up, 'The Trade Federation broken up', 'No single guild will ever again command battleships.'],
+      [Q.banking_independent || Q.banking_reformed >= 1, 'The banks reformed', 'The Banking Clan is audited, independent and answerable to the law.'],
+      [Q.clone_citizenship, 'Clones as citizens', 'Every clone trooper is a citizen of the Republic, with a name and a future.'],
+      [Q.jedi_reformed || Q.jedi_independence, 'The Jedi renewed', 'The Order is independent, and wiser about the hearts of its Knights.'],
+      [Q.anakin_found && !Q.anakin_fallen && Q.anakin_fall < 8, 'Anakin Skywalker, Jedi Knight', 'The Chosen One never became Darth Vader.'],
+      [Q.padme_alive, 'Padmé Amidala lives', 'Senator Amidala lives to see what comes next, and helps to build it.'],
+      [Q.anti_corruption, 'An honest Senate', 'The Senate Ethics Commission keeps watch.'],
+      [Q.federal_compact, 'The Federal Compact', 'The war ended at the negotiating table, not on a battlefield.']
+    ];
+    var h = '';
+    for (var i = 0; i < cards.length; i++) if (cards[i][0]) h += '<div class="legacy"><b>' + cards[i][1] + '.</b> ' + cards[i][2] + '</div>';
+    return h || '<p class="sb-note">The Caucus leaves no lasting reforms behind.</p>';
+  };
+
+  SW.summaryHTML = function (Q) {
+    var h = '<div class="panel">';
+    h += 'Final date: ' + Q.date_label + '<br>';
+    h += 'Chancellor: ' + Q.chancellor + '<br>';
+    h += 'Ruusan Caucus: ' + (Q.rc_r || 0).toFixed(1) + '% of the Senate<br>';
+    h += 'Faith in the Republic: ' + SW.label('faith', Q.faith) + '<br>';
+    h += 'Corruption: ' + SW.label('level', Q.corruption) + '<br>';
+    h += 'Emergency powers: ' + SW.label('powers', Q.emergency_powers) + '<br>';
+    h += 'Our evidence: ' + SW.label('evidence', Q.evidence) + '<br>';
+    h += 'Delegations seceded: ' + (Q.seceded_total || 0) + '%';
+    return h + '</div>';
+  };
+
   // Charts --------------------------------------------------------------
   SW.drawSenate = function (Q, svgId) {
     if (typeof document === 'undefined' || typeof d3 === 'undefined') return;

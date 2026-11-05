@@ -16,6 +16,7 @@ Senators answer to their home worlds, and home worlds can be persuaded. Where sh
 - @midrim: The Mid Rim and Expansion Region.
 - @outer: The Outer Rim Territories.
 - @corporate: The corporate holdings.
+- @shoestring: Campaign on a shoestring.
 - @easy_discard
 
 @core
@@ -57,3 +58,9 @@ unavailable-subtitle: Not enough political capital.
 on-arrival: {! Q.capital -= 2; Q.corporate_rc += 3 * SW.unity(Q); Q.guild_relation += 2; Q.rimward_dissent += 3; !}
 
 Even on guild-owned worlds, workers and small traders are tired of being owned.
+
+@shoestring
+subtitle: Free. A small boost in a random region.
+on-arrival: {! var r = SW.REGIONS[Math.floor(Math.random() * SW.REGIONS.length)]; Q[r + '_rc'] += 1.2 * SW.unity(Q); Q.shoestring_region = SW.REGION_NAMES[r]; !}
+
+Volunteers and borrowed shuttles carry the Caucus's message to the [+ shoestring_region +].

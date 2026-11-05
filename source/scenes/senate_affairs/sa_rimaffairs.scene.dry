@@ -15,6 +15,7 @@ The Caucus chairs the Outer Rim Affairs Committee. Hardship on the Rim is [+ rim
 - @piracy: Fund anti-piracy patrols.
 - @abolition: Abolish slavery in Hutt space.
 - @enfranchise: Pass the Rim Enfranchisement Act.
+- @hearings: Hold committee hearings on the Rim.
 - @easy_discard
 
 @relief
@@ -67,3 +68,9 @@ if (Q.en_vote >= 50) { Q.rim_enfranchised = 1; Q.outer_sep -= 10; Q.midrim_sep -
 [+ vote_html +]
 
 [? if rim_enfranchised : Outer Rim sectors gain the delegations their populations deserve, and seats on every major committee. For the first time in centuries, the Rim has a real voice in the Republic. ?][? if not rim_enfranchised : The Core will not share power. The Rim takes note. ?]
+
+@hearings
+subtitle: Free. The Rim is heard; builds the case for abolition.
+on-arrival: rim_relation += 3; outer_sep -= 1; slavery_campaign += 0.3
+
+Rim witnesses testify before the committee. Their stories make the news.

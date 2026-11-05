@@ -4,7 +4,7 @@ tags: event
 view-if: grand_plan >= unease_next and unease_next <= 80 and not finale
 new-page: true
 face-image: img/ev_jedi.svg
-on-arrival: {! Q.unease_level = Q.unease_next; Q.unease_next += 20; Q.jedi_suspicion += 0.5; Q.fear += 1; !}
+on-arrival: {! Q.unease_level = Q.unease_next; Q.unease_next += 20; Q.jedi_suspicion += 0.3; Q.fear += 1; !}
 
 = A Disturbance in the Force
 

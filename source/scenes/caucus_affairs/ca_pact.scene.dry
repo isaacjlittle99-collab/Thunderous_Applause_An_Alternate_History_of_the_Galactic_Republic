@@ -15,6 +15,7 @@ new-page: true
 - @train: Train and equip member-world forces.
 - @exercise: Hold joint command exercises.
 - @defensive: Keep the Pact strictly defensive and transparent.
+- @talks: Hold preliminary talks among member worlds.
 - @easy_discard
 
 @form
@@ -49,3 +50,10 @@ subtitle: Reassures the Senate and the Pacifists.
 on-arrival: pacifist_dissent -= 5; faith += 0.5; ind_relation += 3
 
 The Pact publishes its rules of engagement in full: it will act only in defence of member worlds and of the Senate itself.
+
+@talks
+view-if: not pact_formed
+subtitle: Free. Lays the groundwork.
+on-arrival: member_forces += 0.2; hawk_dissent -= 2
+
+Defence ministers from a dozen worlds meet quietly on Corellia.

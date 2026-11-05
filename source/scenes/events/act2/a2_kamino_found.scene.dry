@@ -1,7 +1,7 @@
 title: The Missing Planet
 subtitle: Our investigators have found Kamino, and what it is hiding.
 tags: event
-view-if: kamino_hunt >= 2 and not kamino_known
+view-if: kamino_hunt >= 3 and not kamino_known
 max-visits: 1
 priority: 4
 new-page: true

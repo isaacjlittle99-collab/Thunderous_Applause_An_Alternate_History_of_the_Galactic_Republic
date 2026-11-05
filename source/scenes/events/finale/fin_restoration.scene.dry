@@ -1,0 +1,46 @@
+title: The Restoration Vote
+subtitle: The Sith Lord is gone. Will the Senate take back its powers?
+tags: event
+view-if: finale and sidious_defeated and not jedi_coup and not restoration_seen and not game_ending and (not contingency or civil_war_seen) and (not civil_war_pending or civil_war_seen)
+max-visits: 1
+priority: 8
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {!
+Q.restoration_seen = 1;
+Q.trial_held = Q.sidious_method === 'trial' || Q.sidious_method === 'civil_war' ? 1 : 0;
+var st = SW.stance(Q, {mod: 0.6, guild: 0.5, rim: 0.75, sec: 0.3, ind: 0.6, pal: 0.15, rfc: 0.75, cis: 0.6}, true);
+var adj = -(Q.fear - 30) / 200 - Math.max(0, Q.emergency_powers - 4) * 0.02 + (Q.delegation_formed ? 0.05 : 0);
+for (var b in st) st[b] = SW.clamp(st[b] + adj, 0, 1);
+Q.rest_stance = st;
+!}
+
+= The Restoration Vote
+
+[? if trial_held : Darth Sidious, once Supreme Chancellor Palpatine, will stand trial before the Supreme Court in full view of the galaxy. The evidence the Caucus gathered over fifteen years will be read into the record. ?][? if not trial_held : Darth Sidious is dead. The evidence of his crimes is being made public, piece by piece. ?]
+
+The Chancellor's office still holds [+ emergency_powers : powers +] emergency powers. [? if rc_chancellor : The Chancellor is now one of ours, [+ chancellor +], and the decision is ours too. ?][? if not rc_chancellor : The Caucus has tabled a **Restoration Act**: every emergency power to be repealed, the Senate's authority restored. ?]
+
+- @restore: Repeal all emergency powers.
+- @keep: Keep the powers for now, to rebuild.
+
+@restore
+subtitle: [? if emergency_powers <= 0 : There is nothing left to repeal. ?][? if emergency_powers > 0 : The Senate must vote. ?]
+on-arrival: {!
+if (Q.emergency_powers <= 0) { Q.rest_vote = 100; }
+else { Q.rest_vote = SW.vote(Q, Q.rest_stance, 1); }
+Q.vote_html = SW.voteBanner('The Restoration Act', Q.rest_vote);
+if (Q.rest_vote >= 50) { Q.restoration_passed = 1; Q.emergency_powers = 0; Q.faith += 6; this.achieve('restoration'); }
+Q.game_ending = 1;
+!}
+
+[+ vote_html +]
+
+[? if restoration_passed : The Senate votes to take back everything it gave away. The emergency powers end at midnight. In the rotunda, there is no thunderous applause, just a long, exhausted silence, and then, from the Caucus benches, someone begins to laugh with relief. ?][? if not restoration_passed : The Senate is too frightened to let go. The emergency powers remain, now in other hands. ?]
+
+@keep
+view-if: rc_chancellor
+subtitle: Our Chancellor would hold the powers. Only for a while, of course.
+on-arrival: hollow_crown = 1; game_ending = 1
+
+Chancellor [+ chancellor +] announces that the emergency powers will be "returned to the Senate as soon as order is fully restored". Nobody asks when that will be. Everyone remembers the last time they heard those words.

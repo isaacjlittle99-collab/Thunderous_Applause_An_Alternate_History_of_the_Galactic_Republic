@@ -14,6 +14,7 @@ The Senate is not the Republic. Its strength lies with the billions who still be
 - @networks: Build civic networks across member worlds.
 - @holonet: Fund an independent HoloNet foundation.
 - @clones: Campaign for the rights of clone troopers.
+- @volunteers: Organise a volunteer drive.
 - @easy_discard
 
 @networks
@@ -38,3 +39,9 @@ subtitle: The clones trust the Senate more; the Security Bloc objects.
 on-arrival: clone_trust += 1; navy_loyalty += 3; sec_relation -= 3; faith += 0.5
 
 The Caucus asks a simple question in the Senate: are the clone troopers citizens of the Republic they die for? Nobody has a good answer.
+
+@volunteers
+subtitle: Free. A little more faith in the Republic.
+on-arrival: faith += 0.6
+
+Caucus volunteers clean up a lower-levels district of Coruscant. The HoloNet notices.

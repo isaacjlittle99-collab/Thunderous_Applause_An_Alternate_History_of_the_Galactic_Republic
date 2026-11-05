@@ -1,0 +1,63 @@
+title: A Special Session of the Senate
+subtitle: The Chancellor proposes to reorganise the Republic into an Empire.
+tags: event
+view-if: finale and not gambit and finale_day >= 8 and sidious_free and not new_order_seen
+max-visits: 1
+priority: 10
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {!
+Q.new_order_seen = 1;
+var adj = -(Q.petition || 0) * 0.05 - (Q.delegation_formed ? 0.05 : 0) - Q.evidence_public * 0.04 - (Q.order66_failed ? 0.2 : 0) - Q.senate_resolve * 0.02 + (Q.fear - 40) / 200;
+var st = {pal: 1, sec: 0.9, mod: 0.55, guild: 0.6, ind: 0.5, rim: 0.35, rfc: 0.25};
+for (var b in st) if (b !== 'pal') st[b] = SW.clamp(st[b] + adj, 0, 1);
+Q.no_stance = st;
+!}
+
+= A Special Session of the Senate
+
+The Chancellor addresses the Senate, his face scarred and his voice cracking with rage. He tells them the Jedi have tried to overthrow the Republic. [? if order66 : The Jedi rebellion has been foiled, he says, and the remaining Jedi will be hunted down. ?][? if order66_failed : His order to destroy the "traitor Jedi" has been defied by his own army. He sounds, for the first time, uncertain. ?] To ensure the security and continuing stability of the galaxy, he proposes that the Republic be **reorganised into the first Galactic Empire**.
+
+The Caucus has one vote, and perhaps one last chance.
+
+- @walkout: Vote no, and walk out to found a Free Republic.
+- @no: Vote no, and stay in the chamber.
+- @yes: Vote yes. It is over.
+
+@walkout
+subtitle: [? if member_forces >= 2 or pact_formed : The Defence Pact worlds can stand with us. ?][? if member_forces < 2 and not pact_formed : We have almost no forces of our own. ?]
+choose-if: member_forces >= 2 or pact_formed
+unavailable-subtitle: We have no forces to defend a Free Republic (needs the Defence Pact or member-world forces).
+on-arrival: {!
+Q.no_vote = SW.vote(Q, Q.no_stance, 0);
+Q.vote_html = SW.voteBanner('Declaration of the New Order', Q.no_vote);
+if (Q.no_vote >= 50) Q.empire_declared = 1;
+Q.free_republic = 1; Q.civil_war_pending = 1;
+!}
+
+[+ vote_html +]
+
+[? if empire_declared : *So this is how liberty dies,* Padmé had once whispered, *with thunderous applause.* But this time not everyone applauds. The Ruusan Caucus and its allies rise from their pods and leave the chamber together. By nightfall, Alderaan, Chandrila, Corellia and a dozen other worlds have declared that the Republic still lives, and that it does not live on Coruscant. ?][? if not empire_declared : The Senate refuses. The Chancellor stares at the rotunda in silence, then orders the Senate dissolved. The Caucus is already gone, to the worlds of the Defence Pact, to keep the Republic alive. ?]
+
+@no
+on-arrival: {!
+Q.no_vote = SW.vote(Q, Q.no_stance, 0);
+Q.vote_html = SW.voteBanner('Declaration of the New Order', Q.no_vote);
+if (Q.no_vote >= 50) { Q.empire_declared = 1; Q.game_ending = 1; } else { Q.civil_war_pending = 1; }
+!}
+
+[+ vote_html +]
+
+[? if empire_declared : *So this is how liberty dies,* Padmé whispers, *with thunderous applause.* ?][? if not empire_declared : Against every expectation, the Senate votes the Empire down. The Chancellor orders the chamber sealed and the Senate dissolved. Those loyal to the Republic flee to their home worlds. It is civil war. ?]
+
+@yes
+on-arrival: {!
+Q.no_vote = SW.vote(Q, Q.no_stance, 1);
+Q.vote_html = SW.voteBanner('Declaration of the New Order', Q.no_vote);
+if (Q.no_vote >= 50) { Q.empire_declared = 1; } else { Q.civil_war_pending = 1; }
+Q.game_ending = Q.empire_declared ? 1 : 0;
+!}
+
+[+ vote_html +]
+
+The Caucus votes with the majority. Some of its senators weep.

@@ -16,6 +16,7 @@ The Caucus chairs the Security & Defence Committee.
 - @guard: Return the Senate Guard to the Senate's command.
 - @navy: Shape the Navy's officer appointments.
 - @audit: Audit defence procurement.
+- @review: Review the Republic's defences.
 - @easy_discard
 
 @judicials
@@ -72,3 +73,7 @@ subtitle: −1 corruption; the Security Bloc is annoyed.
 on-arrival: corruption -= 1; sec_relation -= 4; treasury += 1
 
 The audit finds that the Republic has paid for the same frigate four times.
+
+@review
+subtitle: Free. The Hawks appreciate it.
+on-arrival: hawk_dissent -= 3; judicial_forces += 0.1

@@ -16,6 +16,7 @@ Constitutional amendments need **three-fifths** of the Senate. Each attempt cost
 - @vonc: A constructive vote of no confidence.
 - @jedi: Guarantee the independence of the Jedi Order.
 - @rim: Constitutional seats for the Outer Rim.
+- @groundwork: Build support for a future amendment.
 - @easy_discard
 
 @sunset
@@ -103,3 +104,9 @@ if (Q.cr_vote >= 60) { Q.rim_enfranchised = 1; Q.outer_sep -= 10; Q.midrim_sep -
 [+ vote_html +]
 
 [? if rim_enfranchised : The Outer Rim gains permanent seats and a constitutional voice. ?][? if not rim_enfranchised : The amendment fails. ?]
+
+@groundwork
+subtitle: Free. Makes future constitutional votes a little easier.
+on-arrival: new_ruusan += 1; senate_resolve += 0.3
+
+The Caucus circulates draft amendments and gathers co-sponsors.

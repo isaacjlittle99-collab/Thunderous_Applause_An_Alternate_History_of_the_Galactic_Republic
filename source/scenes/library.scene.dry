@@ -1,0 +1,172 @@
+title: The Holocron
+new-page: true
+is-special: true
+go-to: menu
+
+= The Holocron
+
+A record of the Galactic Republic, its Senate and the forces that threaten it.
+
+@menu
+is-special: true
+
+- @lib_republic: How the Republic governs itself
+- @lib_blocs: The blocs of the Senate
+- @lib_regions: The regions of the galaxy
+- @lib_factions: The factions of the Ruusan Caucus
+- @lib_meters: The state of the Republic, explained
+- @lib_reforms: Safeguards and how to win them
+- @lib_charts: The Senate in charts
+- @lib_timeline: Timeline of the Republic to 33 BBY
+- @lib_sources: Canon, Legends and invention
+- @backSpecialScene: Close the Holocron.
+
+@lib_republic
+is-special: true
+go-to: menu
+
+= How the Republic governs itself
+
+The **Galactic Senate** is the Republic's legislature. Thousands of delegations represent sectors and member worlds, and meet in the great rotunda on Coruscant. Senators sit in loose **blocs**, not formal parties. Each bloc's share of the Senate changes every year at the **New Senate Session**, as home worlds re-align their delegations.
+
+The Senate elects the **Supreme Chancellor**, who presides over the Senate and leads the government, for a four-year term, and at most two terms. A Chancellor needs a governing **coalition** of blocs holding a majority. The Chancellor can be removed by a **vote of no confidence**.
+
+The coalition shares out the chairs of the great **Senate committees**: Finance & Commerce, Judiciary & Intelligence, Security & Defence, and Outer Rim Affairs. Whoever holds a chair controls that part of the Republic's business. For the Caucus, each chair unlocks new *Senate Affairs* cards.
+
+Since the **Ruusan Reformation** a thousand years ago, the Republic has had no standing army. Its security rests on the **Judicial Forces**, the member worlds' own defence forces and the **Jedi Order**, which serves the Republic but is not governed by the Chancellor. The constitution allows the Senate to grant the Chancellor **emergency powers** in a crisis.
+
+@lib_blocs
+is-special: true
+go-to: menu
+
+= The blocs of the Senate
+
+**[+ rc_name +]** (us): reformers from Alderaan, Chandrila, Corellia, Rodia and later Naboo. Strongest in the Core and Colonies.
+
+**[+ mod_name +]**: the Core establishment, cautious and comfortable. Valorum's bloc. Weakened by corruption and scandal.
+
+**[+ pal_name +]**: Senator Palpatine of Naboo and his allies, Mas Amedda among them. Small at first. Grows on corruption, fear and the Chancellor's office.
+
+**[+ guild_name +]**: the Trade Federation, Commerce Guild, Banking Clan and Techno Union. Strongest in the corporate holdings. Retaliates with credit strikes when squeezed.
+
+**[+ rim_name +]**: populists from the neglected Mid and Outer Rim. Grows with Rim hardship. A natural ally for Rim reform, and a reservoir for separatism.
+
+**[+ sec_name +]**: Kuat, Anaxes, Eriadu and others who want an army and order. Grows with fear.
+
+**[+ ind_name +]**: unaligned worlds and neutrals, later gathered by Satine of Mandalore. Easily courted.
+
+**[+ cis_name +]**: forms when Dooku's movement begins, from worlds thinking of leaving. Leaves the Senate entirely when war breaks out.
+
+**[+ rfc_name +]**: forms only if the Caucus's Rimward wing splits away.
+
+@lib_regions
+is-special: true
+go-to: menu
+
+= The regions of the galaxy
+
+Each region sends a share of the Senate's delegations. Each bloc's strength is the sum of its support in every region, weighted by the region's size.
+
+**Core Worlds**: rich, old and powerful. **Colonies & Inner Rim**: prosperous and security-minded. **Mid Rim & Expansion Region**: squeezed between Core and frontier. **Outer Rim Territories**: poor, neglected and preyed upon. **Corporate holdings**: worlds owned outright by the guilds.
+
+When worlds secede, their delegations leave, and the region shrinks. The Senate that remains leans toward the Core, and toward the Chancellor. This is how the canon Senate came to grant Palpatine so much.
+
+@lib_factions
+is-special: true
+go-to: menu
+
+= The factions of the Ruusan Caucus
+
+**Institutionalists**: proceduralists devoted to the Ruusan constitution. The Caucus's backbone.
+
+**Rimward**: champions of the Outer Rim, of enfranchisement and of abolition. They split away to form the Rim Freedom Caucus if they are ignored for too long.
+
+**Pacifists**: believers in law over arms. They resign their posts if pushed too far toward war.
+
+**Hawks**: defenders of the Republic by force if need be. Distrustful of every Chancellor, they defect to the Security Bloc if the Caucus seems weak.
+
+Each faction has a **strength** and a **dissent** level. Overall dissent reduces almost every gain the Caucus makes. An advisor from a faction keeps its dissent in check. If a faction's dissent reaches 60, it will break away.
+
+@lib_meters
+is-special: true
+go-to: menu
+
+= The state of the Republic, explained
+
+**Political capital** is the Caucus's currency. Patrons contribute each year, and most important actions spend it.
+
+**Faith in the Republic** falls with corruption, fear and emergency powers, and rises with reform. Low faith feeds the Chancellor's bloc.
+
+**Corruption** rises slowly by itself. It feeds Palpatine's appeal as a strong, clean leader, and it feeds separatism.
+
+**Fear** rises with secession and war. It feeds the Security Bloc and the case for emergency powers.
+
+**Outer Rim hardship** drives Rim separatism. Relief, enfranchisement and abolition reduce it. Guild credit strikes and war increase it.
+
+**Separatism** in the Outer Rim, Mid Rim and corporate worlds decides how many worlds leave once Count Dooku's movement begins.
+
+**Emergency powers** measure how much authority the Senate has handed the Chancellor. Each step on the ladder is a Senate vote.
+
+**Evidence** is what the Caucus can prove about the Sith. Below *compelling*, accusations will backfire.
+
+**Senate resolve** is how seriously the Senate takes the danger to its own authority. The Defence Pact, a no-confidence vote and the Petition all need it.
+
+**In the corridors** is the only hint the game gives of the Sith Lord's hidden progress.
+
+@lib_reforms
+is-special: true
+go-to: menu
+
+= Safeguards and how to win them
+
+Some reforms permanently close doors that the Sith would otherwise walk through.
+
+**Sunset clauses** (Constitutional Reform): emergency powers expire unless renewed each year. **Term limits entrenched** (Constitutional Reform): no Chancellor can have his term extended. **Senate oversight of the army** (Security & Defence, or at Kamino and Geonosis): the clones answer to the Senate too. **Senate Guard reformed** (Security & Defence): the Red Guards stop answering to the Chancellor alone. **Jedi independence** (Constitutional Reform): the Chancellor cannot place the Council under his authority. **Banking independence** (Finance & Commerce): the Chancellery cannot seize the banks. **Rim enfranchisement** (Outer Rim Affairs or Constitutional Reform): a lasting cure for separatism. **Ethics Commission** (Judiciary & Intelligence): a lasting check on corruption. **Inhibitor chips removed** (Clone Army Oversight, once found): Order 66 will fail.
+
+Most of these need a seat in government and a Senate majority. Some need three-fifths.
+
+@lib_charts
+is-special: true
+go-to: menu
+on-display: {! if (typeof SW !== 'undefined' && SW.drawSenate) { SW.drawSenate(Q, 'lib_senate'); SW.drawHistory(Q, 'lib_support', 'support'); SW.drawHistory(Q, 'lib_sessions', 'senate'); } !}
+on-arrival: {! Q.lib_legend = (typeof SW !== 'undefined' && SW.parliamentLegend && Q.started) ? SW.parliamentLegend(Q) : ' '; !}
+
+= The Senate in charts
+
+{!<svg id="lib_senate" style="width: 500px; height: 260px;"></svg>!}
+
+[+ lib_legend +]
+
+**Delegation alignment over time** (every turn):
+
+{!<svg id="lib_support" style="width: 500px; height: 320px;"></svg>!}
+
+**Senate seats at each session:**
+
+{!<svg id="lib_sessions" style="width: 500px; height: 320px;"></svg>!}
+
+@lib_timeline
+is-special: true
+go-to: menu
+
+= Timeline of the Republic to 33 BBY
+
+**c. 25,000 BBY**: The Galactic Republic is founded.
+
+**c. 1,000 BBY**: The New Sith Wars end at the Battle of Ruusan. The **Ruusan Reformation** disbands the Republic's armies, reorganises the Senate and places the Jedi Order under the Republic's laws. The Sith are believed destroyed.
+
+**The following centuries**: The Senate grows vast and slow. The great trade guilds gain Senate representation, and the free-trade zones of the Outer Rim make them rich.
+
+**c. 40 BBY**: Finis Valorum, scion of an old Core family, is elected Supreme Chancellor on a promise to clean up the Senate.
+
+**33 BBY**: The game begins. The Yinchorri are restless. The Trade Federation is arming. A senator from Naboo is very patient.
+
+@lib_sources
+is-special: true
+go-to: menu
+
+= Canon, Legends and invention
+
+This game draws on canon first: the films, *The Clone Wars* and recent novels. Where canon is thin, it borrows from **Legends**: the Eriadu summit and the Nebula Front (*Cloak of Deception*), Hego Damask (*Darth Plagueis*), the Yinchorri Uprising, Gunray's four trials, the Sector Governance Decree, and the Delegation of 2000 and its Petition.
+
+The **Ruusan Caucus**, the bloc structure of the Senate, the Free Worlds Defence Pact, the Federal Compact, and characters such as Davan Quill, Orvos Hask and Tamsar Vell are inventions of this game. So, from the first turn, is everything that happens next.

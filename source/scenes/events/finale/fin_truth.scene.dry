@@ -8,7 +8,7 @@ new-page: true
 face-image: img/ev_shadow.svg
 on-arrival: {!
 Q.truth_seen = 1;
-if (Q.evidence >= 8 || Q.dooku_turned || Q.jedi_suspicion >= 8) { Q.sidious_known = 1; Q.known_by = 'caucus'; }
+if (Q.evidence >= 8 || Q.dooku_turned || (Q.jedi_suspicion >= 9 && Q.evidence >= 6)) { Q.sidious_known = 1; Q.known_by = 'caucus'; }
 else if (Q.anakin_fall <= 8.5) { Q.sidious_known = 1; Q.known_by = 'anakin'; Q.anakin_fall += 0.5; }
 else { Q.sidious_known = 0; Q.known_by = 'none'; }
 !}

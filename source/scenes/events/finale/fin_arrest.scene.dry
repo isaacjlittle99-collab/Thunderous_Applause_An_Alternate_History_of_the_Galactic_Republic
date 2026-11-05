@@ -1,0 +1,45 @@
+title: The Arrest
+subtitle: The Jedi confront the Chancellor.
+tags: event
+view-if: finale and not gambit and finale_day >= 6 and arrest_planned and not arrest_seen
+max-visits: 1
+priority: 10
+new-page: true
+face-image: img/ev_jedi.svg
+on-arrival: {!
+Q.arrest_seen = 1;
+var s = 3.5;
+if (Q.anakin_fall <= 4) s += 3; else if (Q.anakin_fall >= 6.5) s -= 3;
+s += Q.senate_guard_reformed ? 1 : (Q.guard_turned ? 0.5 : 0);
+s += Q.warrant ? 1 : 0;
+s += Q.judicial_forces >= 4 ? 1 : 0;
+s += Q.arrest_mode === 'exposed' ? 2 : 0;
+s += Q.senate_jedi_pact ? 0.5 : 0;
+s -= Q.grand_plan >= 80 ? 1 : 0.5;
+s -= Q.arrest_delay ? 1 : 0;
+s += Math.random();
+Q.arrest_score = Math.round(s * 10) / 10;
+Q.anakin_helped = Q.anakin_fall <= 4 ? 1 : 0;
+Q.anakin_fallen = Q.anakin_fall >= 6.5 ? 1 : 0;
+if (s >= 3) {
+    Q.arrest_result = 'success';
+    if (Q.arrest_mode === 'jedi' && !Q.anakin_helped) { Q.sidious_method = 'killed'; } else { Q.sidious_method = 'trial'; }
+    Q.sidious_defeated = 1; Q.sidious_gone = 1;
+    if (Q.clones >= 3 && !Q.chips_removed && Math.random() < SW.clamp((Q.grand_plan - 70) / 60 - (Q.army_oversight ? 0.2 : 0), 0, 0.6)) { Q.contingency = 1; }
+} else {
+    Q.arrest_result = 'failure';
+    Q.sidious_free = 1;
+    Q.jedi_strength -= 1;
+    if (Q.anakin_fallen) Q.anakin_fall = 10;
+}
+!}
+
+= The Arrest
+
+Master Windu, with Masters Kit Fisto, Agen Kolar and Saesee Tiin, enters the Chancellor's office. [? if warrant : He carries a warrant from the Supreme Court and the Senate. ?][? if arrest_mode = "exposed" : Behind him, the whole Senate is watching. ?] "In the name of the Galactic Senate of the Republic," he says, "you are under arrest, Chancellor."
+
+Palpatine draws a red lightsaber.
+
+[? if arrest_result = "success" and anakin_helped : The duel is brief and terrible. Three Masters fall. Then Anakin Skywalker arrives, and he does not hesitate. He stands with Windu. Together they disarm the Sith Lord. "He must stand trial," Anakin says. Windu, after a long moment, agrees. ?][? if arrest_result = "success" and not anakin_helped and sidious_method = "trial" : The duel is brief and terrible. Three Masters fall, but Windu holds, and the Senate Guard [? if senate_guard_reformed : under the Senate's command ?] stands aside. Darth Sidious is taken alive, in binders, to face the Senate's justice. ?][? if arrest_result = "success" and sidious_method = "killed" : The duel is brief and terrible. Three Masters fall. Windu, alone, disarms the Sith Lord, and then decides he is too dangerous to be left alive. Darth Sidious dies on the floor of his office. There was no warrant, no trial, and no witness but the Jedi. ?][? if arrest_result = "failure" and anakin_fallen : Windu has the Sith Lord at his mercy when Anakin Skywalker arrives. "He must stand trial!" Anakin cries, then strikes Windu down. Kneeling before Darth Sidious, Anakin becomes **Darth Vader**. ?][? if arrest_result = "failure" and not anakin_fallen : The Jedi are not enough. One by one the Masters fall, and Windu is hurled from the window into the void. The Chancellor emerges scarred and furious, crying treason. ?]
+
+[? if contingency : But Darth Sidious has planned for even this. In the hour of his arrest, a coded transmission goes out from the Chancellery to every clone commander in the galaxy. ?]
