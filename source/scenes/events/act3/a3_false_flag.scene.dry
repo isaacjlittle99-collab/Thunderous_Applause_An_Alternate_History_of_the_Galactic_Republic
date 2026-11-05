@@ -1,0 +1,54 @@
+title: Fire on Coruscant
+subtitle: A terrible attack has struck the heart of the Republic.
+tags: event
+view-if: date >= 138 and not war and not geonosis_seen and not false_flag_seen and (kamino_army or grand_plan >= 50) and not finale
+max-visits: 1
+priority: 5
+new-page: true
+face-image: img/ev_shadow.svg
+on-arrival: false_flag_seen = 1; fear += 18; faith -= 3; crisis_months = 0
+
+= Fire on Coruscant
+
+A bomb has torn through the Senate Office Building, killing hundreds, among them three senators. Within hours, a group calling itself the Rim Liberation Front claims responsibility. [? if chancellor_bloc = "pal" : The Chancellor's office calls for emergency powers and the immediate creation of an army. One, it emerges, happens to be ready on a planet called Kamino. ?][? if chancellor_bloc != "pal" : Senator Palpatine leads the call for emergency powers and an army. ?]
+
+[? if evidence >= 6 or jedi_suspicion >= 6 : Something about the attack is wrong. Our investigators have seen this pattern before: the Rim Liberation Front's weapons were bought with Damask money. ?]
+
+- @expose: Expose the attack as a provocation.
+- @oppose: Oppose emergency powers. We will not be stampeded.
+- @support: Support emergency powers. The Republic must be protected.
+
+@expose
+view-if: evidence >= 6 or jedi_suspicion >= 6
+subtitle: If we are right, this could break the Sith's plan. If not, it will break us.
+on-arrival: {!
+var ok = Math.random() < 0.45 + (Q.evidence - 6) * 0.1 + (Q.jedi_suspicion - 5) * 0.05;
+if (ok) { Q.ff_exposed = 1; Q.evidence += 2; Q.evidence_public += 2; Q.fear -= 10; Q.senate_resolve += 2; for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_pal'] *= 0.7; Q.grand_plan -= 10; this.achieve('false_flag'); }
+else { Q.ff_exposed = 0; Q.premature_accusations += 1; Q.faith -= 2; for (var j = 0; j < SW.REGIONS.length; j++) Q[SW.REGIONS[j] + '_rc'] *= 0.85; Q.emergency_powers += 2; Q.clones = Q.kamino_army ? 3 : 0; }
+!}
+
+[? if ff_exposed : The Caucus lays out the evidence: the Front's funding, its weapons, its impossible knowledge of the Senate's security. The demands for emergency powers collapse in a storm of questions. Somewhere, a carefully laid plan has just failed. ?][? if not ff_exposed : The accusation sounds monstrous: that someone within the Republic would murder its own senators. The Caucus is shouted down. The emergency powers pass anyway, and the Caucus is blamed for "dividing the Republic in its hour of grief". ?]
+
+@oppose
+subtitle: Principled, and unpopular.
+on-arrival: {!
+var st = {pal: 1, sec: 0.95, mod: 0.55 + Q.fear / 250, guild: 0.5, ind: 0.55, rim: 0.4, rfc: 0.3};
+Q.ff_vote = SW.vote(Q, st, 0);
+Q.vote_html = SW.voteBanner('Emergency powers', Q.ff_vote);
+if (Q.ff_vote >= 50) { Q.emergency_powers += 2; Q.clones = Q.kamino_army ? 3 : 0; }
+Q.pacifist_dissent -= 5;
+!}
+
+[+ vote_html +]
+
+@support
+subtitle: The public demands action.
+on-arrival: {!
+var st = {pal: 1, sec: 0.95, mod: 0.55 + Q.fear / 250, guild: 0.5, ind: 0.55, rim: 0.4, rfc: 0.3};
+Q.ff_vote = SW.vote(Q, st, 1);
+Q.vote_html = SW.voteBanner('Emergency powers', Q.ff_vote);
+if (Q.ff_vote >= 50) { Q.emergency_powers += 2; Q.clones = Q.kamino_army ? 3 : 0; }
+Q.pacifist_dissent += 8;
+!}
+
+[+ vote_html +]

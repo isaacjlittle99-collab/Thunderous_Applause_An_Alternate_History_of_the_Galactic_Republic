@@ -1,0 +1,31 @@
+title: War Profiteers
+subtitle: Someone is getting rich from the war.
+tags: event
+view-if: war and profiteering_timer <= 0 and not finale
+new-page: true
+face-image: img/ev_trade.svg
+on-arrival: {! Q.profiteering_timer = 6; Q.corruption += 2; !}
+
+= War Profiteers
+
+Kuat Drive Yards, Rothana Heavy Engineering and the Banking Clan are making fortunes from the war. Contracts are awarded without competition, prices double every quarter, and several senators on the procurement committee have suddenly bought new estates.
+
+- @investigate: Demand an investigation.
+- @tax: Propose a war-profits tax.
+- @ignore: The war must be won first.
+
+@investigate
+subtitle: Less corruption; the Security Bloc is annoyed.
+on-arrival: corruption -= 2.5; sec_relation -= 4; faith += 0.5
+
+The inquiry finds what everyone expected. Two senators resign.
+
+@tax
+subtitle: +2 treasury; the guilds and the Security Bloc object.
+on-arrival: treasury += 2; guild_relation -= 5; sec_relation -= 3; rimward_dissent -= 3
+
+The war-profits tax passes narrowly. The shipyards' lobbyists are already working on loopholes.
+
+@ignore
+subtitle: The Hawks agree; corruption grows.
+on-arrival: corruption += 1; hawk_dissent -= 2

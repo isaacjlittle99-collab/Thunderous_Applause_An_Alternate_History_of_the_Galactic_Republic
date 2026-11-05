@@ -1,0 +1,33 @@
+title: Lifting the Sanctions
+subtitle: The Trade Federation wants its privileges back.
+tags: event
+view-if: date >= 54
+max-visits: 1
+new-page: true
+face-image: img/ev_trade.svg
+
+= Lifting the Sanctions
+
+The sanctions imposed after Naboo are hurting the Trade Federation, and the Federation has been generous to many senators. A motion to lift them is before the Senate, [? if pal_chancellor : with the Chancellor's quiet blessing ?][? if not pal_chancellor : with the support of the Commerce Guilds ?].
+
+- @oppose: Oppose lifting the sanctions.
+- @accept: Accept it in the interest of galactic commerce.
+- @reparations: Demand full reparations to Naboo first.
+
+@oppose
+subtitle: The guilds will retaliate; the corporate worlds grow restless.
+on-arrival: guild_relation -= 8; corporate_sep += 2; faith += 0.5
+
+The Caucus fights the motion. The sanctions are softened, not lifted.
+
+@accept
+subtitle: The guilds are grateful; it looks like a sell-out.
+on-arrival: guild_relation += 6; corruption += 1; guild_embargo -= 1; rimward_dissent += 4
+
+The sanctions end. Within months, the Federation's battleships are back on the trade lanes.
+
+@reparations
+subtitle: Naboo is grateful; the guilds grudgingly pay.
+on-arrival: guild_relation -= 4; midrim_rc += 1.5; faith += 0.5
+
+The sanctions are lifted only after reparations to Naboo are paid in full.

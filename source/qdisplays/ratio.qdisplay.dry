@@ -1,0 +1,6 @@
+
+(..0.6) <span style="color: #d24a4a;">hopeless</span>
+(0.6..0.9) <span style="color: #e0745a;">outmatched</span>
+(0.9..1.1) <span style="color: #e3cf7a;">evenly matched</span>
+(1.1..1.6) <span style="color: #b5d98a;">favourable</span>
+(1.6..) <span style="color: #7fd18b;">overwhelming</span>

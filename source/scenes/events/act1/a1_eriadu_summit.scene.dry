@@ -1,0 +1,33 @@
+title: The Eriadu Trade Summit
+subtitle: An attempt on the Chancellor's life.
+tags: event
+view-if: date >= 12
+max-visits: 1
+new-page: true
+face-image: img/ev_shadow.svg
+
+= The Eriadu Trade Summit
+
+At the trade summit on Eriadu, a terrorist cell calling itself the **Nebula Front** tries to assassinate Chancellor Valorum. Only the quick work of two Jedi saves him. The Front claims to fight the Trade Federation's grip on the Rim, yet somehow it knew the Chancellor's every movement, and its weapons were bought with Federation credits.
+
+- @piracy: Use the moment to push anti-piracy cooperation in the Rim.
+- @funding: Ask who funded the Nebula Front.
+- @rally: Rally the Senate behind the Chancellor.
+
+@piracy
+subtitle: Helps the Rim; the Security Bloc approves.
+on-arrival: rim_hardship -= 2; sec_relation += 4; rim_relation += 3
+
+The summit's one success is a pact on joint patrols, and the Caucus makes sure it covers the worst pirate lanes.
+
+@funding
+subtitle: [? if tf_probe : Our earlier inquiries may pay off. ?][? if not tf_probe : A thread worth pulling. ?]
+on-arrival: evidence += 0.5; evidence += 0.7 if tf_probe; jedi_suspicion += 0.4; guild_relation -= 4
+
+The money trail runs through four shell companies and a bank on Muunilinst, then disappears. [? if tf_probe : It is the same trail we followed during the taxation fight. Someone is playing both sides: funding the guilds' opposition and the terrorists who attack them. ?][? if not tf_probe : Whoever arranged it was careful. Too careful for a band of Rim radicals. ?]
+
+@rally
+subtitle: Valorum will be grateful.
+on-arrival: mod_relation += 5; faith += 1
+
+The Caucus leads a motion of solidarity with the Chancellor. It passes unanimously, and means very little.

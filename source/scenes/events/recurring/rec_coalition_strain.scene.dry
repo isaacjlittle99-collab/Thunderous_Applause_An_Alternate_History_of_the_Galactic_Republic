@@ -1,0 +1,34 @@
+title: Strains in the Coalition
+subtitle: Our partners are unhappy.
+tags: event
+view-if: rc_in_govt and coalition_strain_timer <= 0 and time >= 4 and coalition_dissent < 4 and not finale
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {!
+Q.coalition_strain_timer = 3 + Math.floor(Math.random() * 3);
+var partners = Q.govt_blocs.filter(function (b) { return b !== 'rc'; });
+Q.strain_bloc = partners.length ? partners[Math.floor(Math.random() * partners.length)] : 'ind';
+Q.strain_name = SW.name(Q, Q.strain_bloc);
+Q.coalition_dissent += 1;
+!}
+
+= Strains in the Coalition
+
+The [+ strain_name +] complain that the Caucus is setting the government's agenda without consulting them. Coalition dissent is now [+ coalition_dissent : coalition_dissent +].
+
+- @soothe: Reassure them with a concession.
+- @hold: Hold firm.
+
+@soothe
+subtitle: −1 political capital; calms the coalition.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! Q.capital -= 1; Q.coalition_dissent -= 1; Q[Q.strain_bloc + '_relation'] += 4; !}
+
+A few committee posts and a friendly speech settle things down, for now.
+
+@hold
+subtitle: The Caucus is pleased; the coalition is not.
+on-arrival: {! Q[Q.strain_bloc + '_relation'] -= 4; Q.inst_dissent -= 2; !}
+
+The Caucus holds its ground.

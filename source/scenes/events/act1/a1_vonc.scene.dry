@@ -1,0 +1,28 @@
+title: The Vote of No Confidence
+new-page: true
+on-arrival: {!
+var bump = Q.valorum_scandal ? 0.12 : 0;
+var relief = Q.relief_fleet ? -0.12 : 0;
+var st = {pal: 1, guild: 0.95, rim: 0.62 + bump + relief, sec: 0.5 + bump + relief, ind: 0.58 + bump + relief, mod: 0.15 + bump / 2};
+Q.vonc_vote = SW.vote(Q, st, Q.vonc_rc);
+Q.vonc_passed = Q.vonc_vote >= 50 ? 1 : 0;
+Q.vote_html = SW.voteBanner('No confidence in Chancellor Valorum', Q.vonc_vote);
+if (Q.vonc_passed) {
+    Q.valorum_fallen = 1;
+    Q.election_due = 1;
+    Q.faith -= 2;
+} else {
+    Q.vonc_failed = 1;
+    Q.naboo_sympathy = 0;
+    Q.mod_relation += 4;
+    Q.pal_relation -= 3;
+}
+!}
+
+= The Vote of No Confidence
+
+[+ vote_html +]
+
+[? if vonc_passed : Valorum's government falls. The former Chancellor sits motionless in his pod as the chamber erupts. The Senate will choose a new Supreme Chancellor at once, and the leading candidates are already being named. Senator Palpatine of Naboo, the senator of the invaded world, is spoken of as the obvious choice. ?]
+
+[? if not vonc_passed : The motion fails. Valorum survives, chastened. Seizing the moment, he orders the Judicial Forces to escort a relief mission to Naboo[? if relief_fleet : , exactly as the Caucus proposed?]. Senator Palpatine congratulates the Chancellor warmly on surviving. Those standing closest to him say his smile did not reach his eyes. ?]

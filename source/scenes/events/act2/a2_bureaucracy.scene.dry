@@ -1,0 +1,35 @@
+title: The Chancellery Grows
+subtitle: Power is quietly moving to the Chancellor's office.
+tags: event
+view-if: date >= 30 and (pal_chancellor or pal_r >= 8)
+max-visits: 1
+new-page: true
+face-image: img/ev_chancellery.svg
+
+= The Chancellery Grows
+
+[? if pal_chancellor : In the name of efficiency, the Chancellor's office has absorbed the staff of six Senate committees, the Senate Bureau of Intelligence's liaison office, and the Senate Guard's command. Each step was small and reasonable. Together they amount to a second government, answerable to one man. ?][? if not pal_chancellor : Senator Palpatine's circle keeps growing. His protégés fill committee staff positions across the Senate, and his advice is sought on everything. Nobody can quite say how it happened. ?]
+
+- @resist: Resist the transfers in committee.
+- @accept: Accept them. The Senate does need to work better.
+- @transparency: Demand full transparency about who works for whom.
+
+@resist
+subtitle: −1 political capital. Slows the Chancellery's growth; it will be remembered.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; grand_plan -= 2; pal_relation -= 6; senate_resolve += 0.3
+
+The Caucus forces several transfers to be reversed. The Chancellor's office thanks the Caucus for its "vigilance".
+
+@accept
+subtitle: Less gridlock, more power in one office.
+on-arrival: corruption -= 2; grand_plan += 3; faith += 1; pal_relation += 3
+
+The Senate becomes noticeably more efficient. Decisions that took years now take weeks, because they are no longer really being made by the Senate.
+
+@transparency
+subtitle: A little evidence; some resolve.
+on-arrival: evidence += 0.4; senate_resolve += 0.3; pal_relation -= 2
+
+The published staff rolls make interesting reading. A dozen names appear on no census of any world in the Republic.

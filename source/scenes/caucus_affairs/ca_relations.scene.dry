@@ -1,0 +1,73 @@
+title: Inter-bloc Relations
+subtitle: Build bridges with another bloc.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_relations.svg
+view-if: relations_timer <= 0
+on-arrival: turn_actions += 1; relations_timer = 2; last_card_timer = "relations"
+new-page: true
+
+= Inter-bloc Relations
+
+No bloc in the Senate can govern alone. Which relationship should the Caucus invest in? Each costs 1 political capital.
+
+- @mod: The Core Moderates.
+- @ind: The Independents.
+- @rim: The Rimward Coalition.
+- @sec: The Security Bloc.
+- @guild: The Commerce Guilds.
+- @pal: The Chancellor's allies.
+- @cis: The Separatist Caucus.
+- @rfc: The Rim Freedom Caucus.
+- @easy_discard
+
+@mod
+subtitle: +8 relations with the Core Moderates. Currently [+ mod_relation : relationships +].
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; mod_relation += 8; inst_dissent -= 2
+
+@ind
+subtitle: +8 relations with the Independents. Currently [+ ind_relation : relationships +].
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; ind_relation += 8
+
+@rim
+view-if: parties_has_rim
+subtitle: +8 relations with the Rimward Coalition. Currently [+ rim_relation : relationships +].
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; rim_relation += 8; rimward_dissent -= 2; inst_dissent += 1
+
+@sec
+subtitle: +8 relations with the Security Bloc. Currently [+ sec_relation : relationships +]. The Pacifists disapprove.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; sec_relation += 8; hawk_dissent -= 2; pacifist_dissent += 3
+
+@guild
+subtitle: +8 relations with the Commerce Guilds. Currently [+ guild_relation : relationships +]. The Rimward wing disapproves.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; guild_relation += 8; rimward_dissent += 5
+
+@pal
+subtitle: +8 relations with the [+ pal_name +]. Currently [+ pal_relation : relationships +].[? if evidence >= 4 : The Caucus is deeply uneasy about this. ?]
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; pal_relation += 8; inst_dissent += 4 if evidence >= 4; pacifist_dissent += 4 if evidence >= 4
+
+@cis
+view-if: cis_formed and parties_has_cis
+subtitle: +8 relations with the Separatist Caucus. Currently [+ cis_relation : relationships +]. The Hawks will be outraged.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; cis_relation += 8; hawk_dissent += 6; pacifist_dissent -= 3
+
+@rfc
+view-if: rfc_formed
+subtitle: +8 relations with the Rim Freedom Caucus. Currently [+ rfc_relation : relationships +].
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; rfc_relation += 8

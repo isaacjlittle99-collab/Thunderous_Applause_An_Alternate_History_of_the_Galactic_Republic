@@ -1,0 +1,35 @@
+title: Defence Droids for the Trade Federation
+subtitle: The guilds want private armies to fight the pirates.
+tags: event
+view-if: date >= 6
+max-visits: 1
+new-page: true
+face-image: img/ev_trade.svg
+
+= Defence Droids for the Trade Federation
+
+The Trade Federation has asked the Commerce Committee for permission to expand its "defensive" droid forces, citing the plague of piracy on the Rim. The committee, chaired by a guild ally, seems certain to agree. Several Caucus senators point out that a private army big enough to fight pirates is big enough to fight planets.
+
+- @fight: Fight it in committee.
+- @inspect: Allow it, but demand Judicial inspections of the droid foundries.
+- @accept: Accept it as a reasonable answer to piracy.
+
+@fight
+subtitle: −1 political capital. The guilds will not forget.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; guild_relation -= 8; tf_droids_limited = 1; hawk_dissent -= 3; rc_momentum += 0.5
+
+The Caucus forces the request into a long, embarrassing public hearing. The final authorisation is a fraction of what the Federation wanted. Someone at the Federation's headquarters on Neimoidia is said to have broken a desk.
+
+@inspect
+subtitle: The droids will be built, but we will know where.
+on-arrival: guild_relation -= 3; tf_inspections = 1; judicial_forces += 0.2
+
+The Federation agrees to inspections through gritted teeth. The Judicial Department's first report runs to nine hundred pages. Somewhere on page six hundred is a supplier on Geonosis.
+
+@accept
+subtitle: The guilds will be grateful; the Rim may be safer.
+on-arrival: guild_relation += 6; rim_hardship -= 1; tf_droids = 1; rimward_dissent += 3; hawk_dissent += 4
+
+The authorisation passes without debate. Federation battleships soon patrol the Rim's trade lanes, and the pirates retreat. The Hawks mutter that the Caucus has just paid for someone else's army.

@@ -1,0 +1,33 @@
+title: The Count's Doubts
+subtitle: Count Dooku wants to talk.
+tags: event
+view-if: war and date >= 150 and dooku_contact and dooku_doubt >= 2 and peace_talks >= 2 and not dooku_turned and not dooku_offer_seen
+max-visits: 1
+priority: 2
+new-page: true
+face-image: img/ev_separatist.svg
+on-arrival: dooku_offer_seen = 1
+
+= The Count's Doubts
+
+Through the comm code he left with Bail Organa years ago, **Count Dooku** sends a private message. He speaks of a master who has promised him a new order, one free of corruption, and who has begun to treat him like a servant to be discarded. He hints that his master is someone in the Senate, close to its very heart.
+
+In exchange for amnesty and real reform of the Senate, he will give the Caucus a name.
+
+- @accept: Accept. Amnesty for the truth.
+- @refuse: Refuse. We do not bargain with butchers.
+
+@accept
+subtitle: [? if rim_enfranchised or anti_corruption : Our reforms make our promises credible. ?][? if not rim_enfranchised and not anti_corruption : He may not believe we can deliver reform. ?]
+on-arrival: {!
+var c = 0.3 + (Q.rim_enfranchised ? 0.15 : 0) + (Q.anti_corruption ? 0.15 : 0) + (Q.federal_compact ? 0.15 : 0) + Q.dooku_doubt * 0.03 - Q.grand_plan / 400;
+if (Math.random() < c) { Q.dooku_turned = 1; Q.evidence += 4; Q.jedi_suspicion += 3; Q.war_balance += 1; this.achieve('dooku_turned'); }
+else { Q.dooku_failed = 1; Q.peace_talks -= 1; Q.investigators_lost += 1; }
+!}
+
+[? if dooku_turned : The name arrives on an encrypted datacard: **Darth Sidious is Supreme Chancellor Palpatine.** With it come years of evidence: holograms, payments, orders. Dooku himself vanishes into hiding. ?][? if dooku_failed : The meeting is a trap, or perhaps someone was listening. Our envoy never returns. Dooku's next broadcast is more violent than ever. ?]
+
+@refuse
+on-arrival: hawk_dissent -= 3; dooku_doubt -= 2
+
+The Caucus does not reply. Dooku's doubts, if they were real, die with the message.

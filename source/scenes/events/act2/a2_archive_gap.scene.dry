@@ -1,0 +1,20 @@
+title: A Hole in the Archives
+subtitle: A star system has been erased from the Jedi Archives.
+tags: event
+view-if: date >= 48 and (jedi_relation >= 52 or quigon_alive or adv_organa) and not archive_gap_known
+max-visits: 1
+new-page: true
+face-image: img/ev_jedi.svg
+on-arrival: archive_gap_known = 1; evidence += 0.5; kamino_hunt += 1 if quigon_alive
+
+= A Hole in the Archives
+
+[? if quigon_alive : Qui-Gon Jinn has been hunting the Sith Master for years. Now he brings the Caucus a strange discovery. ?][? if not quigon_alive : A Jedi archivist, troubled, confides in the Caucus. ?] Somewhere beyond the Outer Rim, near the Rishi Maze, gravity charts show a star system with no planet listed. Someone has deleted it from the Jedi Archives. The last Jedi to access those records was Master **Sifo-Dyas**, who died, conveniently, shortly before the Naboo crisis.
+
+*Shadow Investigations can now pursue the missing system.*
+
+- @ok: Note it.
+
+@ok
+
+The Caucus quietly adds the missing system to its list of questions.

@@ -1,0 +1,41 @@
+title: We Are Being Watched
+subtitle: Someone has noticed our investigation.
+tags: event
+view-if: leak_pending = 1 and not finale
+priority: 3
+new-page: true
+face-image: img/ev_shadow.svg
+on-arrival: {!
+Q.leak_pending = 0;
+Q.leak_severity = Math.random() < 0.5 + Q.grand_plan / 250 ? 2 : 1;
+if (Q.leak_severity === 2) { Q.investigators_lost += 1; Q.evidence -= 0.8; Q.fear += 1; }
+else { Q.evidence -= 0.3; }
+!}
+
+= We Are Being Watched
+
+[? if leak_severity = 2 : One of our investigators has been found dead in a lower-levels apartment: "a speeder accident", the Coruscant Security Force says. Several of her files are missing. ?][? if leak_severity = 1 : Our offices have been broken into. Nothing of value was taken, except some of our investigation files. ?] Someone knows what we are doing.
+
+- @careful: Proceed more carefully.
+- @public: Go public about the intimidation.
+- @jedi: Ask the Jedi to protect our people.
+
+@careful
+subtitle: Slower investigations for a while.
+on-arrival: investigate_timer += 2; inst_dissent -= 2
+
+The Caucus moves its files to an Alderaanian diplomatic vault.
+
+@public
+subtitle: Builds resolve; the shadow learns how much we know.
+on-arrival: senate_resolve += 0.6; grand_plan += 2; faith -= 0.5
+
+The Caucus denounces the break-in. Many senators are shaken. So, perhaps, is someone else.
+
+@jedi
+subtitle: [? if jedi_relation >= 50 : The Jedi will help. ?][? if jedi_relation < 50 : The Jedi may refuse. ?]
+choose-if: jedi_relation >= 50
+unavailable-subtitle: Our relations with the Jedi are too weak.
+on-arrival: jedi_suspicion += 0.8; jedi_relation -= 2; investigators_protected = 1
+
+Two Jedi Knights quietly take up residence near our offices.

@@ -1,0 +1,37 @@
+title: The Petition of 2000
+subtitle: The Delegation demands that the Chancellor return his powers.
+tags: event
+view-if: finale and not gambit and finale_day >= 3 and not petition_seen
+max-visits: 1
+priority: 10
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: petition_seen = 1; petition_possible = 1 if senate_resolve >= 3 or delegation_formed
+
+= The Petition of 2000
+
+[? if petition_possible : The Delegation of 2000 has prepared a petition demanding that the Chancellor return his emergency powers to the Senate now that the war is ending. [+ petition_signatures +] additional senators have signed in the last few days. ?][? if not petition_possible : A few senators talk of a petition demanding that the Chancellor return his powers. Too few have the courage to sign it. ?]
+
+- @present: Present it to the Chancellor in person.
+- @wait: Hold it back until we know what the Jedi will do.
+- @nothing: There is nothing to present.
+
+@present
+view-if: petition_possible
+subtitle: A public stand. The Chancellor will know exactly who his opponents are.
+on-arrival: petition = 1; senate_resolve += 1; faith += 1; pal_relation -= 15; mod_relation += 3; ind_relation += 3
+
+Bail Organa, Mon Mothma[? if padme_alive : and Padmé Amidala ?] carry the petition to the Chancellor's office. Palpatine receives them graciously, thanks them, and promises to "consider it carefully". When they have gone, he summons Mas Amedda and asks for a list of every signatory.
+
+@wait
+view-if: petition_possible
+subtitle: Keeps our options open.
+on-arrival: petition = 0.5; senate_resolve += 0.3
+
+The petition stays in Bail Organa's safe, ready.
+
+@nothing
+view-if: not petition_possible
+on-arrival: faith -= 1
+
+The moment passes.

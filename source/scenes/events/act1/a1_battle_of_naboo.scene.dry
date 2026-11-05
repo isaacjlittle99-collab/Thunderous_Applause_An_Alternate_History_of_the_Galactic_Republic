@@ -1,0 +1,46 @@
+title: The Battle of Naboo
+subtitle: The Queen has returned to free her world.
+tags: event
+view-if: naboo_crisis and date >= 18
+max-visits: 1
+priority: 6
+new-page: true
+face-image: img/ev_naboo.svg
+on-arrival: {!
+var chance = (Q.naboo_jedi >= 2 ? 0.55 : 0.18) + (Q.relief_fleet && Q.vonc_failed ? 0.12 : 0);
+Q.quigon_alive = Math.random() < chance ? 1 : 0;
+Q.anakin_found = 1;
+Q.anakin_fall = Q.quigon_alive ? 1 : 2;
+Q.jedi_suspicion += Q.quigon_alive ? 2.5 : 2;
+Q.naboo_crisis = 0;
+Q.naboo_free = 1;
+for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_guild'] -= 1;
+Q.corporate_guild -= 3;
+Q.guild_embargo = Math.max(0, Q.guild_embargo - 1);
+Q.fear -= 3;
+!}
+
+= The Battle of Naboo
+
+Queen Amidala has returned to Naboo with the two Jedi and allied herself with the Gungans. In a single day her forces capture the Federation viceroy, Nute Gunray, and a young boy from Tatooine named **Anakin Skywalker** destroys the droid control ship.
+
+But the victory has a dark edge. The Jedi were attacked by a tattooed warrior with a red lightsaber: a **Sith**, the first seen in a thousand years. He was killed in the fight.
+
+[? if quigon_alive : Against the odds, Master **Qui-Gon Jinn** survived the duel, gravely wounded. He has insisted on training the boy Skywalker himself, and is already asking a question the Council would rather ignore: *if this was the apprentice, where is the master?* ?][? if not quigon_alive : Master **Qui-Gon Jinn** fell in the duel. His apprentice, Obi-Wan Kenobi, has promised to train the boy Skywalker. The Council is uneasy about it. ?]
+
+Anakin's mother, Shmi, remains a slave on Tatooine.
+
+- @trial: Demand that Gunray face trial before the Supreme Court.
+- @settle: Accept a negotiated settlement with the Trade Federation.
+
+@trial
+subtitle: Justice, and perhaps answers about who gave the Federation its orders.
+on-arrival: gunray_stage = 1; guild_relation -= 6; faith += 1; rc_momentum += 0.5
+
+The Caucus insists Gunray stand trial. The Federation hires the most expensive lawyers in the galaxy.
+
+@settle
+subtitle: The guilds will be grateful. The Rim will call it a cover-up.
+on-arrival: gunray_stage = 0; guild_relation += 6; corruption += 2; rim_relation -= 3; guild_embargo -= 1
+
+A settlement is reached. The Federation pays reparations to Naboo and keeps its Senate seat. Gunray keeps his title.

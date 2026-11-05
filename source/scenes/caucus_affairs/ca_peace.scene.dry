@@ -1,0 +1,41 @@
+title: Peace Movement
+subtitle: Work for an end to the conflict.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_peace.svg
+view-if: peace_timer <= 0 and (war or dooku_movement)
+on-arrival: turn_actions += 1; peace_timer = 2; last_card_timer = "peace"
+new-page: true
+
+= Peace Movement
+
+[? if war : Every month of war costs a million lives and a little more of the Republic's soul. ?][? if not war : The Separatist crisis grows. Is it too late for dialogue? ?] Our channels to the Separatists are [+ peace_talks +]/3 established.
+
+- @rallies: Organise peace rallies across the Core.
+- @channel: Open a channel to Separatist moderates.
+- @corridors: Negotiate humanitarian corridors.
+- @easy_discard
+
+@rallies
+subtitle: Calms fear and the Pacifists; the Hawks are irritated.
+on-arrival: pacifist_dissent -= 6; faith += 1; fear -= 2; hawk_dissent += 3; war_weariness -= 1
+
+Millions march on Coruscant. The Chancellery calls them "well-meaning but naive".
+
+@channel
+view-if: peace_talks < 3
+subtitle: −1 political capital. Builds the path to a negotiated peace.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; peace_talks += 1; cis_relation += 5; sec_relation -= 4; hawk_dissent += 3
+
+Through neutral Mandalorian intermediaries, a message reaches the Separatist Parliament on Raxus. Someone answers.
+
+@corridors
+view-if: war
+subtitle: −1 political capital. Less hardship and war-weariness.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; rim_hardship -= 2; war_weariness -= 3; faith += 0.5
+
+Medical frigates under neutral flags begin to reach the worst-hit worlds.

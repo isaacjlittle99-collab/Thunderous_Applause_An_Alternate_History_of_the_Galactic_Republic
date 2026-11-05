@@ -1,0 +1,42 @@
+title: Coalition Affairs
+subtitle: Keep the governing coalition together.
+is-card: true
+tags: senate_affairs
+card-image: img/card_relations.svg
+view-if: coalition_timer <= 0 and rc_in_govt and coalition_dissent >= 1
+on-arrival: turn_actions += 1; coalition_timer = 2; last_card_timer = "coalition"
+new-page: true
+
+= Coalition Affairs
+
+The [+ coalition_name +] is [+ coalition_dissent : coalition_dissent +].[? if not constructive_vonc : If coalition dissent reaches 4, our partners may bring the government down. ?]
+
+- @concede: Make concessions to our partners.
+- @chair: Give up a committee chair to a partner.
+- @collapse: Bring the government down ourselves.
+- @easy_discard
+
+@concede
+subtitle: −1 political capital. −2 coalition dissent; the Caucus grumbles.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; coalition_dissent -= 2; rimward_dissent += 3; pacifist_dissent += 2
+
+A carefully worded joint statement papers over the cracks.
+
+@chair
+view-if: rc_chairs >= 1
+subtitle: −3 coalition dissent; we lose a chair.
+on-arrival: {!
+for (var i = SW.COMMITTEES.length - 1; i >= 0; i--) { var c = SW.COMMITTEES[i]; if (Q['chair_' + c] === 'rc') { var partner = Q.govt_blocs.filter(function (b) { return b !== 'rc'; })[0] || 'mod'; Q['chair_' + c] = partner; Q.lost_chair = SW.COMMITTEE_NAMES[c]; break; } }
+Q.coalition_dissent -= 3;
+SW.recomputeGovt(Q);
+!}
+
+We hand the [+ lost_chair +] Committee to our partners. They are mollified.
+
+@collapse
+subtitle: The Senate will choose a new Chancellor.
+on-arrival: election_due = 1; rc_momentum += 0.5; inst_dissent += 4
+
+The Caucus withdraws from the government. A new Chancellor election will follow.

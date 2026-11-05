@@ -1,0 +1,72 @@
+title: Shadow Investigation
+subtitle: Dig into the hidden currents behind the Republic's crises.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_shadow.svg
+view-if: investigate_timer <= 0 and date >= 12
+on-arrival: turn_actions += 1; investigate_timer = 2; last_card_timer = "investigate"
+new-page: true
+
+= Shadow Investigation
+
+Too many of the Republic's crises seem to serve someone. Our evidence is **[+ evidence : evidence +]**. Investigations carry risks: the people behind these events do not like being looked at.
+
+[? if investigators_lost > 0 : *We have already lost [+ investigators_lost +] investigator(s).* ?]
+
+- @money: Follow the money.
+- @slicer: Hire a slicer to break into sealed records.
+- @share: Share our findings with the Jedi Council.
+- @archives: Pursue the gap in the Jedi Archives.
+- @charges: Lay charges before the Senate.
+- @easy_discard
+
+@money
+subtitle: −1 political capital. Slow but fairly safe.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {!
+Q.capital -= 1;
+var gain = 0.5 + (Q.tf_probe ? 0.2 : 0) + (Q.chair_finance === 'rc' ? 0.3 : 0) + (Q.banking_audit ? 0.3 : 0);
+Q.evidence += gain;
+Q.inv_result = 'The trail leads through shell companies, a Muunilinst bank and a dead Muun financier\'s holding company, Damask Holdings.';
+if (Math.random() < 0.08 + Q.grand_plan / 600) { Q.leak_pending = 1; Q.inv_result += ' Someone noticed us looking.'; }
+!}
+
+[+ inv_result +]
+
+@slicer
+subtitle: −2 political capital. Faster, but riskier.
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: {!
+Q.capital -= 2;
+Q.evidence += 1.1 + (Q.chair_judiciary === 'rc' ? 0.3 : 0);
+Q.inv_result = 'Our slicer cracks a sealed archive of Chancellery correspondence. Most of it is dull. A little of it is chilling.';
+if (Math.random() < 0.2 + Q.grand_plan / 400) { Q.leak_pending = 1; Q.inv_result += ' Then the slicer stops answering her comlink.'; }
+!}
+
+[+ inv_result +]
+
+@share
+view-if: evidence >= 2
+subtitle: The Jedi grow more suspicious, and closer to us.
+on-arrival: jedi_suspicion += 1; jedi_relation += 2; evidence += 0.2
+
+Master Windu reads our dossier in silence. "This is not proof," he says at last. "But it is not nothing."
+
+@archives
+view-if: archive_gap_known and not kamino_known
+subtitle: −1 political capital. Someone erased a star system from the Archives.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; kamino_hunt += 1; evidence += 0.3
+
+Our people work through old hyperspace charts, cargo manifests and the travel logs of a dead Jedi Master named Sifo-Dyas. [? if kamino_hunt >= 2 : The gap is closing. We are close to finding the missing world. ?]
+
+@charges
+view-if: evidence >= 7 and not sidious_known and (pal_chancellor or pal_was_chancellor) and not finale
+subtitle: [? if evidence >= 10 : Our case is conclusive. This is the moment. ?][? if evidence < 10 : Our case is strong but not conclusive. If it fails, the Caucus may not survive. ?]
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: capital -= 2
+go-to: fin_charges

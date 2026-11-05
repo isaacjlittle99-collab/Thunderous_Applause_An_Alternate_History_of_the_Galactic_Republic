@@ -1,0 +1,49 @@
+title: HoloNet Media
+subtitle: Shape what the galaxy sees and hears.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_holonet.svg
+view-if: media_timer <= 0
+on-arrival: turn_actions += 1; media_timer = 3; last_card_timer = "media"
+new-page: true
+
+= HoloNet Media
+
+The HoloNet reaches every corner of the Republic. What story should the Caucus tell?
+
+- @corruption: Expose corruption in the Senate.
+- @republic: Champion the Republic and its laws.
+- @overreach: Warn of executive overreach.
+- @counter: Answer the Chancellery's propaganda.
+- @easy_discard
+
+@corruption
+subtitle: −1 political capital. Less corruption, more faith; the guilds will be angry.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; corruption -= 1.5; faith += 1; guild_relation -= 3; rc_momentum += 0.5
+
+A Caucus-backed investigation into "the Senate's thousand hands in the till" leads every HoloNet bulletin for a week.
+
+@republic
+subtitle: −1 political capital. More faith in the Republic.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; faith += 2; fear -= 1
+
+The Caucus sponsors a series on the Ruusan Reformation: a thousand years of peace, built by people who refused to give up on the Senate.
+
+@overreach
+subtitle: [? if emergency_powers >= 1 or evidence >= 3 : Credible: the threat is visible. ?][? if emergency_powers < 1 and evidence < 3 : Nobody sees the threat yet. This may look like alarmism. ?]
+on-arrival: senate_resolve += 0.7 if emergency_powers >= 1 or evidence >= 3; faith -= 1 if emergency_powers < 1 and evidence < 3; pal_relation -= 3
+
+[? if emergency_powers >= 1 or evidence >= 3 : The Caucus's warnings strike a nerve. Senators who voted for the emergency measures begin to ask how they will ever be undone. ?][? if emergency_powers < 1 and evidence < 3 : The HoloNet pundits laugh at "the Caucus's phantom tyrant". The Chancellor's office issues a gentle, wounded denial. ?]
+
+@counter
+view-if: pal_chancellor and grand_plan >= 35
+subtitle: −1 political capital. Weakens the Chancellor's bloc a little.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! Q.capital -= 1; for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_pal'] -= 0.8; Q.faith += 0.5; !}
+
+The Caucus picks apart the Chancellery's latest HoloNet campaign, fact by fact. It is slow work. The Chancellery produces three new campaigns for every one the Caucus debunks.

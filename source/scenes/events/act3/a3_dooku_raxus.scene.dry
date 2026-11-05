@@ -1,0 +1,56 @@
+title: The Raxus Declaration
+subtitle: Count Dooku calls on the galaxy's neglected worlds to leave the Republic.
+tags: event
+view-if: date >= 108 and not dooku_movement
+max-visits: 1
+priority: 5
+new-page: true
+face-image: img/ev_separatist.svg
+on-arrival: {!
+Q.dooku_movement = 1;
+Q.cis_formed = 1;
+if (Q.parties.indexOf('cis') < 0) Q.parties.push('cis');
+Q.cis_leader = 'Po Nudo';
+var regs = ['midrim', 'outer', 'corporate'];
+for (var i = 0; i < regs.length; i++) {
+    var r = regs[i];
+    var take = (Q[r + '_sep'] || 0) / 100;
+    Q[r + '_cis'] = (Q[r + '_rim'] * take * 0.5) + (Q[r + '_guild'] * take * 0.4) + (Q[r + '_ind'] * take * 0.3) + 0.5;
+    Q[r + '_rim'] *= (1 - take * 0.5); Q[r + '_guild'] *= (1 - take * 0.4); Q[r + '_ind'] *= (1 - take * 0.3);
+}
+Q.core_cis = 0.5; Q.colonies_cis = 0.8;
+Q.fear += 6;
+SW.computeSupport(Q);
+!}
+
+= The Raxus Declaration
+
+On the industrial world of Raxus, **Count Dooku**, the former Jedi Master, delivers a speech that is broadcast across the galaxy. The Republic, he says, is rotten beyond repair: owned by the Core, run by bribes, deaf to the Rim. He invites every world that agrees to leave it and join a new **Confederacy of Independent Systems**.
+
+Hundreds of worlds are listening. A **Separatist Caucus** has formed in the Senate, made up of senators whose worlds are thinking about leaving.
+
+[? if rim_enfranchised : Thanks to the Rim Enfranchisement Act, Dooku's message falls on stonier ground than he hoped. ?]
+
+- @condemn: Condemn Dooku as a traitor.
+- @dialogue: Call for dialogue with the disaffected worlds.
+- @grievances: Rush through reforms that answer the Rim's grievances.
+
+@condemn
+subtitle: The Hawks approve; the disaffected feel unheard.
+on-arrival: hawk_dissent -= 5; cis_relation -= 10; sec_relation += 4; outer_sep += 2; midrim_sep += 1
+
+The Caucus denounces secession in the strongest terms. Dooku's followers call the Caucus "the Core's polite face".
+
+@dialogue
+subtitle: The Pacifists approve; a door opens.
+on-arrival: pacifist_dissent -= 5; peace_talks += 0.5; cis_relation += 5; hawk_dissent += 4; dooku_doubt += 1 if dooku_contact
+
+The Caucus offers to hear the grievances of every world that is considering secession. Some accept.
+
+@grievances
+subtitle: −2 political capital. Cools separatism quickly; the Institutionalists worry it rewards blackmail.
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: capital -= 2; outer_sep -= 5; midrim_sep -= 4; corporate_sep -= 2; rimward_dissent -= 5; inst_dissent += 4; rim_relation += 5
+
+The Caucus pushes through emergency relief, a moratorium on guild debt collection, and a promise of fair Rim representation. It is not enough to stop the movement. It may be enough to slow it.

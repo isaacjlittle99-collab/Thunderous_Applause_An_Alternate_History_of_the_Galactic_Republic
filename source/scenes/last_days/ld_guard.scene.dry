@@ -1,0 +1,20 @@
+title: Win Over the Senate Guard
+subtitle: The Red Guards stand closest to the Chancellor.
+is-card: true
+tags: last_days
+card-image: img/card_forces.svg
+view-if: finale and not senate_guard_reformed and not ld_guard_used_today
+on-arrival: turn_actions += 1; ld_guard_used_today = 1; last_card_timer = ""
+new-page: true
+
+= Win Over the Senate Guard
+
+The Senate Guard swore an oath to the Senate before they ever swore one to the Chancellor's office.
+
+- @do: Win Over the Senate Guard.
+- @easy_discard
+
+@do
+on-arrival: guard_turned = 1; capital -= 1
+
+Several Guard commanders, veterans of the old blue-robed Senate Guard, quietly let the Caucus know they will not fire on senators.

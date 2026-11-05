@@ -1,0 +1,16 @@
+title: A Mother's Death
+subtitle: Anakin Skywalker has had terrible dreams about his mother.
+tags: event
+view-if: date >= 134 and anakin_found and not shmi_freed and not shmi_dead
+max-visits: 1
+new-page: true
+face-image: img/ev_jedi.svg
+on-arrival: shmi_dead = 1; anakin_fall += 2
+
+= A Mother's Death
+
+Anakin Skywalker's nightmares were true. On Tatooine, his mother Shmi was taken by Tusken Raiders. He found her too late, and she died in his arms. What he did next, to the Tuskens' camp, he tells no one but Padmé.
+
+The Jedi Council knows only that the young man came back from Tatooine changed. The Chancellor knows more. He always does.
+
+[? if slavery_campaign >= 1 : The Caucus's anti-slavery campaign came too late for Shmi Skywalker. ?]

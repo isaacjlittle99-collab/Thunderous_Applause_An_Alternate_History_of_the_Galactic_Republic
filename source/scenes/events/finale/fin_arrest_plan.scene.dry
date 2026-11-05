@@ -1,0 +1,47 @@
+title: How to Stop Him
+subtitle: The Jedi are going to move against the Chancellor. How?
+tags: event
+view-if: finale and not gambit and finale_day >= 5 and sidious_known and not arrest_plan_seen
+max-visits: 1
+priority: 10
+new-page: true
+face-image: img/ev_jedi.svg
+on-arrival: arrest_plan_seen = 1
+
+= How to Stop Him
+
+Master Windu and three Jedi Masters intend to arrest the Chancellor today. Windu wants the Senate with him. [? if warrant : The sealed warrant prepared by the Judiciary Committee is ready. ?][? if not warrant : There is no warrant. The Jedi would be acting on their own authority. ?]
+
+- @warrant: Arrest him with the Senate's warrant.
+- @emergency_warrant: Rush an emergency warrant through the Supreme Court.
+- @expose: Expose him before the full Senate first.
+- @jedi: Let the Jedi act alone, now, before he can react.
+
+@warrant
+view-if: warrant
+subtitle: The arrest will be lawful.
+on-arrival: arrest_mode = "warrant"; arrest_planned = 1
+
+The Jedi go to the Chancellor's office with a warrant signed by the Supreme Court and the Senate.
+
+@emergency_warrant
+view-if: not warrant
+subtitle: −2 political capital. Needs compelling evidence; costs precious time.
+choose-if: capital >= 2 and evidence >= 7
+unavailable-subtitle: Needs 2 political capital and strong evidence (7+).
+on-arrival: capital -= 2; warrant = 1; arrest_mode = "warrant"; arrest_planned = 1; arrest_delay = 1
+
+Three justices are woken in the night. By morning, the Jedi have a warrant, and the Chancellor may have had time to prepare.
+
+@expose
+view-if: evidence >= 10
+subtitle: The whole Senate will know. He will have nowhere to hide, or nothing left to lose.
+on-arrival: arrest_mode = "exposed"; arrest_planned = 1; evidence_public += 4; navy_loyalty += 15; senate_resolve += 2
+
+Before the full Senate, the Caucus reveals everything. The Chancellor's allies flee from him like water from a breaking dam.
+
+@jedi
+subtitle: Speed over legitimacy.
+on-arrival: arrest_mode = "jedi"; arrest_planned = 1
+
+The Jedi go at once, alone.

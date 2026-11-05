@@ -1,0 +1,23 @@
+title: A New Voice for Alderaan
+subtitle: The Caucus's leadership changes.
+tags: event
+view-if: elections_held >= 1 and not antilles_gone and date >= 17
+max-visits: 1
+priority: 1
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {!
+Q.antilles_gone = 1;
+Q.antilles_chancellor = (Q.chancellor === 'Bail Antilles') ? 1 : 0;
+Q.adv_antilles = 0;
+if (!Q.antilles_chancellor) Q.rc_leader = 'Bail Organa';
+SW.countAdvisors(Q);
+if (Q.n_advisors < 3) { Q.adv_organa = 1; Q.inst_strength += 3; }
+SW.countAdvisors(Q);
+!}
+
+= A New Voice for Alderaan
+
+[? if antilles_chancellor : With Bail Antilles now sitting in the Chancellor's chair, Alderaan sends a new senator to Coruscant: the young Viceroy **Bail Organa**. He quickly becomes one of the Caucus's most trusted voices. ?][? if not antilles_chancellor : Bail Antilles' defeat ends his time in the Senate. He returns to Alderaan, and the young Viceroy **Bail Organa** takes his seat and his place at the head of the Caucus. Organa is warmer than Antilles and more flexible, and he has friends in surprising places, the Jedi Temple among them. ?]
+
+[? if adv_organa : Organa joins the Caucus's inner circle of advisors. ?][? if not adv_organa : Organa is available as an advisor if we make room through Shuffle Leadership. ?]

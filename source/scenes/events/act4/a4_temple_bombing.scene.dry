@@ -1,0 +1,27 @@
+title: The Temple Bombing
+subtitle: A bomb has exploded inside the Jedi Temple.
+tags: event
+view-if: war and date >= 156 and not temple_bombing_seen
+max-visits: 1
+new-page: true
+face-image: img/ev_jedi.svg
+on-arrival: temple_bombing_seen = 1; jedi_standing -= 6
+
+= The Temple Bombing
+
+A bomb has exploded in the hangar of the Jedi Temple, killing workers and clones. The Jedi Order's own investigation points to a young Padawan, **Ahsoka Tano**, Anakin Skywalker's apprentice. The Order has expelled her and handed her over for a military tribunal presided over by an admiral named Tarkin. The public mood has turned sharply against the Jedi.
+
+- @defend: Insist on a civilian trial with a proper defence.
+- @tribunal: Let the military tribunal proceed.
+
+@defend
+subtitle: Justice for Ahsoka, and perhaps the truth.
+on-arrival: {! Q.jedi_relation += 4; Q.sec_relation -= 4; Q.faith += 1; Q.ahsoka_saved = 1; Q.anakin_fall -= 0.5; if (Math.random() < 0.6) { Q.evidence += 0.5; Q.jedi_standing += 3; } !}
+
+Senator Amidala herself acts as Ahsoka's counsel. Anakin finds the real bomber, another Padawan, just in time. Ahsoka is cleared, but she leaves the Order anyway. "The Council didn't trust me," she tells Anakin. "Why should I trust myself to them?"
+
+@tribunal
+subtitle: The Security Bloc approves; Anakin is furious.
+on-arrival: sec_relation += 3; anakin_fall += 1; jedi_relation -= 4
+
+Anakin clears his apprentice only at the last minute, and with no help from the Senate. He does not forget who stood by and who did not.

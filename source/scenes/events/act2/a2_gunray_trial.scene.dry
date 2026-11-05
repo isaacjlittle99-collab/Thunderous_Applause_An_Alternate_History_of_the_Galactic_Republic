@@ -1,0 +1,48 @@
+title: The Trial of Nute Gunray
+subtitle: The Supreme Court tries the Trade Federation's viceroy.
+tags: event
+view-if: gunray_stage >= 1 and gunray_stage <= 4 and gunray_timer <= 0 and date >= 24 and not gunray_convicted
+new-page: true
+face-image: img/ev_law.svg
+on-arrival: {!
+Q.gunray_timer = 3;
+Q.gunray_chance = 0.12 + Q.gunray_bonus * 0.15 + (Q.chair_judiciary === 'rc' ? 0.15 : 0) + Q.anti_corruption * 0.1 + (Q.evidence >= 4 ? 0.08 : 0) - (Q.pal_chancellor ? 0.12 : 0) - Q.guild_r / 200;
+Q.gunray_chance = SW.clamp(Q.gunray_chance, 0.03, 0.8);
+Q.gunray_pct = Math.round(Q.gunray_chance * 100);
+Q.deal_pct = Math.round(SW.clamp(Q.gunray_chance + 0.18, 0.05, 0.9) * 100);
+!}
+
+= The Trial of Nute Gunray
+
+This is trial number **[+ gunray_stage +]** of the Neimoidian viceroy for the invasion of Naboo. His defence team is the most expensive in the galaxy. Witnesses keep changing their testimony, and one has disappeared. Our prosecutors estimate their chance of a conviction at about [+ gunray_pct +]%.
+
+There is another option. Gunray is terrified, not of the court but of someone else. If he were offered protection and leniency, he might talk.
+
+- @prosecute: Press for a conviction.
+- @deal: Offer Gunray leniency in return for testimony.
+- @drop: Let the case run without the Caucus's involvement.
+
+@prosecute
+subtitle: About [+ gunray_pct +]% chance of a conviction.
+on-arrival: {!
+if (Math.random() < Q.gunray_chance) { Q.gunray_convicted = 1; Q.evidence += 2.5; Q.faith += 2; Q.corruption -= 2; Q.corporate_guild -= 4; Q.guild_relation -= 6; Q.gunray_result = 'convicted'; this.achieve('gunray_convicted'); }
+else { Q.gunray_stage += 1; Q.corruption += 1.5; Q.faith -= 1; Q.gunray_result = 'acquitted'; }
+!}
+
+[? if gunray_result = "convicted" : Guilty. Facing life in a Coruscant prison, Gunray breaks. He tells the court about a hooded figure called **Darth Sidious**, who ordered the blockade and the invasion by hologram. He swears he never saw the man's face. ?][? if gunray_result = "acquitted" : The court cannot reach a verdict. Gunray walks free for now, and the Trade Federation keeps its seat. The HoloNet calls it "the best justice money can buy". ?]
+
+@deal
+subtitle: About [+ deal_pct +]% chance he talks; no conviction either way.
+on-arrival: {!
+var c = SW.clamp(Q.gunray_chance + 0.18, 0.05, 0.9);
+if (Math.random() < c) { Q.evidence += 2; Q.gunray_testified = 1; Q.gunray_stage = 5; Q.guild_relation += 2; Q.gunray_result = 'talked'; }
+else { Q.gunray_stage += 1; Q.gunray_result = 'refused'; Q.corruption += 0.5; }
+!}
+
+[? if gunray_result = "talked" : Under sealed testimony, Gunray describes the Sith Lord who gave his orders, **Darth Sidious**, and admits Sidious seemed to know the Senate's private business before the Senate did. In exchange he keeps his title. Many in the Caucus find the bargain distasteful. ?][? if gunray_result = "refused" : Gunray considers the offer for a long time, then refuses. "You cannot protect me," he says. "No one can." ?]
+
+@drop
+subtitle: Let the courts do their work.
+on-arrival: gunray_stage += 1
+
+The trial grinds on without us, and ends inconclusively.

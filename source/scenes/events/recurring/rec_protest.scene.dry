@@ -1,0 +1,31 @@
+title: The Weary Republic
+subtitle: Protests against the war spread across the Core.
+tags: event
+view-if: war and war_weariness >= 45 and protest_timer <= 0 and not finale
+new-page: true
+face-image: img/ev_peace.svg
+on-arrival: {! Q.protest_timer = 5; Q.faith -= 1; !}
+
+= The Weary Republic
+
+Millions have died. The war has no end in sight. Protesters fill the plazas of Coruscant, Alderaan and Chandrila, demanding peace. [? if pal_chancellor : The Chancellor's office warns of "Separatist agitators" and asks for new security powers to keep order. ?]
+
+- @join: March with the protesters.
+- @channel: Channel their anger into a peace initiative.
+- @order: Call for calm and support the war effort.
+
+@join
+subtitle: The Pacifists and the public cheer; the Hawks are furious.
+on-arrival: pacifist_dissent -= 8; hawk_dissent += 6; faith += 1; core_rc += 1; colonies_rc += 1; senate_resolve += 0.3
+
+Mon Mothma speaks to a million people on the Senate Plaza.
+
+@channel
+subtitle: Builds peace channels.
+on-arrival: peace_talks += 0.5; pacifist_dissent -= 3; war_weariness -= 3
+
+The Caucus collects a billion signatures for a negotiated peace.
+
+@order
+subtitle: The Hawks and the Security Bloc approve.
+on-arrival: hawk_dissent -= 4; sec_relation += 3; pacifist_dissent += 5; fear += 1

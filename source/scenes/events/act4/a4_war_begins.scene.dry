@@ -1,0 +1,28 @@
+title: Generals of the Republic
+subtitle: Should the Jedi lead the Republic's armies?
+tags: event
+view-if: war and geonosis_seen and not war_begins_seen
+max-visits: 1
+priority: 4
+new-page: true
+face-image: img/ev_war.svg
+on-arrival: war_begins_seen = 1
+
+= Generals of the Republic
+
+[? if clones > 0 : The Grand Army needs commanders, and the clones were bred to follow Jedi. ?][? if clones <= 0 : The Republic's patchwork forces need commanders. ?] The Chancellor proposes that Jedi Knights be commissioned as generals. Many Jedi are uneasy: they are keepers of the peace, not soldiers.
+
+- @generals: Accept Jedi as generals.
+- @advisors: Insist that the Jedi serve as advisors and peacekeepers, not commanders.
+
+@generals
+subtitle: The war will go better. The Order will pay a heavy price.
+on-arrival: jedi_generals = 1; war_balance += 1
+
+The Jedi become generals. Within a year, a tenth of the Order has died in battle, and the public begins to see the Jedi as soldiers.
+
+@advisors
+subtitle: The Order stays itself. The war will be harder.
+on-arrival: jedi_generals = 0; war_balance -= 1; jedi_relation += 8; jedi_standing += 3; hawk_dissent += 4
+
+The Senate keeps the Jedi out of the chain of command. They serve as negotiators, scouts and protectors of civilians. The Order is grateful. The Security Bloc is not.

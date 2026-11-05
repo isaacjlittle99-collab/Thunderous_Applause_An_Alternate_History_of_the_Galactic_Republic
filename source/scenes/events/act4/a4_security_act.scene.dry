@@ -1,0 +1,61 @@
+title: The Enhanced Security Act
+subtitle: The Chancellery wants control of the HoloNet and the intelligence services.
+tags: event
+view-if: war and date >= 148 and (pal_chancellor or puppet_chancellor) and not security_act_seen and not finale
+max-visits: 1
+new-page: true
+face-image: img/ev_holonet.svg
+on-arrival: security_act_seen = 1
+
+= The Enhanced Security Act
+
+Citing Separatist spies and propaganda, the Chancellery asks for authority over the HoloNet's news services and the Senate Bureau of Intelligence. Broadcasters who "undermine the war effort" could be shut down. Intelligence reports would go to the Chancellor first, and to the Senate only "as appropriate".
+
+[? if free_press >= 1 : The independent HoloNet foundation the Caucus helped to fund is broadcasting live from the gallery. ?]
+
+- @oppose: Oppose the Act.
+- @amend: Try to amend it: no censorship, intelligence still shared with the Senate.
+- @support: Support it. Spies are real.
+
+@oppose
+on-arrival: {!
+var st = {pal: 1, sec: 0.85, mod: 0.4 + Q.fear / 250, guild: 0.5, ind: 0.4, rim: 0.3, rfc: 0.2};
+var adj = (Q.free_press || 0) * 0.04;
+for (var b in st) if (b !== 'pal') st[b] -= adj;
+Q.sa_vote = SW.vote(Q, st, 0);
+Q.vote_html = SW.voteBanner('Enhanced Security Act', Q.sa_vote);
+if (Q.sa_vote >= 50) { Q.emergency_powers += 1; Q.holonet_free = Q.free_press >= 1 ? 1 : 0; Q.security_act = 1; }
+Q.senate_resolve += 0.5;
+!}
+
+[+ vote_html +]
+
+[? if security_act : The Act passes. [? if holonet_free : The independent broadcasters keep transmitting from Chandrila, beyond the Act's reach. ?][? if not holonet_free : Within a month, three critical news services go off the air. ?] ?][? if not security_act : The Act fails. The Chancellor's office expresses "disappointment". ?]
+
+@amend
+subtitle: −1 political capital. A watered-down Act.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {!
+Q.capital -= 1;
+var st = SW.stance(Q, {pal: 0.4, sec: 0.6, mod: 0.6, guild: 0.5, ind: 0.6, rim: 0.5, rfc: 0.4}, true);
+Q.sa_vote = SW.vote(Q, st, 1);
+Q.vote_html = SW.voteBanner('Amended Security Act', Q.sa_vote);
+if (Q.sa_vote >= 50) { Q.security_act = 0; Q.sa_amended = 1; Q.faith += 1; }
+else { Q.emergency_powers += 1; Q.security_act = 1; Q.holonet_free = Q.free_press >= 1 ? 1 : 0; }
+!}
+
+[+ vote_html +]
+
+[? if sa_amended : The Caucus's amended Act passes in place of the original. Spies will be hunted, and the press and the Senate keep their rights. ?][? if not sa_amended : The amendment fails, and the original Act passes. ?]
+
+@support
+on-arrival: {!
+var st = {pal: 1, sec: 0.85, mod: 0.4 + Q.fear / 250, guild: 0.5, ind: 0.4, rim: 0.3, rfc: 0.2};
+Q.sa_vote = SW.vote(Q, st, 1);
+Q.vote_html = SW.voteBanner('Enhanced Security Act', Q.sa_vote);
+if (Q.sa_vote >= 50) { Q.emergency_powers += 1; Q.security_act = 1; Q.holonet_free = 0; }
+Q.pacifist_dissent += 6;
+!}
+
+[+ vote_html +]

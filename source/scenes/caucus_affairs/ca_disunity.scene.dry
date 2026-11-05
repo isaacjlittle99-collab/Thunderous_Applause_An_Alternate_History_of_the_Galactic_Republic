@@ -1,0 +1,45 @@
+title: Caucus Disunity
+subtitle: The Caucus is quarrelling. Restore order before it splits.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_disunity.svg
+view-if: disunity_timer <= 0 and (dissent_percent >= 22 or inst_dissent >= 40 or rimward_dissent >= 40 or pacifist_dissent >= 40 or hawk_dissent >= 40)
+on-arrival: turn_actions += 1; disunity_timer = 2; last_card_timer = "disunity"
+new-page: true
+
+= Caucus Disunity
+
+The Caucus is [+ dissent_percent : dissent +]. Institutionalists: [+ inst_dissent : dissent +]. Rimward: [+ rimward_dissent : dissent +]. Pacifists: [+ pacifist_dissent : dissent +]. Hawks: [+ hawk_dissent : dissent +]. A faction whose dissent reaches 60 may leave.
+
+- @discipline: Enforce discipline.
+- @concede: Give the angriest faction what it wants.
+- @convention: Hold an open convention.
+- @easy_discard
+
+@discipline
+subtitle: −1 political capital. Everyone calms down a little.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; inst_dissent -= 8; rimward_dissent -= 8; pacifist_dissent -= 8; hawk_dissent -= 8
+
+The whips are out. The Caucus falls into line, grudgingly.
+
+@concede
+subtitle: The angriest faction calms down a great deal; the others resent it.
+on-arrival: {!
+var worst = 'inst', v = -1;
+for (var i = 0; i < SW.FACTIONS.length; i++) { var f = SW.FACTIONS[i]; if (Q[f + '_dissent'] > v) { v = Q[f + '_dissent']; worst = f; } }
+for (var j = 0; j < SW.FACTIONS.length; j++) { var g = SW.FACTIONS[j]; Q[g + '_dissent'] += (g === worst ? -18 : 4); }
+Q[worst + '_strength'] += 3;
+Q.conceded_to = SW.FACTION_NAMES[worst];
+!}
+
+The Caucus gives the [+ conceded_to +] what they have been demanding. They are mollified. Everyone else takes note.
+
+@convention
+subtitle: −2 political capital. Broad relief, and a little more faith.
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: capital -= 2; inst_dissent -= 11; rimward_dissent -= 11; pacifist_dissent -= 11; hawk_dissent -= 11; faith += 0.5
+
+A long, open convention airs every grievance. It is exhausting, and it works.

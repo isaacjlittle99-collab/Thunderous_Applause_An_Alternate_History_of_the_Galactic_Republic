@@ -1,0 +1,46 @@
+title: News from the Front
+subtitle: A major battle has been fought.
+tags: event
+view-if: war and battle_timer <= 0 and war_begins_seen and not finale
+new-page: true
+face-image: img/ev_war.svg
+on-arrival: {!
+Q.battle_timer = 2;
+var battles = [[135, 'Christophsis', 'the Outer Rim world of Christophsis'], [140, 'Ryloth', 'the Twi\'lek homeworld of Ryloth'], [144, 'the Malevolence', 'the Separatist super-weapon Malevolence'], [148, 'Kamino', 'the cloning world of Kamino'], [152, 'Umbara', 'the shadow world of Umbara'], [158, 'Mandalore', 'neutral Mandalore'], [162, 'the Outer Rim Sieges', 'a hundred fortified worlds across the Outer Rim']];
+var pick = battles[0];
+for (var i = 0; i < battles.length; i++) if (Q.date >= battles[i][0] && !Q['battle_' + i]) { pick = battles[i]; Q.battle_idx = i; }
+Q['battle_' + (Q.battle_idx || 0)] = 1;
+Q.battle_name = pick[1]; Q.battle_desc = pick[2];
+var swing = (Math.random() - 0.45) * 3 + (Q.clones * 0.08) - (Q.droid_armies * 0.08);
+Q.war_balance += swing;
+Q.battle_won = swing >= 0 ? 1 : 0;
+Q.war_weariness += 2;
+!}
+
+= The Battle of [+ battle_name +]
+
+The Republic and the Confederacy have fought a great battle at [+ battle_desc +]. [? if battle_won : Republic forces carry the day, at terrible cost. ?][? if not battle_won : Republic forces are thrown back, and the HoloNet is full of grim images. ?] The front is now [+ war_balance : war +].
+
+- @fund: Push for more resources for the front.
+- @civilians: Demand protection for civilians.
+- @ceasefire: Call for a local ceasefire.
+
+@fund
+subtitle: −2 treasury. The war goes a little better.
+choose-if: treasury >= 2
+unavailable-subtitle: The treasury is empty.
+on-arrival: treasury -= 2; war_balance += 1.2; hawk_dissent -= 2; sec_relation += 2
+
+New squadrons are rushed to the front.
+
+@civilians
+subtitle: Faith and the Rim are grateful; the generals are not.
+on-arrival: war_balance -= 0.4; rim_hardship -= 2; faith += 1; pacifist_dissent -= 3; outer_sep -= 1
+
+The Caucus forces through rules to protect civilians in war zones.
+
+@ceasefire
+subtitle: A little closer to peace; the Hawks object.
+on-arrival: peace_talks += 0.3; fear -= 1; war_weariness -= 1; hawk_dissent += 3
+
+A local ceasefire saves thousands of lives. It does not last.

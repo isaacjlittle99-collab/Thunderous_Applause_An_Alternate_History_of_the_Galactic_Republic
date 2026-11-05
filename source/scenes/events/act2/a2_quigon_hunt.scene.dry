@@ -1,0 +1,12 @@
+title: Qui-Gon's Hunt
+subtitle: Qui-Gon Jinn will not stop looking for the Sith Master.
+tags: event
+view-if: quigon_alive and date >= 42
+max-visits: 1
+new-page: true
+face-image: img/ev_jedi.svg
+on-arrival: {! Q.evidence += 0.8; Q.jedi_suspicion += 1; Q.kamino_hunt += 1; Q.anakin_fall -= 0.5; if (Q.grand_plan > 45 && Math.random() < 0.3) { Q.quigon_alive = 0; Q.quigon_killed = 1; Q.anakin_fall += 1.5; } !}
+
+= Qui-Gon's Hunt
+
+[? if quigon_alive : Qui-Gon Jinn has followed the Sith Master's trail across a dozen worlds. He shares his findings with the Caucus: the Sith work through intermediaries, money and fear, and the trail always leads back toward Coruscant. He is also, by all accounts, a far gentler teacher to Anakin than the Council would be. ?][? if quigon_killed : Qui-Gon Jinn followed the Sith Master's trail too far. His ship was lost with all hands near Dathomir. His last message, sent to Bail Organa, says only: "Coruscant. It was always Coruscant." Anakin takes the news very badly. ?]

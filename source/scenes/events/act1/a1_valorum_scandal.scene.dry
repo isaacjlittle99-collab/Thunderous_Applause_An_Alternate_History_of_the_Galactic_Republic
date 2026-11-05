@@ -1,0 +1,33 @@
+title: The Valorum Shipping Affair
+subtitle: The Chancellor's family firm is accused of profiting from Senate contracts.
+tags: event
+view-if: date >= 9
+max-visits: 1
+new-page: true
+face-image: img/ev_holonet.svg
+
+= The Valorum Shipping Affair
+
+A HoloNet exposé alleges that Valorum Shipping, the Chancellor's family firm, has profited from Senate transport contracts. There is no evidence that Valorum himself knew. Nobody in the Senate cares about that distinction. The leak came from a Finance Committee office, and the guilds are delighted.
+
+- @defend: Defend the Chancellor's integrity.
+- @inquiry: Demand an independent inquiry.
+- @silent: Say nothing and let the storm pass.
+
+@defend
+subtitle: The Core Moderates will be grateful; some will call us hypocrites.
+on-arrival: mod_relation += 8; faith -= 1; corruption += 1; rc_momentum -= 0.5; valorum_scandal = 0
+
+The Caucus stands by Valorum. The scandal fades, but the press calls the Caucus "the Chancellor's lapdogs" for a while.
+
+@inquiry
+subtitle: Good for the Senate's integrity, bad for the Chancellor.
+on-arrival: mod_relation -= 10; corruption -= 2; faith += 1; rc_momentum += 1; valorum_scandal = 1
+
+The inquiry clears Valorum personally but finds a web of kickbacks involving three Core Moderate senators. The Chancellor is wounded, and the Caucus is suddenly seen as the only bloc with clean hands.
+
+@silent
+subtitle: The scandal will run its course without us.
+on-arrival: mod_relation -= 2; valorum_scandal = 1
+
+The Caucus keeps its head down. The scandal does not.

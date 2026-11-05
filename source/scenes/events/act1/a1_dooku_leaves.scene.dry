@@ -1,0 +1,34 @@
+title: The Lost Twenty-First
+subtitle: Master Dooku has left the Jedi Order.
+tags: event
+view-if: date >= 21 and naboo_free
+max-visits: 1
+new-page: true
+face-image: img/ev_jedi.svg
+on-arrival: dooku_left = 1
+
+= The Lost Twenty-First
+
+Master **Dooku**, one of the most respected Jedi of his generation and Qui-Gon Jinn's old teacher, has renounced the Order. He has reclaimed his family's title as Count of Serenno. In a rare public statement, he condemns the Senate as "a marketplace of bribes" and the Jedi as "its obedient servants".
+
+Many in the Caucus quietly agree with the first half of that.
+
+- @meet: Invite Count Dooku to address the Caucus on Senate reform.
+- @ask: Ask the Jedi why he really left.
+- @ignore: Let him go.
+
+@meet
+subtitle: A powerful critic of corruption, and perhaps a future channel of communication.
+on-arrival: dooku_contact = 1; dooku_doubt += 2; jedi_relation -= 3; corruption -= 0.5
+
+Dooku's address to the Caucus is brilliant, cold and unsettling. He leaves a private comm code with Bail Organa. "Should you ever wish to speak frankly," he says.
+
+@ask
+subtitle: The Jedi may tell us something.
+on-arrival: jedi_suspicion += 0.5; jedi_relation += 2
+
+The Council's answer is evasive. Master Yoda alone seems troubled. "Lost, he is. Searching for something, he was, in the archives, before he left."
+
+@ignore
+
+The Count of Serenno departs Coruscant. Few notice.

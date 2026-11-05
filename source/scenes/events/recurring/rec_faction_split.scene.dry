@@ -1,0 +1,33 @@
+title: The Caucus Splits
+subtitle: A faction has had enough.
+tags: event
+view-if: (hawk_dissent >= 60 and not hawks_split) or (rimward_dissent >= 60 and not rimward_split) or (pacifist_dissent >= 60 and not pacifists_resigned) or (inst_dissent >= 70 and not inst_crisis)
+priority: 7
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {!
+Q.split_kind = '';
+if (Q.hawk_dissent >= 60 && !Q.hawks_split) {
+    Q.split_kind = 'hawk'; Q.hawks_split = 1; Q.adv_bel_iblis = 0;
+    for (var i = 0; i < SW.REGIONS.length; i++) { var r = SW.REGIONS[i]; var mv = Q[r + '_rc'] * 0.15; Q[r + '_rc'] -= mv; Q[r + '_sec'] += mv; }
+    Q.hawk_strength *= 0.3; Q.hawk_dissent = 20; Q.member_forces *= 0.7; Q.sec_relation += 10;
+} else if (Q.rimward_dissent >= 60 && !Q.rimward_split) {
+    Q.split_kind = 'rimward'; Q.rimward_split = 1; Q.rfc_formed = 1; Q.adv_farr = 0; Q.adv_chuchi = 0;
+    if (Q.parties.indexOf('rfc') < 0) Q.parties.push('rfc');
+    for (var j = 0; j < SW.REGIONS.length; j++) { var g = SW.REGIONS[j]; var mv2 = Q[g + '_rc'] * (g === 'outer' || g === 'midrim' ? 0.35 : 0.1); Q[g + '_rc'] -= mv2; Q[g + '_rfc'] += mv2; }
+    Q.rimward_strength *= 0.3; Q.rimward_dissent = 20; Q.rfc_relation = 45;
+} else if (Q.pacifist_dissent >= 60 && !Q.pacifists_resigned) {
+    Q.split_kind = 'pacifist'; Q.pacifists_resigned = 1; Q.adv_mothma = 0;
+    Q.pacifist_strength *= 0.4; Q.pacifist_dissent = 25; Q.faith -= 2; Q.capital -= 2;
+    for (var k = 0; k < SW.REGIONS.length; k++) Q[SW.REGIONS[k] + '_rc'] *= 0.94;
+} else {
+    Q.split_kind = 'inst'; Q.inst_crisis = 1; Q.inst_dissent = 35; Q.capital -= 3; Q.mod_relation -= 5;
+    for (var m = 0; m < SW.REGIONS.length; m++) Q[SW.REGIONS[m] + '_rc'] *= 0.92;
+}
+SW.countAdvisors(Q);
+SW.computeSupport(Q);
+!}
+
+= The Caucus Splits
+
+[? if split_kind = "hawk" : The Hawks have had enough of what they call the Caucus's "endless talk while the Republic burns". Garm Bel Iblis is not among them, but he resigns as an advisor in protest at the way they were treated. Dozens of senators cross the floor to the Security Bloc, taking their worlds' support with them. ?][? if split_kind = "rimward" : The Rimward wing walks out. They have waited too long for the Core to keep its promises. They form the **Rim Freedom Caucus**, a new bloc that still talks to us, for now. ?][? if split_kind = "pacifist" : The Pacifist wing's leaders resign their Caucus posts in protest. They remain senators, but the Caucus has lost much of its moral authority. ?][? if split_kind = "inst" : The Institutionalists, the Caucus's backbone, are in open revolt against the leadership. A bruising leadership crisis follows. It costs the Caucus money, allies and credibility. ?]

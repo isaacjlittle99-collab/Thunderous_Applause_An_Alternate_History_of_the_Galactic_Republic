@@ -1,0 +1,32 @@
+title: The Chancellor's Protégé
+subtitle: Palpatine has taken an interest in young Skywalker.
+tags: event
+view-if: date >= 48 and anakin_found and (pal_chancellor or pal_r >= 6)
+max-visits: 1
+new-page: true
+face-image: img/ev_jedi.svg
+on-arrival: anakin_fall += 1
+
+= The Chancellor's Protégé
+
+Anakin Skywalker, now a teenage Padawan, has become a frequent guest of [? if pal_chancellor : the Supreme Chancellor ?][? if not pal_chancellor : Senator Palpatine ?]. Palpatine praises his gifts, sympathises with his frustrations at the Jedi's rules, and tells him he will one day be the most powerful Jedi of all. The boy adores him.
+
+- @warn: Quietly warn the Jedi that this friendship is unhealthy.
+- @encourage: It is touching. Encourage it.
+- @nothing: It is none of the Caucus's business.
+
+@warn
+subtitle: [? if jedi_relation >= 55 : The Jedi trust us enough to listen. ?][? if jedi_relation < 55 : The Jedi may not listen. ?]
+on-arrival: jedi_relation += 2; anakin_fall -= 0.8 if jedi_relation >= 55; jedi_suspicion += 0.3
+
+[? if jedi_relation >= 55 : Obi-Wan Kenobi thanks us, and makes sure his apprentice spends more time at the Temple. ?][? if jedi_relation < 55 : The Council thanks us politely, and does nothing. ?]
+
+@encourage
+subtitle: The Chancellor's allies appreciate it.
+on-arrival: pal_relation += 4; anakin_fall += 0.5
+
+The Caucus thinks no more about it.
+
+@nothing
+
+The visits continue.

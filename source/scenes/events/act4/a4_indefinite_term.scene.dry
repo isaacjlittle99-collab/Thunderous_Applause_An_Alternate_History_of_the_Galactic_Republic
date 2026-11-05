@@ -1,0 +1,40 @@
+title: For the Duration
+subtitle: The Chancellor's allies want his mandate to last as long as the war.
+tags: event
+view-if: war and date >= 138 and (pal_chancellor or puppet_chancellor) and not term_limits_protected and not indefinite_seen and not finale
+max-visits: 1
+new-page: true
+face-image: img/ev_chancellery.svg
+on-arrival: indefinite_seen = 1
+
+= For the Duration
+
+A motion is tabled: "That the Supreme Chancellor's mandate and emergency authority shall continue for the duration of the present conflict." No more elections, no more renewals: just the war, and the Chancellor, until the war is over.
+
+- @oppose: Oppose the motion.
+- @support: Support the motion.
+
+@oppose
+on-arrival: {!
+var st = {pal: 1, sec: 0.9, mod: 0.45 + Q.fear / 250, guild: 0.5, ind: 0.4 + Q.fear / 300, rim: 0.3, rfc: 0.2};
+if (Q.emergency_sunset) { st.mod -= 0.15; st.ind -= 0.1; }
+Q.it_vote = SW.vote(Q, st, 0);
+Q.vote_html = SW.voteBanner('Continuation of the Chancellor\'s mandate', Q.it_vote);
+if (Q.it_vote >= 50) { Q.emergency_powers += 1; Q.next_election_date = 999; Q.election_suspended = 1; }
+Q.senate_resolve += 0.5;
+!}
+
+[+ vote_html +]
+
+[? if election_suspended : The motion passes. There will be no election until the war ends. ?][? if not election_suspended : The motion fails. The Senate insists on its right to choose. ?]
+
+@support
+on-arrival: {!
+var st = {pal: 1, sec: 0.9, mod: 0.45 + Q.fear / 250, guild: 0.5, ind: 0.4 + Q.fear / 300, rim: 0.3, rfc: 0.2};
+Q.it_vote = SW.vote(Q, st, 1);
+Q.vote_html = SW.voteBanner('Continuation of the Chancellor\'s mandate', Q.it_vote);
+if (Q.it_vote >= 50) { Q.emergency_powers += 1; Q.next_election_date = 999; Q.election_suspended = 1; }
+Q.pacifist_dissent += 6; Q.inst_dissent += 3;
+!}
+
+[+ vote_html +]

@@ -1,0 +1,40 @@
+title: Friends of the Republic
+subtitle: Build support for democracy beyond the Senate chamber.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_civil.svg
+view-if: civil_timer <= 0 and date >= 24
+on-arrival: turn_actions += 1; civil_timer = 3; last_card_timer = "civil"
+new-page: true
+
+= Friends of the Republic
+
+The Senate is not the Republic. Its strength lies with the billions who still believe in it: civic leagues, free journalists, teachers, veterans of the Judicial Forces.
+
+- @networks: Build civic networks across member worlds.
+- @holonet: Fund an independent HoloNet foundation.
+- @clones: Campaign for the rights of clone troopers.
+- @easy_discard
+
+@networks
+subtitle: −1 political capital. More faith; broader support for the Caucus.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! Q.capital -= 1; Q.faith += 1.5; for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_rc'] += 0.7 * SW.unity(Q); !}
+
+"Friends of the Republic" societies spring up on hundreds of worlds.
+
+@holonet
+subtitle: −1 political capital. Protects the free press; harder to silence later.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; free_press += 1; faith += 0.5; evidence += 0.2
+
+An independent HoloNet foundation, funded from a dozen worlds, begins broadcasting from Chandrila.
+
+@clones
+view-if: clones > 0
+subtitle: The clones trust the Senate more; the Security Bloc objects.
+on-arrival: clone_trust += 1; navy_loyalty += 3; sec_relation -= 3; faith += 0.5
+
+The Caucus asks a simple question in the Senate: are the clone troopers citizens of the Republic they die for? Nobody has a good answer.

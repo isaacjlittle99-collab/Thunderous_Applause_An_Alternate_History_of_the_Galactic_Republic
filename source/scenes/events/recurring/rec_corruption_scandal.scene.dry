@@ -1,0 +1,41 @@
+title: Scandal in the Senate
+subtitle: Another senator caught with their hand in the till.
+tags: event
+view-if: corruption >= 62 and corruption_scandal_timer <= 0 and time >= 3 and not finale
+new-page: true
+face-image: img/ev_holonet.svg
+on-arrival: {!
+Q.corruption_scandal_timer = 5 + Math.floor(Math.random() * 4);
+var pool = ['mod', 'guild', 'ind', 'sec'];
+if (Q.guild_money >= 2) pool.push('rc');
+Q.scandal_bloc = pool[Math.floor(Math.random() * pool.length)];
+Q.scandal_name = SW.name(Q, Q.scandal_bloc);
+Q.scandal_ours = Q.scandal_bloc === 'rc' ? 1 : 0;
+Q.faith -= 1.5;
+!}
+
+= Scandal in the Senate
+
+The HoloNet has another scandal: a senator of the [+ scandal_name +] took bribes from a shipping cartel to block an anti-piracy bill. [? if scandal_ours : Worse, the senator is one of ours, and the money came through the guild-linked donors we accepted. ?] Faith in the Senate sinks a little further.
+
+- @punish: Demand the senator's expulsion.
+- @reform: Use it to push for stronger ethics rules.
+- @protect: [? if scandal_ours : Protect our own. ?][? if not scandal_ours : Let their bloc handle it. ?]
+
+@punish
+subtitle: Less corruption; the bloc is offended.
+on-arrival: {! Q.corruption -= 1.5; Q.faith += 0.5; if (!Q.scandal_ours) Q[Q.scandal_bloc + '_relation'] -= 5; else { Q.inst_dissent += 5; Q.faith += 1; } !}
+
+The senator is expelled. [? if scandal_ours : The Caucus's willingness to punish its own earns grudging respect. ?]
+
+@reform
+subtitle: Builds the case for an Ethics Commission.
+on-arrival: corruption -= 0.5; ethics_push += 1; senate_resolve += 0.2; rc_momentum += 0.5
+
+The Caucus uses the scandal to demand real ethics enforcement. Its proposal for a Senate Ethics Commission gains co-sponsors.
+
+@protect
+subtitle: [? if scandal_ours : The Caucus's reputation suffers. ?][? if not scandal_ours : The bloc appreciates our discretion. ?]
+on-arrival: {! if (Q.scandal_ours) { Q.faith -= 1; for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_rc'] *= 0.96; } else { Q[Q.scandal_bloc + '_relation'] += 3; Q.corruption += 0.5; } !}
+
+The storm passes, slowly.

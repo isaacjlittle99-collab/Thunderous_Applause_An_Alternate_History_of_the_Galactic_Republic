@@ -1,0 +1,60 @@
+title: Rim Outreach
+subtitle: Help the forgotten worlds of the Outer Rim.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_rim.svg
+view-if: rim_outreach_timer <= 0
+on-arrival: turn_actions += 1; rim_outreach_timer = 2; last_card_timer = "rim_outreach"
+new-page: true
+
+= Rim Outreach
+
+The Outer Rim is poor, overtaxed and preyed upon by pirates and the Hutt cartels. Hardship there is currently [+ rim_hardship : level +], and Outer Rim separatism is [+ outer_sep : separatism +].
+
+- @relief: Fund relief convoys.
+- @slavery: Mount an anti-slavery mission into Hutt space.
+- @shmi: Buy the freedom of Shmi Skywalker.
+- @listen: Hold hearings on Rim grievances.
+- @moderates: Court moderate Separatist sympathisers.
+- @easy_discard
+
+@relief
+subtitle: −1 political capital. Less hardship, less separatism.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; rim_hardship -= 3; outer_sep -= 2; outer_rc += 1; rimward_dissent -= 2
+
+Caucus-funded convoys reach worlds the Republic has not visited in decades.
+
+@slavery
+subtitle: −2 political capital. Builds the case for abolition; the Hutts will retaliate.
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: capital -= 2; slavery_campaign += 1; rimward_strength += 3; rimward_dissent -= 4; rim_hardship += 1; outer_rc += 1
+
+Caucus observers document the slave markets of Nar Shaddaa and Tatooine. The footage shocks the Core. [? if slavery_campaign >= 2 : The case for an abolition bill is now overwhelming. ?]
+
+@shmi
+view-if: anakin_found and not shmi_freed and not shmi_dead and date >= 18
+subtitle: −2 political capital. A small act of kindness to a boy who left his mother behind.
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: capital -= 2; shmi_freed = 1; anakin_fall -= 2; slavery_campaign += 0.5
+achievement: shmi_free
+
+A Caucus envoy buys Shmi Skywalker's freedom from a junk dealer in Mos Espa and brings her to a safe life on a Caucus world. When young Anakin is told, he weeps, and asks who did it. The Jedi tell him only that "friends in the Senate" did.
+
+@listen
+subtitle: The Rimward Coalition notices; the Institutionalists fidget.
+on-arrival: rim_relation += 6; outer_sep -= 1.5; midrim_sep -= 1; inst_dissent += 2
+
+Rim delegates testify for three days. For once, the Senate listens.
+
+@moderates
+view-if: dooku_movement
+subtitle: −1 political capital. Cools separatism; the Hawks object.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; outer_sep -= 3; midrim_sep -= 2; cis_relation += 4; hawk_dissent += 4
+
+Not every world that talks of leaving wants to go. The Caucus listens to those who would rather stay.

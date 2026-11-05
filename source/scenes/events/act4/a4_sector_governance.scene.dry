@@ -1,0 +1,16 @@
+title: The Sector Governance Decree
+subtitle: Every world will have a governor appointed by the Chancellor.
+tags: event
+view-if: war and date >= 164 and (pal_chancellor or puppet_chancellor) and emergency_powers >= 3 and not governors and not sector_seen and not finale
+max-visits: 1
+new-page: true
+face-image: img/ev_chancellery.svg
+on-arrival: {!
+Q.sector_seen = 1;
+if (Q.emergency_sunset && Q.emergency_powers < 5) { Q.sector_blocked = 1; Q.senate_resolve += 0.5; }
+else { Q.governors = 1; Q.emergency_powers += 1; Q.senate_resolve += 1.5; Q.faith -= 3; Q.sector_blocked = 0; }
+!}
+
+= The Sector Governance Decree
+
+[? if sector_blocked : The Chancellor's lawyers have drafted a decree placing every member world under a governor answerable to the Chancellor. But under the Sunset Amendment, his remaining powers do not stretch that far. The decree is quietly shelved. ?][? if not sector_blocked : By decree, using the emergency powers the Senate gave him, the Chancellor has placed every member world under a **regional governor** answerable to him alone, "to coordinate the war effort". Senators will now share power with Moffs. Many senators feel, for the first time, how much they have surrendered. ?]

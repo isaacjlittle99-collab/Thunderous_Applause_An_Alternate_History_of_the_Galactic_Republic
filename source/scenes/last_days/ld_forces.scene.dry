@@ -1,0 +1,20 @@
+title: Mobilise the Free Worlds
+subtitle: Put member-world forces on alert.
+is-card: true
+tags: last_days
+card-image: img/card_pact.svg
+view-if: finale and not ld_forces_used_today
+on-arrival: turn_actions += 1; ld_forces_used_today = 1; last_card_timer = ""
+new-page: true
+
+= Mobilise the Free Worlds
+
+Alderaan, Corellia, Chandrila and the other Pact worlds can bring their forces to readiness, if they are told to.
+
+- @do: Mobilise the Free Worlds.
+- @easy_discard
+
+@do
+on-arrival: member_forces += 1 if pact_formed; member_forces += 0.5 if not pact_formed; fear += 1
+
+Quietly, member-world squadrons move to readiness. If the worst comes, the Senate will not be alone.

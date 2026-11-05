@@ -1,0 +1,42 @@
+title: The Guilds Strike Back
+subtitle: The trade guilds are squeezing the Republic.
+tags: event
+view-if: guild_embargo >= 5 and embargo_timer <= 0 and not finale
+new-page: true
+face-image: img/ev_trade.svg
+on-arrival: {!
+Q.embargo_timer = 6;
+Q.embargo_severe = Q.guild_embargo >= 8 ? 1 : 0;
+Q.treasury -= Q.embargo_severe ? 4 : 2;
+Q.rim_hardship += Q.embargo_severe ? 5 : 2;
+Q.corporate_sep += 3;
+for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_rc'] -= Q.embargo_severe ? 1 : 0.4;
+!}
+
+= The Guilds Strike Back
+
+[? if embargo_severe : The Commerce Guild, the Trade Federation and the Banking Clan have declared a **credit strike**: loans are called in, shipping is halted and prices soar across the Rim. ?][? if not embargo_severe : The guilds are slowing shipments and tightening credit to the Rim. It is a warning. ?] Everyone knows who they blame.
+
+- @stand: Stand firm against the guilds.
+- @negotiate: Negotiate a truce.
+- @expose: Expose the guilds' coordination as illegal.
+
+@stand
+subtitle: The Rimward wing approves; the pain continues.
+on-arrival: rimward_dissent -= 4; inst_dissent += 3; guild_embargo -= 1
+
+The Caucus refuses to bend. The strike drags on.
+
+@negotiate
+subtitle: −1 political capital. The embargo eases; the Rimward wing is unhappy.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; guild_embargo -= 3; guild_relation += 6; rimward_dissent += 5
+
+A quiet compromise ends the strike. Some call it a surrender.
+
+@expose
+subtitle: [? if chair_judiciary = "rc" : With the Judiciary chair, we can prosecute. ?][? if chair_judiciary != "rc" : Without the Judiciary chair, it is just noise. ?]
+on-arrival: guild_embargo -= 2 if chair_judiciary = "rc"; corruption -= 1 if chair_judiciary = "rc"; guild_relation -= 6; faith += 0.5
+
+The guilds' cartel agreements are made public. [? if chair_judiciary = "rc" : The Judiciary Committee opens proceedings, and the strike quietly collapses. ?]

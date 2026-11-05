@@ -1,0 +1,33 @@
+title: Constitution Day
+subtitle: The Republic commemorates the Ruusan Reformation.
+tags: event
+view-if: date >= 72
+max-visits: 1
+new-page: true
+face-image: img/ev_senate.svg
+
+= Constitution Day
+
+Each year the Senate marks the anniversary of the **Ruusan Reformation**, which ended the last war with the Sith a thousand years ago, disbanded the Republic's armies and placed the Jedi under the Senate's laws. This year the Caucus has the honour of giving the commemorative address.
+
+- @commission: Call for a New Ruusan: a commission to renew the constitution.
+- @celebrate: Celebrate a thousand years of peace.
+- @corruption: Use the day to attack the Senate's corruption.
+
+@commission
+subtitle: Builds support for future constitutional reform.
+on-arrival: new_ruusan += 1; senate_resolve += 0.5; faith += 0.5; mod_relation += 2
+
+The address calls on the Senate to renew the Ruusan settlement before a crisis forces its hand. Several blocs agree to join a constitutional commission.
+
+@celebrate
+subtitle: Faith in the Republic rises.
+on-arrival: faith += 2; fear -= 1
+
+Fireworks light up Coruscant's skylanes. For one evening, the Republic feels young again.
+
+@corruption
+subtitle: Less corruption; some blocs are offended.
+on-arrival: corruption -= 1.5; guild_relation -= 3; mod_relation -= 2; rc_momentum += 0.5
+
+"The Sith did not defeat the Republic a thousand years ago," the address ends. "Only we can do that."

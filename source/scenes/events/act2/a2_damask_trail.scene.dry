@@ -1,0 +1,36 @@
+title: The Dead Man's Money
+subtitle: A dead Muun financier's company is still spending.
+tags: event
+view-if: date >= 36 and (banking_audit or tf_probe or evidence >= 2) and not damask_seen
+max-visits: 1
+new-page: true
+face-image: img/ev_shadow.svg
+on-arrival: damask_seen = 1; evidence += 0.6
+
+= The Dead Man's Money
+
+Our investigators have found something odd. **Damask Holdings**, the investment empire of the Muun magnate Hego Damask, financed the Trade Federation's expansion, the guilds' campaign against the taxation bill and several Senate election campaigns. Damask himself died years ago, in 32 BBY, the year of the Naboo crisis. His company never stopped spending.
+
+The accounts were managed through a law office whose only client of note was a senator from the Chommell sector.
+
+- @pursue: Pursue it, carefully.
+- @jedi: Share it with the Jedi.
+- @leave: Leave it. Dead men's money is a dead end.
+
+@pursue
+subtitle: −1 political capital. +1 evidence. Someone may notice.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! Q.capital -= 1; Q.evidence += 1; if (Math.random() < 0.25) Q.leak_pending = 1; !}
+
+Our accountants find the thread and pull. It leads, eventually, to an empty office on 500 Republica, the most exclusive address on Coruscant.
+
+@jedi
+subtitle: The Jedi grow more suspicious.
+on-arrival: jedi_suspicion += 1; jedi_relation += 2
+
+The Jedi archivists take the file and promise nothing.
+
+@leave
+
+The file goes into a drawer.

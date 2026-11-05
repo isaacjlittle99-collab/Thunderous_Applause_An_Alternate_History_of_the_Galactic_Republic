@@ -1,0 +1,16 @@
+title: The Delegation of 2000
+subtitle: Senators from every bloc unite to defend the constitution.
+tags: event
+view-if: (war or emergency_powers >= 3) and date >= 156 and (senate_resolve >= 5 or governors or (senate_resolve >= 3 and emergency_powers >= 6)) and not delegation_formed and not finale
+max-visits: 1
+priority: 2
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {! Q.delegation_formed = 1; Q.senate_resolve += 1; Q.faith += 1; for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_rc'] += 1; Q.pal_relation -= 10; !}
+achievement: delegation
+
+= The Delegation of 2000
+
+Two thousand senators, from the Caucus and from almost every other bloc, have signed a declaration of principle: the emergency powers must end with the war, and the Senate's authority must be restored. They call themselves the **Delegation of 2000**. Bail Organa, Mon Mothma[? if padme_alive : , Padmé Amidala ?] and Fang Zar are among its leaders.
+
+It is the largest organised opposition to the Chancellery in a generation. The Chancellor smiles and says it shows "the health of our democracy".

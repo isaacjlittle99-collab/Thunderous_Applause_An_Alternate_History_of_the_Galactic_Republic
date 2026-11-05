@@ -1,0 +1,20 @@
+title: Reach Out to Anakin
+subtitle: Someone must reach Anakin Skywalker before the Chancellor does.
+is-card: true
+tags: last_days
+card-image: img/card_jedi.svg
+view-if: finale and anakin_found and anakin_fall < 9 and not ld_anakin_used_today
+on-arrival: turn_actions += 1; ld_anakin_used_today = 1; last_card_timer = ""
+new-page: true
+
+= Reach Out to Anakin
+
+Anakin Skywalker is torn between the Jedi, Padmé and the Chancellor who has been his friend since boyhood.
+
+- @do: Reach Out to Anakin.
+- @easy_discard
+
+@do
+on-arrival: anakin_fall -= 1.5 if padme_alive and padme_married; anakin_fall -= 1 if not padme_married; anakin_fall -= 0.5 if quigon_alive
+
+[? if padme_alive and padme_married : Padmé tells Anakin everything she knows, and asks him to trust her rather than the Chancellor. ?][? if not padme_married : Caucus friends of the Jedi seek Anakin out and speak to him plainly about the Chancellor. ?] He does not answer. But he listens.

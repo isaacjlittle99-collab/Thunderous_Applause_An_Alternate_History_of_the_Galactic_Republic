@@ -1,0 +1,42 @@
+title: Onaconda Farr
+subtitle: Rimward advisor
+is-pinned-card: true
+tags: advisor
+card-image: img/adv_farr.svg
+view-if: adv_farr = 1 and not farr_dead
+new-page: true
+
+= Senator Onaconda Farr of Rodia
+
+Rodia’s genial, wily senator has spent decades speaking for worlds the Core forgets. He is beloved in the Rim and is a mentor to a generation of young senators.
+
+[? if advisor_action_timer > 0 : *Our advisors can act again in [+ advisor_action_timer +] turn(s).* ?]
+
+- @farr_solidarity: Rim solidarity.
+- @farr_relief: Organise a relief convoy.
+- @farr_bargain: Strike a quiet bargain.
+- @go_back: Back.
+
+@farr_solidarity
+subtitle: +8 relations with the Rimward Coalition, more support in the Outer Rim.
+choose-if: advisor_action_timer <= 0
+unavailable-subtitle: Our advisors have already acted recently.
+on-arrival: rim_relation += 8; outer_rc += 1.5; advisor_action_timer = 3
+
+Farr calls in favours with every Rim delegation that ever owed Rodia a kindness. It is a long list.
+
+@farr_relief
+subtitle: −3 Outer Rim hardship; costs 1 political capital.
+choose-if: advisor_action_timer <= 0
+unavailable-subtitle: Our advisors have already acted recently.
+on-arrival: capital -= 1; rim_hardship -= 3; outer_sep -= 1.5; advisor_action_timer = 3
+
+Rodian freighters, Caucus money and a great deal of goodwill: the convoy will not fix the Rim, but it reminds the Rim that someone cares.
+
+@farr_bargain
+subtitle: +1 political capital; calms the Rimward wing.
+choose-if: advisor_action_timer <= 0
+unavailable-subtitle: Our advisors have already acted recently.
+on-arrival: capital += 1; rimward_dissent -= 5; advisor_action_timer = 3
+
+Farr trades a vote nobody cares about for a favour everybody will. He has done this before.

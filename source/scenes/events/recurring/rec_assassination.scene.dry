@@ -1,0 +1,17 @@
+title: An Attempt on a Senator's Life
+subtitle: Someone is trying to silence the Caucus.
+tags: event
+view-if: evidence >= 5 and grand_plan >= 40 and assassination_timer <= 0 and not finale and assassination_roll < 0.35
+new-page: true
+face-image: img/ev_shadow.svg
+on-arrival: {!
+Q.assassination_timer = 8;
+var protectedBy = Q.investigators_protected ? 0.35 : 0;
+Q.assassin_hit = Math.random() < 0.55 - protectedBy ? 1 : 0;
+if (Q.assassin_hit) { Q.investigators_lost += 1; Q.evidence -= 1; Q.capital -= 1; Q.fear += 2; }
+else { Q.evidence += 0.8; Q.senate_resolve += 0.5; }
+!}
+
+= An Attempt on a Senator's Life
+
+A bounty hunter fires into the speeder of one of our senior investigators. [? if assassin_hit : He does not survive. His files on the Chancellery's finances burn with him. ?][? if not assassin_hit : [? if investigators_protected : A Jedi Knight's lightsaber turns the bolt aside. ?][? if not investigators_protected : He survives by sheer luck. ?] The captured assassin, before she dies of a poisoned dart, gasps that she was hired "through a Muun". ?]

@@ -1,0 +1,59 @@
+title: Campaign
+subtitle: Win over delegations in one region of the galaxy.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_campaign.svg
+view-if: campaign_timer <= 0
+on-arrival: turn_actions += 1; campaign_timer = 2; last_card_timer = "campaign"
+new-page: true
+
+= Campaign
+
+Senators answer to their home worlds, and home worlds can be persuaded. Where should the Caucus spend its effort?
+
+- @core: The Core Worlds.
+- @colonies: The Colonies and Inner Rim.
+- @midrim: The Mid Rim and Expansion Region.
+- @outer: The Outer Rim Territories.
+- @corporate: The corporate holdings.
+- @easy_discard
+
+@core
+subtitle: −1 political capital. More support in the Core.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! Q.capital -= 1; Q.core_rc += 4 * SW.unity(Q); Q.inst_dissent -= 2; !}
+
+The Caucus's message of clean government plays well in the Core's great cities.
+
+@colonies
+subtitle: −1 political capital. More support in the Colonies.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! Q.capital -= 1; Q.colonies_rc += 4 * SW.unity(Q); Q.hawk_dissent -= 2; !}
+
+In the prosperous Colonies, the Caucus promises security and honest government.
+
+@midrim
+subtitle: −1 political capital. More support in the Mid Rim.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! Q.capital -= 1; Q.midrim_rc += 4 * SW.unity(Q); Q.midrim_sep -= 1; !}
+
+The Mid Rim feels squeezed between the Core and the frontier. The Caucus listens.
+
+@outer
+subtitle: −1 political capital. More support in the Outer Rim; calms separatism a little.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! Q.capital -= 1; Q.outer_rc += 4 * SW.unity(Q); Q.outer_sep -= 1.5; Q.rimward_dissent -= 3; Q.inst_dissent += 1; !}
+
+Caucus senators tour the Outer Rim. For many worlds it is the first time a Core senator has visited in living memory.
+
+@corporate
+subtitle: −2 political capital. Hard ground for the Caucus.
+choose-if: capital >= 2
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! Q.capital -= 2; Q.corporate_rc += 3 * SW.unity(Q); Q.guild_relation += 2; Q.rimward_dissent += 3; !}
+
+Even on guild-owned worlds, workers and small traders are tired of being owned.

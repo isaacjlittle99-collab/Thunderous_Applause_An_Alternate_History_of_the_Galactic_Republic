@@ -1,0 +1,27 @@
+title: A Voice from Raxus
+subtitle: A Separatist senator wants to talk.
+tags: event
+view-if: dooku_movement and date >= 114 and (peace_talks >= 0.5 or cis_relation >= 25 or adv_amidala) and not bonteri_contact
+max-visits: 1
+new-page: true
+face-image: img/ev_peace.svg
+on-arrival: bonteri_contact = 1
+
+= A Voice from Raxus
+
+**Mina Bonteri** of Onderon, one of the most respected senators of the separatist movement, sends a private message to the Caucus. She was once Padmé Amidala's mentor. She does not want war. She believes many in the Separatist Parliament feel the same, but that "others, above us, do".
+
+- @answer: Open a quiet channel with her.
+- @report: Report the contact to the Chancellor.
+
+@answer
+subtitle: +1 peace channel.
+on-arrival: peace_talks += 1; cis_relation += 5; pacifist_dissent -= 3
+
+Bonteri and Caucus envoys begin to meet, quietly, on neutral worlds.
+
+@report
+subtitle: The Chancellor's office will be grateful.
+on-arrival: pal_relation += 5; cis_relation -= 8; hawk_dissent -= 3
+
+The Chancellor thanks the Caucus for its loyalty. Bonteri never writes again.

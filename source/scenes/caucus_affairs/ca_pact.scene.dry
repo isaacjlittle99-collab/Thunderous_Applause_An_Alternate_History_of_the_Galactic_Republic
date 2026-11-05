@@ -1,0 +1,51 @@
+title: Free Worlds Defence Pact
+subtitle: Build loyal defence forces among member worlds, under civilian control.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_pact.svg
+view-if: pact_timer <= 0 and (senate_resolve >= 3 or pact_formed)
+on-arrival: turn_actions += 1; pact_timer = 3; last_card_timer = "pact"
+new-page: true
+
+= Free Worlds Defence Pact
+
+[? if not pact_formed : The Republic has had no army for a thousand years. But Alderaan, Corellia, Chandrila and others still keep their own security forces. A mutual Defence Pact, answerable to their own elected governments and to no Chancellor, would mean the Senate is never defenceless. ?][? if pact_formed : The Free Worlds Defence Pact stands. Its member-world forces are currently [+ member_forces : strength +]. ?]
+
+- @form: Found the Pact.
+- @train: Train and equip member-world forces.
+- @exercise: Hold joint command exercises.
+- @defensive: Keep the Pact strictly defensive and transparent.
+- @easy_discard
+
+@form
+view-if: not pact_formed
+subtitle: −2 political capital. A milestone, and a provocation.
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: capital -= 2; pact_formed = 1; member_forces += 1.5; hawk_strength += 4; hawk_dissent -= 6; pacifist_dissent += 5; sec_relation += 4; core_pal += 0.5; colonies_pal += 0.5
+achievement: defence_pact
+
+In a modest ceremony on Chandrila, eleven member worlds sign the Free Worlds Defence Pact. [? if pal_chancellor : The Chancellor's office expresses "concern at the creation of private armies within the Republic". ?]
+
+@train
+view-if: pact_formed
+subtitle: −1 political capital. +1 member-world forces.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; member_forces += 1; hawk_dissent -= 3; pacifist_dissent += 2; fear += 0.5
+
+CorSec instructors and Alderaanian quartermasters work through the night.
+
+@exercise
+view-if: pact_formed
+subtitle: +0.5 member-world forces; the Hawks are pleased.
+on-arrival: member_forces += 0.5; hawk_dissent -= 4; sec_relation += 2
+
+Pact squadrons fly joint exercises above Corellia. The HoloNet loves the footage.
+
+@defensive
+view-if: pact_formed
+subtitle: Reassures the Senate and the Pacifists.
+on-arrival: pacifist_dissent -= 5; faith += 0.5; ind_relation += 3
+
+The Pact publishes its rules of engagement in full: it will act only in defence of member worlds and of the Senate itself.

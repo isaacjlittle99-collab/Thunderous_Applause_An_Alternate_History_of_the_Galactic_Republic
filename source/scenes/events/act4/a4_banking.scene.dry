@@ -1,0 +1,42 @@
+title: The Banking Bill
+subtitle: More clones, or a chance at peace?
+tags: event
+view-if: war and date >= 144 and not banking_bill_seen
+max-visits: 1
+new-page: true
+face-image: img/ev_trade.svg
+on-arrival: banking_bill_seen = 1
+
+= The Banking Bill
+
+The war is bankrupting the Republic. The Chancellor's allies propose to **deregulate the banks** so the Republic can borrow enough for five million more clone troopers. [? if bonteri_contact : At the same moment, Mina Bonteri has persuaded the Separatist Parliament to vote on a peace overture, if the Republic will show restraint. ?]
+
+- @peace: Oppose deregulation and give the peace overture a chance.
+- @clones: Support deregulation to fund the war.
+
+@peace
+subtitle: [? if bonteri_contact : +1 peace channel. The Security Bloc is furious. ?][? if not bonteri_contact : The Security Bloc is furious. ?]
+on-arrival: {!
+var st = {pal: 0.95, sec: 0.95, mod: 0.5, guild: 0.75, ind: 0.45, rim: 0.3, rfc: 0.25};
+Q.bk_vote = SW.vote(Q, st, 0);
+Q.vote_html = SW.voteBanner('Banking Deregulation Bill', Q.bk_vote);
+if (Q.bk_vote >= 50) { Q.clones += 1.5; Q.corruption += 2; Q.war_balance += 0.5; Q.banking_dereg = 1; }
+else if (Q.bonteri_contact) { Q.peace_talks += 1; }
+Q.sec_relation -= 6; Q.pacifist_dissent -= 4;
+!}
+
+[+ vote_html +]
+
+[? if banking_dereg : The deregulation passes anyway. The banks lend, the clone vats fill, and the peace overture dies. ?][? if not banking_dereg : The deregulation fails. [? if bonteri_contact : On Raxus, Mina Bonteri's peace motion passes. It is the first real hope in a year. ?] ?]
+
+@clones
+subtitle: The war goes better; corruption and debt grow.
+on-arrival: {!
+var st = {pal: 0.95, sec: 0.95, mod: 0.5, guild: 0.75, ind: 0.45, rim: 0.3, rfc: 0.25};
+Q.bk_vote = SW.vote(Q, st, 1);
+Q.vote_html = SW.voteBanner('Banking Deregulation Bill', Q.bk_vote);
+if (Q.bk_vote >= 50) { Q.clones += 1.5; Q.corruption += 2; Q.war_balance += 0.5; Q.banking_dereg = 1; }
+Q.hawk_dissent -= 4; Q.pacifist_dissent += 6;
+!}
+
+[+ vote_html +]

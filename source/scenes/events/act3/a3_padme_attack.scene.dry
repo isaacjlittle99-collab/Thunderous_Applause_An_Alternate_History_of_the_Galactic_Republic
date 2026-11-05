@@ -1,0 +1,39 @@
+title: An Attempt on Senator Amidala
+subtitle: Someone tried to kill Padmé Amidala.
+tags: event
+view-if: date >= 133 and padme_senator and padme_alive and not padme_attack_seen
+max-visits: 1
+priority: 2
+new-page: true
+face-image: img/ev_shadow.svg
+on-arrival: padme_attack_seen = 1
+
+= An Attempt on Senator Amidala
+
+A bomb destroys Senator Amidala's ship on its landing platform on Coruscant. She survives because she was disguised as one of her pilots; her decoy, Cordé, does not. A second attempt follows days later. Padmé was on her way to vote against the Military Creation Act.
+
+The Chancellor offers her the protection of the Jedi: Obi-Wan Kenobi and his apprentice, Anakin Skywalker.
+
+- @jedi: Accept the Jedi's protection.
+- @naboo: Rely on Naboo's own security and go into hiding.
+- @investigate: Track down whoever hired the assassin.
+
+@jedi
+subtitle: She will be safe. Anakin will be very close to her.
+on-arrival: padme_jedi_guard = 1; anakin_fall += 0.3
+
+Anakin Skywalker is given the job of escorting Senator Amidala back to Naboo. He has not seen her in ten years. He has thought about her every day.
+
+@naboo
+subtitle: Safer from scandal; Anakin feels shut out.
+on-arrival: anakin_fall += 0.5; padme_hidden = 1
+
+Padmé retreats to the Lake Country under Naboo's own guards. Anakin, refused the assignment, sulks at the Temple and confides in the Chancellor.
+
+@investigate
+subtitle: −1 political capital. Follows the trail.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; padme_jedi_guard = 1; evidence += 0.8; kamino_hunt += 1
+
+The assassin, a changeling named Zam Wesell, is killed by her employer before she can talk: a bounty hunter in Mandalorian armour, using a toxic dart that only one world in the galaxy manufactures. The trail leads somewhere beyond the Rishi Maze.

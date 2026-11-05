@@ -1,0 +1,34 @@
+title: "There Is Always a Master"
+subtitle: The Jedi have learned something they would rather not share.
+tags: event
+view-if: naboo_free and date >= 19
+max-visits: 1
+new-page: true
+face-image: img/ev_jedi.svg
+on-arrival: sith_told = 1 if jedi_relation >= 55 or adv_organa = 1; evidence += 1 if sith_told
+
+= "There Is Always a Master"
+
+[? if sith_told : Master Yoda receives a small Caucus delegation in a quiet room of the Jedi Temple. He confirms what the rumours say: the warrior on Naboo was a Sith Lord. "Always two there are," he says. "A master and an apprentice. Destroyed, the apprentice was. The master, hidden he remains." ?][? if not sith_told : Rumours leak out of the Jedi Temple: the warrior killed on Naboo was a *Sith*. The Order neither confirms nor denies anything. Our contacts in the Temple say the Council is badly shaken. ?]
+
+- @confide: Keep the Jedi's confidence and quietly offer our help.
+- @push: Press the Council to investigate where the Sith might be hiding, including the Senate.
+- @leak: Make it public: the Republic deserves to know.
+
+@confide
+subtitle: The Jedi will trust us more.
+on-arrival: jedi_relation += 5
+
+The Caucus keeps the secret. The Jedi notice.
+
+@push
+subtitle: The Jedi will investigate, and resent being pushed.
+on-arrival: jedi_suspicion += 1; jedi_relation -= 3; senate_resolve += 0.3
+
+The Council agrees, coolly, to "remain vigilant". A small group of Jedi archivists begins quietly reviewing the Senate's records.
+
+@leak
+subtitle: Fear will spread. The Jedi will be furious.
+on-arrival: fear += 5; jedi_relation -= 10; jedi_standing -= 3; pal_relation += 2; core_pal += 1; colonies_pal += 1
+
+The HoloNet runs with "SITH RETURN!" for a week. Senator Palpatine calls for calm and for "a government strong enough to protect us". Many find this very reassuring.

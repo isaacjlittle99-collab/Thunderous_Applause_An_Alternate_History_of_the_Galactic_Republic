@@ -1,0 +1,29 @@
+title: Systems Leave the Republic
+subtitle: Another wave of secessions.
+tags: event
+view-if: dooku_movement and seceded_total >= secession_next and not finale
+priority: 2
+new-page: true
+face-image: img/ev_separatist.svg
+on-arrival: {! Q.secession_shown = Q.secession_next; Q.secession_next += 10; Q.fear += 3; Q.faith -= 1; SW.senateSession(Q); !}
+
+= Systems Leave the Republic
+
+[+ seceded_total +]% of the Senate's delegations have now left the Republic to join Count Dooku's Confederacy. Their empty repulsorpods hang in the rotunda like missing teeth. The Senate that remains is smaller, more frightened, and more inclined to trust a strong Chancellor.
+
+[? if rim_enfranchised : Even so, the Rim Enfranchisement Act has kept many wavering worlds loyal. ?]
+
+- @appeal: Appeal to the departing worlds to come back.
+- @condemn: Condemn the secessions as treason.
+
+@appeal
+subtitle: Cools separatism; the Hawks object.
+on-arrival: outer_sep -= 3; midrim_sep -= 2; corporate_sep -= 2; hawk_dissent += 3; pacifist_dissent -= 2
+
+The Caucus's appeal is broadcast on every Separatist world. A few systems pause.
+
+@condemn
+subtitle: The Hawks approve; separatists dig in.
+on-arrival: hawk_dissent -= 4; outer_sep += 1; sec_relation += 3; cis_relation -= 6
+
+"There is no secession from the Ruusan constitution," Garm Bel Iblis declares.

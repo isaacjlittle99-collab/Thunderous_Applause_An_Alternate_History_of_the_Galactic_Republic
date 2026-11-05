@@ -1,0 +1,79 @@
+title: Diplomacy
+subtitle: Talk to the Separatists before it is too late, or after.
+is-card: true
+tags: senate_affairs
+card-image: img/card_peace.svg
+view-if: diplomacy_timer <= 0 and rc_in_govt and (dooku_movement or war) and not federal_compact
+on-arrival: turn_actions += 1; diplomacy_timer = 3; last_card_timer = "diplomacy"
+new-page: true
+
+= Diplomacy
+
+The government can open official talks with the Separatist Parliament on Raxus. Our peace channels are [+ peace_talks +]/3 established. [? if bonteri_dead : With Mina Bonteri dead, the Separatist moderates have lost their bravest voice. ?]
+
+- @talks: Open formal talks with the Separatist Parliament.
+- @neutrals: Ask the Council of Neutral Systems to mediate.
+- @compact: Propose a Federal Compact.
+- @recognise: Recognise the Confederacy's independence.
+- @easy_discard
+
+@talks
+view-if: peace_talks < 3
+subtitle: −1 political capital. The Hawks and the Security Bloc object.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; peace_talks += 1; cis_relation += 6; sec_relation -= 5; hawk_dissent += 4
+
+Envoys meet in a neutral system. The first session lasts eleven minutes. The second lasts eleven hours.
+
+@neutrals
+view-if: peace_talks < 3
+subtitle: +1 peace channel; the Independents approve.
+on-arrival: peace_talks += 1; ind_relation += 5; satine_mediation = 1
+
+Duchess Satine of Mandalore agrees to host talks on behalf of the Council of Neutral Systems.
+
+@compact
+view-if: peace_talks >= 3
+subtitle: −2 political capital. A reformed Republic in which the seceded worlds could live. Needs a Senate majority.
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: {!
+Q.capital -= 2;
+var st = SW.stance(Q, {mod: 0.5, guild: 0.45, rim: 0.8, sec: 0.15, ind: 0.7, pal: 0.1, cis: 0.9}, true);
+st.mod += (Q.war_weariness - 30) / 200; st.ind += (Q.war_weariness - 30) / 200;
+st.mod += Q.rim_enfranchised * 0.1; st.ind += Q.rim_enfranchised * 0.1;
+Q.fc_vote = SW.vote(Q, st, 1);
+Q.vote_html = SW.voteBanner('The Federal Compact', Q.fc_vote);
+if (Q.fc_vote >= 50) { Q.fc_passed = 1; }
+!}
+go-to: fc_outcome
+
+@fc_outcome
+on-arrival: {!
+if (Q.fc_passed) {
+    var sabotage = (Q.dooku_turned ? 0 : 0.35) + Q.grand_plan / 300 - (Q.evidence >= 6 ? 0.2 : 0) - (Q.satine_mediation ? 0.1 : 0);
+    if (Math.random() < sabotage) { Q.fc_sabotaged = 1; Q.peace_talks = 1; Q.fear += 6; Q.war_weariness += 3; }
+    else { Q.federal_compact = 1; Q.war = 0; Q.peace_achieved = 1; Q.outer_sep -= 20; Q.midrim_sep -= 15; Q.corporate_sep -= 15; Q.fear -= 10; Q.faith += 5; this.achieve('federal_compact'); }
+}
+!}
+
+[+ vote_html +]
+
+[? if federal_compact : The Senate approves the Federal Compact. Seceded worlds may return with guarantees of autonomy, fair representation and an end to guild monopolies. Within weeks, system after system lowers the Confederate flag. The guns fall silent. ?][? if fc_sabotaged : The Senate approves the Compact, but on the night it is to be signed, a bomb destroys the Separatist delegation's ship. Each side blames the other. The war resumes, more bitter than before. Someone did not want peace. ?][? if not fc_passed : The Compact fails on the floor. The Chancellor's allies call it "surrender with a ribbon on it". ?]
+
+@recognise
+view-if: war and war_balance <= -3
+subtitle: End the war by letting the Separatists go. The Republic would be smaller, and Palpatine would lose his war.
+on-arrival: {!
+var st = SW.stance(Q, {mod: 0.35, guild: 0.55, rim: 0.6, sec: 0.05, ind: 0.55, pal: 0.0, cis: 1}, false);
+st.mod += Q.war_weariness / 200; st.ind += Q.war_weariness / 200;
+Q.rec_vote = SW.vote(Q, st, 1);
+Q.vote_html = SW.voteBanner('Treaty of Separation', Q.rec_vote);
+if (Q.rec_vote >= 50) { Q.recognized_cis = 1; Q.war = 0; Q.dissolved = 1; Q.game_ending = 1; }
+else { Q.hawk_dissent += 10; Q.faith -= 2; }
+!}
+
+[+ vote_html +]
+
+[? if recognized_cis : The Senate votes to let the Confederacy go. The war is over. The Republic is smaller, poorer and humbled, but it is still a republic. ?][? if not recognized_cis : The Senate refuses. "We will not dismember the Republic," thunders the Chancellor's spokesman. ?]

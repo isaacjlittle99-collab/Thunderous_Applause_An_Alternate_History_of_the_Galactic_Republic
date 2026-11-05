@@ -1,0 +1,34 @@
+title: A New Session of the Senate
+subtitle: Delegations realign for the new year.
+tags: event
+view-if: new_session = 1 and not finale and not game_ending
+priority: 8
+new-page: true
+on-arrival: {!
+SW.senateSession(Q);
+Q.session_legend = SW.parliamentLegend(Q);
+var ch = [];
+for (var i = 0; i < Q.parties.length; i++) {
+    var b = Q.parties[i];
+    var d = (Q[b + '_r'] || 0) - (Q[b + '_old_r'] || 0);
+    if (Math.abs(d) >= 1) ch.push(SW.span(Q, b) + (d > 0 ? ' gain ' : ' lose ') + Math.abs(d).toFixed(1) + ' points');
+}
+Q.session_changes = ch.length ? ch.join('; ') + '.' : 'The balance of the Senate is little changed.';
+!}
+on-display: {! if (typeof SW !== 'undefined' && SW.drawSenate) { SW.drawSenate(Q, 'senate_chart'); SW.drawHistory(Q, 'support_history', 'support'); } !}
+
+= The Senate in [+ bby +] BBY
+
+{!<svg id="senate_chart" style="width: 500px; height: 260px;"></svg>!}
+
+[+ session_legend +]
+
+[+ session_changes +] The governing [+ coalition_name +] holds [+ govt_seats +]% of the Senate.[? if minority_govt : It no longer commands a majority. ?]
+
+[? if seceded_total > 0 : [+ seceded_total +]% of the Senate's delegations have left the Republic. ?]
+
+{!<svg id="support_history" style="width: 500px; height: 320px;"></svg>!}
+
+- @ok: Take our seats.
+
+@ok

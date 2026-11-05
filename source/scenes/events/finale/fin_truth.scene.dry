@@ -1,0 +1,18 @@
+title: The Sith Lord Revealed
+subtitle: Someone has learned the truth.
+tags: event
+view-if: finale and not gambit and finale_day >= 4 and not truth_seen
+max-visits: 1
+priority: 10
+new-page: true
+face-image: img/ev_shadow.svg
+on-arrival: {!
+Q.truth_seen = 1;
+if (Q.evidence >= 8 || Q.dooku_turned || Q.jedi_suspicion >= 8) { Q.sidious_known = 1; Q.known_by = 'caucus'; }
+else if (Q.anakin_fall <= 8.5) { Q.sidious_known = 1; Q.known_by = 'anakin'; Q.anakin_fall += 0.5; }
+else { Q.sidious_known = 0; Q.known_by = 'none'; }
+!}
+
+= The Sith Lord Revealed
+
+[? if known_by = "caucus" : The Caucus's evidence is complete. Bail Organa takes it to Master Windu in person. [? if dooku_turned : With Dooku's testimony, there can be no doubt. ?] **Supreme Chancellor Palpatine is the Sith Lord Darth Sidious.** For once, the Jedi and the Senate know it at the same moment. ?][? if known_by = "anakin" : In a private box at the Galaxies Opera House, the Chancellor tells Anakin Skywalker a story about a Sith Lord who could save the ones he loved from dying. A few days later, Palpatine reveals that he is that Sith Lord. Anakin, shaken, goes straight to Master Windu. ?][? if known_by = "none" : The Chancellor has told Anakin Skywalker the truth: he is a Sith Lord, and only he can save Padmé from the deaths Anakin has foreseen. Anakin tells no one. ?]

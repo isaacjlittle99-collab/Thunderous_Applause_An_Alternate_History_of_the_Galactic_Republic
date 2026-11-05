@@ -1,0 +1,8 @@
+
+(..-7) <span style="color: #d24a4a;">catastrophic</span>
+(-7..-3) <span style="color: #e0745a;">losing ground</span>
+(-3..-1) <span style="color: #e8a36a;">faltering</span>
+(-1..1) stalemate
+(1..4) <span style="color: #b5d98a;">gaining ground</span>
+(4..7) <span style="color: #7fd18b;">winning</span>
+(7..) <span style="color: #7fd18b;">nearly won</span>

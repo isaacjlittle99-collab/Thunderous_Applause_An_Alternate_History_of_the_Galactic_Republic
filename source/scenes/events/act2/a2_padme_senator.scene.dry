@@ -1,0 +1,14 @@
+title: Senator Amidala
+subtitle: Naboo's former Queen comes to the Senate.
+tags: event
+view-if: date >= 60
+max-visits: 1
+new-page: true
+face-image: img/ev_naboo.svg
+on-arrival: {! Q.padme_senator = 1; Q.midrim_rc += 2; Q.inst_strength += 3; SW.countAdvisors(Q); Q.padme_joined = 0; if (Q.n_advisors < 3) { Q.adv_amidala = 1; Q.padme_joined = 1; } !}
+
+= Senator Amidala
+
+Her terms as Queen of Naboo complete, **Padmé Amidala** has accepted Naboo's seat in the Senate. [? if pal_chancellor : She was Chancellor Palpatine's protégé, and he greets her warmly. But she chooses to sit with the Ruusan Caucus. ?][? if not pal_chancellor : She sits with the Ruusan Caucus from her first day. ?] She is barely twenty, and already one of the most admired figures in the Republic.
+
+[? if padme_joined : She joins the Caucus's inner circle of advisors. ?][? if not padme_joined : She is available as an advisor through Shuffle Leadership. ?]

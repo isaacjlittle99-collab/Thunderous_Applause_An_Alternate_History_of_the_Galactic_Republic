@@ -1,0 +1,20 @@
+title: Rally the Delegation
+subtitle: Gather signatures and courage for the stand against the Chancellor.
+is-card: true
+tags: last_days
+card-image: img/card_senate.svg
+view-if: finale and not ld_delegation_used_today
+on-arrival: turn_actions += 1; ld_delegation_used_today = 1; last_card_timer = ""
+new-page: true
+
+= Rally the Delegation
+
+Senators who once applauded the Chancellor now meet in shadowed offices. Every signature is a risk.
+
+- @do: Rally the Delegation.
+- @easy_discard
+
+@do
+on-arrival: petition_signatures += 4 + rc_r / 4; senate_resolve += 1; mod_relation += 3; ind_relation += 3
+
+Bail Organa and Mon Mothma go from office to office through the night. By dawn, dozens more senators have added their names.

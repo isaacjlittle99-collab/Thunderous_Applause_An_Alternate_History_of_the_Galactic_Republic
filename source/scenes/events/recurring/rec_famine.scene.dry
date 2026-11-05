@@ -1,0 +1,28 @@
+title: Famine on the Rim
+subtitle: Crop failures and blockades are starving Rim worlds.
+tags: event
+view-if: rim_hardship >= 55 and famine_timer <= 0 and not finale
+new-page: true
+face-image: img/ev_rim.svg
+on-arrival: {! Q.famine_timer = 6; Q.outer_sep += 3; Q.midrim_sep += 2; Q.faith -= 1; !}
+
+= Famine on the Rim
+
+Famine has struck a dozen Outer Rim systems. [? if war : War has cut their supply lanes. ?][? if not war : The guilds have raised shipping prices again. ?] Separatist agitators are telling the starving that the Republic has abandoned them, and they are not entirely wrong.
+
+- @aid: Mount an emergency aid effort.
+- @pressure: Pressure the government to act.
+
+@aid
+subtitle: −2 political capital. A real difference.
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: capital -= 2; rim_hardship -= 5; outer_sep -= 4; outer_rc += 2; faith += 1
+
+Caucus worlds send grain ships under their own flags.
+
+@pressure
+subtitle: Some help arrives, slowly.
+on-arrival: rim_hardship -= 1.5; rc_momentum += 0.3
+
+The government promises a relief package "in due course".

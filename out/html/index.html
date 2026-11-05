@@ -4,18 +4,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta prefix="ifiction: http://babel.ifarchive.org/protocol/iFiction/"
-        property="ifiction:ifid" content="7FCDF039-2B77-4179-B795-CBAFA65253AA">
-    <title>Dynamic Social Democracy</title>
+        property="ifiction:ifid" content="D1A6C434-055D-4F4D-85F6-C21EC19347B9">
+    <title>Thunderous Applause</title>
     <link rel="stylesheet" type="text/css" href="game.css">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <script src="jquery-1.11.1.min.js"></script>
     <script src="d3.v7.min.js"></script>
     <script src="d3-parliament.js"></script>
     <script src="d3-linegraph.js"></script>
+    <script src="sw.js"></script>
+    <script src="sw_ui.js"></script>
     <script src="core.js"></script>
     <script src="game.js"></script>
   </head>
-  <body>
+  <body class="dark-mode">
     <div class="background" id="bg2">
     </div>
 
@@ -150,9 +152,7 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                   <td>
-                        <button onclick="window.showMods();">Mods</button>
-                    </td>
+                   <td></td>
 
                 </tr>
             </table>
@@ -317,11 +317,11 @@
     <div id='page'>
         <div id="mid_panel">
             <header>
-                <h1 id="game-title">Dynamic Social Democracy: An Alternate History</h1>
-                <h2 id="game-author">Autumn Chen, modded by originn0</h2>
+                <h1 id="game-title">Thunderous Applause</h1>
+                <h2 id="game-author">a fan adaptation of Autumn Chen's <i>Social Democracy</i></h2>
 
                 <div id="header-links">
-                    <a id="stats-link" onclick="window.showStats();" href="#">Library</a>
+                    <a id="stats-link" onclick="window.showStats();" href="#">Holocron</a>
                     <a onclick="dendryUI.showSaveSlots();" href="#">Save/Load</a>
                     <a onclick="window.showOptions();" href="#">Options</a>
                 </div>
@@ -329,10 +329,10 @@
             <div id="tools_wrapper">
                 <div id='stats_sidebar' class='tools left'>
                     <div class="tab_container">
-                        <button class="tab_button" id="emergency_tab" onclick="window.changeTab('status.emergency', 'emergency_tab');" style="display: none;">Emergency Status</button>
-                        <button class="tab_button active" id="main_tab" onclick="window.changeTab('status', 'main_tab');">Main</button>
-                        <button class="tab_button" id="politics_tab" onclick="window.changeTab('status.politics', 'politics_tab');">Politics</button>
-                        <button class="tab_button" id="paramilitary_tab" onclick="window.changeTab('status.paramilitaries', 'paramilitary_tab');">Defense</button>
+                        <button class="tab_button active" id="main_tab" onclick="window.changeTab('status', 'main_tab');">Status</button>
+                        <button class="tab_button" id="senate_tab" onclick="window.changeTab('status.senate', 'senate_tab');">Senate</button>
+                        <button class="tab_button" id="shadow_tab" onclick="window.changeTab('status.shadow', 'shadow_tab');">Shadow</button>
+                        <button class="tab_button" id="forces_tab" onclick="window.changeTab('status.forces', 'forces_tab');">Forces</button>
                         <button class="tab_button" id="poll_tab" onclick="window.changeTab('status.polls', 'poll_tab');">Polls</button>
                     </div>
                     <div id="qualities">
@@ -340,7 +340,7 @@
                 </div>
                 <div id='stats_sidebar_right' class='tools right'>
                     <div class="tab_container">
-                        <button class="tab_button active" id="scheming_tab" onclick="window.changeTab('status_right', 'scheming_tab', true);">Scheming</button>
+                        <button class="tab_button active" id="chancellery_tab" onclick="window.changeTab('status_right', 'chancellery_tab', true);">The Chancellery</button>
                     </div>
                     <div id="qualities_right">
                     </div>
