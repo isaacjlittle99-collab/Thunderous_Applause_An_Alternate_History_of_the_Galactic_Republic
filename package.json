@@ -1,22 +1,22 @@
 {
-  "name": "social_democracy_alternate_history",
-  "version": "0.11.1",
-  "description": "Building the game:",
+  "name": "thunderous_applause",
+  "version": "0.1.0",
+  "description": "Thunderous Applause: a Star Wars prequel-era political strategy game built on the Social Democracy engine (dendrynexus).",
   "main": "out/html/index.html",
   "scripts": {
     "dendrynexus": "dendrynexus"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/originn0/dynamic_social_democracy.git"
+    "url": "git+https://github.com/isaacjlittle99-collab/dynamic_social_democracy_fork.git"
   },
   "keywords": [],
-  "author": "Autumn Chen",
+  "author": "isaacjlittle99-collab, after Autumn Chen",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/originn0/dynamic_social_democracy/issues"
+    "url": "https://github.com/isaacjlittle99-collab/dynamic_social_democracy_fork/issues"
   },
-  "homepage": "https://github.com/originn0/dynamic_social_democracy",
+  "homepage": "https://github.com/isaacjlittle99-collab/dynamic_social_democracy_fork",
   "dependencies": {
     "dendrynexus": "github:originn0/dendrynexus",
     "parliament-svg": "^3.0.0"

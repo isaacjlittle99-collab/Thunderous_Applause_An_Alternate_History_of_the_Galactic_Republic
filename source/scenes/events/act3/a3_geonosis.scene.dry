@@ -8,6 +8,7 @@ new-page: true
 face-image: img/ev_war.svg
 on-arrival: {!
 Q.geonosis_seen = 1;
+Q.anakin_jedi = Q.anakin_found ? 1 : 0;
 Q.crisis_months = 0;
 Q.droid_armies = 3.5 + Q.seceded_total / 8 + (Q.tf_droids ? 1 : 0) - (Q.tf_droids_limited ? 1 : 0) - (Q.tf_broken_up ? 0.8 : 0);
 Q.fear += 10;

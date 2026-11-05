@@ -783,3 +783,12 @@ th {
     top: 105%;
   }
 }
+
+/* panels sit beside floated event images instead of underneath them */
+.panel,
+.vote,
+.legacy,
+.tutorial,
+.alert {
+  overflow: hidden;
+}
