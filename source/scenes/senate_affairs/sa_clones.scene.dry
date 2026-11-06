@@ -36,7 +36,7 @@ unavailable-subtitle: Not enough political capital.
 on-arrival: {!
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.5, guild: 0.3, rim: 0.65, sec: 0.25, ind: 0.55, pal: 0.2, cis: 0.3}, true);
-Q.cc_vote = SW.vote(Q, st, 1);
+Q.cc_vote = SW.vote(Q, st, 1, 'oversight');
 Q.vote_html = SW.voteBanner('Clone Citizenship Act', Q.cc_vote);
 if (Q.cc_vote >= 50) { Q.clone_citizenship = 1; Q.navy_loyalty += 8; Q.clone_trust += 3; this.achieve('citizens'); }
 !}

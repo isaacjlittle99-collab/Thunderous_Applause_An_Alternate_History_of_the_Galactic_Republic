@@ -45,7 +45,8 @@ const REFORM_PREFS = [
   ['walkout', 6], ['powers_no', 3], ['judicials', 2], ['channel', 2], ['talks', 2], ['compact', 4], ['trial', 3], ['prosecute', 2],
   ['run', 4], ['court_mod', 3], ['court_ind', 3], ['el_join', 4], ['el_chair', 4], ['el_coal', 3], ['confront', 3], ['campaign', 2],
   ['contributions', 2], ['grassroots', 2], ['defend', 2], ['accept', 1], ['senate', 2], ['army', 2], ['delegation', 3], ['present', 4],
-  ['discipline', 2], ['concede', 2], ['convention', 1], ['advisors', 2], ['oppose', 2], ['amend', 2], ['networks', 2], ['holonet', 2]
+  ['discipline', 2], ['concede', 2], ['convention', 1], ['advisors', 2], ['oppose', 2], ['amend', 2], ['networks', 2], ['holonet', 2],
+  ['offer', 3], ['let_decide', 3]
 ];
 function weightFor(id) {
   if (POLICY !== 'reform') return 1;
@@ -131,9 +132,9 @@ function playOne(gameIndex) {
 
 (async function () {
   const endings = {}, stucks = {}, nanKeys = {};
-  const stats = {pal_chancellor_32: 0, war: 0, finale: 0, turns: 0, empire_powers: 0, kamino_early: 0, chips: 0, rc_chancellor: 0, reforms: 0};
+  const stats = {pal_chancellor_32: 0, war: 0, finale: 0, turns: 0, empire_powers: 0, kamino_early: 0, chips: 0, rc_chancellor: 0, reforms: 0, beaten: 0, restoration_votes: 0, restored: 0, faith55: 0};
   const seen = {}; const paths = {};
-  const audit = {cap20: [], cap40: [], capEnd: [], rcWon32: 0, rcWon32ThenPal: 0, rcHeldToEnd: 0, enf: 0, enfSeceded: [], enfWar: 0, maxDissent: [], repeatCards: {}};
+  const audit = {cap20: [], cap40: [], capEnd: [], rcWon32: 0, rcWon32ThenPal: 0, rcHeldToEnd: 0, enf: 0, enfSeceded: [], enfWar: 0, maxDissent: [], repeatCards: {}, contests: [], changes: [], endLeaders: {}, refused: 0, radicalRim: 0, radicalRimWar: 0, radicalRimSep: [], softRimSep: []};
   for (let g = 0; g < GAMES; g++) {
     rng = mulberry(SEED * 1000 + g);
     const r = await playOne(g);
@@ -148,6 +149,7 @@ function playOne(gameIndex) {
     if (Q.kamino_early) stats.kamino_early++;
     if (Q.chips_removed) stats.chips++;
     if (Q.rc_was_chancellor) stats.rc_chancellor++;
+    if (Q.sidious_defeated) { stats.beaten++; if (Q.restoration_seen) stats.restoration_votes++; if (Q.restoration_passed) stats.restored++; if (Q.faith >= 55) stats.faith55++; }
     stats.reforms += Q.emergency_sunset + Q.term_limits_protected + Q.army_oversight + Q.senate_guard_reformed + Q.jedi_independence + Q.banking_independent + Q.rim_enfranchised + Q.anti_corruption;
     stats.turns += Q.time;
     const tag = [Q.gambit ? 'gambit:' + Q.gambit_kind : 'canon', Q.known_by ? 'known:' + Q.known_by : '', Q.arrest_result ? 'arrest:' + Q.arrest_result : '',
@@ -170,6 +172,17 @@ function playOne(gameIndex) {
       if (process.env.TRACE && ch.length && ch[0].indexOf(':rc') >= 0) origLog('trace', g, JSON.stringify(t.chancellors));
       audit.maxDissent.push(t.maxDissent);
       for (const c in t.cardPlays) if (t.cardPlays[c] >= 6) audit.repeatCards[c] = (audit.repeatCards[c] || 0) + 1;
+      // leaders
+      audit.contests.push(Q.leadership_contests || 0);
+      audit.changes.push(Q.leader_changes || 0);
+      audit.refused += Q.coal_refused || 0;
+      for (const grp of ['mod', 'guild', 'rim', 'sec', 'ind', 'inst', 'rimward', 'pacifist', 'hawk']) {
+        const k = grp + ':' + Q[grp + '_leader_id'];
+        audit.endLeaders[k] = (audit.endLeaders[k] || 0) + 1;
+      }
+      const rimSep = Math.round((Q.outer_sep + Q.midrim_sep) / 2);
+      if (Q.rim_was_radical) { audit.radicalRim++; if (Q.geonosis_seen) audit.radicalRimWar++; audit.radicalRimSep.push(rimSep); }
+      else audit.softRimSep.push(rimSep);
     }
     if (VERBOSE) origLog(g, e, Q.date_label, 'steps', r.steps, r.stuck || '', 'ep', Q.emergency_powers, 'ev', Q.evidence.toFixed(1), 'gp', Math.round(Q.grand_plan), 'rc', Q.rc_r, 'pal', Q.pal_r, 'ch', Q.chancellor);
   }
@@ -185,6 +198,9 @@ function playOne(gameIndex) {
   origLog('audit: Caucus won first election ' + audit.rcWon32 + 'x; Palpatine later Chancellor in ' + audit.rcWon32ThenPal + '; Caucus still Chancellor at end ' + audit.rcHeldToEnd);
   if (audit.enfWhere) origLog('audit: enfranchised games, where/sep: ' + Object.keys(audit.enfWhere).slice(0, 12).join(' | '));
   origLog('audit: enfranchised before 22 BBY in ' + audit.enf + ' games; avg seceded ' + avg(audit.enfSeceded) + '%; war in ' + audit.enfWar);
+  origLog('audit: leadership contests per game avg ' + avg(audit.contests) + ', leader changes avg ' + avg(audit.changes) + ', coalition offers refused by a leader ' + audit.refused);
+  origLog('audit: radical Rim leader at some point in ' + audit.radicalRim + ' games (war in ' + audit.radicalRimWar + ', end Rim sep avg ' + avg(audit.radicalRimSep) + ') vs end Rim sep avg ' + avg(audit.softRimSep) + ' otherwise');
+  origLog('audit: leaders at the end: ' + Object.entries(audit.endLeaders).sort().map(([k, v]) => k + '=' + v).join(' '));
   origLog('audit: avg peak faction dissent ' + avg(audit.maxDissent) + '; cards played 6+ times (games): ' + JSON.stringify(audit.repeatCards));
   origLog('paths:'); Object.keys(paths).sort((a, b) => paths[b] - paths[a]).slice(0, 18).forEach(k => origLog('  ' + paths[k] + 'x ' + k));
   origLog('errors', Object.keys(errCount).length);

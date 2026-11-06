@@ -8,7 +8,7 @@ face-image: img/ev_shadow.svg
 on-arrival: {!
 Q.farr_murder_seen = 1;
 var risk = Q.farr_protected ? 0.2 : 0.85;
-if (Math.random() < risk) { Q.farr_dead = 1; Q.adv_farr = 0; Q.rimward_dissent += 8; Q.evidence += 0.3; Q.fear += 2; }
+if (Math.random() < risk) { Q.farr_dead = 1; Q.adv_farr = 0; if (Q.rfc_leader_id === 'farr') SW.setLeader(Q, 'rfc', 'tandeth'); Q.rimward_dissent += 8; Q.evidence += 0.3; Q.fear += 2; }
 else { Q.farr_foiled = 1; Q.evidence += 0.8; }
 SW.countAdvisors(Q);
 !}

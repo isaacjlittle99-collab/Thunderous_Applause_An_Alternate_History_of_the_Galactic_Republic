@@ -1,0 +1,63 @@
+title: A Challenge Inside the Caucus
+subtitle: One of our own factions is choosing a new voice.
+tags: event
+view-if: faction_contest_ready
+priority: 1
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {! SW.prepareContest(Q, 'faction'); Q.faction_leader_timer = 7 + Math.floor(Math.random() * 4); !}
+
+= A Challenge Among the [+ contest_group_name +]
+
+[+ contest_ch +] is challenging [+ contest_inc +] to speak for the Caucus's [+ contest_group_name +]. The faction's senators will decide, but the leadership's view carries weight.
+
+**[+ contest_inc +]** ([+ contest_inc_tag +]). [+ contest_inc_blurb +] Wants [+ contest_inc_demand +].
+
+**[+ contest_ch +]** ([+ contest_ch_tag +]). [+ contest_ch_blurb +] Wants [+ contest_ch_demand +].
+
+[+ contest_odds +] A firmer leader makes the faction quicker to anger and quicker to break away. A pragmatist makes it more patient.
+
+- @let_decide: Let the faction decide for itself.
+- @adv_inc: Have [+ contest_adv_name +] rally the backbenches for [+ contest_inc +].
+- @adv_ch: Have [+ contest_adv_name +] rally the backbenches for [+ contest_ch +].
+- @back_inc: Use the leadership's weight for [+ contest_inc +].
+- @back_ch: Use the leadership's weight for [+ contest_ch +].
+
+@let_decide
+subtitle: The faction appreciates being left to choose.
+on-arrival: {! SW.resolveContest(Q, ''); !}
+go-to: faction_contest_result
+
+@adv_inc
+view-if: contest_adv
+subtitle: Free, but our advisors can't act for a while. Backing the loser will anger the faction.
+on-arrival: {! Q.advisor_action_timer = Math.max(Q.advisor_action_timer, 2); SW.resolveContest(Q, 'inc'); !}
+go-to: faction_contest_result
+
+@adv_ch
+view-if: contest_adv
+subtitle: Free, but our advisors can't act for a while. Backing the loser will anger the faction.
+on-arrival: {! Q.advisor_action_timer = Math.max(Q.advisor_action_timer, 2); SW.resolveContest(Q, 'ch'); !}
+go-to: faction_contest_result
+
+@back_inc
+view-if: not contest_adv
+choose-if: capital >= 1
+unavailable-subtitle: Needs 1 political capital.
+subtitle: Costs 1 political capital. Backing the loser will anger the faction.
+on-arrival: {! Q.capital -= 1; SW.resolveContest(Q, 'inc'); !}
+go-to: faction_contest_result
+
+@back_ch
+view-if: not contest_adv
+choose-if: capital >= 1
+unavailable-subtitle: Needs 1 political capital.
+subtitle: Costs 1 political capital. Backing the loser will anger the faction.
+on-arrival: {! Q.capital -= 1; SW.resolveContest(Q, 'ch'); !}
+go-to: faction_contest_result
+
+@faction_contest_result
+
+[? if contest_changed : **[+ contest_winner +]** now speaks for the [+ contest_group_name +]. ?][? if not contest_changed : **[+ contest_winner +]** sees off the challenge. ?] [? if contest_backed_won : The faction knows the leadership stood with the winner. ?][? if contest_backed_lost : The faction knows the leadership backed the loser, and it is not happy. ?]
+
+[+ contest_effect +]

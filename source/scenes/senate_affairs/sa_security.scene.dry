@@ -36,7 +36,7 @@ unavailable-subtitle: Needs 1 political capital and a seat in government.
 on-arrival: {!
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.6, guild: 0.4, rim: 0.6, sec: 0.25, ind: 0.55, pal: 0.1, cis: 0.5}, true);
-Q.ov_vote = SW.vote(Q, st, 1);
+Q.ov_vote = SW.vote(Q, st, 1, 'oversight');
 Q.vote_html = SW.voteBanner('Grand Army Oversight Act', Q.ov_vote);
 if (Q.ov_vote >= 50) { Q.army_oversight = 1; Q.navy_loyalty += 10; this.achieve('oversight'); }
 !}
@@ -53,7 +53,7 @@ unavailable-subtitle: Needs 1 political capital and a seat in government.
 on-arrival: {!
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.55, guild: 0.45, rim: 0.55, sec: 0.35, ind: 0.55, pal: 0.05, cis: 0.5}, true);
-Q.sg_vote = SW.vote(Q, st, 1);
+Q.sg_vote = SW.vote(Q, st, 1, 'oversight');
 Q.vote_html = SW.voteBanner('Senate Guard Restoration Act', Q.sg_vote);
 if (Q.sg_vote >= 50) { Q.senate_guard_reformed = 1; Q.pal_relation -= 10; }
 !}

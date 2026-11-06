@@ -43,7 +43,7 @@ Q.capital -= 2;
 var st = SW.stance(Q, {mod: 0.5, guild: 0.45, rim: 0.8, sec: 0.15, ind: 0.7, pal: 0.1, cis: 0.9}, true);
 st.mod += (Q.war_weariness - 30) / 200; st.ind += (Q.war_weariness - 30) / 200;
 st.mod += Q.rim_enfranchised * 0.1; st.ind += Q.rim_enfranchised * 0.1;
-Q.fc_vote = SW.vote(Q, st, 1);
+Q.fc_vote = SW.vote(Q, st, 1, 'peace');
 Q.vote_html = SW.voteBanner('The Federal Compact', Q.fc_vote);
 if (Q.fc_vote >= 50) { Q.fc_passed = 1; }
 !}
@@ -68,7 +68,7 @@ subtitle: End the war by letting the Separatists go. The Republic would be small
 on-arrival: {!
 var st = SW.stance(Q, {mod: 0.35, guild: 0.55, rim: 0.6, sec: 0.05, ind: 0.55, pal: 0.0, cis: 1}, false);
 st.mod += Q.war_weariness / 200; st.ind += Q.war_weariness / 200;
-Q.rec_vote = SW.vote(Q, st, 1);
+Q.rec_vote = SW.vote(Q, st, 1, 'peace');
 Q.vote_html = SW.voteBanner('Treaty of Separation', Q.rec_vote);
 if (Q.rec_vote >= 50) { Q.recognized_cis = 1; Q.war = 0; Q.dissolved = 1; Q.game_ending = 1; }
 else { Q.hawk_dissent += 10; Q.faith -= 2; }

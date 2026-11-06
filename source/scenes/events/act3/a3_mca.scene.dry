@@ -23,7 +23,7 @@ With [+ seceded_total +]% of the Senate's delegations gone and more leaving ever
 subtitle: The Pacifists cheer; the Hawks fume.
 on-arrival: {!
 var st = SW.stance(Q, {pal: 0.8, sec: 0.95, mod: 0.4 + Q.fear / 200, guild: 0.45, ind: 0.4 + Q.fear / 250, rim: 0.3, rfc: 0.25, cis: 0.05}, false);
-Q.mca_vote = SW.vote(Q, st, 0);
+Q.mca_vote = SW.vote(Q, st, 0, 'army');
 Q.mca_result = Q.mca_vote >= 50 ? 'passed' : 'failed';
 Q.pacifist_dissent -= 6; Q.hawk_dissent += 8;
 !}
@@ -33,7 +33,7 @@ go-to: mca_result_scene
 subtitle: The Hawks cheer; the Pacifists fume.
 on-arrival: {!
 var st = SW.stance(Q, {pal: 0.8, sec: 0.95, mod: 0.4 + Q.fear / 200, guild: 0.45, ind: 0.4 + Q.fear / 250, rim: 0.3, rfc: 0.25, cis: 0.05}, false);
-Q.mca_vote = SW.vote(Q, st, 1);
+Q.mca_vote = SW.vote(Q, st, 1, 'army');
 Q.mca_result = Q.mca_vote >= 50 ? 'passed' : 'failed';
 Q.hawk_dissent -= 6; Q.pacifist_dissent += 8;
 !}
@@ -46,7 +46,7 @@ unavailable-subtitle: Not enough political capital.
 on-arrival: {!
 Q.capital -= 1;
 var st = SW.stance(Q, {pal: 0.35, sec: 0.6, mod: 0.6 + Q.fear / 250, guild: 0.45, ind: 0.55, rim: 0.4, rfc: 0.35, cis: 0.05}, true);
-Q.mca_vote = SW.vote(Q, st, 1);
+Q.mca_vote = SW.vote(Q, st, 1, ['army', 'oversight']);
 Q.mca_result = Q.mca_vote >= 50 ? 'oversight' : 'failed';
 if (Q.mca_result === 'oversight') { Q.army_oversight = 1; Q.navy_loyalty += 10; }
 Q.hawk_dissent -= 2; Q.pacifist_dissent += 2;
@@ -60,7 +60,7 @@ unavailable-subtitle: Not enough political capital.
 on-arrival: {!
 Q.capital -= 1;
 var st = SW.stance(Q, {pal: 0.3, sec: 0.45, mod: 0.6, guild: 0.4, ind: 0.6, rim: 0.55, rfc: 0.5, cis: 0.1}, true);
-Q.mca_vote = SW.vote(Q, st, 1);
+Q.mca_vote = SW.vote(Q, st, 1, 'oversight');
 Q.mca_result = Q.mca_vote >= 50 ? 'judicials' : 'failed';
 if (Q.mca_result === 'judicials') { Q.judicial_forces += 2; Q.judicial_expansion = 1; }
 !}

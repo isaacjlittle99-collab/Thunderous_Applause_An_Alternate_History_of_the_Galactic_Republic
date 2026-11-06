@@ -21,7 +21,7 @@ Under the Sunset Amendment, the Chancellor's emergency powers expire unless the 
 
 @lapse
 on-arrival: {!
-Q.sr_vote = SW.vote(Q, Q.renew_st, 0);
+Q.sr_vote = SW.vote(Q, Q.renew_st, 0, 'powers');
 Q.vote_html = SW.voteBanner('Renewal of emergency powers', Q.sr_vote);
 if (Q.sr_vote < 50) { Q.emergency_powers = Math.max(0, Q.emergency_powers - 2); Q.faith += 2; Q.sunset_lapsed = 1; } else { Q.sunset_lapsed = 0; }
 !}
@@ -32,7 +32,7 @@ if (Q.sr_vote < 50) { Q.emergency_powers = Math.max(0, Q.emergency_powers - 2); 
 
 @renew
 on-arrival: {!
-Q.sr_vote = SW.vote(Q, Q.renew_st, 1);
+Q.sr_vote = SW.vote(Q, Q.renew_st, 1, 'powers');
 Q.vote_html = SW.voteBanner('Renewal of emergency powers', Q.sr_vote);
 Q.pacifist_dissent += 4;
 !}

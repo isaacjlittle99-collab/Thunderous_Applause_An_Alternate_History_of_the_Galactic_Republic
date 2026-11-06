@@ -28,7 +28,7 @@ The Chancellor's office still holds [+ emergency_powers : powers +] emergency po
 subtitle: [? if emergency_powers <= 0 : There is nothing left to repeal. ?][? if emergency_powers > 0 : The Senate must vote. ?]
 on-arrival: {!
 if (Q.emergency_powers <= 0) { Q.rest_vote = 100; }
-else { Q.rest_vote = SW.vote(Q, Q.rest_stance, 1); }
+else { Q.rest_vote = SW.vote(Q, Q.rest_stance, 1, ['oversight', '-powers']); }
 Q.vote_html = SW.voteBanner('The Restoration Act', Q.rest_vote);
 if (Q.rest_vote >= 50) { Q.restoration_passed = 1; Q.emergency_powers = 0; Q.faith += 6; this.achieve('restoration'); }
 Q.game_ending = 1;

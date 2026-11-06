@@ -23,6 +23,10 @@ artwork, music or footage is included; all images are original abstract art.*
 - **Advisors** are pinned cards that share one action every few turns.
 - **The Senate** is made of blocs whose strength comes from regional support, recalculated every year.
   The Supreme Chancellor is elected by coalition, and can be brought down by a vote of no confidence.
+- **Leaders change with the times.** Every Senate bloc and every faction of the Caucus has a leader.
+  A neglected Rim turns to radicals, a frightened Senate to hardliners, and a satisfied faction to pragmatists.
+  Leaders decide how firmly a group holds its line, how it votes, whom it will govern with and, inside the Caucus,
+  what a faction demands and how soon it breaks away. You can stay out of leadership fights or try to tip them.
 - **The threat** is mostly hidden. Corruption, fear and emergency powers feed the Sith Lord's plan.
   Evidence, Senate resolve and structural safeguards work against it.
 

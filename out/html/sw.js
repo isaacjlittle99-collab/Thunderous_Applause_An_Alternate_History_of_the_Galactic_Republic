@@ -50,7 +50,7 @@
     'coalition', 'shuffle_committees', 'emergency_measures',
     'corruption_scandal', 'piracy', 'famine', 'embargo', 'secession', 'profiteering', 'protest',
     'assassination', 'leak', 'unease', 'sunset', 'battle', 'gunray', 'pal_media', 'faction_crisis',
-    'last_days', 'coalition_strain'
+    'last_days', 'coalition_strain', 'leadership', 'faction_leader'
   ];
 
   // Initial pairwise affinity of each bloc for each potential partner/candidate bloc (0-100).
@@ -169,6 +169,18 @@
     for (var z = 0; z < ZERO.length; z++) if (D[ZERO[z]] === undefined) D[ZERO[z]] = 0;
     var STR = ["all_ach_html", "arrest_mode", "battle_desc", "battle_name", "conceded_to", "el_backing", "el_incumbent", "el_sec_leader", "el_text", "el_winner", "ending_title", "gambit_kind", "game_ach_html", "geo_choice", "gunray_result", "inv_result", "known_by", "last_card_timer", "legacy_html", "lib_legend", "lost_chair", "mca_result", "petition_region", "scandal_bloc", "scandal_name", "session_changes", "session_legend", "split_kind", "strain_bloc", "strain_name", "sub_reborn", "summary_html", "vote_html"];
     for (var y = 0; y < STR.length; y++) if (D[STR[y]] === undefined) D[STR[y]] = '';
+    var CZ = ['bloc_contest_ready', 'faction_contest_ready', 'contest_chance', 'contest_cost', 'contest_inc_out', 'contest_changed',
+      'contest_backed_won', 'contest_backed_lost', 'contest_adv', 'contest_can_pay', 'tarkin_rising', 'leader_changes', 'leadership_contests', 'rim_sep_high',
+      'inst_split_ready', 'rimward_split_ready', 'pacifist_split_ready', 'hawk_split_ready'];
+    for (var cz = 0; cz < CZ.length; cz++) D[CZ[cz]] = 0;
+    var CS = ['contest_kind', 'contest_group', 'contest_group_name', 'contest_inc_id', 'contest_ch_id', 'contest_inc', 'contest_inc_tag',
+      'contest_inc_blurb', 'contest_ch', 'contest_ch_tag', 'contest_ch_blurb', 'contest_soft_id', 'contest_soft', 'contest_offer',
+      'contest_adv_name', 'contest_winner', 'contest_winner_tag', 'contest_odds', 'contest_inc_demand', 'contest_ch_demand', 'contest_effect'];
+    for (var cs = 0; cs < CS.length; cs++) D[CS[cs]] = '';
+    for (var lg in SW.LEADER_START) {
+      D[lg + '_leader_id'] = SW.LEADER_START[lg];
+      D[lg + '_leader'] = SW.LEADERS[SW.LEADER_START[lg]].name;
+    }
     D.pal_can_run = 1; D.naboo_jedi = 1; D.unease_next = 40; D.secession_next = 10; D.next_election_date = 21;
     // regions
     for (var i = 0; i < SW.REGIONS.length; i++) {
@@ -218,6 +230,15 @@
   // Fill in anything missing (old saves, new qualities).
   SW.migrate = function (Q) {
     if (!Q.started) return;
+    // leaders: map an old save's leader names to leader ids before defaults fill the gaps
+    for (var lg in SW.LEADER_START) {
+      if (Q[lg + '_leader_id'] === undefined && Q[lg + '_leader']) {
+        for (var lid in SW.LEADERS) if (SW.LEADERS[lid].group === lg && SW.LEADERS[lid].name === Q[lg + '_leader']) Q[lg + '_leader_id'] = lid;
+      }
+    }
+    if (Q.timers && Q.timers.length !== undefined) {
+      for (var ti = 0; ti < SW.TIMERS.length; ti++) if (Q.timers.indexOf(SW.TIMERS[ti]) < 0) Q.timers.push(SW.TIMERS[ti]);
+    }
     var D = SW.DEFAULTS();
     for (var key in D) {
       if (Q[key] === undefined || Q[key] === null || (typeof D[key] === 'number' && typeof Q[key] === 'number' && isNaN(Q[key]))) {
@@ -323,6 +344,419 @@
 
   // gain multiplier dampened by dissent
   SW.unity = function (Q) { return 1 - (Q.dissent || 0); };
+
+  // ------------------------------------------------------------------ leaders
+  // Every Senate bloc (except the Sith-run blocs) and every Caucus faction has a leader.
+  // firm: 0 = pragmatist, 1 = hardliner. 0.5 reproduces the game's baseline behaviour.
+  // views: shift in a bloc's chance of voting yes, by vote topic (rim, regulate, powers, army,
+  //   oversight, peace, vonc). likes: affinity for other blocs. refuses: blocs it won't govern with.
+  // rise(Q): how strongly the galaxy favours this leader (used for leadership contests).
+  var on = function (x) { return x ? 1 : 0; };
+  SW.LEADERS = {
+    // Rimward Coalition
+    teem: {group: 'rim', name: 'Ainlee Teem', tag: 'populist', firm: 0.5, relBase: 32,
+      views: {rim: 0.05}, blurb: 'A Malastare populist. Wants the Rim\'s due, but will bargain for it.',
+      rise: function (Q) { return 0.35 + 0.1 * on(Q.rim_enfranchised) + 0.15 * on(Q.rim_hardship < 45); }},
+    orn_free_taa: {group: 'rim', name: 'Orn Free Taa', tag: 'dealmaker', firm: 0.2, relBase: 36,
+      views: {regulate: -0.12, powers: 0.05, oversight: -0.05}, likes: {guild: 12, mod: 6}, rimGriev: -0.15, rimSep: -0.15,
+      blurb: 'Ryloth\'s senator. Trades votes for favours, and the guilds pay well.',
+      rise: function (Q) { return 0.15 + 0.2 * on(Q.corruption > 62) + 0.1 * on(Q.rim_relief >= 1) + 0.15 * on(Q.rim_enfranchised); }},
+    ardana: {group: 'rim', name: 'Tal Ardana', tag: 'radical', firm: 0.9, relBase: 20,
+      views: {rim: 0.15, regulate: 0.2, powers: -0.1, army: -0.15, peace: 0.15, vonc: 0.15},
+      likes: {mod: -15, guild: -20, sec: -15, cis: 15, rfc: 10}, refuses: ['mod', 'guild', 'sec'],
+      rimGriev: 0.15, rimSep: 0.2, pull: function (Q) { return Q.rim_hardship > 40 ? 0.1 : -0.05; },
+      blurb: 'An Ord Mantell firebrand. No more promises from Coruscant, and no deals with the Core or the guilds.',
+      rise: function (Q) {
+        var lostRim = (Q.secession_where || '').indexOf('outer') >= 0 || (Q.secession_where || '').indexOf('midrim') >= 0;
+        return 0.05 + Math.max(0, Q.rim_hardship - 45) / 30 + 0.2 * on(lostRim) + 0.1 * on(Q.dooku_movement) -
+          0.3 * on(Q.rim_enfranchised) - Math.min(Q.rim_relief || 0, 3) * 0.05;
+      }},
+    // Commerce Guilds
+    dod: {group: 'guild', name: 'Lott Dod', tag: 'Trade Federation', firm: 0.6, relBase: 22,
+      views: {regulate: -0.05, rim: -0.05}, likes: {pal: 5},
+      blurb: 'The Trade Federation\'s man in the Senate. Defends its monopolies to the last.',
+      rise: function (Q) { return 0.35 - 0.2 * on(Q.tf_broken_up) + 0.05 * on(Q.guild_relation < 30); }},
+    san_hill: {group: 'guild', name: 'San Hill', tag: 'hardliner', firm: 0.85, relBase: 14,
+      views: {regulate: -0.2, peace: 0.1, army: -0.1, powers: -0.05}, likes: {cis: 20, rc: -10}, refuses: ['rim', 'rfc'],
+      guildGriev: 0.25,
+      blurb: 'Chairman of the Banking Clan. Already halfway to the Confederacy.',
+      rise: function (Q) {
+        return 0.1 + (Q.guild_embargo || 0) * 0.05 + 0.25 * on(Q.tf_broken_up) + 0.2 * on(Q.dooku_movement) +
+          0.1 * on(Q.trade_tax) + 0.1 * on(Q.guild_relation < 20);
+      }},
+    clovis: {group: 'guild', name: 'Rush Clovis', tag: 'pragmatist', firm: 0.3, relBase: 34,
+      views: {regulate: 0.1, oversight: 0.05}, likes: {rc: 8, mod: 6}, guildGriev: -0.15,
+      blurb: 'A Scipio banker who thinks the guilds would do better inside a reformed Republic.',
+      available: function (Q) { return Q.date >= 96 && !Q.banking_seizure_seen; },
+      rise: function (Q) { return 0.15 + 0.15 * on(Q.banking_reformed) + 0.15 * on(Q.guild_relation > 35) + 0.1 * on(Q.war && Q.war_weariness > 30); }},
+    // Core Moderates
+    valorum: {group: 'mod', name: 'Finis Valorum', tag: 'establishment reformer', firm: 0.5, relBase: 42,
+      views: {regulate: 0.05, oversight: 0.05}, blurb: 'The Chancellor. A decent man trapped in a slow machine.',
+      available: function (Q) { return !Q.valorum_fallen; },
+      rise: function (Q) { return 0.4; }},
+    quill: {group: 'mod', name: 'Davan Quill', tag: 'establishment', firm: 0.6, relBase: 38,
+      views: {regulate: -0.05, powers: 0.05, rim: -0.05}, likes: {guild: 6},
+      blurb: 'The Core establishment\'s safe pair of hands. Distrusts anything new.',
+      available: function (Q) { return Q.valorum_fallen || Q.date >= 21; },
+      rise: function (Q) { return 0.35 + 0.1 * on(Q.corruption > 60) + 0.1 * on(Q.fear > 35); }},
+    fang_zar: {group: 'mod', name: 'Fang Zar', tag: 'reformist', firm: 0.3, relBase: 50,
+      views: {oversight: 0.12, powers: -0.12, rim: 0.05}, likes: {rc: 10}, pull: 0.05,
+      blurb: 'Sern Prime\'s senator. Believes the Senate must take its authority back.',
+      available: function (Q) { return Q.date >= 60; },
+      rise: function (Q) {
+        return 0.2 + 0.15 * on(Q.faith < 45) + 0.2 * on(Q.senate_resolve >= 3) + 0.15 * on(Q.emergency_powers >= 3) + 0.2 * on(Q.delegation_formed);
+      }},
+    // Security Bloc
+    hask: {group: 'sec', name: 'Orvos Hask', tag: 'law and order', firm: 0.5, relBase: 28,
+      blurb: 'A Colonies conservative. Wants order, and an army to keep it.',
+      rise: function (Q) { return 0.35 + 0.1 * on(Q.fear < 35); }},
+    tarkin: {group: 'sec', name: 'Wilhuff Tarkin', tag: 'hardliner', firm: 0.85, relBase: 20,
+      views: {powers: 0.08, army: 0.1, oversight: -0.05, peace: -0.12, rim: -0.1}, likes: {pal: 15, rim: -15, rfc: -15},
+      refuses: ['rim', 'rfc'], pull: function (Q) { return Q.fear > 35 ? 0.08 : 0; },
+      blurb: 'Eriadu\'s rising star. Believes in rule through fear of force.',
+      available: function (Q) { return Q.tarkin_rising > 0; },
+      rise: function (Q) { return 0.1 + 0.15 * Q.tarkin_rising + Math.max(0, Q.fear - 35) / 40 + 0.2 * on(Q.war && Q.war_balance < 0) + 0.1 * on(Q.dooku_movement); }},
+    danu: {group: 'sec', name: 'Giddean Danu', tag: 'constitutional hawk', firm: 0.3, relBase: 40,
+      views: {oversight: 0.12, powers: -0.1, army: 0.05}, likes: {rc: 8, mod: 6},
+      blurb: 'Kuat\'s senator. Wants a strong defence, under the Senate\'s control.',
+      available: function (Q) { return Q.date >= 36; },
+      rise: function (Q) {
+        return 0.25 + 0.1 * on(Q.army_oversight) + 0.15 * on(Q.senate_resolve >= 3) + 0.15 * on(Q.emergency_powers >= 4) +
+          0.1 * on(Q.evidence_public > 0) + 0.1 * on(Q.fear < 30);
+      }},
+    // Independents
+    vell: {group: 'ind', name: 'Tamsar Vell', tag: 'broker', firm: 0.4, relBase: 40,
+      blurb: 'Speaks for the unaligned worlds. Open to any bargain that leaves them alone.',
+      rise: function (Q) { return 0.35; }},
+    satine: {group: 'ind', name: 'Satine Kryze', tag: 'neutralist', firm: 0.6, relBase: 42,
+      views: {peace: 0.2, army: -0.15, powers: -0.1}, likes: {sec: -10, pal: -5, cis: 5},
+      blurb: 'Duchess of Mandalore, voice of the Council of Neutral Systems. Peace above all.',
+      available: function (Q) { return Q.dooku_movement || Q.war; },
+      rise: function (Q) { return 0.15 + Q.war_weariness / 100 + 0.1 * on(Q.peace_talks >= 1) + 0.1 * on(Q.satine_friend); }},
+    shale: {group: 'ind', name: 'Corwin Shale', tag: 'isolationist', firm: 0.7, relBase: 30,
+      views: {army: -0.1, rim: -0.1, regulate: -0.05, peace: 0.05}, likes: {rc: -5},
+      blurb: 'Wants the Republic to leave his worlds alone, and to stop asking them to pay for it.',
+      rise: function (Q) { return 0.15 + 0.1 * on(Q.treasury < 2) + 0.1 * on(Q.rim_hardship > 45) + 0.1 * on(Q.war_weariness > 40); }},
+    // Rim Freedom Caucus (only if the Rimward wing splits away)
+    farr: {group: 'rfc', name: 'Onaconda Farr', tag: 'pragmatist', firm: 0.35, relBase: 45,
+      views: {rim: 0.05}, likes: {rc: 8},
+      blurb: 'Rodia\'s senator. Left the Caucus, but still talks to it.',
+      available: function (Q) { return !Q.farr_dead; },
+      rise: function (Q) { return 0.4; }},
+    tandeth: {group: 'rfc', name: 'Mira Tandeth', tag: 'radical', firm: 0.8, relBase: 28,
+      views: {rim: 0.15, regulate: 0.15, army: -0.1, peace: 0.1}, likes: {mod: -10, guild: -15, cis: 10}, refuses: ['guild'],
+      rimGriev: 0.1, rimSep: 0.15,
+      blurb: 'A Mid Rim organiser who thinks the Caucus betrayed the Rim.',
+      rise: function (Q) { return 0.1 + Math.max(0, Q.rim_hardship - 40) / 30 + (Q.farr_dead ? 1 : 0); }},
+
+    // Caucus factions. agenda(Q) is true when the faction's demands are not being met.
+    ryder: {group: 'inst', name: 'Horox Ryder', tag: 'mainstream', firm: 0.5,
+      demand: 'an honest Senate (an Ethics Commission or lower corruption)',
+      blurb: 'A veteran Core senator. Steady, procedural, and tired of scandals.',
+      agenda: function (Q) { return Q.corruption > 62 && !Q.anti_corruption; },
+      rise: function (Q) { return 0.35; }},
+    papanoida: {group: 'inst', name: 'Chi Eekway Papanoida', tag: 'proceduralist', firm: 0.7,
+      demand: 'an Ethics Commission now, and sunset clauses on any emergency powers',
+      blurb: 'Pantora\'s senator. The constitution is not negotiable.',
+      agenda: function (Q) { return (Q.corruption > 58 && !Q.anti_corruption) || (Q.emergency_powers >= 3 && !Q.emergency_sunset && !Q.rc_chancellor); },
+      rise: function (Q) { return 0.05 + Math.max(0, Q.corruption - 64) / 30 + 0.1 * on(Q.emergency_powers >= 3 && !Q.emergency_sunset) + Math.max(0, Q.inst_dissent - 40) / 60; }},
+    taneel: {group: 'inst', name: 'Terr Taneel', tag: 'dealmaker', firm: 0.25,
+      demand: 'corruption kept from spiralling, and a seat at the table',
+      blurb: 'An Emberlene veteran of a hundred committee deals. Prefers results to purity.',
+      agenda: function (Q) { return Q.corruption > 70 && !Q.anti_corruption; },
+      rise: function (Q) { return 0.15 + 0.2 * on(Q.rc_in_govt) + Math.max(0, 25 - Q.inst_dissent) / 60; }},
+
+    tills: {group: 'rimward', name: 'Meena Tills', tag: 'mainstream', firm: 0.5,
+      demand: 'relief for the Rim, an end to slavery, Rim representation',
+      blurb: 'Mon Calamari\'s senator. Wants the Rim treated as part of the Republic.',
+      agenda: function (Q) { return (Q.rim_hardship > 40 && !Q.rim_enfranchised) || (Q.date >= 60 && !Q.slavery_abolished && Q.slavery_campaign < 1); },
+      rise: function (Q) { return 0.35; }},
+    corvane: {group: 'rimward', name: 'Jessa Corvane', tag: 'radical', firm: 0.8,
+      demand: 'enfranchisement and abolition now, and no deals with the guilds',
+      blurb: 'A Dantooine firebrand. Thinks the Caucus has made too many excuses.',
+      agenda: function (Q) {
+        return (Q.rim_hardship > 36 && !Q.rim_enfranchised) || (Q.date >= 60 && !Q.slavery_abolished && Q.slavery_campaign < 2) ||
+          (Q.rc_in_govt && (Q.govt_blocs || []).indexOf('guild') >= 0);
+      },
+      rise: function (Q) { return 0.05 + Math.max(0, Q.rim_hardship - 42) / 30 + Math.max(0, Q.rimward_dissent - 40) / 60 + 0.1 * on(Q.rim_sep_high); }},
+    rusk: {group: 'rimward', name: 'Hollin Rusk', tag: 'gradualist', firm: 0.25,
+      demand: 'steady relief for the Rim, and a start on abolition',
+      blurb: 'A Bakuran pragmatist. Half a loaf now beats a whole one never.',
+      agenda: function (Q) { return (Q.rim_hardship > 50 && Q.rim_relief < 1 && !Q.rim_enfranchised) || (Q.date >= 84 && !Q.slavery_abolished && Q.slavery_campaign < 1); },
+      rise: function (Q) { return 0.15 + 0.15 * on(Q.rim_relief >= 1) + 0.15 * on(Q.rim_enfranchised) + Math.max(0, 25 - Q.rimward_dissent) / 60; }},
+
+    venn: {group: 'pacifist', name: 'Aya Venn', tag: 'mainstream', firm: 0.5,
+      demand: 'talks with the Separatists and fewer emergency powers',
+      blurb: 'A Chandrilan lawyer. Law before arms, but no fool about either.',
+      agenda: function (Q) {
+        return (Q.war && Q.peace_talks < 2) || (!Q.rc_chancellor && Q.emergency_powers >= 4) || (Q.dooku_movement && !Q.war && Q.peace_talks < 1);
+      },
+      rise: function (Q) { return 0.35; }},
+    shen: {group: 'pacifist', name: 'Tamra Shen', tag: 'absolutist', firm: 0.8,
+      demand: 'peace talks above all, no emergency powers, and no Caucus militias',
+      blurb: 'An Alderaanian absolutist. Every weapon built is a war made likelier.',
+      agenda: function (Q) {
+        return (Q.war && Q.peace_talks < 3) || (!Q.rc_chancellor && Q.emergency_powers >= 2) ||
+          (Q.dooku_movement && !Q.war && Q.peace_talks < 1) || (Q.pact_formed && !Q.war);
+      },
+      rise: function (Q) { return 0.05 + Q.war_weariness / 150 + 0.1 * on(Q.emergency_powers >= 3) + Math.max(0, Q.pacifist_dissent - 40) / 60; }},
+    dask: {group: 'pacifist', name: 'Orrin Dask', tag: 'pragmatist', firm: 0.25,
+      demand: 'a channel for peace, and a limit on the Chancellor\'s powers',
+      blurb: 'A Corellian who accepts that a Republic may need to defend itself.',
+      agenda: function (Q) { return (Q.war && Q.peace_talks < 1) || (!Q.rc_chancellor && Q.emergency_powers >= 6); },
+      rise: function (Q) { return 0.15 + 0.15 * on(Q.peace_talks >= 1) + 0.1 * on(Q.fear > 40) + Math.max(0, 25 - Q.pacifist_dissent) / 60; }},
+
+    kelt: {group: 'hawk', name: 'Varo Kelt', tag: 'mainstream', firm: 0.5,
+      demand: 'a Defence Pact and a firm line against the Separatists',
+      blurb: 'A Corellian veteran of the Judicial Forces. Wants the Republic able to defend itself.',
+      agenda: function (Q) { return (Q.dooku_movement && !Q.pact_formed && Q.member_forces < 3) || (Q.war && Q.war_balance < 0); },
+      rise: function (Q) { return 0.35; }},
+    voss: {group: 'hawk', name: 'Darra Voss', tag: 'militarist', firm: 0.8,
+      demand: 'a Defence Pact, more forces, and victory without compromise',
+      blurb: 'An Anaxes hawk. Talks are for after the war is won.',
+      agenda: function (Q) {
+        return (Q.dooku_movement && !Q.pact_formed) || (Q.war && Q.war_balance < 2) ||
+          (Q.date >= 96 && Q.member_forces < 2 && Q.judicial_forces < 5) || (Q.war && Q.peace_talks >= 2);
+      },
+      rise: function (Q) { return 0.05 + Math.max(0, Q.fear - 35) / 45 + 0.15 * on(Q.war && Q.war_balance < 0) + Math.max(0, Q.hawk_dissent - 40) / 60; }},
+    morn: {group: 'hawk', name: 'Talia Morn', tag: 'constitutional hawk', firm: 0.3,
+      demand: 'forces under Senate command: oversight of the clone army and a Defence Pact',
+      blurb: 'A Chandrilan admiral\'s daughter. A strong Republic, but a lawful one.',
+      agenda: function (Q) {
+        return (Q.dooku_movement && !Q.pact_formed && Q.member_forces < 3 && Q.judicial_forces < 5) ||
+          (Q.clones > 0 && !Q.army_oversight) || (Q.war && Q.war_balance < -3);
+      },
+      rise: function (Q) { return 0.15 + 0.15 * on(Q.clones > 0 && !Q.army_oversight) + 0.1 * on(Q.senate_resolve >= 3) + Math.max(0, 25 - Q.hawk_dissent) / 60; }}
+  };
+  SW.LEADER_START = {
+    rim: 'teem', guild: 'dod', mod: 'valorum', sec: 'hask', ind: 'vell', rfc: 'farr',
+    inst: 'ryder', rimward: 'tills', pacifist: 'venn', hawk: 'kelt'
+  };
+  SW.CONTEST_BLOCS = ['mod', 'guild', 'rim', 'sec', 'ind', 'rfc'];
+  SW.NEUTRAL_LEADER = {firm: 0.5, views: {}, likes: {}, refuses: [], tag: '', blurb: ''};
+
+  SW.leader = function (Q, group) {
+    var id = Q && Q[group + '_leader_id'];
+    return (id && SW.LEADERS[id]) || SW.NEUTRAL_LEADER;
+  };
+  SW.firm = function (Q, group) { return SW.leader(Q, group).firm; };
+  SW.leaderPool = function (Q, group) {
+    var out = [];
+    for (var id in SW.LEADERS) {
+      var L = SW.LEADERS[id];
+      if (L.group === group && (!L.available || L.available(Q))) out.push(id);
+    }
+    return out;
+  };
+  SW.setLeader = function (Q, group, id) {
+    var L = SW.LEADERS[id];
+    if (!L) return;
+    Q[group + '_leader_id'] = id;
+    Q[group + '_leader'] = L.name;
+    // a new leader starts from today's figures: earlier changes are not rescaled
+    if (SW.FACTIONS.indexOf(group) >= 0) Q[group + '_dissent_prev'] = Q[group + '_dissent'];
+    else Q[group + '_relation_prev'] = Q[group + '_relation'];
+    Q.leader_changes = (Q.leader_changes || 0) + 1;
+    if (id === 'ardana') Q.rim_was_radical = 1;
+  };
+  SW.leaderRefuses = function (Q, a, b) {
+    var r = SW.leader(Q, a).refuses || [];
+    return r.indexOf(b) >= 0;
+  };
+  // Whether a set of blocs can govern together; returns '' or the reason.
+  SW.coalitionBlock = function (Q, blocs) {
+    for (var i = 0; i < blocs.length; i++) {
+      for (var j = 0; j < blocs.length; j++) {
+        if (i !== j && SW.leaderRefuses(Q, blocs[i], blocs[j])) {
+          return Q[blocs[i] + '_leader'] + ' will not govern with the ' + SW.name(Q, blocs[j]) + '.';
+        }
+      }
+    }
+    return '';
+  };
+  SW.coalitionMin = function (Q, b) { return 25 + 20 * SW.firm(Q, b); };
+  SW.splitAt = function (Q, f) { return (f === 'inst' ? 70 : 60) + (0.5 - SW.firm(Q, f)) * 16; };
+  SW.leaderPull = function (Q, b) {
+    var p = SW.leader(Q, b).pull;
+    return typeof p === 'function' ? p(Q) : (p || 0);
+  };
+  SW.leaderSum = function (Q, key, groups) {
+    var s = 0;
+    for (var i = 0; i < groups.length; i++) {
+      if (groups[i] === 'rfc' && Q.parties.indexOf('rfc') < 0) continue;
+      s += SW.leader(Q, groups[i])[key] || 0;
+    }
+    return s;
+  };
+  SW.firmLabel = function (Q, group) {
+    var L = SW.leader(Q, group);
+    return L.tag || (L.firm >= 0.75 ? 'hardliner' : (L.firm <= 0.35 ? 'pragmatist' : 'mainstream'));
+  };
+
+  // Scale relation and dissent changes made since the last visit by the leader's firmness:
+  // pragmatists are easier to win over and quicker to forgive; hardliners hold grudges.
+  SW.scaleChanges = function (Q) {
+    for (var i = 0; i < SW.BLOCS.length; i++) {
+      var b = SW.BLOCS[i];
+      if (b === 'rc') continue;
+      var k = b + '_relation', pk = k + '_prev';
+      if (typeof Q[pk] !== 'number' || isNaN(Q[pk])) { Q[pk] = Q[k]; continue; }
+      var d = Q[k] - Q[pk];
+      if (d !== 0) {
+        var fm = SW.firm(Q, b);
+        Q[k] = Q[pk] + d * (d > 0 ? 1.3 - 0.6 * fm : 0.7 + 0.6 * fm);
+      }
+      Q[k] = SW.clamp(Q[k], 0, 100);
+      Q[pk] = Q[k];
+    }
+    for (var j = 0; j < SW.FACTIONS.length; j++) {
+      var f = SW.FACTIONS[j];
+      var dk = f + '_dissent', dpk = dk + '_prev';
+      if (typeof Q[dpk] !== 'number' || isNaN(Q[dpk])) { Q[dpk] = Q[dk]; continue; }
+      var dd = Q[dk] - Q[dpk];
+      if (dd !== 0) {
+        var ff = SW.firm(Q, f);
+        Q[dk] = Q[dpk] + dd * (dd > 0 ? 0.6 + 0.8 * ff : 1.4 - 0.8 * ff);
+      }
+      Q[dk] = SW.clamp(Q[dk], 0, 100);
+      Q[dpk] = Q[dk];
+    }
+  };
+
+  // Which leadership contest the galaxy is pushing hardest for, if any.
+  SW.contestFor = function (Q, groups) {
+    var best = null;
+    for (var i = 0; i < groups.length; i++) {
+      var g = groups[i];
+      var incId = Q[g + '_leader_id'];
+      var inc = SW.LEADERS[incId];
+      if (!inc) continue;
+      var incAvail = !inc.available || inc.available(Q);
+      var hold = incAvail ? inc.rise(Q) + 0.15 : -1;
+      var pool = SW.leaderPool(Q, g);
+      for (var j = 0; j < pool.length; j++) {
+        if (pool[j] === incId) continue;
+        var press = SW.LEADERS[pool[j]].rise(Q) - hold;
+        if (press > 0.15 && (!best || press > best.press)) best = {group: g, challenger: pool[j], press: press};
+      }
+    }
+    return best;
+  };
+  SW.leaderPressure = function (Q) {
+    var blocs = SW.CONTEST_BLOCS.filter(function (b) { return Q.parties.indexOf(b) >= 0; });
+    var factions = SW.FACTIONS.filter(function (f) {
+      return !(f === 'hawk' && Q.hawks_split) && !(f === 'rimward' && Q.rimward_split);
+    });
+    Q.rim_sep_high = (Q.outer_sep > 45 || Q.midrim_sep > 45) ? 1 : 0;
+    var bc = SW.contestFor(Q, blocs);
+    var fc = SW.contestFor(Q, factions);
+    Q.bloc_contest_ready = (bc && Q.leadership_timer <= 0 && Q.time >= 3 && !Q.finale && Q.months_per_turn > 0) ? 1 : 0;
+    Q.faction_contest_ready = (fc && Q.faction_leader_timer <= 0 && Q.time >= 4 && !Q.finale && Q.months_per_turn > 0) ? 1 : 0;
+    return {bloc: bc, faction: fc};
+  };
+
+  // Set up the strings and odds for a contest scene. kind: 'bloc' or 'faction'.
+  SW.prepareContest = function (Q, kind) {
+    var p = SW.leaderPressure(Q)[kind];
+    if (!p) { Q.contest_group = ''; return; }
+    var g = p.group, inc = SW.LEADERS[Q[g + '_leader_id']], ch = SW.LEADERS[p.challenger];
+    Q.contest_kind = kind;
+    Q.contest_group = g;
+    Q.contest_group_name = kind === 'bloc' ? SW.name(Q, g) : SW.FACTION_NAMES[g];
+    Q.contest_inc_id = Q[g + '_leader_id'];
+    Q.contest_ch_id = p.challenger;
+    Q.contest_inc = inc.name; Q.contest_inc_tag = SW.firmLabel(Q, g); Q.contest_inc_blurb = inc.blurb;
+    Q.contest_ch = ch.name; Q.contest_ch_tag = ch.tag; Q.contest_ch_blurb = ch.blurb;
+    Q.contest_inc_out = (inc.available && !inc.available(Q)) ? 1 : 0;
+    Q.contest_chance = SW.clamp(0.35 + p.press, 0.2, 0.85);
+    Q.contest_cost = (kind === 'bloc' && (Q[g + '_r'] || 0) >= 18) ? 2 : 1;
+    // the softer of the two candidates is the one an offer helps
+    Q.contest_soft_id = ch.firm < inc.firm ? p.challenger : Q.contest_inc_id;
+    Q.contest_soft = SW.LEADERS[Q.contest_soft_id].name;
+    var OFFERS = {
+      rim: 'Promise the Rimward Coalition our votes for Rim relief',
+      guild: 'Promise the guilds we will go easy on regulation',
+      mod: 'Promise to back the establishment\'s budget',
+      sec: 'Promise support for defence spending',
+      ind: 'Offer the Independents a voice in our peace efforts',
+      rfc: 'Offer the Rim Freedom Caucus a joint Rim platform'
+    };
+    Q.contest_offer = OFFERS[g] || '';
+    Q.contest_can_pay = Q.capital >= Q.contest_cost ? 1 : 0;
+    Q.contest_odds = Q.contest_inc_out ? 'The succession is all but settled.' :
+      (Q.contest_chance >= 0.62 ? 'The challenger is favoured.' : (Q.contest_chance <= 0.42 ? 'The incumbent should hold on.' : 'It is too close to call.'));
+    Q.contest_inc_demand = inc.demand || '';
+    Q.contest_ch_demand = ch.demand || '';
+    Q.contest_adv = 0;
+    if (kind === 'faction') for (var a in SW.ADVISOR_FACTION) if (Q['adv_' + a] && SW.ADVISOR_FACTION[a] === g) { Q.contest_adv = 1; Q.contest_adv_name = SW.ADVISOR_NAMES[a]; break; }
+  };
+
+  // backing: '' (stay out), 'inc', 'ch' or 'offer'. Returns 1 if the challenger won.
+  SW.resolveContest = function (Q, backing) {
+    var g = Q.contest_group;
+    if (!g) return 0;
+    var chance = Q.contest_chance;
+    if (backing === 'ch') chance += 0.25;
+    if (backing === 'inc') chance -= 0.25;
+    if (backing === 'offer') chance += (Q.contest_soft_id === Q.contest_ch_id ? 0.2 : -0.2);
+    if (Q.contest_inc_out) chance = 1;
+    var won = SW.rnd() < SW.clamp(chance, 0.05, 0.95) ? 1 : 0;
+    var winId = won ? Q.contest_ch_id : Q.contest_inc_id;
+    if (won) SW.setLeader(Q, g, Q.contest_ch_id);
+    Q.contest_winner = SW.LEADERS[winId].name;
+    Q.contest_winner_tag = SW.LEADERS[winId].tag;
+    Q.contest_changed = won;
+    var ours = backing === 'ch' || backing === 'inc';
+    var backedWon = (backing === 'ch' && won) || (backing === 'inc' && !won);
+    Q.contest_backed_won = ours && backedWon ? 1 : 0;
+    Q.contest_backed_lost = ours && !backedWon ? 1 : 0;
+    if (Q.contest_kind === 'bloc') {
+      if (Q.contest_backed_won) Q[g + '_relation'] += 6;
+      if (Q.contest_backed_lost) Q[g + '_relation'] -= 8;
+    } else {
+      if (backing === '') Q[g + '_dissent'] -= 3;
+      if (Q.contest_backed_won) Q[g + '_dissent'] -= 2;
+      if (Q.contest_backed_lost) Q[g + '_dissent'] += 8;
+    }
+    if (Q.contest_kind === 'faction') SW.factionAgendas(Q);
+    Q.contest_effect = SW.leaderEffect(Q, g, winId);
+    Q.leadership_contests = (Q.leadership_contests || 0) + 1;
+    return won;
+  };
+
+  // One or two sentences on what a leader means for play.
+  SW.leaderEffect = function (Q, g, id) {
+    var L = SW.LEADERS[id], t = [];
+    var isFaction = SW.FACTIONS.indexOf(g) >= 0;
+    if (isFaction) {
+      if (L.firm >= 0.7) t.push('Expect the ' + SW.FACTION_NAMES[g] + ' to lose patience quickly, to forgive slowly, and to break away sooner.');
+      else if (L.firm <= 0.35) t.push('Expect the ' + SW.FACTION_NAMES[g] + ' to be patient, and to accept compromises they would once have refused.');
+      else t.push('The ' + SW.FACTION_NAMES[g] + ' should be no more or less patient than before.');
+      t.push('They want ' + L.demand + '.');
+    } else {
+      var nm = SW.name(Q, g);
+      if (L.firm >= 0.7) t.push('The ' + nm + ' will vote as one block, hold grudges, and be hard to court.');
+      else if (L.firm <= 0.35) t.push('The ' + nm + ' will be open to bargains, quick to forgive, and swayed by good relations.');
+      else t.push('The ' + nm + ' will be no harder or easier to deal with than before.');
+      var ref = (L.refuses || []).filter(function (b) { return Q.parties.indexOf(b) >= 0; });
+      if (ref.length) t.push(L.name + ' will not govern alongside the ' + ref.map(function (b) { return SW.name(Q, b); }).join(' or the ') + '.');
+      if (L.rimSep > 0.2) t.push('Their rhetoric will feed separatism on the Rim.');
+      if (L.rimSep < 0) t.push('They will take some of the heat out of Rim separatism.');
+      if (L.guildGriev > 0.2) t.push('They will push the guilds toward the Confederacy.');
+    }
+    return t.join(' ');
+  };
+
+  // The policy price of an offer in a bloc's leadership contest.
+  SW.contestOffer = function (Q) {
+    var g = Q.contest_group;
+    if (g === 'rim') { Q.treasury -= 1; Q.rimward_dissent -= 2; Q.inst_dissent += 3; }
+    else if (g === 'guild') { Q.inst_dissent += 3; Q.rimward_dissent += 4; Q.corruption += 0.5; }
+    else if (g === 'mod') { Q.rimward_dissent += 3; Q.pacifist_dissent += 1; }
+    else if (g === 'sec') { Q.pacifist_dissent += 4; Q.hawk_dissent -= 2; }
+    else if (g === 'ind') { Q.hawk_dissent += 3; }
+    else if (g === 'rfc') { Q.inst_dissent += 3; }
+  };
 
   // ------------------------------------------------------------------ support / seats
   SW.computeSupport = function (Q) {
@@ -445,6 +879,11 @@
     }
     if (b === 'mod' && Q.valorum_scandal && Q.mod_leader === 'Finis Valorum') base -= 15;
     if (Q['bonus_' + a + '_for_' + b]) base += Q['bonus_' + a + '_for_' + b];
+    if (a !== b) {
+      var La = SW.leader(Q, a);
+      base += ((La.likes && La.likes[b]) || 0) + (0.5 - La.firm) * 16;
+      if (SW.leaderRefuses(Q, a, b)) base -= 20;
+    }
     // incumbency: partners stick with a Chancellor who has governed well
     if (Q.el_active && b === Q.chancellor_bloc && Q.elections_held > 0) {
       var record = (Q.faith - 52) * 0.9 + (58 - Q.corruption) * 0.35 - Q.coalition_dissent * 3 - (Q.war && Q.war_balance < 0 ? 6 : 0);
@@ -492,6 +931,7 @@
     for (var i = 0; i < others.length && seats < 52; i++) {
       var o = others[i];
       if (SW.affinity(Q, o, leader) < 25) continue;
+      if (SW.coalitionBlock(Q, members.concat([o]))) continue;
       members.push(o);
       seats += Q[o + '_r'] || 0;
     }
@@ -509,9 +949,12 @@
     for (var i = 0; i < combos.length; i++) {
       var bl = combos[i].filter(function (b) { return Q.parties.indexOf(b) >= 0; });
       if (bl.length < 2) continue;
-      var minRel = 100;
-      for (var j = 1; j < bl.length; j++) minRel = Math.min(minRel, Q[bl[j] + '_relation'] || 0);
-      out.push({name: SW.coalitionName(Q, bl), blocs: bl, seats: SW.seats(Q, bl), minRel: minRel});
+      var minRel = 100, cold = '';
+      for (var j = 1; j < bl.length; j++) {
+        minRel = Math.min(minRel, Q[bl[j] + '_relation'] || 0);
+        if ((Q[bl[j] + '_relation'] || 0) < SW.coalitionMin(Q, bl[j]) && !cold) cold = bl[j];
+      }
+      out.push({name: SW.coalitionName(Q, bl), blocs: bl, seats: SW.seats(Q, bl), minRel: minRel, cold: cold, block: SW.coalitionBlock(Q, bl)});
     }
     return out;
   };
@@ -618,9 +1061,11 @@
     for (var i = 0; i < 7; i++) {
       var o = opts[i];
       Q['el_opt' + i] = o ? 1 : 0;
-      Q['el_opt' + i + '_ok'] = (o && o.seats >= 50 && o.minRel >= 35) ? 1 : 0;
+      Q['el_opt' + i + '_ok'] = (o && o.seats >= 50 && !o.cold && !o.block) ? 1 : 0;
+      if (o && o.seats >= 50 && o.block) Q.coal_refused = (Q.coal_refused || 0) + 1;
       Q['el_opt' + i + '_label'] = o ? (o.name + ': ' + o.blocs.filter(function (b) { return b !== 'rc'; }).map(function (b) { return SW.name(Q, b); }).join(', ') + ' (' + o.seats.toFixed(1) + '%)') : '';
-      Q['el_opt' + i + '_why'] = o ? (o.seats < 50 ? 'Not enough seats.' : (o.minRel < 35 ? 'One of these blocs will not work with us.' : '')) : '';
+      Q['el_opt' + i + '_why'] = o ? (o.seats < 50 ? 'Not enough seats.' : (o.block ? o.block :
+        (o.cold ? 'The ' + SW.name(Q, o.cold) + ' under ' + Q[o.cold + '_leader'] + ' will not work with us yet.' : ''))) : '';
     }
     Q.el_opts = opts.map(function (o) { return o.blocs; });
   };
@@ -640,9 +1085,10 @@
 
   // ------------------------------------------------------------------ votes
   // stance: {bloc: probability of voting yes}; rcYes: the Caucus's own vote (1/0/0.5)
-  SW.vote = function (Q, stance, rcYes) {
+  SW.vote = function (Q, stance, rcYes, topic) {
     var yes = 0, total = 0;
     if (rcYes === undefined) rcYes = 0.5;
+    var topics = topic ? [].concat(topic) : [];
     for (var i = 0; i < Q.parties.length; i++) {
       var b = Q.parties[i];
       var s = Q[b + '_r'] || 0;
@@ -651,6 +1097,16 @@
       else if (stance[b] !== undefined) p = stance[b];
       else if (b === 'rfc') p = rcYes * 0.8 + 0.1;
       else p = 0.5;
+      if (b !== 'rc') {
+        // a bloc's leader colours its vote: their views on the topic, and how firmly the bloc holds its line
+        var L = SW.leader(Q, b);
+        for (var t = 0; t < topics.length; t++) {
+          var tp = topics[t], sign = 1;
+          if (tp.charAt(0) === '-') { sign = -1; tp = tp.slice(1); }
+          p += sign * ((L.views && L.views[tp]) || 0);
+        }
+        p = 0.5 + (p - 0.5) * (0.7 + 0.6 * L.firm);
+      }
       p = SW.clamp(p, 0, 1);
       yes += s * p;
       total += s;
@@ -669,7 +1125,7 @@
       var b = Q.parties[i];
       if (b === 'rc') continue;
       var p = base[b] !== undefined ? base[b] : 0.4;
-      if (b !== 'pal' && b !== 'cis') p += ((Q[b + '_relation'] || 40) - 45) / 150;
+      if (b !== 'pal' && b !== 'cis') p += ((Q[b + '_relation'] || 40) - 45) / 150 * (1.4 - 0.8 * SW.firm(Q, b));
       if (reform) p += (Q.faith - 50) / 250 + Q.senate_resolve * 0.02 + Math.min(3, Q.new_ruusan || 0) * 0.015;
       st[b] = SW.clamp(p, 0, 1);
     }
@@ -714,6 +1170,7 @@
           - Q.rim_enfranchised * 1.5 - Q.slavery_abolished * 0.3 - Math.min(Q.rim_relief, 3) * 0.15;
         // a reformed Rim slowly settles back toward loyalty
         if (Q.rim_enfranchised && Q[r + '_sep'] > 15) d -= (Q[r + '_sep'] - 15) * 0.04;
+        d += SW.leaderSum(Q, 'rimSep', ['rim', 'rfc']);
       } else {
         d = (Q.corruption - 55) / 50 + (Q.dooku_movement ? 1.2 * Q.guild_grievance : 0.05) - (Q.guild_relation - 30) / 60;
       }
@@ -746,6 +1203,7 @@
         var b = ['rc', 'mod', 'pal', 'guild', 'rim', 'sec', 'ind'][bi];
         var m2 = mult[b];
         if (b === 'rim' && (rg === 'outer' || rg === 'midrim')) m2 = Math.max(0.3, 1 + (Q.rim_hardship - 30) / 30);
+        m2 *= 1 + SW.leaderPull(Q, b);
         var target = START_SUPPORT[rg][b] * m2;
         // splinters take a share of the Caucus
         if (b === 'rc') target *= (1 - (Q.hawks_split ? 0.15 : 0) - (Q.rimward_split ? 0.2 : 0));
@@ -782,9 +1240,10 @@
   // How much real grievance Dooku's movement can feed on (0 = none, ~1.5 = the Rim is furious).
   SW.grievances = function (Q) {
     Q.rim_grievance = SW.clamp((Q.rim_hardship - 25) / 30 + (Q.corruption - 45) / 45 - Q.rim_enfranchised * 0.8 -
-      Q.slavery_abolished * 0.2 - Math.min(Q.rim_relief, 3) * 0.1 - Q.anti_corruption * 0.2 - Q.federal_compact, 0, 1.6);
+      Q.slavery_abolished * 0.2 - Math.min(Q.rim_relief, 3) * 0.1 - Q.anti_corruption * 0.2 - Q.federal_compact +
+      SW.leaderSum(Q, 'rimGriev', ['rim', 'rfc']), 0, 1.6);
     Q.guild_grievance = SW.clamp(Q.guild_embargo * 0.12 + (Q.tf_broken_up ? 0.5 : 0) + (Q.trade_tax ? 0.2 : 0) +
-      (40 - Q.guild_relation) / 50 + (Q.corruption - 50) / 80, 0, 1.6);
+      (40 - Q.guild_relation) / 50 + (Q.corruption - 50) / 80 + SW.leaderSum(Q, 'guildGriev', ['guild']), 0, 1.6);
   };
 
   // Secession: regions with strong separatism lose delegations.
@@ -872,6 +1331,11 @@
 
   // What each faction wants right now. Unmet agendas make its dissent climb every turn.
   SW.factionAgendas = function (Q) {
+    for (var g = 0; g < SW.FACTIONS.length; g++) {
+      var fl = SW.FACTIONS[g], L = SW.leader(Q, fl);
+      if (L.agenda) { Q[fl + '_unmet'] = L.agenda(Q) ? 1 : 0; Q[fl + '_demand'] = L.demand; }
+    }
+    if (SW.leader(Q, 'inst').agenda) return;
     var A = {
       inst: [Q.corruption > 62 && !Q.anti_corruption, 'an honest Senate (an Ethics Commission or lower corruption)'],
       rimward: [(Q.rim_hardship > 40 && !Q.rim_enfranchised) || (Q.date >= 60 && !Q.slavery_abolished && Q.slavery_campaign < 1),
@@ -911,12 +1375,18 @@
 
   // ------------------------------------------------------------------ every visit
   SW.everyVisit = function (Q) {
+    SW.scaleChanges(Q);
     SW.updateDissent(Q);
     SW.computeSupport(Q);
     SW.recomputeGovt(Q);
     SW.factionAgendas(Q);
     SW.cardAvailability(Q);
     SW.grievances(Q);
+    SW.leaderPressure(Q);
+    Q.hawk_split_ready = (Q.hawk_dissent >= SW.splitAt(Q, 'hawk') && !Q.hawks_split) ? 1 : 0;
+    Q.rimward_split_ready = (Q.rimward_dissent >= SW.splitAt(Q, 'rimward') && !Q.rimward_split) ? 1 : 0;
+    Q.pacifist_split_ready = (Q.pacifist_dissent >= SW.splitAt(Q, 'pacifist') && !Q.pacifists_resigned) ? 1 : 0;
+    Q.inst_split_ready = (Q.inst_dissent >= SW.splitAt(Q, 'inst') && !Q.inst_crisis) ? 1 : 0;
     var fb = SW.forces(Q);
     Q.force_rep = fb.rep; Q.force_sith = fb.sith; Q.force_ratio = fb.ratio;
     Q.unease = Math.floor(Q.grand_plan / 20);
@@ -954,9 +1424,17 @@
     // relations with other blocs fade back toward their natural attitude unless tended
     var REL_BASE = {mod: 42, pal: 38, guild: 22, rim: 32, sec: 28, ind: 40, cis: 12, rfc: 40};
     var rf = Q.months_per_turn > 0 ? Q.months_per_turn / 3 : 0.1;
-    for (var rb in REL_BASE) Q[rb + '_relation'] += (REL_BASE[rb] - Q[rb + '_relation']) * 0.07 * rf;
+    for (var rb in REL_BASE) {
+      var lb = SW.leader(Q, rb).relBase;
+      var base = lb !== undefined ? lb : REL_BASE[rb];
+      Q[rb + '_relation'] += (base - Q[rb + '_relation']) * 0.07 * rf;
+    }
     Q.assassination_roll = Math.random();
-    if (Q.rc_in_govt && Q.govt_blocs && Q.govt_blocs.length > 1) Q.coalition_dissent += 0.12;
+    if (Q.rc_in_govt && Q.govt_blocs && Q.govt_blocs.length > 1) {
+      var strain = 0.12;
+      for (var gb = 0; gb < Q.govt_blocs.length; gb++) if (Q.govt_blocs[gb] !== 'rc') strain += 0.25 * (SW.firm(Q, Q.govt_blocs[gb]) - 0.5);
+      Q.coalition_dissent += Math.max(0.04, strain);
+    }
     SW.drift(Q);
     SW.secession(Q);
     if (Q.months_per_turn > 0 || !Q.finale) {

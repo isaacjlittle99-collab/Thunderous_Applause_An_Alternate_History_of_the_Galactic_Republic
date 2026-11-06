@@ -1,0 +1,56 @@
+title: A Fight for the Leadership
+subtitle: One of the Senate's blocs is choosing who speaks for it.
+tags: event
+view-if: bloc_contest_ready
+priority: 1
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {! SW.prepareContest(Q, 'bloc'); Q.leadership_timer = 6 + Math.floor(Math.random() * 4); !}
+
+= A Fight for the Leadership of the [+ contest_group_name +]
+
+[? if contest_inc_out : [+ contest_inc +] can no longer lead the [+ contest_group_name +], and the bloc must choose a successor. ?][? if not contest_inc_out : [+ contest_ch +] has challenged [+ contest_inc +] for the leadership of the [+ contest_group_name +]. The galaxy has changed, and the bloc's senators are asking whether their leader has changed with it. ?]
+
+**[+ contest_inc +]** ([+ contest_inc_tag +]). [+ contest_inc_blurb +]
+
+**[+ contest_ch +]** ([+ contest_ch_tag +]). [+ contest_ch_blurb +]
+
+[+ contest_odds +] Whoever wins will decide how the bloc votes, whom it will govern with, and how far it will compromise.
+
+- @stay_out: Stay out of it.
+- @back_inc: Quietly back [+ contest_inc +].
+- @back_ch: Quietly back [+ contest_ch +].
+- @offer: [+ contest_offer +], to help [+ contest_soft +].
+
+@stay_out
+subtitle: The bloc settles its own affairs.
+on-arrival: {! SW.resolveContest(Q, ''); !}
+go-to: contest_result
+
+@back_inc
+view-if: not contest_inc_out
+choose-if: contest_can_pay
+unavailable-subtitle: Needs [+ contest_cost +] political capital.
+subtitle: Costs [+ contest_cost +] political capital. They will remember who helped, and who didn't.
+on-arrival: {! Q.capital -= Q.contest_cost; SW.resolveContest(Q, 'inc'); !}
+go-to: contest_result
+
+@back_ch
+view-if: not contest_inc_out
+choose-if: contest_can_pay
+unavailable-subtitle: Needs [+ contest_cost +] political capital.
+subtitle: Costs [+ contest_cost +] political capital. They will remember who helped, and who didn't.
+on-arrival: {! Q.capital -= Q.contest_cost; SW.resolveContest(Q, 'ch'); !}
+go-to: contest_result
+
+@offer
+view-if: not contest_inc_out
+subtitle: No capital, but the promise will cost us inside the Caucus.
+on-arrival: {! SW.contestOffer(Q); SW.resolveContest(Q, 'offer'); !}
+go-to: contest_result
+
+@contest_result
+
+[? if contest_changed : **[+ contest_winner +]** now leads the [+ contest_group_name +]. ?][? if not contest_changed : **[+ contest_winner +]** holds on to the leadership of the [+ contest_group_name +]. ?] [? if contest_backed_won : Our help did not go unnoticed. ?][? if contest_backed_lost : Our meddling did not go unnoticed either, and the winner will remember it. ?]
+
+[+ contest_effect +]

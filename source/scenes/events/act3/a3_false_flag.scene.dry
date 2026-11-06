@@ -33,7 +33,7 @@ else { Q.ff_exposed = 0; Q.premature_accusations += 1; Q.faith -= 2; for (var j 
 subtitle: Principled, and unpopular.
 on-arrival: {!
 var st = {pal: 1, sec: 0.95, mod: 0.55 + Q.fear / 250, guild: 0.5, ind: 0.55, rim: 0.4, rfc: 0.3};
-Q.ff_vote = SW.vote(Q, st, 0);
+Q.ff_vote = SW.vote(Q, st, 0, 'powers');
 Q.vote_html = SW.voteBanner('Emergency powers', Q.ff_vote);
 if (Q.ff_vote >= 50) { Q.emergency_powers += 2; Q.clones = Q.kamino_army ? 3 : 0; }
 Q.pacifist_dissent -= 5;
@@ -45,7 +45,7 @@ Q.pacifist_dissent -= 5;
 subtitle: The public demands action.
 on-arrival: {!
 var st = {pal: 1, sec: 0.95, mod: 0.55 + Q.fear / 250, guild: 0.5, ind: 0.55, rim: 0.4, rfc: 0.3};
-Q.ff_vote = SW.vote(Q, st, 1);
+Q.ff_vote = SW.vote(Q, st, 1, 'powers');
 Q.vote_html = SW.voteBanner('Emergency powers', Q.ff_vote);
 if (Q.ff_vote >= 50) { Q.emergency_powers += 2; Q.clones = Q.kamino_army ? 3 : 0; }
 Q.pacifist_dissent += 8;
