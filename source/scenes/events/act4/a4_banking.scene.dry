@@ -18,7 +18,7 @@ The war is bankrupting the Republic. The Chancellor's allies propose to **deregu
 subtitle: [? if bonteri_contact : +1 peace channel. The Security Bloc is furious. ?][? if not bonteri_contact : The Security Bloc is furious. ?]
 on-arrival: {!
 var st = {pal: 0.95, sec: 0.95, mod: 0.5, guild: 0.75, ind: 0.45, rim: 0.3, rfc: 0.25};
-Q.bk_vote = SW.vote(Q, st, 0);
+Q.bk_vote = SW.vote(Q, st, 0, '-regulate');
 Q.vote_html = SW.voteBanner('Banking Deregulation Bill', Q.bk_vote);
 if (Q.bk_vote >= 50) { Q.clones += 1.5; Q.corruption += 2; Q.war_balance += 0.5; Q.banking_dereg = 1; }
 else if (Q.bonteri_contact) { Q.peace_talks += 1; }
@@ -33,7 +33,7 @@ Q.sec_relation -= 6; Q.pacifist_dissent -= 4;
 subtitle: The war goes better; corruption and debt grow.
 on-arrival: {!
 var st = {pal: 0.95, sec: 0.95, mod: 0.5, guild: 0.75, ind: 0.45, rim: 0.3, rfc: 0.25};
-Q.bk_vote = SW.vote(Q, st, 1);
+Q.bk_vote = SW.vote(Q, st, 1, '-regulate');
 Q.vote_html = SW.voteBanner('Banking Deregulation Bill', Q.bk_vote);
 if (Q.bk_vote >= 50) { Q.clones += 1.5; Q.corruption += 2; Q.war_balance += 0.5; Q.banking_dereg = 1; }
 Q.hawk_dissent -= 4; Q.pacifist_dissent += 6;

@@ -8,7 +8,7 @@ new-page: true
 face-image: img/ev_senate.svg
 on-arrival: {!
 var st = {mod: 0.85, guild: 0.04, rim: (Q.tax_stance == 2 ? 0.8 : (Q.tax_stance == 0 ? 0.2 : 0.4)), sec: 0.55, ind: 0.5, pal: 0.7};
-Q.tax_vote = SW.vote(Q, st, Q.tax_stance >= 1 ? 1 : 0);
+Q.tax_vote = SW.vote(Q, st, Q.tax_stance >= 1 ? 1 : 0, 'regulate');
 Q.tax_passed = Q.tax_vote >= 50 ? 1 : 0;
 Q.vote_html = SW.voteBanner('Taxation of the trade routes', Q.tax_vote);
 if (Q.tax_passed) {

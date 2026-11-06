@@ -6,7 +6,7 @@ max-visits: 1
 priority: 3
 new-page: true
 face-image: img/ev_senate.svg
-on-arrival: valorum_fallen = 1; mod_leader = "Davan Quill"; election_due = 1
+on-arrival: {! Q.valorum_fallen = 1; SW.setLeader(Q, 'mod', 'quill'); Q.election_due = 1; !}
 
 = The End of Valorum's Term
 

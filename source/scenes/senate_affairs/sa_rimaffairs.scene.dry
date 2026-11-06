@@ -45,7 +45,7 @@ on-arrival: {!
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.6, guild: 0.3, rim: 0.7, sec: 0.45, ind: 0.45, pal: 0.4, cis: 0.2}, true);
 st.rim += Q.slavery_campaign * 0.05; st.mod += Q.slavery_campaign * 0.05;
-Q.ab_vote = SW.vote(Q, st, 1);
+Q.ab_vote = SW.vote(Q, st, 1, 'rim');
 Q.vote_html = SW.voteBanner('Abolition of Slavery Act', Q.ab_vote);
 if (Q.ab_vote >= 50) { Q.slavery_abolished = 1; Q.rim_hardship += 2; Q.rim_relation += 6; Q.faith += 2; this.achieve('abolition'); }
 !}
@@ -62,7 +62,7 @@ unavailable-subtitle: Needs 2 political capital and a seat in government.
 on-arrival: {!
 Q.capital -= 2;
 var st = SW.stance(Q, {mod: 0.35, guild: 0.25, rim: 0.95, sec: 0.2, ind: 0.6, pal: 0.35, cis: 0.7}, true);
-Q.en_vote = SW.vote(Q, st, 1);
+Q.en_vote = SW.vote(Q, st, 1, 'rim');
 Q.vote_html = SW.voteBanner('Rim Enfranchisement Act', Q.en_vote);
 if (Q.en_vote >= 50) { Q.rim_enfranchised = 1; Q.outer_sep -= 10; Q.midrim_sep -= 6; Q.rim_relation += 10; Q.mod_relation -= 5; Q.outer_rc += 3; this.achieve('enfranchised'); }
 !}

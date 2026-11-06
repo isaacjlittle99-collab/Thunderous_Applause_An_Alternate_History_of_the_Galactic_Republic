@@ -4,7 +4,7 @@ on-arrival: {!
 var bump = Q.valorum_scandal ? 0.12 : 0;
 var relief = Q.relief_fleet ? -0.12 : 0;
 var st = {pal: 1, guild: 0.95, rim: 0.62 + bump + relief, sec: 0.5 + bump + relief, ind: 0.58 + bump + relief, mod: 0.15 + bump / 2};
-Q.vonc_vote = SW.vote(Q, st, Q.vonc_rc);
+Q.vonc_vote = SW.vote(Q, st, Q.vonc_rc, 'vonc');
 Q.vonc_passed = Q.vonc_vote >= 50 ? 1 : 0;
 Q.vote_html = SW.voteBanner('No confidence in Chancellor Valorum', Q.vonc_vote);
 if (Q.vonc_passed) {

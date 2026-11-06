@@ -29,7 +29,7 @@ The extension motion is ruled out of order. Palpatine bows graciously and announ
 view-if: not term_limits_protected
 on-arrival: {!
 var st = {pal: 1, sec: 0.8, mod: 0.45 + Q.fear / 200, guild: 0.55, ind: 0.45 + Q.fear / 250, rim: 0.35, rfc: 0.2, cis: 0.15};
-Q.tl_vote = SW.vote(Q, st, 0);
+Q.tl_vote = SW.vote(Q, st, 0, 'powers');
 Q.vote_html = SW.voteBanner('Extension of the Chancellor\'s term', Q.tl_vote);
 if (Q.tl_vote >= 50) { Q.term_extended = 1; Q.emergency_powers += 1; Q.next_election_date = 999; Q.pal_relation -= 6; }
 else { Q.pal_can_run = 0; Q.election_due = 1; Q.senate_resolve += 1; Q.pal_relation -= 10; this.achieve('term_limit_held'); }
@@ -40,7 +40,7 @@ go-to: term_result
 view-if: not term_limits_protected
 on-arrival: {!
 var st = {pal: 1, sec: 0.8, mod: 0.45 + Q.fear / 200, guild: 0.55, ind: 0.45 + Q.fear / 250, rim: 0.35, rfc: 0.2, cis: 0.15};
-Q.tl_vote = SW.vote(Q, st, 1);
+Q.tl_vote = SW.vote(Q, st, 1, 'powers');
 Q.vote_html = SW.voteBanner('Extension of the Chancellor\'s term', Q.tl_vote);
 if (Q.tl_vote >= 50) { Q.term_extended = 1; Q.emergency_powers += 1; Q.next_election_date = 999; Q.pal_relation += 6; }
 else { Q.pal_can_run = 0; Q.election_due = 1; }

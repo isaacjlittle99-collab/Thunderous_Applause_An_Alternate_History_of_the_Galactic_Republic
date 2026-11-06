@@ -23,7 +23,7 @@ No one in the Senate authorised it. No one in the Jedi Order admits to knowing. 
 subtitle: A secret army, made answerable to the Senate. Needs a majority.
 on-arrival: {!
 var st = SW.stance(Q, {mod: 0.65, guild: 0.4, rim: 0.55, sec: 0.5, ind: 0.6, pal: 0.3, cis: 0.4}, true);
-Q.ko_vote = SW.vote(Q, st, 1);
+Q.ko_vote = SW.vote(Q, st, 1, 'oversight');
 Q.vote_html = SW.voteBanner('Kamino Oversight Act', Q.ko_vote);
 if (Q.ko_vote >= 50) { Q.army_oversight = 1; Q.evidence_public += 1; Q.fear += 3; if (Math.random() < 0.4) Q.chips_found = 1; this.achieve('oversight'); }
 else { Q.fear += 4; Q.evidence_public += 0.5; }
@@ -38,7 +38,7 @@ Q.grand_plan -= 4;
 subtitle: Removes the army entirely. The Republic would face any future war without it.
 on-arrival: {!
 var st = SW.stance(Q, {mod: 0.45, guild: 0.55, rim: 0.6, sec: 0.1, ind: 0.55, pal: 0.2, cis: 0.6}, true);
-Q.kd_vote = SW.vote(Q, st, 1);
+Q.kd_vote = SW.vote(Q, st, 1, '-army');
 Q.vote_html = SW.voteBanner('Kamino Decommissioning Act', Q.kd_vote);
 if (Q.kd_vote >= 50) { Q.kamino_army = 0; Q.sec_relation -= 10; Q.hawk_dissent += 10; Q.grand_plan -= 8; this.achieve('no_army'); }
 Q.evidence_public += 1; Q.fear += 3;

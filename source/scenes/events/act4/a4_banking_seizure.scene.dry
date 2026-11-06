@@ -5,7 +5,7 @@ view-if: war and date >= 156 and (pal_chancellor or puppet_chancellor) and not b
 max-visits: 1
 new-page: true
 face-image: img/ev_trade.svg
-on-arrival: banking_seizure_seen = 1
+on-arrival: {! Q.banking_seizure_seen = 1; if (Q.guild_leader_id === 'clovis') SW.setLeader(Q, 'guild', 'san_hill'); !}
 
 = The Banking Clan Crisis
 
@@ -27,7 +27,7 @@ The proposal is withdrawn. Rush Clovis, before vanishing, sends the Caucus a dat
 view-if: not banking_independent
 on-arrival: {!
 var st = {pal: 1, sec: 0.8, mod: 0.45, guild: 0.25, ind: 0.45, rim: 0.4, rfc: 0.3};
-Q.bs_vote = SW.vote(Q, st, 0);
+Q.bs_vote = SW.vote(Q, st, 0, 'powers');
 Q.vote_html = SW.voteBanner('Supervision of the Banking Clan', Q.bs_vote);
 if (Q.bs_vote >= 50) { Q.emergency_powers += 1; Q.banks_seized = 1; Q.war_balance += 0.5; }
 !}
@@ -40,7 +40,7 @@ if (Q.bs_vote >= 50) { Q.emergency_powers += 1; Q.banks_seized = 1; Q.war_balanc
 view-if: not banking_independent
 on-arrival: {!
 var st = {pal: 1, sec: 0.8, mod: 0.45, guild: 0.25, ind: 0.45, rim: 0.4, rfc: 0.3};
-Q.bs_vote = SW.vote(Q, st, 1);
+Q.bs_vote = SW.vote(Q, st, 1, 'powers');
 Q.vote_html = SW.voteBanner('Supervision of the Banking Clan', Q.bs_vote);
 if (Q.bs_vote >= 50) { Q.emergency_powers += 1; Q.banks_seized = 1; Q.war_balance += 0.5; }
 !}

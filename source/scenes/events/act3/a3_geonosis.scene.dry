@@ -61,12 +61,12 @@ var html = '';
 Q.geo_outcome = '';
 if (Q.geo_choice === 'oversight') {
     var ov = SW.stance(Q, {pal: 0.25, sec: 0.55, mod: 0.65 + Q.fear / 300, guild: 0.45, ind: 0.65, rim: 0.55, rfc: 0.5, cis: 0}, true);
-    var v = SW.vote(Q, ov, 1);
+    var v = SW.vote(Q, ov, 1, 'oversight');
     html += SW.voteBanner('Deployment of the clone army under Senate command', v);
     if (v >= 50) { Q.geo_outcome = 'oversight'; Q.army_oversight = 1; Q.navy_loyalty += 12; }
 }
 if (!Q.geo_outcome && Q.kamino_army) {
-    var v2 = SW.vote(Q, ep, Q.geo_choice === 'yes' ? 1 : 0);
+    var v2 = SW.vote(Q, ep, Q.geo_choice === 'yes' ? 1 : 0, 'powers');
     html += SW.voteBanner('Emergency powers for the Chancellor', v2);
     if (v2 >= 50) { Q.geo_outcome = 'powers'; Q.emergency_powers += Q.ep_cost; if (Q.rc_chancellor) Q.rc_emergency_taken += Q.ep_cost; }
 }

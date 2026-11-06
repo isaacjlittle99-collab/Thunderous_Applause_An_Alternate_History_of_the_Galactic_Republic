@@ -5,25 +5,25 @@ view-if: date >= 48
 max-visits: 1
 new-page: true
 face-image: img/ev_war.svg
-on-arrival: sec_leader = "Wilhuff Tarkin"
+on-arrival: tarkin_rising = 1
 
 = The Butcher of the Rim
 
-**Wilhuff Tarkin** of Eriadu, a former officer of the Outland Regions Security Force, has crushed a pirate confederation in the Seswenna sector with breathtaking ruthlessness. The pirates are gone. So are several villages that may or may not have sheltered them. The Security Bloc has made him its champion.
+**Wilhuff Tarkin** of Eriadu, a former officer of the Outland Regions Security Force, has crushed a pirate confederation in the Seswenna sector with breathtaking ruthlessness. The pirates are gone. So are several villages that may or may not have sheltered them. The Security Bloc has found a new champion, and [+ sec_leader +] a dangerous rival. If fear grips the Senate, Tarkin could take the bloc's leadership, and he believes in rule through fear of force.
 
 - @praise: Praise his effectiveness.
 - @condemn: Condemn his brutality.
 - @ignore: Say nothing.
 
 @praise
-subtitle: The Security Bloc approves; the Rim is appalled.
-on-arrival: sec_relation += 6; rim_relation -= 6; hawk_dissent -= 3; rimward_dissent += 5; rim_hardship -= 1
+subtitle: The Security Bloc approves; the Rim is appalled. Tarkin's star rises faster.
+on-arrival: sec_relation += 6; rim_relation -= 6; hawk_dissent -= 3; rimward_dissent += 5; rim_hardship -= 1; tarkin_rising = 2
 
 Tarkin sends a brief, correct note of thanks.
 
 @condemn
-subtitle: The Rim is grateful; the Security Bloc is not.
-on-arrival: rim_relation += 5; sec_relation -= 6; pacifist_dissent -= 3; hawk_dissent += 3; faith += 0.5
+subtitle: The Rim is grateful; the Security Bloc is not. Tarkin's rise slows.
+on-arrival: rim_relation += 5; sec_relation -= 6; pacifist_dissent -= 3; hawk_dissent += 3; faith += 0.5; tarkin_rising = 0.5
 
 Tarkin does not reply. He remembers.
 
