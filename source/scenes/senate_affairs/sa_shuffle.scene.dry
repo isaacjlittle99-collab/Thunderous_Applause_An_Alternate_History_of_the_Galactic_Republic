@@ -1,0 +1,8 @@
+title: Shuffle Committees
+subtitle: Reassign the committee chairs (Chancellor only).
+is-card: true
+tags: senate_affairs
+card-image: img/card_shuffle.svg
+view-if: shuffle_committees_timer <= 0 and rc_chancellor
+on-arrival: {! Q.turn_actions += 1; Q.shuffle_committees_timer = 6; Q.last_card_timer = 'shuffle_committees'; for (var i = 0; i < SW.COMMITTEES.length; i++) if (Q['chair_' + SW.COMMITTEES[i]] === 'rc') { Q['chair_' + SW.COMMITTEES[i]] = 'ind'; } Q.leverage = Math.round(Q.rc_r) + 15; Q.coalition_dissent += 1; !}
+go-to: rec_chancellor_election.el_chairs

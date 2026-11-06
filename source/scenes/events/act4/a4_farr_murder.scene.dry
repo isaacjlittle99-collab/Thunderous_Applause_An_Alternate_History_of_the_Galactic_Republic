@@ -1,0 +1,18 @@
+title: Death in the Senate
+subtitle: Onaconda Farr has been poisoned.
+tags: event
+view-if: war and date >= 144 and not farr_dead and not farr_murder_seen
+max-visits: 1
+new-page: true
+face-image: img/ev_shadow.svg
+on-arrival: {!
+Q.farr_murder_seen = 1;
+var risk = Q.farr_protected ? 0.2 : 0.85;
+if (Math.random() < risk) { Q.farr_dead = 1; Q.adv_farr = 0; Q.rimward_dissent += 8; Q.evidence += 0.3; Q.fear += 2; }
+else { Q.farr_foiled = 1; Q.evidence += 0.8; }
+SW.countAdvisors(Q);
+!}
+
+= Death in the Senate
+
+[? if farr_dead : Senator **Onaconda Farr** of Rodia has been found dead in his apartment, poisoned. The killer is his own aide, Lolo Purs, who wanted to stop any separate peace with the Confederacy. The Rim has lost its most beloved voice, and the Caucus has lost a friend. ?][? if farr_foiled : An attempt to poison Onaconda Farr has been foiled. His aide, Lolo Purs, is arrested. Under questioning she admits she was promised a fortune by "someone in the Chancellery's orbit" if Farr died before he could negotiate. ?]

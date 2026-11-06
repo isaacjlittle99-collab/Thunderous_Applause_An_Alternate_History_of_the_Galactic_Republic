@@ -1,0 +1,37 @@
+title: The Yinchorri Uprising
+subtitle: A reptilian warrior people has risen against the Republic.
+tags: event
+view-if: date >= 3
+max-visits: 1
+new-page: true
+face-image: img/ev_jedi.svg
+
+= The Yinchorri Uprising
+
+The Yinchorri, a fierce people on the edge of Republic space, have attacked neighbouring worlds and murdered a Jedi Knight. The Republic has no army. It has only the Judicial Forces, overstretched and slow, and the Jedi Order, which has dispatched a team of Masters to end the crisis.
+
+The Senate is in uproar. Some senators demand that the Republic build real military forces. Others ask why the Chancellery took so long to respond at all.
+
+- @jedi: Praise the Jedi and back their mission.
+- @judicials: Insist on a Senate-authorised Judicial Forces deployment.
+- @inquiry: Demand an inquiry into the Chancellery's slow response.
+
+@jedi
+subtitle: The Jedi will remember our support.
+on-arrival: jedi_relation += 6; jedi_standing += 3; fear -= 2
+
+The Jedi Masters end the uprising within weeks. Master Yoda sends the Caucus a short, cryptic message of thanks.
+
+@judicials
+subtitle: −1 political capital. Slower, but under Senate control.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; judicial_forces += 0.5; sec_relation += 4; hawk_dissent -= 4; jedi_relation -= 2
+
+The Caucus wins a vote to expand and deploy the Judicial Forces. They arrive after the Jedi have already done most of the work, but the principle has been established: the Senate's security is the Senate's business.
+
+@inquiry
+subtitle: Popular, but it weakens Valorum.
+on-arrival: mod_relation -= 6; rc_momentum += 1; pal_relation += 4; faith -= 1
+
+The inquiry finds that requests for help sat unread in the Chancellery for nine days. The Senator for Naboo, Palpatine, is among the first to sign the Caucus's motion. "We must have a government that acts," he says gently.

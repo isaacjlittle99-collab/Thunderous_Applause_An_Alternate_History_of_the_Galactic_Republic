@@ -1,0 +1,39 @@
+title: Routine Senate Business
+subtitle: Committee hearings, constituent petitions and the endless paperwork of the Republic. Always available.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_routine.svg
+on-arrival: turn_actions += 1; last_card_timer = ""
+new-page: true
+
+= Routine Senate Business
+
+Grand strategy is all very well, but the business of the Republic does not stop for it. Trade disputes need arbitrating, refugee petitions need answering, and somebody has to read the four-thousand-page Hydroponics Subsidy Amendment.
+
+- @favours: Work the corridors for favours.
+- @petitions: Answer the petitions of member worlds.
+- @dinner: Host a quiet dinner for the Caucus.
+- @easy_discard
+
+@favours
+subtitle: +1 political capital.
+on-arrival: capital += 1
+
+You trade a vote on the subsidy bill for a promise to be named later. It is not glamorous, but it is how the Senate works.
+
+@petitions
+subtitle: A little more support in a random region; a little more faith in the Republic.
+on-arrival: {!
+var r = SW.REGIONS[Math.floor(Math.random() * SW.REGIONS.length)];
+Q[r + '_rc'] += 1.5 * SW.unity(Q);
+Q.faith += 0.5;
+Q.petition_region = SW.REGION_NAMES[r];
+!}
+
+Your staff answer every petition from the [+ petition_region +], however small. Word gets around that the Ruusan Caucus still listens.
+
+@dinner
+subtitle: Calms the Caucus a little.
+on-arrival: inst_dissent -= 3; rimward_dissent -= 3; pacifist_dissent -= 3; hawk_dissent -= 3
+
+Over Alderaanian wine and Chandrilan cheese, old grudges soften, at least for an evening.

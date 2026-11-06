@@ -1,0 +1,12 @@
+title: The Republic Collapses
+subtitle: The Separatists have won the war.
+tags: event
+view-if: war and war_balance <= -9.5 and not game_ending
+priority: 50
+new-page: true
+face-image: img/ev_war.svg
+on-arrival: cis_victory = 1; game_ending = 1
+
+= The Republic Collapses
+
+The Confederacy's droid armies have broken through. The Core Worlds are under siege and Coruscant's shields are failing. The Senate votes to sue for peace on whatever terms Count Dooku will allow.

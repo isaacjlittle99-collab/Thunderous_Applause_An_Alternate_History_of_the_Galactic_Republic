@@ -1,0 +1,23 @@
+title: The War for the Republic
+subtitle: Republic against Empire.
+tags: event
+view-if: finale and civil_war_pending and not civil_war_seen
+max-visits: 1
+priority: 9
+new-page: true
+face-image: img/ev_war.svg
+on-arrival: {!
+Q.civil_war_seen = 1;
+var f = SW.forces(Q);
+var rep = f.rep + (Q.free_republic ? Q.member_forces * 0.5 : 0) + (Q.delegation_formed ? 1 : 0);
+var sith = f.sith - (Q.sidious_gone ? 3 : 0);
+if (sith < 0.5) sith = 0.5;
+Q.cw_ratio = Math.round(100 * rep / sith) / 100;
+if (Q.cw_ratio > 1.1) { Q.civil_war_result = 'won'; Q.sidious_defeated = 1; if (!Q.sidious_method) Q.sidious_method = 'civil_war'; }
+else if (Q.cw_ratio >= 0.6) { Q.civil_war_result = 'long'; Q.game_ending = 1; }
+else { Q.civil_war_result = 'lost'; Q.empire_declared = 1; Q.game_ending = 1; }
+!}
+
+= The War for the Republic
+
+[? if civil_war_result = "won" : It is short, and it is terrible. [? if chips_removed : Clone legions loyal to the Senate ?][? if not chips_removed : Judicial cruisers, Defence Pact squadrons and the surviving Jedi ?] converge on Coruscant. [? if sidious_gone : The Sith Lord's servants fight on without their master, and lose. ?][? if not sidious_gone : Darth Sidious is cornered in the Senate building he once ruled, and taken. ?] The Republic has survived, at a price no one will ever forget. ?][? if civil_war_result = "long" : Neither side can win quickly. The galaxy splits in two: an Empire ruling the Core from Coruscant, and a Free Republic holding Alderaan, Corellia, Chandrila, Mon Cala and much of the Rim. The war will last for years. ?][? if civil_war_result = "lost" : The Free Republic is crushed within weeks. Its worlds are occupied, its senators imprisoned or in hiding. The Empire stands. ?]

@@ -1,0 +1,35 @@
+title: Patron Contributions
+subtitle: Raise political capital from the Caucus's patrons.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_credits.svg
+view-if: contributions_timer <= 0
+on-arrival: turn_actions += 1; contributions_timer = 4; last_card_timer = "contributions"
+new-page: true
+
+= Patron Contributions
+
+Politics in the Galactic Senate runs on favours and credits. The Caucus has friends who can provide both, at a price.
+
+- @core: Appeal to wealthy Core patrons.
+- @grassroots: Appeal to the member worlds directly.
+- @guilds: Accept a generous offer from guild-linked donors.
+- @easy_discard
+
+@core
+subtitle: +2 political capital. The Rimward wing dislikes it.
+on-arrival: capital += 2; rimward_dissent += 4
+
+Alderaanian nobles and Chandrilan bankers write generous cheques. The Rimward wing grumbles about "the Caucus of the comfortable".
+
+@grassroots
+subtitle: +1 political capital, a little more faith in the Republic and broader support.
+on-arrival: capital += 1; faith += 0.5; core_rc += 0.5; colonies_rc += 0.5; midrim_rc += 0.5; outer_rc += 0.5
+
+Small donations pour in from a hundred worlds. It is not much money, but it is a great deal of goodwill.
+
+@guilds
+subtitle: +3 political capital. The guilds will expect something; the Caucus will not like it.
+on-arrival: capital += 3; guild_relation += 4; corruption += 1; rimward_dissent += 8; pacifist_dissent += 3; guild_money += 1
+
+The money arrives through three intermediaries and a charitable foundation on Muunilinst. Nobody asks too many questions. That is rather the point.

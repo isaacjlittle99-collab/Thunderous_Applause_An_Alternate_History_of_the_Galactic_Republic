@@ -1,0 +1,43 @@
+title: The Blockade of Naboo
+subtitle: The Trade Federation has surrounded a peaceful world with battleships.
+tags: event
+view-if: date >= 15
+max-visits: 1
+priority: 6
+new-page: true
+face-image: img/ev_naboo.svg
+on-arrival: crisis_months = 5; naboo_jedi = 1; naboo_crisis = 1
+
+= The Blockade of Naboo
+
+[? if tax_passed : In protest at the new taxes, ?][? if not tax_passed : Citing an obscure dispute over plasma tariffs, ?] the Trade Federation has blockaded the small Mid Rim world of **Naboo** with an armada of battleships. Naboo's young Queen, Amidala, has appealed to the Senate. The Senate has referred the matter to a committee.
+
+Chancellor Valorum has secretly sent two Jedi to negotiate a settlement. Naboo's senator, **Palpatine**, says he is "deeply worried" for his people.
+
+*Events will now move month by month.*
+
+- @jedi: Urge the Jedi Council to send a larger mission.
+- @session: Call for an emergency session of the Senate.
+- @talks: Open back-channel talks with the Trade Federation.
+
+@jedi
+subtitle: [? if jedi_relation >= 45 : The Council may listen to us. ?][? if jedi_relation < 45 : The Council does not owe us favours. ?]
+choose-if: jedi_relation >= 45
+unavailable-subtitle: Our relations with the Jedi are too weak.
+on-arrival: naboo_jedi = 2; jedi_relation += 2
+
+After a long audience with Master Windu, the Council agrees to place more Jedi on standby. "Two should be enough," Windu says. "But we will be ready if they are not."
+
+@session
+subtitle: Shows the Caucus cares; changes little.
+on-arrival: faith -= 1; rc_momentum += 1; midrim_rc += 1
+
+The emergency session is swallowed by points of order. Even so, the Caucus is seen to have tried.
+
+@talks
+subtitle: −1 political capital. Someone may let something slip.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; guild_relation += 4; evidence += 0.5; tf_talks = 1
+
+The Federation's envoys are nervous to the point of panic. One, after too much Corellian brandy, mutters that "it is not our decision" and that "he would not allow it". He refuses to say who "he" is.

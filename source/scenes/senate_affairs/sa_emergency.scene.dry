@@ -1,0 +1,37 @@
+title: Emergency Measures
+subtitle: As Chancellor, we could take emergency powers. Should we?
+is-card: true
+tags: senate_affairs
+card-image: img/card_confront.svg
+view-if: emergency_measures_timer <= 0 and rc_chancellor and (war or dooku_movement or emergency_powers > 0)
+on-arrival: turn_actions += 1; emergency_measures_timer = 3; last_card_timer = "emergency_measures"
+new-page: true
+
+= Emergency Measures
+
+The Chancellor currently holds [+ emergency_powers : powers +] emergency powers. Our advisors are divided: some say only a strong executive can win this crisis, others that this is exactly how republics die.
+
+- @request: Ask the Senate for emergency powers.
+- @return: Return emergency powers to the Senate.
+- @martial: Impose martial law in seceding sectors.
+- @easy_discard
+
+@request
+subtitle: +2 emergency powers. The war goes better; the Pacifists are horrified.
+on-arrival: emergency_powers += 2; war_balance += 1 if war; fear -= 4; pacifist_dissent += 10; rc_emergency_taken += 2; faith -= 1
+
+The Senate grants our Chancellor sweeping emergency powers, with thunderous applause.
+
+@return
+view-if: emergency_powers > 0
+subtitle: −2 emergency powers. Faith rises; the Hawks worry.
+on-arrival: emergency_powers -= 2; faith += 2; fear += 2; hawk_dissent += 4; rc_emergency_taken -= 2; senate_resolve += 0.5
+
+The Chancellor returns powers to the Senate. Some call it weakness. History may call it something else.
+
+@martial
+view-if: dooku_movement or war
+subtitle: +1 emergency powers. Secession slows; faith falls.
+on-arrival: emergency_powers += 1; outer_sep -= 5; midrim_sep -= 4; faith -= 3; rim_relation -= 8; rc_emergency_taken += 1
+
+Republic marshals take control of a dozen wavering sectors. Secession slows. So does the Rim's trust.

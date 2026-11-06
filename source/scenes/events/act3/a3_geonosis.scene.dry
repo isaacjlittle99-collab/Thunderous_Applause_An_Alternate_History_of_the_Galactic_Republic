@@ -1,0 +1,94 @@
+title: The Battle of Geonosis
+subtitle: Jedi are trapped on Geonosis. The Senate must decide whether to go to war.
+tags: event
+view-if: date >= 135 and dooku_movement and not war and not geonosis_seen and (seceded_total >= 5 or sep_total >= 42)
+max-visits: 1
+priority: 5
+new-page: true
+face-image: img/ev_war.svg
+on-arrival: {!
+Q.geonosis_seen = 1;
+Q.anakin_jedi = Q.anakin_found ? 1 : 0;
+Q.crisis_months = 0;
+Q.droid_armies = 3.5 + Q.seceded_total / 8 + (Q.tf_droids ? 1 : 0) - (Q.tf_droids_limited ? 1 : 0) - (Q.tf_broken_up ? 0.8 : 0);
+Q.fear += 10;
+Q.ep_cost = 2 + (Q.mca_result === 'passed' ? 1 : 0);
+!}
+
+= The Battle of Geonosis
+
+On Geonosis, the Jedi have discovered a vast droid army being built for the Confederacy. Obi-Wan Kenobi has been captured, and Anakin Skywalker and Padmé Amidala have gone after him. The Jedi Council is sending every Knight it has. They will be massacred without support.
+
+[? if kamino_army : The clone army of Kamino is ready, but the Senate has never authorised it. ?][? if not kamino_army : The clone army was decommissioned. The Republic has only the Judicial Forces ([+ judicial_forces : strength +]) and whatever member worlds will send. ?] [? if mca_result = "oversight" : Under the Caucus's amendment, any army deployed now would answer to a Senate oversight committee. ?]
+
+In an emergency session, a Gungan representative rises to move that the Senate grant the Chancellor **emergency powers** to deploy the army. [? if pal_chancellor : Palpatine accepts the suggestion with every appearance of reluctance. ?]
+
+- @powers_no: Vote against emergency powers.
+- @powers_yes: Vote for emergency powers.
+- @oversight: Move to deploy the clones under Senate command, without emergency powers.
+- @judicials: Send the Judicial Forces and the Defence Pact instead.
+
+@powers_no
+subtitle: The Pacifists will be proud.
+on-arrival: geo_choice = "no"; pacifist_dissent -= 5; hawk_dissent += 5
+go-to: geo_vote
+
+@powers_yes
+subtitle: The Hawks will be relieved.
+on-arrival: geo_choice = "yes"; hawk_dissent -= 5; pacifist_dissent += 8
+go-to: geo_vote
+
+@oversight
+view-if: kamino_army and not army_oversight
+subtitle: −1 political capital. An army, but answerable to the Senate.
+choose-if: capital >= 1 and (senate_resolve >= 2 or rc_in_govt or rc_r >= 15)
+unavailable-subtitle: Needs 1 political capital, and either some Senate resolve, a seat in government, or a large Caucus.
+on-arrival: capital -= 1; geo_choice = "oversight"
+go-to: geo_vote
+
+@judicials
+view-if: judicial_forces >= 4 or pact_formed or not kamino_army
+subtitle: The Senate keeps control, but our forces are thin.
+on-arrival: geo_choice = "judicials"; hawk_dissent -= 2
+go-to: geo_vote
+
+@geo_vote
+new-page: true
+on-arrival: {!
+var ep = {pal: 1, sec: 0.95, mod: 0.5 + Q.fear / 200, guild: 0.45, ind: 0.5 + Q.fear / 250, rim: 0.4, rfc: 0.3, cis: 0};
+var html = '';
+Q.geo_outcome = '';
+if (Q.geo_choice === 'oversight') {
+    var ov = SW.stance(Q, {pal: 0.25, sec: 0.55, mod: 0.65 + Q.fear / 300, guild: 0.45, ind: 0.65, rim: 0.55, rfc: 0.5, cis: 0}, true);
+    var v = SW.vote(Q, ov, 1);
+    html += SW.voteBanner('Deployment of the clone army under Senate command', v);
+    if (v >= 50) { Q.geo_outcome = 'oversight'; Q.army_oversight = 1; Q.navy_loyalty += 12; }
+}
+if (!Q.geo_outcome && Q.kamino_army) {
+    var v2 = SW.vote(Q, ep, Q.geo_choice === 'yes' ? 1 : 0);
+    html += SW.voteBanner('Emergency powers for the Chancellor', v2);
+    if (v2 >= 50) { Q.geo_outcome = 'powers'; Q.emergency_powers += Q.ep_cost; }
+}
+if (!Q.geo_outcome) Q.geo_outcome = 'none';
+Q.vote_html = html;
+// the war begins either way: the Confederacy will not stand down now
+Q.war = 1;
+Q.jedi_generals = 1;
+if (Q.geo_outcome === 'oversight' || Q.geo_outcome === 'powers') { Q.clones = 5; Q.war_balance = 1; Q.jedi_strength -= 0.5; }
+else { Q.clones = 0; Q.war_balance = -2 + Q.judicial_forces * 0.2 + Q.member_forces * 0.2; Q.jedi_strength -= 2; Q.jedi_standing -= 5; }
+var idx = Q.parties.indexOf('cis');
+if (idx >= 0) {
+    Q.parties.splice(idx, 1);
+    for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_cis'] = 0;
+}
+Q.clear_hand = 1;
+SW.senateSession(Q);
+!}
+
+= The Clone Wars Begin
+
+[+ vote_html +]
+
+[? if geo_outcome = "powers" : The Senate grants the Chancellor emergency powers, to thunderous applause. Within hours, the Chancellor authorises the creation of the **Grand Army of the Republic**. Clone troopers led by Master Yoda arrive on Geonosis in time to rescue the surviving Jedi. ?][? if geo_outcome = "oversight" : The Senate itself orders the clones into battle, under a standing oversight committee. The Chancellor receives no new powers. Clone troopers arrive on Geonosis in time to rescue the surviving Jedi. ?][? if geo_outcome = "none" : The Senate refuses to hand over its authority. Judicial cruisers and Defence Pact squadrons race to Geonosis and arrive too late for many of the Jedi. The Republic has kept its constitution, but its first battle has been bloody. ?]
+
+The Separatist senators walk out of the rotunda for the last time. The **Clone Wars** have begun.

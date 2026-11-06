@@ -1,0 +1,34 @@
+title: The Taxation Vote
+subtitle: The Senate votes on Valorum's taxation of the trade routes.
+tags: event
+view-if: date >= 6 and trade_tax_proposed
+max-visits: 1
+priority: 4
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {!
+var st = {mod: 0.85, guild: 0.04, rim: (Q.tax_stance == 2 ? 0.8 : (Q.tax_stance == 0 ? 0.2 : 0.4)), sec: 0.55, ind: 0.5, pal: 0.7};
+Q.tax_vote = SW.vote(Q, st, Q.tax_stance >= 1 ? 1 : 0);
+Q.tax_passed = Q.tax_vote >= 50 ? 1 : 0;
+Q.vote_html = SW.voteBanner('Taxation of the trade routes', Q.tax_vote);
+if (Q.tax_passed) {
+    Q.trade_tax = 1; Q.guild_embargo += 2; Q.corporate_sep += 6; Q.treasury += 2;
+    if (Q.tax_stance == 2) { Q.rim_relief += 1; Q.rim_hardship -= 3; }
+} else {
+    Q.core_mod -= 2; Q.colonies_mod -= 2; Q.corruption += 2; Q.rim_hardship += 2;
+}
+!}
+
+= The Taxation Vote
+
+[+ vote_html +]
+
+[? if tax_passed : The bill passes. The free-trade zones are no more. Chancellor Valorum calls it a victory for the whole Republic. The Trade Federation calls it theft, and its delegation walks out of the chamber. There are rumours that the Federation is moving battleships toward the Mid Rim. ?][? if tax_passed and tax_stance = 2 : Thanks to the Caucus's amendment, the first patrol frigates are already being commissioned for the Rim. ?]
+
+[? if not tax_passed : The bill fails. The guilds have bought enough votes to bury it, and Valorum's authority takes a heavy blow. The Senate HoloNet channels replay the moment the Chancellor sat down, defeated, again and again. ?]
+
+- @ok: The Senate moves on to other business.
+
+@ok
+
+Somewhere far from the rotunda, a hooded figure is pleased. Either outcome serves him.

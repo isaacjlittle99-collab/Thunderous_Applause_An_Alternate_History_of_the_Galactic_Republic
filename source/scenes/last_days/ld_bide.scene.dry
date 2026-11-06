@@ -1,0 +1,20 @@
+title: Bide Our Time
+subtitle: Wait, gather strength, and watch.
+is-card: true
+tags: last_days
+card-image: img/card_routine.svg
+view-if: finale
+on-arrival: turn_actions += 1; last_card_timer = ""
+new-page: true
+
+= Bide Our Time
+
+Sometimes the wisest move is not to move.
+
+- @do: Bide Our Time.
+- @easy_discard
+
+@do
+on-arrival: capital += 1; inst_dissent -= 4; rimward_dissent -= 4; pacifist_dissent -= 4; hawk_dissent -= 4
+
+The Caucus waits, and steadies its nerves.

@@ -1,0 +1,20 @@
+title: Appeal to the Navy
+subtitle: Remind the Navy whom it serves.
+is-card: true
+tags: last_days
+card-image: img/card_forces.svg
+view-if: finale and clones > 0 and not ld_navy_used_today
+on-arrival: turn_actions += 1; ld_navy_used_today = 1; last_card_timer = ""
+new-page: true
+
+= Appeal to the Navy
+
+The Republic Navy's officers took an oath to the constitution.
+
+- @do: Appeal to the Navy.
+- @easy_discard
+
+@do
+on-arrival: navy_loyalty += 10
+
+Admirals receive personal messages from the senators of their home worlds. Some reply. Most do not. But a few cruisers change their patrol routes.

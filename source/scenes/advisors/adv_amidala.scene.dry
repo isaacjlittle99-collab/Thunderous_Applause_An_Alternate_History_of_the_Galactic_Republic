@@ -1,0 +1,43 @@
+title: Padmé Amidala
+subtitle: Institutionalist advisor
+is-pinned-card: true
+tags: advisor
+card-image: img/adv_amidala.svg
+view-if: adv_amidala = 1 and padme_alive
+new-page: true
+
+= Senator Padmé Amidala of Naboo
+
+The former Queen of Naboo is young, fearless and already one of the most respected voices in the Senate. She also knows Palpatine better than almost anyone.
+
+[? if advisor_action_timer > 0 : *Our advisors can act again in [+ advisor_action_timer +] turn(s).* ?]
+
+- @amidala_naboo: Naboo’s voice.
+- @amidala_anakin: Speak with Anakin Skywalker.
+- @amidala_moderates: Rally the moderates.
+- @go_back: Back.
+
+@amidala_naboo
+subtitle: +1 faith and more support in the Mid Rim.
+choose-if: advisor_action_timer <= 0
+unavailable-subtitle: Our advisors have already acted recently.
+on-arrival: faith += 1; midrim_rc += 2; advisor_action_timer = 3
+
+Senator Amidala’s appeal for honest government carries a special weight. Everyone remembers the Queen who stood up to the Trade Federation.
+
+@amidala_anakin
+view-if: anakin_found and date >= 132
+subtitle: His trust in the Chancellor wavers a little.
+choose-if: advisor_action_timer <= 0
+unavailable-subtitle: Our advisors have already acted recently.
+on-arrival: anakin_fall -= 1; advisor_action_timer = 3
+
+Padmé and Anakin talk for hours, about Tatooine, the war and the Chancellor’s kindness to him. She does not tell him what she fears. She asks him what he fears.
+
+@amidala_moderates
+subtitle: +5 relations with the Core Moderates and Independents.
+choose-if: advisor_action_timer <= 0
+unavailable-subtitle: Our advisors have already acted recently.
+on-arrival: mod_relation += 5; ind_relation += 5; advisor_action_timer = 3
+
+Padmé spends a week of late nights with moderate senators who have stopped listening to anyone. They listen to her.

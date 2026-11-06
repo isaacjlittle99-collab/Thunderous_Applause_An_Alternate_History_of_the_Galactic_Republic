@@ -1,0 +1,14 @@
+title: The Government Falls
+subtitle: Our coalition partners have walked out.
+tags: event
+view-if: rc_in_govt and coalition_dissent >= 4 and not constructive_vonc and not finale and not election_due
+priority: 6
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {! Q.election_due = 1; Q.rc_momentum -= 0.5; Q.faith -= 1; Q.govt_fell = (Q.govt_fell || 0) + 1; !}
+
+= The Government Falls
+
+Our coalition partners have had enough. [? if rc_chancellor : They table a motion of no confidence in Chancellor [+ chancellor +], and it passes. ?][? if not rc_chancellor : They withdraw their support, and the government collapses. ?] The Senate must elect a new Supreme Chancellor.
+
+[? if not constructive_vonc : A constructive no-confidence amendment would have prevented this kind of collapse. ?]

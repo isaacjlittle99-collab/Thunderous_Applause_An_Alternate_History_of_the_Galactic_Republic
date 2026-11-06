@@ -1,0 +1,20 @@
+title: Secure the Evidence
+subtitle: Get the proof into safe hands before it can be destroyed.
+is-card: true
+tags: last_days
+card-image: img/card_shadow.svg
+view-if: finale and not ld_evidence_used_today
+on-arrival: turn_actions += 1; ld_evidence_used_today = 1; last_card_timer = ""
+new-page: true
+
+= Secure the Evidence
+
+If the Chancellor moves against us, the evidence must survive.
+
+- @do: Secure the Evidence.
+- @easy_discard
+
+@do
+on-arrival: evidence += 1; free_press += 0.5
+
+Copies of the Caucus dossier are sent to Alderaan, Chandrila and an independent HoloNet station. If we fall, the truth will not.

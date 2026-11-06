@@ -1,0 +1,32 @@
+title: Who Rules Now?
+subtitle: The Jedi have killed the Chancellor without a trial.
+tags: event
+view-if: finale and sidious_method = "killed" and not regency_seen
+max-visits: 1
+priority: 11
+new-page: true
+face-image: img/ev_jedi.svg
+on-arrival: regency_seen = 1
+
+= Who Rules Now?
+
+The Chancellor is dead, killed by the Jedi in his own office. The Senate is in uproar. Some call Windu a liberator, others a murderer. Master Windu proposes that the Jedi Council take "temporary control of the Senate" until the Sith's influence has been rooted out.
+
+The Caucus must decide whether to accept.
+
+- @standdown: Insist the Jedi hand power back to the Senate at once.
+- @accept: Accept temporary Jedi control. The Sith's network must be destroyed.
+
+@standdown
+subtitle: [? if jedi_relation >= 55 or senate_jedi_pact or faith >= 60 : The Jedi trust us; they will listen. ?][? if jedi_relation < 55 and not senate_jedi_pact and faith < 60 : The Jedi may not listen to us. ?]
+choose-if: jedi_relation >= 55 or senate_jedi_pact or faith >= 60
+unavailable-subtitle: Our relations with the Jedi, and the Senate's own standing, are too weak to make them listen.
+on-arrival: faith += 2; jedi_relation -= 3; evidence_public += 3
+
+Bail Organa and Mon Mothma go to the Jedi Temple. Windu listens, and bows. The Jedi turn over the Chancellery, the evidence and the Sith Lord's body to the Senate. The Caucus publishes everything.
+
+@accept
+subtitle: Order now, legitimacy later.
+on-arrival: jedi_coup = 1; game_ending = 1
+
+The Jedi Council assumes emergency authority over the Republic. The Sith are gone. So, for now, is the Senate.

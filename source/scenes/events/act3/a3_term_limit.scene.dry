@@ -1,0 +1,55 @@
+title: The Term Limit
+subtitle: Chancellor Palpatine's second term is ending. His allies want to extend it.
+tags: event
+view-if: pal_chancellor and pal_terms >= 2 and date >= next_election_date - 3 and not term_crisis_seen and not finale
+max-visits: 1
+priority: 4
+new-page: true
+face-image: img/ev_chancellery.svg
+on-arrival: term_crisis_seen = 1
+
+= The Term Limit
+
+Chancellor Palpatine has served the two terms the constitution allows. But with the Separatist crisis growing, his allies have tabled an amendment to extend his term "until the present emergency has passed". Palpatine says he will "reluctantly accept whatever the Senate decides".
+
+[? if term_limits_protected : Thanks to the Term Limits Amendment, the extension is unconstitutional. It cannot even be put to a vote. ?]
+
+- @blocked: Then the Chancellor must step down.
+- @oppose: Oppose the extension.
+- @support: Support the extension. Stability matters in a crisis.
+
+@blocked
+view-if: term_limits_protected
+on-arrival: pal_can_run = 0; election_due = 1; senate_resolve += 1; faith += 2
+achievement: term_limit_held
+
+The extension motion is ruled out of order. Palpatine bows graciously and announces he will not stand again. His bloc nominates Vice Chair **Mas Amedda** in his place. For the first time, the man behind the curtain will have to work through someone else.
+
+@oppose
+view-if: not term_limits_protected
+on-arrival: {!
+var st = {pal: 1, sec: 0.8, mod: 0.45 + Q.fear / 200, guild: 0.55, ind: 0.45 + Q.fear / 250, rim: 0.35, rfc: 0.2, cis: 0.15};
+Q.tl_vote = SW.vote(Q, st, 0);
+Q.vote_html = SW.voteBanner('Extension of the Chancellor\'s term', Q.tl_vote);
+if (Q.tl_vote >= 50) { Q.term_extended = 1; Q.emergency_powers += 1; Q.next_election_date = 999; Q.pal_relation -= 6; }
+else { Q.pal_can_run = 0; Q.election_due = 1; Q.senate_resolve += 1; Q.pal_relation -= 10; this.achieve('term_limit_held'); }
+!}
+go-to: term_result
+
+@support
+view-if: not term_limits_protected
+on-arrival: {!
+var st = {pal: 1, sec: 0.8, mod: 0.45 + Q.fear / 200, guild: 0.55, ind: 0.45 + Q.fear / 250, rim: 0.35, rfc: 0.2, cis: 0.15};
+Q.tl_vote = SW.vote(Q, st, 1);
+Q.vote_html = SW.voteBanner('Extension of the Chancellor\'s term', Q.tl_vote);
+if (Q.tl_vote >= 50) { Q.term_extended = 1; Q.emergency_powers += 1; Q.next_election_date = 999; Q.pal_relation += 6; }
+else { Q.pal_can_run = 0; Q.election_due = 1; }
+Q.pacifist_dissent += 5; Q.inst_dissent += 3;
+!}
+go-to: term_result
+
+@term_result
+
+[+ vote_html +]
+
+[? if term_extended : The amendment passes. Chancellor Palpatine will remain in office "for the duration of the crisis", an end date that nobody can name. ?][? if not term_extended : The amendment fails. Palpatine must step down at the end of his term, and his bloc will run Vice Chair Mas Amedda in his place. ?]

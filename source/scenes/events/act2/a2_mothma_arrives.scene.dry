@@ -1,0 +1,14 @@
+title: The Senator from Chandrila
+subtitle: Mon Mothma takes her seat.
+tags: event
+view-if: date >= 36
+max-visits: 1
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {! Q.pacifist_strength += 5; SW.countAdvisors(Q); Q.mothma_joined = 0; if (Q.n_advisors < 3) { Q.adv_mothma = 1; Q.mothma_joined = 1; } !}
+
+= The Senator from Chandrila
+
+Chandrila sends a new senator to Coruscant: **Mon Mothma**, young, composed and already famous at home for her speeches on civic duty. She joins the Ruusan Caucus on her first day and quickly becomes the voice of its Pacifist wing.
+
+[? if mothma_joined : She joins the Caucus's inner circle of advisors. ?][? if not mothma_joined : She is available as an advisor through Shuffle Leadership. ?]

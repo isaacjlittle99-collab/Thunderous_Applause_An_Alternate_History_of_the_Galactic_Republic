@@ -1,0 +1,14 @@
+title: The Death of Mina Bonteri
+subtitle: The Separatist peacemaker has been murdered.
+tags: event
+view-if: bonteri_contact and date >= 146 and not bonteri_dead and not dooku_turned and war
+max-visits: 1
+new-page: true
+face-image: img/ev_separatist.svg
+on-arrival: bonteri_dead = 1; peace_talks -= 1; fear += 2
+
+= The Death of Mina Bonteri
+
+Mina Bonteri has been killed in her home on Raxus. The Confederacy blames Republic commandos. Republic intelligence blames the Confederacy. Her son Lux tells anyone who will listen that Count Dooku ordered it, because Dooku did not want peace.
+
+Somebody very powerful does not want this war to end.

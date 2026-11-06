@@ -1,0 +1,56 @@
+title: Jedi Relations
+subtitle: Work with the guardians of peace and justice.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_jedi.svg
+view-if: jedi_timer <= 0
+on-arrival: turn_actions += 1; jedi_timer = 2; last_card_timer = "jedi"
+new-page: true
+
+= Jedi Relations
+
+The Jedi Order is the Republic's oldest institution, and its most misunderstood. Our relations with the Order are [+ jedi_relation : relationships +], and public trust in the Jedi is [+ jedi_standing : level +].
+
+- @visit: Visit the Temple and listen.
+- @hunt: Urge the Council to hunt for the Sith Master.
+- @defend: Defend the Order in the Senate.
+- @reform: Speak for reform of the Order.
+- @anakin: Ask about young Skywalker.
+- @easy_discard
+
+@visit
+subtitle: +6 relations with the Jedi.
+on-arrival: jedi_relation += 6
+
+The Caucus delegation leaves with no promises and a great many proverbs.
+
+@hunt
+view-if: date >= 18
+subtitle: [? if jedi_relation >= 45 : They may listen. ?][? if jedi_relation < 45 : They do not trust us enough to listen. ?]
+choose-if: jedi_relation >= 45
+unavailable-subtitle: Our relations with the Jedi are too weak.
+on-arrival: jedi_suspicion += 1; jedi_relation -= 2; evidence += 0.2
+
+The Council agrees to quietly expand its search. "The dark side clouds everything," Yoda warns. "Impossible to see, the future is."
+
+@defend
+subtitle: +4 public trust in the Jedi.
+on-arrival: jedi_standing += 4; jedi_relation += 2; sec_relation -= 2
+
+The Caucus reminds the Senate that the Jedi have kept the peace for a thousand years without an army.
+
+@reform
+view-if: date >= 108 or war
+subtitle: The Order resents it, but a less rigid Order might keep its troubled Knights.
+on-arrival: jedi_reform += 1; jedi_relation -= 4; anakin_fall -= 0.5; jedi_standing += 1
+
+The Caucus argues that the Order's rules, on attachment, on the recruitment of infants, on becoming generals, belong to a calmer age. Some younger Jedi quietly agree.
+
+@anakin
+view-if: anakin_found and date >= 20
+subtitle: [? if jedi_relation >= 60 : The Council may confide in us. ?][? if jedi_relation < 60 : The Council is protective of its own. ?]
+choose-if: jedi_relation >= 60
+unavailable-subtitle: Our relations with the Jedi are not close enough.
+on-arrival: anakin_fall -= 0.6; jedi_relation -= 1
+
+Obi-Wan Kenobi admits he worries about his apprentice: the boy is brilliant, angry and far too fond of the Chancellor's company. The Caucus gently suggests that someone at the Temple should spend more time with him than Palpatine does.

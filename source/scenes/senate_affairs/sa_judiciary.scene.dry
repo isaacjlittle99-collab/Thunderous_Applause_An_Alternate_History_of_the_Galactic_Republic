@@ -1,0 +1,64 @@
+title: Judiciary & Intelligence
+subtitle: Courts, investigations and the Senate Bureau of Intelligence.
+is-card: true
+tags: senate_affairs
+card-image: img/card_law.svg
+view-if: judiciary_timer <= 0 and chair_judiciary = "rc"
+on-arrival: turn_actions += 1; judiciary_timer = 3; last_card_timer = "judiciary"
+new-page: true
+
+= Judiciary & Intelligence Committee
+
+The Caucus chairs the Judiciary & Intelligence Committee: the Republic's courts, the Judicial Department and the Senate Bureau of Intelligence answer to it.
+
+- @prosecute: Prosecute corruption.
+- @ethics: Establish a Senate Ethics Commission.
+- @intel: Order an intelligence review of the Chancellery's contacts.
+- @gunray: Press the case against Nute Gunray.
+- @warrant: Prepare a Senate warrant for the Sith Lord.
+- @easy_discard
+
+@prosecute
+subtitle: −3 corruption; some blocs feel targeted.
+on-arrival: corruption -= 3; mod_relation -= 3; guild_relation -= 3; faith += 0.5
+
+Twelve senators and forty officials are indicted for bribery. Several of them were Caucus allies.
+
+@ethics
+view-if: not anti_corruption
+subtitle: −1 political capital. A permanent safeguard against corruption, if the Senate agrees.
+choose-if: capital >= 1 and rc_in_govt
+unavailable-subtitle: Needs 1 political capital and a seat in government.
+on-arrival: {!
+Q.capital -= 1;
+var st = SW.stance(Q, {mod: 0.55, guild: 0.15, rim: 0.7, sec: 0.45, ind: 0.55, pal: 0.45, cis: 0.3}, true);
+Q.eth_vote = SW.vote(Q, st, 1);
+Q.vote_html = SW.voteBanner('Senate Ethics Commission Act', Q.eth_vote);
+if (Q.eth_vote >= 50) { Q.anti_corruption = 1; Q.corruption -= 4; Q.faith += 2; }
+!}
+
+[+ vote_html +]
+
+[? if anti_corruption : The Senate Ethics Commission is born, with real powers of audit. Corruption will be harder from now on. ?][? if not anti_corruption : Too many senators have too much to hide. The bill fails. ?]
+
+@intel
+subtitle: +1 evidence. The Chancellery may notice.
+on-arrival: {! Q.evidence += 1; if (Math.random() < 0.15 + Q.grand_plan / 500) Q.leak_pending = 1; !}
+
+The Bureau's analysts map the Chancellery's contacts. A disturbing number of them lead to people who later died, disappeared or became very rich.
+
+@gunray
+view-if: gunray_stage >= 1 and gunray_stage <= 4 and not gunray_convicted
+subtitle: Strengthens the prosecution at the next trial.
+on-arrival: gunray_bonus += 1
+
+The Judiciary Committee assigns its best prosecutors to the Gunray case and shields the witnesses.
+
+@warrant
+view-if: evidence >= 7 and not warrant
+subtitle: [? if evidence >= 8 : Our evidence can justify a warrant. ?][? if evidence < 8 : We need a little more before a judge will sign. ?]
+choose-if: evidence >= 8
+unavailable-subtitle: Needs compelling evidence (8+).
+on-arrival: warrant = 1; senate_resolve += 0.5
+
+A sealed warrant is drafted and signed by three justices of the Supreme Court. It names no one yet. It does not need to. If the moment comes, the Jedi will be acting for the Senate, not against it.

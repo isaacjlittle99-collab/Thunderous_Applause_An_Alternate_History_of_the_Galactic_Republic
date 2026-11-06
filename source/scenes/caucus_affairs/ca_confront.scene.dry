@@ -1,0 +1,48 @@
+title: Confronting the Chancellery
+subtitle: Decide how seriously the Caucus takes the growth of the Chancellor's power.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_confront.svg
+view-if: confront_timer <= 0 and date >= 21 and (emergency_powers >= 1 or evidence >= 2 or grand_plan >= 35 or pal_chancellor)
+on-arrival: turn_actions += 1; confront_timer = 3; last_card_timer = "confront"
+new-page: true
+
+= Confronting the Chancellery
+
+[? if pal_chancellor : Chancellor Palpatine is popular, patient and always reasonable. ?][? if not pal_chancellor : Chancellor [+ chancellor +] leads the government, but power keeps flowing to the Chancellor's office. ?] Each new crisis seems to leave a little more authority in the Chancellor's hands, and a little less in the Senate's. Senate resolve is currently **[+ senate_resolve : resolve +]**.
+
+[? if senate_resolve >= 3 and not pact_formed : *With resolve this high, member worlds would now consider a mutual Defence Pact (Caucus Affairs).* ?]
+
+- @alarm: Raise the alarm within the Caucus.
+- @crossbloc: Build a cross-bloc group of senators to defend the constitution.
+- @vonc: Move a vote of no confidence in the Chancellor.
+- @downplay: Downplay it. We must not look paranoid.
+- @easy_discard
+
+@alarm
+subtitle: +1 Senate resolve. Some will think we are overreacting.
+on-arrival: senate_resolve += 1; faith -= 0.5 if evidence < 2 and emergency_powers < 1; inst_dissent += 2; hawk_dissent -= 2; pacifist_dissent -= 2
+
+The Caucus leadership circulates a sober memorandum: the Republic's constitution is being hollowed out one emergency at a time.
+
+@crossbloc
+subtitle: −1 political capital. More resolve, if the Core Moderates trust us.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; senate_resolve += 1.5 if mod_relation >= 45; senate_resolve += 0.6 if mod_relation < 45; mod_relation += 2; ind_relation += 2
+
+Senators from four blocs begin meeting quietly in Bail Organa's office. They call themselves nothing at all. It is safer that way.
+
+@vonc
+view-if: senate_resolve >= 4 and not war and not rc_chancellor
+subtitle: [? if evidence >= 6 : We may have enough to bring the Chancellor down. ?][? if evidence < 6 : A long shot. If it fails, the Chancellor will be stronger than ever. ?]
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: capital -= 2
+go-to: rec_vonc_chancellor
+
+@downplay
+subtitle: Calms the Institutionalists; resolve falls.
+on-arrival: senate_resolve -= 0.5; inst_dissent -= 4; pacifist_dissent += 2
+
+The Caucus decides to wait for clearer evidence. Waiting is always the easiest choice.

@@ -1,0 +1,14 @@
+title: The Tide Turns
+subtitle: The Confederacy is collapsing.
+tags: event
+view-if: war and war_balance >= 9 and not war_won_seen and not finale
+priority: 5
+new-page: true
+face-image: img/ev_war.svg
+on-arrival: war_won_seen = 1; war = 0; war_won = 1; fear -= 12; faith += 3; outer_sep -= 15; midrim_sep -= 12; corporate_sep -= 12
+
+= The Tide Turns
+
+The Confederacy's armies are broken. System after system surrenders, and the Separatist Parliament on Raxus votes to negotiate. The war is over. The Republic has won.
+
+[? if emergency_powers >= 3 : The Chancellor's emergency powers, granted "for the duration of the crisis", remain in place. His allies say there is still a peace to secure. ?][? if emergency_powers < 3 : With the war over, the Senate looks forward to normal government. ?]

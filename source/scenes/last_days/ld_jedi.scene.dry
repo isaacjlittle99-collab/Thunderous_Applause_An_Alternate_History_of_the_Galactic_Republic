@@ -1,0 +1,20 @@
+title: Coordinate with the Jedi Council
+subtitle: Make sure the Jedi act with the Senate, not alone.
+is-card: true
+tags: last_days
+card-image: img/card_jedi.svg
+view-if: finale and not ld_jedi_used_today
+on-arrival: turn_actions += 1; ld_jedi_used_today = 1; last_card_timer = ""
+new-page: true
+
+= Coordinate with the Jedi Council
+
+The Jedi Council is deciding what to do about the Chancellor. The Senate must be part of that decision.
+
+- @do: Coordinate with the Jedi Council.
+- @easy_discard
+
+@do
+on-arrival: jedi_suspicion += 1.5; jedi_relation += 4; senate_jedi_pact = 1
+
+Master Windu agrees: if the Jedi move against the Chancellor, a Senate delegation will stand with them and the Supreme Court will be told at once.

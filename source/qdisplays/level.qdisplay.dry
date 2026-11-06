@@ -1,0 +1,6 @@
+
+(..15) very low
+(15..35) low
+(35..55) moderate
+(55..75) high
+(75..) very high

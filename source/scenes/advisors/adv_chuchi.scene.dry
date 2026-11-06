@@ -1,0 +1,43 @@
+title: Riyo Chuchi
+subtitle: Rimward advisor
+is-pinned-card: true
+tags: advisor
+card-image: img/adv_chuchi.svg
+view-if: adv_chuchi = 1
+new-page: true
+
+= Senator Riyo Chuchi of Pantora
+
+Pantora’s young senator is honest to the point of naivety. That makes her surprisingly dangerous to cynics.
+
+[? if advisor_action_timer > 0 : *Our advisors can act again in [+ advisor_action_timer +] turn(s).* ?]
+
+- @chuchi_integrity: Pantoran integrity.
+- @chuchi_rim: Outer Rim voices.
+- @chuchi_troopers: Listen to the troopers.
+- @go_back: Back.
+
+@chuchi_integrity
+subtitle: −1 corruption, +1 faith.
+choose-if: advisor_action_timer <= 0
+unavailable-subtitle: Our advisors have already acted recently.
+on-arrival: corruption -= 1; faith += 1; advisor_action_timer = 3
+
+Chuchi publishes her entire office’s accounts. Dozens of senators are suddenly very uncomfortable.
+
+@chuchi_rim
+subtitle: Cools Outer Rim separatism; +4 relations with the Rimward Coalition.
+choose-if: advisor_action_timer <= 0
+unavailable-subtitle: Our advisors have already acted recently.
+on-arrival: outer_sep -= 3; rim_relation += 4; advisor_action_timer = 3
+
+Chuchi tours refugee worlds on the Rim and brings their delegates to Coruscant to testify.
+
+@chuchi_troopers
+view-if: clones > 0
+subtitle: The clones trust the Senate a little more.
+choose-if: advisor_action_timer <= 0
+unavailable-subtitle: Our advisors have already acted recently.
+on-arrival: navy_loyalty += 3; clone_trust += 1; advisor_action_timer = 3
+
+Chuchi visits a clone medical frigate and listens. The troopers are not used to being listened to.

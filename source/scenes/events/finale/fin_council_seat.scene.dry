@@ -1,0 +1,17 @@
+title: The Chancellor's Representative
+subtitle: Palpatine wants Anakin Skywalker on the Jedi Council.
+tags: event
+view-if: finale and not gambit and finale_day >= 2 and not council_seat_seen
+max-visits: 1
+priority: 10
+new-page: true
+face-image: img/ev_jedi.svg
+on-arrival: {!
+Q.council_seat_seen = 1;
+if (Q.jedi_independence) { Q.council_blocked = 1; }
+else { Q.council_blocked = 0; Q.anakin_fall += 1; Q.emergency_powers += 1; if (!Q.jedi_reform) Q.anakin_fall += 0.5; }
+!}
+
+= The Chancellor's Representative
+
+[? if council_blocked : Chancellor Palpatine asks the Jedi Council to accept Anakin Skywalker as his personal representative. Under the Jedi Independence Amendment, the Council can simply refuse, and it does, politely. Anakin is disappointed, but not humiliated. ?][? if not council_blocked : Using his emergency powers, Chancellor Palpatine appoints Anakin Skywalker as his personal representative on the Jedi Council. The Council accepts him, but refuses him the rank of Master, then secretly asks him to spy on the Chancellor. Anakin is furious, humiliated and torn. Palpatine is very kind to him that evening. ?]

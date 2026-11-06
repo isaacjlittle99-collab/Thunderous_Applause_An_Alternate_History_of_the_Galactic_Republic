@@ -1,0 +1,26 @@
+title: Order Sixty-Six
+subtitle: The Sith Lord gives his order.
+tags: event
+view-if: finale and not gambit and finale_day >= 7 and (sidious_free or contingency) and not order66_seen
+max-visits: 1
+priority: 10
+new-page: true
+face-image: img/ev_clones.svg
+on-arrival: {!
+Q.order66_seen = 1;
+if (Q.clones >= 3 && !Q.chips_removed) {
+    var survive = Q.army_oversight ? 0.25 : 0;
+    Q.order66 = 1; Q.jedi_strength = 1 + survive * 6 + Q.clone_trust * 0.2; Q.jedi_standing -= 30;
+} else {
+    Q.order66_failed = 1;
+}
+if (Q.contingency) Q.civil_war_pending = 1;
+!}
+
+= Order Sixty-Six
+
+"Execute Order Sixty-Six."
+
+[? if order66 : Across the galaxy, clone troopers turn their weapons on the Jedi generals they have served beside for three years. On Kashyyyk, on Felucia, on Mygeeto and on a hundred other worlds, the Jedi die. [? if not anakin_fallen : Some escape: Kenobi, Yoda, a few others. ?][? if anakin_fallen : At the Jedi Temple, Darth Vader leads the 501st Legion through the halls. ?] [? if army_oversight : The Senate's oversight committee raises the alarm within minutes, and some commanders hesitate long enough for their Jedi to flee. ?] ?][? if order66_failed and chips_removed : The order goes out, and nothing happens. Without their inhibitor chips, the clone troopers hear an order to murder their generals, and refuse. Commander Cody calls General Kenobi to ask what in the galaxy is going on. ?][? if order66_failed and not chips_removed : The order goes out, but there are too few clone troopers to carry it out. ?]
+
+[? if contingency : The Sith Lord is in custody, but his order is loose in the galaxy. The Republic's own army is now at war with itself. ?]

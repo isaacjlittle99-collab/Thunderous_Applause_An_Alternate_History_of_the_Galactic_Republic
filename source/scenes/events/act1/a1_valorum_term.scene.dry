@@ -1,0 +1,15 @@
+title: The End of Valorum's Term
+subtitle: The Chancellor's final term is over.
+tags: event
+view-if: date >= 21 and not valorum_fallen
+max-visits: 1
+priority: 3
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: valorum_fallen = 1; mod_leader = "Davan Quill"; election_due = 1
+
+= The End of Valorum's Term
+
+Finis Valorum survived the Naboo crisis, but he has served the two terms the constitution allows. He leaves office tired and bruised, with a quiet warning to the Caucus: "Someone engineered that blockade to bring me down. I could never prove who."
+
+The Core Moderates nominate **Davan Quill of Brentaal**, a cautious party manager, to succeed him. The election of a new Supreme Chancellor follows at once.

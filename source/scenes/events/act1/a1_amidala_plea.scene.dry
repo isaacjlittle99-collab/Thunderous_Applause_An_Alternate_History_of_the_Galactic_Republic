@@ -1,0 +1,37 @@
+title: The Queen of Naboo Addresses the Senate
+subtitle: Queen Amidala demands action. Palpatine urges a vote of no confidence.
+tags: event
+view-if: naboo_crisis and date >= 17
+max-visits: 1
+priority: 6
+new-page: true
+face-image: img/ev_senate.svg
+
+= The Queen of Naboo Addresses the Senate
+
+Queen Amidala has reached Coruscant and pleads with the Senate for help. The Trade Federation's delegate denies everything and demands a commission to "investigate the accusations". Chancellor Valorum, bound by procedure, allows the motion.
+
+Senator Palpatine leans close to his Queen. "Enough is enough," he murmurs. "The Senate needs a strong Chancellor." Moments later, Amidala moves a **vote of no confidence** in Valorum.
+
+The Caucus must decide in the next few minutes.
+
+- @yes: Support the vote of no confidence.
+- @no: Stand by Valorum and propose an emergency relief fleet for Naboo.
+- @abstain: Abstain.
+
+@yes
+subtitle: Valorum is paralysed. Perhaps someone better can lead.
+on-arrival: vonc_rc = 1; mod_relation -= 6; pal_relation += 6; rc_momentum += 0.5
+go-to: a1_vonc
+
+@no
+subtitle: −1 political capital. A real answer to Naboo might save Valorum.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: vonc_rc = 0; capital -= 1; relief_fleet = 1; mod_relation += 8; pal_relation -= 4; judicial_forces += 0.3
+go-to: a1_vonc
+
+@abstain
+subtitle: Let others decide Valorum's fate.
+on-arrival: vonc_rc = 0.5
+go-to: a1_vonc

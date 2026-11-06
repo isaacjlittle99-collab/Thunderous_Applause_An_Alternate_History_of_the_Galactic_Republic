@@ -1,0 +1,71 @@
+title: The Military Creation Act
+subtitle: Should the Republic build an army?
+tags: event
+view-if: date >= 132 and dooku_movement and not war and not mca_seen
+max-visits: 1
+priority: 3
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: mca_seen = 1; crisis_months = 4
+
+= The Military Creation Act
+
+With [+ seceded_total +]% of the Senate's delegations gone and more leaving every month, the Security Bloc has tabled the **Military Creation Act**: a standing army of the Republic, the first since the Ruusan Reformation. [? if pal_chancellor : The Chancellor says he would "never wish for war", but that the Senate must decide. ?]
+
+*Events will now move month by month.*
+
+- @oppose: Oppose the Act. An army will make war inevitable.
+- @support: Support the Act. The Republic must defend itself.
+- @oversight: Support it only with permanent Senate oversight of the army.
+- @judicials: Propose expanding the Judicial Forces instead.
+
+@oppose
+subtitle: The Pacifists cheer; the Hawks fume.
+on-arrival: {!
+var st = SW.stance(Q, {pal: 0.8, sec: 0.95, mod: 0.4 + Q.fear / 200, guild: 0.45, ind: 0.4 + Q.fear / 250, rim: 0.3, rfc: 0.25, cis: 0.05}, false);
+Q.mca_vote = SW.vote(Q, st, 0);
+Q.mca_result = Q.mca_vote >= 50 ? 'passed' : 'failed';
+Q.pacifist_dissent -= 6; Q.hawk_dissent += 8;
+!}
+go-to: mca_result_scene
+
+@support
+subtitle: The Hawks cheer; the Pacifists fume.
+on-arrival: {!
+var st = SW.stance(Q, {pal: 0.8, sec: 0.95, mod: 0.4 + Q.fear / 200, guild: 0.45, ind: 0.4 + Q.fear / 250, rim: 0.3, rfc: 0.25, cis: 0.05}, false);
+Q.mca_vote = SW.vote(Q, st, 1);
+Q.mca_result = Q.mca_vote >= 50 ? 'passed' : 'failed';
+Q.hawk_dissent -= 6; Q.pacifist_dissent += 8;
+!}
+go-to: mca_result_scene
+
+@oversight
+subtitle: −1 political capital. An army that answers to the Senate.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {!
+Q.capital -= 1;
+var st = SW.stance(Q, {pal: 0.35, sec: 0.6, mod: 0.6 + Q.fear / 250, guild: 0.45, ind: 0.55, rim: 0.4, rfc: 0.35, cis: 0.05}, true);
+Q.mca_vote = SW.vote(Q, st, 1);
+Q.mca_result = Q.mca_vote >= 50 ? 'oversight' : 'failed';
+if (Q.mca_result === 'oversight') { Q.army_oversight = 1; Q.navy_loyalty += 10; }
+Q.hawk_dissent -= 2; Q.pacifist_dissent += 2;
+!}
+go-to: mca_result_scene
+
+@judicials
+subtitle: −1 political capital. Strengthens the Senate's own forces.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {!
+Q.capital -= 1;
+var st = SW.stance(Q, {pal: 0.3, sec: 0.45, mod: 0.6, guild: 0.4, ind: 0.6, rim: 0.55, rfc: 0.5, cis: 0.1}, true);
+Q.mca_vote = SW.vote(Q, st, 1);
+Q.mca_result = Q.mca_vote >= 50 ? 'judicials' : 'failed';
+if (Q.mca_result === 'judicials') { Q.judicial_forces += 2; Q.judicial_expansion = 1; }
+!}
+go-to: mca_result_scene
+
+@mca_result_scene
+
+[? if mca_result = "passed" : The Military Creation Act passes. The Republic will have an army, though where it is to come from nobody is quite sure. ?][? if mca_result = "oversight" : The Act passes with the Caucus's amendment: any army of the Republic will answer to a standing Senate oversight committee, with full access to its orders. ?][? if mca_result = "judicials" : Instead of an army, the Senate votes to double the Judicial Forces under its own command. It is a compromise that satisfies no one, and it might just work. ?][? if mca_result = "failed" : The Senate deadlocks. There will be no army, for now. ?]

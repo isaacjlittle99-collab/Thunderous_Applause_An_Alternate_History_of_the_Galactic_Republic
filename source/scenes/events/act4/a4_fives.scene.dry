@@ -1,0 +1,41 @@
+title: A Trooper's Warning
+subtitle: A clone trooper named Fives has discovered something terrible.
+tags: event
+view-if: war and clones >= 3 and date >= 156 and not chips_found and not fives_seen
+max-visits: 1
+priority: 3
+new-page: true
+face-image: img/ev_clones.svg
+on-arrival: fives_seen = 1
+
+= A Trooper's Warning
+
+A clone ARC trooper named **Fives** has escaped Kaminoan custody. He claims that every clone carries an organic **inhibitor chip** in his brain, and that the chips are a hidden program to make the clones obey a secret order without question. The Kaminoans call it a malfunction. The Chancellor has asked that Fives be returned to him "for treatment". If we do nothing, Fives will not survive the week.
+
+*This is a window that will not open again.*
+
+- @shelter: Shelter Fives and let him testify before the Senate.
+- @jedi: Take his evidence to the Jedi Council.
+- @ignore: It is a military matter. Stay out of it.
+
+@shelter
+subtitle: [? if army_oversight or chair_security = "rc" : Our oversight powers give us the authority to protect him. ?][? if not army_oversight and chair_security != "rc" : Without oversight powers, this means defying the Chancellor. ?]
+choose-if: army_oversight or chair_security = "rc" or senate_resolve >= 4
+unavailable-subtitle: Needs Senate oversight of the army, the Security chair, or strong Senate resolve.
+on-arrival: chips_found = 1; evidence += 2.5; jedi_suspicion += 1; fives_alive = 1; pal_relation -= 10; clone_trust += 2
+achievement: fives
+
+Fives testifies behind closed doors to the oversight committee. Republic medics confirm the chips. The Chancellor's office insists they are "a routine safety measure". Nobody believes it. Fives asks only that his brothers be freed.
+
+@jedi
+subtitle: [? if jedi_relation >= 45 : The Jedi may act. ?][? if jedi_relation < 45 : The Jedi may not listen. ?]
+choose-if: jedi_relation >= 45
+unavailable-subtitle: Our relations with the Jedi are too weak.
+on-arrival: {! Q.jedi_suspicion += 2; if (Math.random() < 0.55) { Q.chips_found = 1; Q.evidence += 1.5; Q.fives_result = 1; } else { Q.fives_result = 0; } !}
+
+[? if fives_result : The Jedi examine Fives and confirm the chips. Obi-Wan Kenobi quietly orders scans of his own battalion. ?][? if not fives_result : Before the Jedi can examine him, Fives is shot "resisting arrest" by Chancellery guards. The Jedi are left with suspicions and nothing more. ?]
+
+@ignore
+on-arrival: fives_dead = 1
+
+Fives is shot "resisting arrest" in the Coruscant underworld. The chips stay where they are.

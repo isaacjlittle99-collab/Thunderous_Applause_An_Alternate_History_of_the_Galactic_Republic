@@ -1,0 +1,42 @@
+title: The Sunset Review
+subtitle: The Chancellor's emergency powers are up for renewal.
+tags: event
+view-if: emergency_sunset and emergency_powers >= 1 and sunset_timer <= 0 and new_session_seen != bby and not finale
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {!
+Q.sunset_timer = 3;
+Q.new_session_seen = Q.bby;
+var renew = {pal: 1, sec: 0.85, mod: 0.4 + Q.fear / 150, guild: 0.45, ind: 0.4 + Q.fear / 200, rim: 0.3, rfc: 0.2, cis: 0.1};
+if (!Q.war) { renew.mod -= 0.2; renew.ind -= 0.2; renew.sec -= 0.2; }
+Q.renew_st = renew;
+!}
+
+= The Sunset Review
+
+Under the Sunset Amendment, the Chancellor's emergency powers expire unless the Senate renews them each year. The Chancellor's allies say the crisis demands it. Others say it is time to give the Senate its authority back.
+
+- @lapse: Vote to let the powers lapse.
+- @renew: Vote to renew them.
+
+@lapse
+on-arrival: {!
+Q.sr_vote = SW.vote(Q, Q.renew_st, 0);
+Q.vote_html = SW.voteBanner('Renewal of emergency powers', Q.sr_vote);
+if (Q.sr_vote < 50) { Q.emergency_powers = Math.max(0, Q.emergency_powers - 2); Q.faith += 2; Q.sunset_lapsed = 1; } else { Q.sunset_lapsed = 0; }
+!}
+
+[+ vote_html +]
+
+[? if sunset_lapsed : The renewal fails, and two of the Chancellor's emergency powers lapse at midnight. The Sunset Amendment works exactly as intended. ?][? if not sunset_lapsed : The Senate renews the powers for another year. ?]
+
+@renew
+on-arrival: {!
+Q.sr_vote = SW.vote(Q, Q.renew_st, 1);
+Q.vote_html = SW.voteBanner('Renewal of emergency powers', Q.sr_vote);
+Q.pacifist_dissent += 4;
+!}
+
+[+ vote_html +]
+
+The Caucus votes to renew. The powers remain.

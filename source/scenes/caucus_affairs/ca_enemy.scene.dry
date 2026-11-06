@@ -1,0 +1,52 @@
+title: Choosing our Enemy
+subtitle: Decide what the Caucus should fight above all.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_enemy.svg
+view-if: enemy_timer <= 0
+max-visits: 4
+on-arrival: turn_actions += 1; enemy_timer = 12; last_card_timer = "enemy"
+new-page: true
+
+= Choosing our Enemy
+
+The Caucus cannot fight on every front at once. What should it treat as the greatest threat to the Republic?
+
+- @corruption: Corruption.
+- @guilds: The trade guilds and the Banking Clan.
+- @militarists: The militarists of the Security Bloc.
+- @separatists: The Separatists.
+- @overreach: The Chancellery itself.
+- @easy_discard
+
+@corruption
+subtitle: Everyone's enemy, and therefore nobody's.
+on-arrival: main_enemy = "corruption"; corruption -= 1; guild_relation -= 4; mod_relation -= 2; inst_strength += 3
+
+The Caucus declares war on graft. Half the Senate applauds; the other half checks its accounts.
+
+@guilds
+subtitle: The Rim will cheer; the guilds will retaliate.
+on-arrival: main_enemy = "guilds"; guild_relation -= 10; rim_relation += 5; rimward_strength += 4; rimward_dissent -= 4; guild_embargo += 0.5
+
+The Caucus names the guilds as the root of the Republic's sickness. The guilds hear it.
+
+@militarists
+subtitle: The Pacifists approve; the Hawks are furious.
+on-arrival: main_enemy = "militarists"; sec_relation -= 8; pacifist_strength += 4; pacifist_dissent -= 4; hawk_dissent += 8
+
+The Caucus warns that a Republic with an army will soon be an army with a Republic.
+
+@separatists
+view-if: dooku_movement
+subtitle: The Hawks approve; Rim moderates feel abandoned.
+on-arrival: main_enemy = "separatists"; cis_relation -= 10; sec_relation += 4; hawk_strength += 4; hawk_dissent -= 5; outer_sep += 2; rimward_dissent += 5
+
+The Caucus declares that secession is treason against the Ruusan constitution.
+
+@overreach
+view-if: date >= 21
+subtitle: [? if emergency_powers >= 1 or evidence >= 3 : The danger is real and visible. ?][? if emergency_powers < 1 and evidence < 3 : Many will think we are chasing shadows. ?]
+on-arrival: main_enemy = "overreach"; pal_relation -= 8; senate_resolve += 0.5; inst_dissent += 4 if emergency_powers < 1 and evidence < 3; faith -= 0.5 if emergency_powers < 1 and evidence < 3
+
+The Caucus declares that the greatest threat to the Republic is the steady growth of power in the Chancellor's office, whoever holds it.

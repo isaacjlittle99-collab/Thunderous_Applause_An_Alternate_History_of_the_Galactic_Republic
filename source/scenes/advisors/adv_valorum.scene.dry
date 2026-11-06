@@ -1,0 +1,42 @@
+title: Finis Valorum
+subtitle: Institutionalist advisor
+is-pinned-card: true
+tags: advisor
+card-image: img/adv_valorum.svg
+view-if: adv_valorum = 1
+new-page: true
+
+= Former Supreme Chancellor Finis Valorum
+
+Brought down by the Naboo crisis, Valorum has had time to think about who arranged his fall. He is disgraced, but not a fool.
+
+[? if advisor_action_timer > 0 : *Our advisors can act again in [+ advisor_action_timer +] turn(s).* ?]
+
+- @valorum_networks: Old Chancellery networks.
+- @valorum_elder: Elder statesman.
+- @valorum_bureaucracy: Bureaucratic know-how.
+- @go_back: Back.
+
+@valorum_networks
+subtitle: +1 evidence (less each time).
+choose-if: advisor_action_timer <= 0
+unavailable-subtitle: Our advisors have already acted recently.
+on-arrival: evidence += 1 / (1 + valorum_leads); valorum_leads += 1; advisor_action_timer = 3
+
+Valorum still has friends in the Chancellery’s offices. They remember which visitors came to the Naboo delegation late at night.
+
+@valorum_elder
+subtitle: +6 relations with the Core Moderates.
+choose-if: advisor_action_timer <= 0
+unavailable-subtitle: Our advisors have already acted recently.
+on-arrival: mod_relation += 6; advisor_action_timer = 3
+
+The Core Moderates still remember Valorum’s better days. He reminds them that the Caucus kept faith with him.
+
+@valorum_bureaucracy
+subtitle: −2 corruption.
+choose-if: advisor_action_timer <= 0
+unavailable-subtitle: Our advisors have already acted recently.
+on-arrival: corruption -= 2; advisor_action_timer = 3
+
+Valorum knows exactly which audits were never finished. He hands the list to the Caucus.

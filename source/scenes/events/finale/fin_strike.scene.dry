@@ -1,0 +1,13 @@
+title: The Sith Strike First
+subtitle: Nobody moved against the Chancellor in time.
+tags: event
+view-if: finale and not gambit and finale_day >= 6 and not sidious_known and not strike_seen
+max-visits: 1
+priority: 10
+new-page: true
+face-image: img/ev_shadow.svg
+on-arrival: {! Q.strike_seen = 1; Q.sidious_free = 1; Q.anakin_fallen = Q.anakin_fall >= 6.5 ? 1 : 0; if (Q.anakin_fallen) Q.anakin_fall = 10; !}
+
+= The Sith Strike First
+
+Nobody stops him. The Jedi suspect, but they cannot prove. The Senate fears, but it cannot see. [? if anakin_fallen : Anakin Skywalker, promised the power to save Padmé, kneels before his master and takes a new name: **Darth Vader**. ?][? if not anakin_fallen : Anakin Skywalker, sensing something terribly wrong, refuses the Chancellor's summons and goes to Padmé instead. ?] Darth Sidious prepares to give the order he has waited fifteen years to give.

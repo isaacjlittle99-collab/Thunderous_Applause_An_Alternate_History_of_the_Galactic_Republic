@@ -1,0 +1,62 @@
+title: Clone Army Oversight
+subtitle: Who controls the Grand Army of the Republic?
+is-card: true
+tags: senate_affairs
+card-image: img/card_clones.svg
+view-if: clone_oversight_timer <= 0 and (clones > 0 or kamino_known) and (rc_in_govt or chair_security = "rc")
+on-arrival: turn_actions += 1; clone_oversight_timer = 3; last_card_timer = "clone_oversight"
+new-page: true
+
+= Clone Army Oversight
+
+[? if clones > 0 : The Grand Army of the Republic is [+ clones : strength +]. ?][? if clones <= 0 : The clone army of Kamino exists, but has not yet been deployed. ?] [? if army_oversight : A Senate committee oversees its commanders. ?][? if not army_oversight : It answers to the Chancellor alone. ?] [? if chips_found and not chips_removed : We know about the inhibitor chips. Removing them is underway: [+ chip_removal +]/3. ?]
+
+- @inspect: Inspect the Kaminoan facilities.
+- @citizenship: Grant citizenship to clone troopers.
+- @chips: Remove the inhibitor chips.
+- @limit: Cap the size of the army.
+- @easy_discard
+
+@inspect
+view-if: not chips_found
+subtitle: [? if army_oversight : With oversight powers, our inspectors can go anywhere. ?][? if not army_oversight : Without oversight powers, the Kaminoans will show us only what they want. ?]
+on-arrival: {!
+Q.evidence += 0.6;
+var chance = Q.army_oversight ? 0.55 : 0.15;
+if (Math.random() < chance) { Q.chips_found = 1; Q.evidence += 1.5; Q.inspect_found = 1; } else { Q.inspect_found = 0; }
+!}
+
+[? if inspect_found : Our inspectors find something the Kaminoans did not want found: every clone carries a tiny organic chip in the brain, and nobody will say what it is for. A Kaminoan scientist, Nala Se, refuses to answer questions "without the Chancellor's authorisation". ?][? if not inspect_found : The Kaminoans are polite, thorough and unhelpful. Our inspectors leave impressed by the cloning vats and certain they have been shown only half the facility. ?]
+
+@citizenship
+view-if: clones > 0 and not clone_citizenship
+subtitle: −1 political capital. The clones would be citizens, with rights, not property.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {!
+Q.capital -= 1;
+var st = SW.stance(Q, {mod: 0.5, guild: 0.3, rim: 0.65, sec: 0.25, ind: 0.55, pal: 0.2, cis: 0.3}, true);
+Q.cc_vote = SW.vote(Q, st, 1);
+Q.vote_html = SW.voteBanner('Clone Citizenship Act', Q.cc_vote);
+if (Q.cc_vote >= 50) { Q.clone_citizenship = 1; Q.navy_loyalty += 8; Q.clone_trust += 3; this.achieve('citizens'); }
+!}
+
+[+ vote_html +]
+
+[? if clone_citizenship : Every clone trooper is now a citizen of the Republic, with the right to refuse an unlawful order. Many troopers watch the vote live, in silence. ?][? if not clone_citizenship : The bill fails. The troopers notice. ?]
+
+@chips
+view-if: chips_found and not chips_removed
+subtitle: −3 treasury. One stage of a three-stage removal programme.
+choose-if: treasury >= 3
+unavailable-subtitle: The treasury cannot afford it.
+on-arrival: {! Q.treasury -= 3; Q.chip_removal += 1; if (Q.chip_removal >= 3) { Q.chips_removed = 1; this.achieve('chips_removed'); } !}
+
+[? if chips_removed : The last of the inhibitor chips has been removed. Whatever they were for, they will never be used. ?][? if not chips_removed : Republic medical teams work through the army one battalion at a time, citing "a routine neurological screening". The Kaminoans protest. ?]
+
+@limit
+view-if: clones > 2
+subtitle: Fewer clones, less risk, and a harder war.
+on-arrival: clones -= 1; fear += 2; war_balance -= 1; pacifist_dissent -= 4; hawk_dissent += 5
+
+The Senate caps the army's size. The Chancellor calls it "a gift to the Separatists".

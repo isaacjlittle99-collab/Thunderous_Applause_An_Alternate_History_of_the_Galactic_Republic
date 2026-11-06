@@ -1,0 +1,24 @@
+title: The Duchess of Mandalore
+subtitle: Mandalore turns to pacifism.
+tags: event
+view-if: date >= 60
+max-visits: 1
+new-page: true
+face-image: img/ev_peace.svg
+
+= The Duchess of Mandalore
+
+The warrior world of **Mandalore** has a new ruler: Duchess **Satine Kryze**, leader of the pacifist New Mandalorians. She has begun gathering neutral systems into a loose association that refuses to take sides in the Republic's quarrels.
+
+- @welcome: Welcome her and build ties with the neutral systems.
+- @ignore: Mandalore is not our concern.
+
+@welcome
+subtitle: The Independents approve; a future mediator.
+on-arrival: ind_relation += 6; satine_friend = 1; pacifist_dissent -= 3
+
+Satine and Mon Mothma become friends, as far as two such reserved women can.
+
+@ignore
+
+Mandalore goes its own way.

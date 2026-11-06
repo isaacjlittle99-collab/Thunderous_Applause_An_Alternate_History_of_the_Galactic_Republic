@@ -1,0 +1,22 @@
+title: The Battle of Coruscant
+subtitle: The Separatists have struck at the heart of the Republic.
+tags: event
+view-if: date >= 171 and war and pal_chancellor and not finale and not sidious_defeated and not game_ending
+max-visits: 1
+priority: 20
+new-page: true
+face-image: img/ev_war.svg
+on-arrival: {!
+Q.finale = 1; Q.finale_day = 1; Q.months_per_turn = 0; Q.clear_hand = 1; Q.gambit = 0;
+if (!Q.dooku_turned && !Q.dooku_dead) { Q.dooku_dead = 1; Q.anakin_fall += 1; }
+Q.war_balance += 1; Q.fear += 5;
+SW.updateDate(Q);
+!}
+
+= The Battle of Coruscant
+
+General Grievous has raided Coruscant itself and kidnapped Supreme Chancellor Palpatine. In a desperate rescue above the capital, Anakin Skywalker and Obi-Wan Kenobi free him. [? if dooku_dead : Count Dooku is dead, struck down by Anakin, unarmed, at the Chancellor's urging. ?][? if dooku_turned : Count Dooku, in hiding since he betrayed his master, was not aboard. ?]
+
+The Chancellor returns to the Senate a hero. The war seems nearly won. In the Senate's shadowed offices, the Delegation knows that the next few days will decide what kind of Republic survives it.
+
+*The game now moves day by day. You have at most twelve days.*

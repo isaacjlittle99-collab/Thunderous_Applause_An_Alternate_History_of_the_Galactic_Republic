@@ -1,0 +1,27 @@
+title: The Slave Markets of the Rim
+subtitle: A report on Hutt slavery shocks the Core.
+tags: event
+view-if: date >= 30
+max-visits: 1
+new-page: true
+face-image: img/ev_rim.svg
+on-arrival: slavery_campaign += 0.5
+
+= The Slave Markets of the Rim
+
+A Judicial Department report leaks to the HoloNet. It documents the slave markets of Hutt space in clinical detail: millions bought and sold, many with explosive chips implanted to stop them escaping. The Republic has always looked away, because the Hutts are useful and the Rim is far away.
+
+- @publicise: Make it the Caucus's cause.
+- @quiet: Pursue it through quiet diplomacy.
+
+@publicise
+subtitle: Faith rises, the Rim notices; the Hutts retaliate.
+on-arrival: faith += 1; rim_relation += 4; slavery_campaign += 0.5; rim_hardship += 1; rimward_dissent -= 4
+
+The Caucus reads the report into the Senate record, every page of it. It takes three days.
+
+@quiet
+subtitle: Avoids trouble; changes little.
+on-arrival: guild_relation += 2; rimward_dissent += 3
+
+Quiet diplomacy secures the release of a few hundred slaves. The markets carry on.

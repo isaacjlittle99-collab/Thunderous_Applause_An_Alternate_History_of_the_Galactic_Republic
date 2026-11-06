@@ -1,0 +1,48 @@
+title: The Taxation of Trade Routes
+subtitle: Valorum wants to tax the free-trade zones of the Outer Rim.
+tags: event
+view-if: date >= 0 and not trade_tax_proposed
+max-visits: 1
+priority: 5
+new-page: true
+face-image: img/ev_trade.svg
+on-arrival: trade_tax_proposed = 1
+
+= The Taxation of Trade Routes
+
+For centuries, the trade routes to the outlying star systems have been free-trade zones, and the great guilds have grown rich on them. Supreme Chancellor Valorum now proposes to tax them. The revenue would pay for anti-piracy patrols and relief for the struggling worlds of the Outer Rim.
+
+The **Trade Federation** is outraged. Its delegate, Lott Dod, warns of "consequences for galactic commerce". The **Rimward Coalition** is split: Rim worlds want protection from pirates, but they also fear the guilds will simply pass the cost on to them. The vote will come later this year. Where does the Caucus stand?
+
+- @support: Back the bill as written.
+- @amend: Back it, but insist the revenue goes to Rim relief and anti-piracy patrols.
+- @probe: Back it, and ask who is really funding the guilds' campaign against it.
+- @oppose: Oppose it as a burden on the Rim.
+
+@support
+subtitle: The Core Moderates will appreciate it; the guilds will not.
+on-arrival: tax_stance = 1; mod_relation += 6; guild_relation -= 10; rim_relation -= 2; inst_dissent -= 3; rimward_dissent += 3
+
+The Caucus announces its support for the Chancellor's bill. Valorum sends a warm note of thanks. Lott Dod does not.
+
+@amend
+subtitle: −1 political capital. The Rim will notice; so will the guilds.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; tax_stance = 2; rim_relation += 8; mod_relation += 2; guild_relation -= 12; rimward_dissent -= 6
+
+The Caucus's amendment, drafted by Onaconda Farr, ties every credit of the new revenue to patrols and relief in the Rim. It turns a tax into a promise. The Rimward Coalition takes notice.
+
+@probe
+subtitle: −1 political capital. Someone is spending a fortune on this fight.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; tax_stance = 1; tf_probe = 1; guild_relation -= 14; mod_relation += 4; evidence += 0.3
+
+The Caucus backs the bill, and Bail Antilles asks the Finance Committee an awkward question: where is the money for the guilds' lobbying campaign coming from? Nobody answers. But Garm Bel Iblis notices that several of the shell companies involved are registered in the Chommell sector.
+
+@oppose
+subtitle: The guilds will be grateful. The Chancellor will not.
+on-arrival: tax_stance = 0; guild_relation += 8; rim_relation += 4; mod_relation -= 8; inst_dissent += 5; rimward_dissent -= 2
+
+The Caucus declares that the Rim should not pay for the Core's failure to police its own trade lanes. The guilds are surprised and delighted. Chancellor Valorum is merely surprised.

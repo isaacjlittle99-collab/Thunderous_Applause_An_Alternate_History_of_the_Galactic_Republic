@@ -1,0 +1,55 @@
+title: The Missing Planet
+subtitle: Our investigators have found Kamino, and what it is hiding.
+tags: event
+view-if: kamino_hunt >= 3 and not kamino_known
+max-visits: 1
+priority: 4
+new-page: true
+face-image: img/ev_clones.svg
+on-arrival: kamino_known = 1; kamino_early = 1; evidence += 2; jedi_suspicion += 1.5
+achievement: kamino_early
+
+= The Missing Planet
+
+The missing world is **Kamino**, a planet of endless ocean and of cloners. The Kaminoans greet our envoys as expected guests. Their client, a Jedi Master named Sifo-Dyas, ordered an army of clone soldiers for the Republic ten years ago, they explain. It is nearly ready: hundreds of thousands of troopers, cloned from a bounty hunter named Jango Fett, with millions more to come.
+
+No one in the Senate authorised it. No one in the Jedi Order admits to knowing. Somebody has been paying for it all this time.
+
+- @oversight: Bring it before the Senate and place the army under Senate oversight.
+- @decommission: Demand that the army be decommissioned.
+- @secret: Keep it secret and keep investigating.
+
+@oversight
+subtitle: A secret army, made answerable to the Senate. Needs a majority.
+on-arrival: {!
+var st = SW.stance(Q, {mod: 0.65, guild: 0.4, rim: 0.55, sec: 0.5, ind: 0.6, pal: 0.3, cis: 0.4}, true);
+Q.ko_vote = SW.vote(Q, st, 1);
+Q.vote_html = SW.voteBanner('Kamino Oversight Act', Q.ko_vote);
+if (Q.ko_vote >= 50) { Q.army_oversight = 1; Q.evidence_public += 1; Q.fear += 3; if (Math.random() < 0.4) Q.chips_found = 1; this.achieve('oversight'); }
+else { Q.fear += 4; Q.evidence_public += 0.5; }
+Q.grand_plan -= 4;
+!}
+
+[+ vote_html +]
+
+[? if army_oversight : The Senate takes formal custody of the clone army, which will stay on Kamino under a Senate committee's supervision. [? if chips_found : Our inspectors find something the Kaminoans did not want found: an organic chip in every clone's brain. ?] Somewhere, a Sith Lord's careful plan has just become much harder. ?][? if not army_oversight : The revelation causes uproar, but no majority agrees what to do. The army stays on Kamino, in limbo, answerable in practice to whoever pays the Kaminoans. ?]
+
+@decommission
+subtitle: Removes the army entirely. The Republic would face any future war without it.
+on-arrival: {!
+var st = SW.stance(Q, {mod: 0.45, guild: 0.55, rim: 0.6, sec: 0.1, ind: 0.55, pal: 0.2, cis: 0.6}, true);
+Q.kd_vote = SW.vote(Q, st, 1);
+Q.vote_html = SW.voteBanner('Kamino Decommissioning Act', Q.kd_vote);
+if (Q.kd_vote >= 50) { Q.kamino_army = 0; Q.sec_relation -= 10; Q.hawk_dissent += 10; Q.grand_plan -= 8; this.achieve('no_army'); }
+Q.evidence_public += 1; Q.fear += 3;
+!}
+
+[+ vote_html +]
+
+[? if not kamino_army : The Senate orders the army disbanded. The Kaminoans are paid off and the clones are given new lives as settlers on a dozen frontier worlds. If war comes, the Republic will have to fight it some other way. ?][? if kamino_army : The Senate refuses to throw away "the Republic's only army". It stays on Kamino, waiting. ?]
+
+@secret
+subtitle: +1.5 evidence and a chance to learn more; the risk is that whoever paid for it notices.
+on-arrival: {! Q.evidence += 1.5; Q.grand_plan -= 2; if (Math.random() < 0.3) Q.chips_found = 1; if (Math.random() < 0.3) Q.leak_pending = 1; !}
+
+The Caucus says nothing publicly. Our agents trace the payments: through the Banking Clan, through Damask Holdings, and into accounts controlled by someone in the Chancellery's orbit. [? if chips_found : One Kaminoan technician, bribed, admits that every clone carries a "behavioural modification chip". ?]

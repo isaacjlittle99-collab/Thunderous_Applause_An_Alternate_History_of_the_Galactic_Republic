@@ -1,0 +1,48 @@
+title: The Banking Clan Crisis
+subtitle: The Chancellery moves to take control of the galaxy's banks.
+tags: event
+view-if: war and date >= 156 and (pal_chancellor or puppet_chancellor) and not banking_seizure_seen and not finale
+max-visits: 1
+new-page: true
+face-image: img/ev_trade.svg
+on-arrival: banking_seizure_seen = 1
+
+= The Banking Clan Crisis
+
+After a scandal involving the Muun banker Rush Clovis, the InterGalactic Banking Clan is in chaos. The Chancellor proposes to place it under the "temporary supervision" of the Office of the Chancellor. The Banking Clan finances both sides of the war.
+
+[? if banking_independent : The Banking Independence Act forbids exactly this. The Chancellor's proposal is dead on arrival. ?]
+
+- @oppose: Oppose the takeover.
+- @support: Support it: someone must restore order.
+- @blocked: The law forbids it.
+
+@blocked
+view-if: banking_independent
+on-arrival: evidence += 0.5; senate_resolve += 0.5
+
+The proposal is withdrawn. Rush Clovis, before vanishing, sends the Caucus a datacard of the Clan's loans to both sides. Several are guaranteed by the Chancellor's own office.
+
+@oppose
+view-if: not banking_independent
+on-arrival: {!
+var st = {pal: 1, sec: 0.8, mod: 0.45, guild: 0.25, ind: 0.45, rim: 0.4, rfc: 0.3};
+Q.bs_vote = SW.vote(Q, st, 0);
+Q.vote_html = SW.voteBanner('Supervision of the Banking Clan', Q.bs_vote);
+if (Q.bs_vote >= 50) { Q.emergency_powers += 1; Q.banks_seized = 1; Q.war_balance += 0.5; }
+!}
+
+[+ vote_html +]
+
+[? if banks_seized : The Banking Clan now answers to the Chancellor. Whoever controls the money controls the war, on both sides. ?][? if not banks_seized : The proposal fails. ?]
+
+@support
+view-if: not banking_independent
+on-arrival: {!
+var st = {pal: 1, sec: 0.8, mod: 0.45, guild: 0.25, ind: 0.45, rim: 0.4, rfc: 0.3};
+Q.bs_vote = SW.vote(Q, st, 1);
+Q.vote_html = SW.voteBanner('Supervision of the Banking Clan', Q.bs_vote);
+if (Q.bs_vote >= 50) { Q.emergency_powers += 1; Q.banks_seized = 1; Q.war_balance += 0.5; }
+!}
+
+[+ vote_html +]

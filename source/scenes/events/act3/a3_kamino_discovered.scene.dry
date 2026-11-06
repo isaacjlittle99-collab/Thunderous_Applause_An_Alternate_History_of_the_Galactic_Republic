@@ -1,0 +1,15 @@
+title: The Clone Army
+subtitle: Obi-Wan Kenobi has found a secret army on Kamino.
+tags: event
+view-if: date >= 134 and kamino_army and not kamino_known
+max-visits: 1
+priority: 3
+new-page: true
+face-image: img/ev_clones.svg
+on-arrival: kamino_known = 1; jedi_suspicion += 1; evidence += 0.5
+
+= The Clone Army
+
+Following the assassin's trail, Obi-Wan Kenobi has found a world erased from the Jedi Archives: **Kamino**. Its cloners have built an army of clone troopers for the Republic, ordered a decade ago by the late Jedi Master Sifo-Dyas. Two hundred thousand units are ready, with a million more on the way. The template is a bounty hunter named Jango Fett, the same man who hired Padmé's assassin.
+
+The Jedi Council is deeply disturbed. The Chancellor calls it "providential".

@@ -1,0 +1,43 @@
+title: The Senate Under Siege
+subtitle: How will the Caucus meet the Sith Lord's move?
+tags: event
+view-if: finale and gambit and finale_day >= 2 and not gambit_response_seen
+max-visits: 1
+priority: 10
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: gambit_response_seen = 1; gambit_bonus = 0
+
+= The Senate Under Siege
+
+[? if gambit_kind = "exposed" : Exposed, Palpatine has abandoned all pretence. ?][? if gambit_kind = "decree" : The Chancellor's decree is hours old. ?][? if gambit_kind = "coup" : The coup is under way. ?] Loyal and disloyal forces are moving all over Coruscant. The Caucus has time for one great effort.
+
+- @senate: Rally the Senate to stand together.
+- @jedi: Call on the Jedi Order.
+- @pact: Mobilise the Defence Pact.
+- @army: Appeal directly to the army and the Navy.
+
+@senate
+subtitle: [? if senate_resolve >= 3 : The Senate has the resolve to stand. ?][? if senate_resolve < 3 : The Senate may not have the nerve. ?]
+on-arrival: gambit_bonus += 2 if senate_resolve >= 3; gambit_bonus += 1 if senate_resolve < 3; gambit_bonus += 1 if delegation_formed; faith += 2
+
+The Caucus calls the Senate into emergency session, and hundreds of senators come, in defiance of the guards at the doors.
+
+@jedi
+subtitle: [? if jedi_relation >= 45 : The Jedi will come. ?][? if jedi_relation < 45 : The Jedi may hesitate. ?]
+on-arrival: {! Q.gambit_bonus += Q.jedi_relation >= 45 ? Q.jedi_strength * 0.35 : Q.jedi_strength * 0.15; Q.senate_jedi_pact = 1; !}
+
+The Jedi march from the Temple to the Senate building, lightsabers lit, to defend the Senate.
+
+@pact
+subtitle: [? if pact_formed : The Pact is ready. ?][? if not pact_formed : There is no Pact to call on. ?]
+on-arrival: gambit_bonus += member_forces * 0.6 if pact_formed; gambit_bonus += 0.5 if not pact_formed
+
+Defence Pact squadrons jump to Coruscant from Alderaan and Corellia.
+
+@army
+view-if: clones > 0
+subtitle: [? if chips_removed or army_oversight : The army answers to the Senate as well. ?][? if not chips_removed and not army_oversight : The clones were bred to obey. ?]
+on-arrival: navy_loyalty += 15; clone_trust += 2; gambit_bonus += 2 if chips_removed or army_oversight
+
+The Caucus broadcasts the evidence directly to every ship and garrison of the Grand Army.

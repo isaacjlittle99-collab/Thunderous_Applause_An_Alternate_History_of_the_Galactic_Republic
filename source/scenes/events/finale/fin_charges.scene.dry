@@ -1,0 +1,27 @@
+title: Charges Before the Senate
+new-page: true
+face-image: img/ev_law.svg
+on-arrival: {!
+var p = Q.evidence >= 10 ? 0.85 : 0.1 + (Q.evidence - 7) * 0.15 + (Q.warrant ? 0.1 : 0) + (Q.jedi_suspicion >= 6 ? 0.1 : 0);
+if (Q.evidence_public < 1) p -= 0.1;
+Q.charges_ok = Math.random() < p ? 1 : 0;
+if (Q.charges_ok) {
+    Q.finale = 1; Q.finale_day = 1; Q.months_per_turn = 0; Q.clear_hand = 1; Q.gambit = 1; Q.gambit_kind = 'exposed';
+    Q.sidious_known = 1; Q.evidence_public += 4; Q.navy_loyalty += 15; Q.jedi_suspicion += 3;
+    for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_pal'] *= 0.4;
+    SW.computeSupport(Q);
+    this.achieve('unmasked');
+} else {
+    Q.premature_accusations += 1; Q.senate_resolve -= 2; Q.faith -= 2; Q.emergency_powers += 1;
+    Q.jedi_standing -= 6; Q.pal_relation = 0;
+    for (var j = 0; j < SW.REGIONS.length; j++) Q[SW.REGIONS[j] + '_rc'] *= 0.8;
+    Q.evidence -= 2;
+}
+SW.updateDate(Q);
+!}
+
+= Charges Before the Senate
+
+[? if charges_ok : Before a packed Senate, the Caucus lays out its case: the Damask money trail, the clone order, Gunray's Sith master, the payments and the murders. It ends with a single sentence: *Supreme Chancellor Palpatine is the Sith Lord Darth Sidious.* For a long moment there is silence. Then the rotunda explodes. Within the hour, Palpatine's allies are deserting him. Within two, he has stopped pretending. ?][? if not charges_ok : The Caucus lays out its case, but too much of it is circumstantial. The Chancellor's allies tear it apart, piece by piece. Palpatine himself speaks last, sorrowful and dignified: he forgives his accusers, who are "frightened by the shadows of war", and asks only for the powers to protect the Republic "from those who would divide it". The Senate gives them to him. ?]
+
+[? if charges_ok : *The game now moves day by day.* ?]

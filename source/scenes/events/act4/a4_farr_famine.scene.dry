@@ -1,0 +1,36 @@
+title: Rodia Starves
+subtitle: Onaconda Farr's world is desperate.
+tags: event
+view-if: war and date >= 138 and not farr_dead and not farr_famine_seen
+max-visits: 1
+new-page: true
+face-image: img/ev_rim.svg
+on-arrival: farr_famine_seen = 1
+
+= Rodia Starves
+
+The war has cut Rodia off from its food supplies. Onaconda Farr, desperate, admits to the Caucus that the Separatists have offered to feed Rodia if it changes sides. He has not said yes. Not yet.
+
+- @aid: Send Caucus aid to Rodia at once.
+- @deal: Let him make his own arrangements.
+- @report: Report the Separatist approach to the Chancellor.
+
+@aid
+subtitle: −2 political capital. Rodia is fed, and Farr is grateful.
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: capital -= 2; farr_protected = 1; rimward_dissent -= 6; rim_relation += 5
+
+Caucus grain ships break the blockade around Rodia. Farr weeps openly in the Senate.
+
+@deal
+subtitle: Farr may find his own way out. It is dangerous.
+on-arrival: peace_talks += 0.5; farr_compromised = 1
+
+Farr opens a quiet line to Raxus. He tells almost no one, not even his own aide, Lolo Purs. Almost.
+
+@report
+subtitle: The Chancellor is grateful; Farr is humiliated.
+on-arrival: pal_relation += 4; rimward_dissent += 10; adv_farr = 0; farr_relation_broken = 1
+
+Farr is summoned to the Chancellor's office. He leaves the Caucus's leadership circle that week.

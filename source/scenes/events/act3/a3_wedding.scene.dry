@@ -1,0 +1,30 @@
+title: A Secret Wedding
+subtitle: Padmé Amidala and Anakin Skywalker have married in secret.
+tags: event
+view-if: war and padme_jedi_guard and anakin_found and padme_alive and not padme_married
+max-visits: 1
+new-page: true
+face-image: img/ev_naboo.svg
+on-arrival: padme_married = 1; anakin_fall += 0.5; knows_wedding = 1 if adv_amidala
+
+= A Secret Wedding
+
+[? if knows_wedding : Padmé confides in the Caucus leadership: after Geonosis, she and Anakin Skywalker were married in secret on Naboo. The Jedi forbid attachments. If the Council found out, Anakin would be expelled. She is happy, and frightened. ?][? if not knows_wedding : Rumours reach the Caucus that Senator Amidala and the young Jedi Skywalker are closer than they should be. ?]
+
+- @honest: [? if knows_wedding : Urge them to tell the Jedi Council. ?][? if not knows_wedding : Gently ask Padmé about it. ?]
+- @secret: Keep their secret.
+
+@honest
+subtitle: [? if jedi_reform >= 1 : After our reform campaign, the Council may be more understanding. ?][? if jedi_reform < 1 : The Council's rules are strict. ?]
+on-arrival: {!
+if (Q.jedi_reform >= 1 || Q.jedi_relation >= 70) { Q.anakin_fall -= 2; Q.wedding_accepted = 1; Q.jedi_reformed = 1; }
+else { Q.anakin_fall += 1; Q.wedding_accepted = 0; Q.jedi_relation -= 4; }
+!}
+
+[? if wedding_accepted : After long deliberation, the Council does something it has never done before. It allows Anakin to remain a Jedi, and married, provided he is honest with them. For the first time in years, Anakin has nothing to hide. ?][? if not wedding_accepted : The Council is appalled, and Anakin is put on probation. He goes to the Chancellor for comfort, as he always does. ?]
+
+@secret
+subtitle: Their secret, their choice.
+on-arrival: padme_trust += 1
+
+The Caucus says nothing. Padmé is grateful.

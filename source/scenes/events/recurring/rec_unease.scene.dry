@@ -1,0 +1,16 @@
+title: A Disturbance in the Force
+subtitle: The Jedi speak of darkness.
+tags: event
+view-if: grand_plan >= unease_next and unease_next <= 80 and not finale
+new-page: true
+face-image: img/ev_jedi.svg
+on-arrival: {! Q.unease_level = Q.unease_next; Q.unease_next += 20; Q.jedi_suspicion += 0.3; Q.fear += 1; !}
+
+= A Disturbance in the Force
+
+[? if unease_level = 40 : Bail Organa's Jedi friends are troubled. "The dark side is growing," one tells him. "We cannot see where it comes from. It is as though we are standing inside it." ?][? if unease_level = 60 : Jedi visions grow cloudy. Master Yoda admits to the Council that the Order's ability to use the Force is diminishing. The Caucus hears of it only as rumour. ?][? if unease_level = 80 : Even non-Force-users feel it now: a heaviness in the Senate's corridors, a sense of a trap about to close. ?]
+
+- @ok: We must act while we still can.
+
+@ok
+on-arrival: senate_resolve += 0.3

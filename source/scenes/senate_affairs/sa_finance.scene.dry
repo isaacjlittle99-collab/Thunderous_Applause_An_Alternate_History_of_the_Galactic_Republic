@@ -1,0 +1,72 @@
+title: Finance & Commerce
+subtitle: Trade policy, the guilds, the Banking Clan and the treasury.
+is-card: true
+tags: senate_affairs
+card-image: img/card_credits.svg
+view-if: finance_timer <= 0 and chair_finance = "rc"
+on-arrival: turn_actions += 1; finance_timer = 3; last_card_timer = "finance"
+new-page: true
+
+= Finance & Commerce Committee
+
+The Caucus chairs the Finance & Commerce Committee. The Republic treasury stands at [+ treasury +].
+
+- @regulate: Regulate the trade guilds.
+- @breakup: Break up the Trade Federation.
+- @audit: Audit the InterGalactic Banking Clan.
+- @independent: Guarantee the Banking Clan's independence from the Chancellery.
+- @books: Balance the Republic's books.
+- @easy_discard
+
+@regulate
+subtitle: Less corruption; the guilds retaliate.
+on-arrival: guild_relation -= 8; corruption -= 1.5; guild_embargo += 1; corporate_sep += 2; rim_hardship -= 1
+
+New disclosure rules for guild lobbying pass in committee. The guilds call it persecution.
+
+@breakup
+view-if: not tf_broken_up and (gunray_convicted or evidence >= 4 or naboo_free)
+subtitle: −2 political capital. A historic blow to the guilds, and a provocation to the corporate worlds.
+choose-if: capital >= 2 and rc_in_govt
+unavailable-subtitle: Needs 2 political capital and a seat in government.
+on-arrival: {!
+Q.capital -= 2;
+var st = SW.stance(Q, {mod: 0.55, guild: 0, rim: 0.85, sec: 0.45, ind: 0.55, pal: 0.35, cis: 0}, true);
+Q.tfb_vote = SW.vote(Q, st, 1);
+Q.vote_html = SW.voteBanner('Trade Federation Dissolution Act', Q.tfb_vote);
+if (Q.tfb_vote >= 50) { Q.tf_broken_up = 1; Q.corporate_guild -= 12; Q.guild_embargo += 3; Q.corporate_sep += 6; Q.corruption -= 3; Q.rim_relation += 6; this.achieve('trust_buster'); }
+else { Q.guild_relation -= 6; }
+!}
+
+[+ vote_html +]
+
+[? if tf_broken_up : The Trade Federation is to be broken into a dozen competing shipping concerns. The Neimoidians are apoplectic. The corporate worlds are frightened, and frightened worlds listen to separatists. ?][? if not tf_broken_up : The guilds' friends close ranks. The bill dies on the floor. ?]
+
+@audit
+subtitle: A chance to find where the Republic's dark money flows.
+on-arrival: banking_audit = 1; evidence += 0.8; guild_relation -= 4; banking_reformed += 0.5
+
+The audit of the Banking Clan's Coruscant branch turns up loans to the Trade Federation guaranteed by Damask Holdings. Its founder, a Muun named Hego Damask, died in 32 BBY. His holding company kept spending money for years afterwards.
+
+@independent
+view-if: not banking_independent and date >= 120
+subtitle: Blocks the Chancellery from seizing control of the banks in wartime.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {!
+Q.capital -= 1;
+var st = SW.stance(Q, {mod: 0.6, guild: 0.75, rim: 0.5, sec: 0.35, ind: 0.55, pal: 0.15, cis: 0.6}, true);
+Q.bi_vote = SW.vote(Q, st, 1);
+Q.vote_html = SW.voteBanner('Banking Independence Act', Q.bi_vote);
+if (Q.bi_vote >= 50) { Q.banking_independent = 1; Q.guild_relation += 4; }
+!}
+
+[+ vote_html +]
+
+[? if banking_independent : The Banking Clan's charter now forbids any transfer of control to the executive. The Chancellery says it never intended any such thing. ?][? if not banking_independent : The bill fails. The Chancellor's allies say it "ties the Republic's hands in wartime". ?]
+
+@books
+subtitle: +2 treasury; the Rim feels the cuts.
+on-arrival: treasury += 2; rim_hardship += 1.5; mod_relation += 2; rimward_dissent += 3
+
+Spending is trimmed across the board. The Rim, as always, feels it first.

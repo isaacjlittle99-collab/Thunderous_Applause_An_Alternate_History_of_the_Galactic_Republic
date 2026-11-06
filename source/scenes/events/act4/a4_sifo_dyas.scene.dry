@@ -1,0 +1,14 @@
+title: The Lost One
+subtitle: The Jedi investigate the death of Sifo-Dyas.
+tags: event
+view-if: war and date >= 160 and kamino_known and jedi_suspicion >= 3 and not sifo_seen
+max-visits: 1
+new-page: true
+face-image: img/ev_jedi.svg
+on-arrival: sifo_seen = 1; evidence += 1.5; jedi_suspicion += 1
+
+= The Lost One
+
+The Jedi have finally investigated the death of Sifo-Dyas. He did order the clone army, but he was murdered soon afterwards, and the army's funding was taken over by someone called **Darth Tyranus**: Count Dooku. Records show that the Kamino contract was also overseen by an office in the Republic's own bureaucracy, one that the Senate never authorised.
+
+The leader of the Separatists helped create the Republic's army. Someone is playing both sides of this war.

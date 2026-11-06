@@ -1,0 +1,44 @@
+title: The Invasion of Naboo
+subtitle: Droid armies have landed on Naboo.
+tags: event
+view-if: naboo_crisis and date >= 16
+max-visits: 1
+priority: 6
+new-page: true
+face-image: img/ev_naboo.svg
+on-arrival: {!
+Q.fear += 6;
+Q.naboo_sympathy = 1;
+for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_pal'] += 1.5;
+Q.corporate_guild -= 3;
+Q.corporate_sep += 2;
+!}
+
+= The Invasion of Naboo
+
+Negotiations have failed. Trade Federation droid armies have landed on Naboo, its cities are occupied, and all communications have been cut. There are reports that Queen Amidala escaped with the help of the Jedi.
+
+Across the Senate, delegates who had never heard of Naboo are suddenly very interested in its gentle, grieving senator.
+
+- @sanctions: Demand immediate sanctions on the Trade Federation.
+- @refugees: Fund relief for Naboo's refugees.
+- @wait: Wait for the Queen to reach Coruscant.
+
+@sanctions
+subtitle: The guilds will hate us; the public will cheer.
+on-arrival: guild_relation -= 8; faith += 1; rc_momentum += 1
+
+The sanctions motion is tabled pending "further review by the Commerce Committee". It is the first of many such motions.
+
+@refugees
+subtitle: −1 political capital. More support in the Mid Rim.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; midrim_rc += 2; faith += 1; naboo_aid = 1
+
+Caucus worlds open their ports to Naboo's refugees. Naboo will remember this.
+
+@wait
+subtitle: Patience.
+
+The Caucus waits. So does Senator Palpatine, with a patience that a more suspicious observer might find unsettling.
