@@ -257,6 +257,43 @@ window.disableGrayMode = function() {
   };
 
 
+  // ------------------------------------------------------------------
+  // "Install game": one click adds the game to the Start menu / desktop
+  // as an app (Edge and Chrome), via the browser's install prompt.
+  var deferredInstall = null;
+  function isInstalledApp() {
+    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+      window.navigator.standalone === true;
+  }
+  function showInstallLink(show) {
+    var el = document.getElementById('install-link');
+    if (el) el.style.display = show ? '' : 'none';
+  }
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    deferredInstall = e;
+    if (!isInstalledApp()) showInstallLink(true);
+  });
+  window.addEventListener('appinstalled', function () {
+    deferredInstall = null;
+    showInstallLink(false);
+  });
+  window.installGame = function () {
+    if (deferredInstall) {
+      deferredInstall.prompt();
+      deferredInstall.userChoice.then(function (choice) {
+        if (choice.outcome === 'accepted') showInstallLink(false);
+        deferredInstall = null;
+      });
+      return;
+    }
+    window.alert('To install Thunderous Applause as an app:\n\n' +
+      '1. Open this page in Microsoft Edge or Google Chrome.\n' +
+      '2. Click the "Install" icon at the right-hand end of the address bar ' +
+      '(in Edge you can also use the menu: Apps > Install this site as an app).\n\n' +
+      'The game then appears in your Start menu and can be pinned to the taskbar.');
+  };
+
   window.justLoaded = true;
   window.statusTab = "status";
   window.statusTabRight = "status_right";
@@ -279,6 +316,8 @@ window.disableGrayMode = function() {
     window.updateSidebar();
     window.statusTabRight = "status_right";
     window.updateSidebarRight();
+    // offer installation when the game is on the web and not already installed
+    if (/^https?:$/.test(location.protocol) && !isInstalledApp()) showInstallLink(true);
   };
 
 }());
