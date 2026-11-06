@@ -6,7 +6,7 @@
  * it in the background, so a new version arrives the next time the game is opened.
  * Bump CACHE when the list of files changes.
  */
-var CACHE = 'thunderous-applause-v1';
+var CACHE = 'thunderous-applause-v2';
 var SHELL = [
   "./",
   "index.html",
@@ -27,6 +27,7 @@ var SHELL = [
   "icons/apple-touch-icon.png"
 ];
 var IMAGES = [
+  "img/bg_galaxy.jpg",
   "img/adv_amidala.svg",
   "img/adv_antilles.svg",
   "img/adv_bel_iblis.svg",
@@ -97,6 +98,20 @@ self.addEventListener('activate', function (event) {
 self.addEventListener('fetch', function (event) {
   var req = event.request;
   if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return;
+  // custom art comes from the network first, so new art shows at once; offline, the last copy is used
+  if (new URL(req.url).pathname.indexOf('/img/custom/') >= 0) {
+    event.respondWith(
+      fetch(req).then(function (resp) {
+        if (resp && resp.ok) { var copy = resp.clone(); caches.open(CACHE).then(function (c) { c.put(req, copy); }); }
+        return resp;
+      }).catch(function () {
+        return caches.match(req).then(function (hit) {
+          return hit || new Response('{}', {headers: {'Content-Type': 'application/json'}});
+        });
+      })
+    );
+    return;
+  }
   event.respondWith(
     caches.open(CACHE).then(function (cache) {
       return cache.match(req, {ignoreSearch: true}).then(function (cached) {

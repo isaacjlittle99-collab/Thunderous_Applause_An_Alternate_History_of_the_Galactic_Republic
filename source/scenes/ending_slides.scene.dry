@@ -1,6 +1,6 @@
 title: Epilogue
 new-page: true
-set-bg: img/bg_stars.svg
+set-bg: img/bg_galaxy.jpg
 on-arrival: {!
 if (!Q.ending) { Q.ending = SW.routeEnding(Q); Q.ending_title = SW.ENDING_TITLES[Q.ending]; }
 // Padmé's fate follows Anakin's
