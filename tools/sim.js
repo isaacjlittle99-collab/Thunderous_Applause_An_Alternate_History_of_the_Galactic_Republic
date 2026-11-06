@@ -80,11 +80,18 @@ function playOne(gameIndex) {
       eng.beginGame([gameIndex * 7919 + SEED]);
       const Q = eng.state.qualities;
       let steps = 0, stuck = 0, lastTime = -1, sameTimeSteps = 0;
+      const trace = {capital: {}, chancellors: [], enfranchisedAt: null, maxDissent: 0, cardPlays: {}};
+      let lastChancellor = Q.chancellor;
       const visits = {};
       while (!eng.isGameOver() && steps < 6000) {
         steps++;
         const sc = eng.getCurrentScene();
         visits[eng.state.sceneId] = (visits[eng.state.sceneId] || 0) + 1;
+        if (Q.time && trace.capital[Q.time] === undefined) trace.capital[Q.time] = Q.capital;
+        if (Q.chancellor !== lastChancellor) { trace.chancellors.push(Q.bby + ':' + Q.chancellor_bloc + (process.env.TRACE ? '[fell' + (Q.govt_fell||0) + ' rc' + Q.rc_r + ' pal' + Q.pal_r + ' mod' + Q.mod_r + ' faith' + Math.round(Q.faith) + ' corr' + Math.round(Q.corruption) + ']' : '')); lastChancellor = Q.chancellor; }
+        if (Q.rim_enfranchised && trace.enfranchisedAt === null) trace.enfranchisedAt = Q.date;
+        trace.maxDissent = Math.max(trace.maxDissent, Q.inst_dissent || 0, Q.rimward_dissent || 0, Q.pacifist_dissent || 0, Q.hawk_dissent || 0);
+        if (game.scenes[eng.state.sceneId] && game.scenes[eng.state.sceneId].isCard) trace.cardPlays[eng.state.sceneId] = (trace.cardPlays[eng.state.sceneId] || 0) + 1;
         if (Q.time === lastTime) sameTimeSteps++; else { sameTimeSteps = 0; lastTime = Q.time; }
         if (sameTimeSteps > 400) { resolve({stuck: 'loop at ' + eng.state.sceneId, Q, steps, visits}); return; }
         if (sc.isHand) {
@@ -117,7 +124,7 @@ function playOne(gameIndex) {
         const ch = pick(pool, x => x.c.id);
         eng.choose(ch.i);
       }
-      resolve({stuck: eng.isGameOver() ? null : 'step limit at ' + eng.state.sceneId, Q, steps, visits});
+      resolve({stuck: eng.isGameOver() ? null : 'step limit at ' + eng.state.sceneId, Q, steps, visits, trace});
     });
   });
 }
@@ -126,6 +133,7 @@ function playOne(gameIndex) {
   const endings = {}, stucks = {}, nanKeys = {};
   const stats = {pal_chancellor_32: 0, war: 0, finale: 0, turns: 0, empire_powers: 0, kamino_early: 0, chips: 0, rc_chancellor: 0, reforms: 0};
   const seen = {}; const paths = {};
+  const audit = {cap20: [], cap40: [], capEnd: [], rcWon32: 0, rcWon32ThenPal: 0, rcHeldToEnd: 0, enf: 0, enfSeceded: [], enfWar: 0, maxDissent: [], repeatCards: {}};
   for (let g = 0; g < GAMES; g++) {
     rng = mulberry(SEED * 1000 + g);
     const r = await playOne(g);
@@ -146,6 +154,23 @@ function playOne(gameIndex) {
       Q.sidious_method ? 'method:' + Q.sidious_method : '', Q.civil_war_result ? 'cw:' + Q.civil_war_result : '', Q.order66 ? 'o66' : '', Q.restoration_passed ? 'restored' : '', Q.finale ? 'af:' + Math.round(Q.anakin_fall) + ' sc:' + (Q.arrest_score||'-') + ' ev:' + Math.round(Q.evidence) + ' js:' + Math.round(Q.jedi_suspicion) : ''].filter(x => x).join(' ');
     paths[e + ' | ' + tag] = (paths[e + ' | ' + tag] || 0) + 1;
     for (const k in r.visits) seen[k] = 1;
+    if (r.trace) {
+      const t = r.trace;
+      if (t.capital[20] !== undefined) audit.cap20.push(t.capital[20]);
+      if (t.capital[40] !== undefined) audit.cap40.push(t.capital[40]);
+      audit.capEnd.push(Q.capital);
+      const first = t.chancellors.find(c => !c.startsWith('33:') ) || '';
+      const ch = t.chancellors.filter(c => !c.startsWith('33:'));
+      if (ch.length && ch[0].endsWith(':rc')) {
+        audit.rcWon32++;
+        if (ch.slice(1).some(c => c.endsWith(':pal'))) audit.rcWon32ThenPal++;
+        if (Q.chancellor_bloc === 'rc') audit.rcHeldToEnd++;
+      }
+      if (t.enfranchisedAt !== null && t.enfranchisedAt < 132) { audit.enf++; audit.enfSeceded.push(Q.seceded_total); if (Q.geonosis_seen) audit.enfWar++; audit.enfWhere = audit.enfWhere || {}; const w = (Q.secession_where || 'none') + ' o' + Math.round(Q.outer_sep) + ' m' + Math.round(Q.midrim_sep) + ' c' + Math.round(Q.corporate_sep); audit.enfWhere[w] = 1; }
+      if (process.env.TRACE && ch.length && ch[0].indexOf(':rc') >= 0) origLog('trace', g, JSON.stringify(t.chancellors));
+      audit.maxDissent.push(t.maxDissent);
+      for (const c in t.cardPlays) if (t.cardPlays[c] >= 6) audit.repeatCards[c] = (audit.repeatCards[c] || 0) + 1;
+    }
     if (VERBOSE) origLog(g, e, Q.date_label, 'steps', r.steps, r.stuck || '', 'ep', Q.emergency_powers, 'ev', Q.evidence.toFixed(1), 'gp', Math.round(Q.grand_plan), 'rc', Q.rc_r, 'pal', Q.pal_r, 'ch', Q.chancellor);
   }
   origLog('policy', POLICY, 'games', GAMES);
@@ -155,6 +180,12 @@ function playOne(gameIndex) {
   origLog('stats', JSON.stringify(Object.assign(stats, {turns: (stats.turns / GAMES).toFixed(1), reforms: (stats.reforms / GAMES).toFixed(2)})));
   const errCount = {};
   for (const e of errors) { const k = e.slice(0, 160); errCount[k] = (errCount[k] || 0) + 1; }
+  const avg = a => a.length ? (a.reduce((x, y) => x + y, 0) / a.length).toFixed(1) : '-';
+  origLog('audit: capital at turn 20 avg ' + avg(audit.cap20) + ', turn 40 avg ' + avg(audit.cap40) + ', end avg ' + avg(audit.capEnd) + ', end max ' + Math.max(...audit.capEnd));
+  origLog('audit: Caucus won first election ' + audit.rcWon32 + 'x; Palpatine later Chancellor in ' + audit.rcWon32ThenPal + '; Caucus still Chancellor at end ' + audit.rcHeldToEnd);
+  if (audit.enfWhere) origLog('audit: enfranchised games, where/sep: ' + Object.keys(audit.enfWhere).slice(0, 12).join(' | '));
+  origLog('audit: enfranchised before 22 BBY in ' + audit.enf + ' games; avg seceded ' + avg(audit.enfSeceded) + '%; war in ' + audit.enfWar);
+  origLog('audit: avg peak faction dissent ' + avg(audit.maxDissent) + '; cards played 6+ times (games): ' + JSON.stringify(audit.repeatCards));
   origLog('paths:'); Object.keys(paths).sort((a, b) => paths[b] - paths[a]).slice(0, 18).forEach(k => origLog('  ' + paths[k] + 'x ' + k));
   origLog('errors', Object.keys(errCount).length);
   for (const k of Object.keys(errCount).slice(0, 25)) origLog('  ' + errCount[k] + 'x ' + k);

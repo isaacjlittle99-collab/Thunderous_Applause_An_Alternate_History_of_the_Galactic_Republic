@@ -1,7 +1,7 @@
 title: The Delegation of 2000
 subtitle: Senators from every bloc unite to defend the constitution.
 tags: event
-view-if: (war or emergency_powers >= 3) and date >= 156 and (senate_resolve >= 5 or governors or (senate_resolve >= 3 and emergency_powers >= 6)) and not delegation_formed and not finale
+view-if: (war or emergency_powers >= 3) and date >= 156 and (senate_resolve >= 5 or governors or (senate_resolve >= 3 and emergency_powers >= 6)) and not delegation_formed and not finale and not rc_chancellor
 max-visits: 1
 priority: 2
 new-page: true

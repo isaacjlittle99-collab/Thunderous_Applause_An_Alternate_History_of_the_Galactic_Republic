@@ -3,7 +3,7 @@ subtitle: A New Ruusan: entrench the Senate's safeguards in the constitution.
 is-card: true
 tags: senate_affairs
 card-image: img/card_law.svg
-view-if: constitution_timer <= 0 and rc_in_govt and (chair_judiciary = "rc" or rc_chancellor)
+view-if: constitution_timer <= 0 and rc_in_govt and (chair_judiciary = "rc" or rc_chancellor) and cardok_constitution
 on-arrival: turn_actions += 1; constitution_timer = 3; last_card_timer = "constitution"
 new-page: true
 

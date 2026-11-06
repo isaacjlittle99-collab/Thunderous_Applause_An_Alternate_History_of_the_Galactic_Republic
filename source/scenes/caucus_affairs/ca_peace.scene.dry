@@ -3,7 +3,7 @@ subtitle: Work for an end to the conflict.
 is-card: true
 tags: caucus_affairs
 card-image: img/card_peace.svg
-view-if: peace_timer <= 0 and (war or dooku_movement)
+view-if: peace_timer <= 0 and (war or dooku_movement) and cardok_peace
 on-arrival: turn_actions += 1; peace_timer = 2; last_card_timer = "peace"
 new-page: true
 

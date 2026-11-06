@@ -3,7 +3,7 @@ subtitle: Build loyal defence forces among member worlds, under civilian control
 is-card: true
 tags: caucus_affairs
 card-image: img/card_pact.svg
-view-if: pact_timer <= 0 and (senate_resolve >= 3 or pact_formed)
+view-if: pact_timer <= 0 and (senate_resolve >= 3 or pact_formed) and cardok_pact
 on-arrival: turn_actions += 1; pact_timer = 3; last_card_timer = "pact"
 new-page: true
 
@@ -29,16 +29,16 @@ achievement: defence_pact
 In a modest ceremony on Chandrila, eleven member worlds sign the Free Worlds Defence Pact. [? if pal_chancellor : The Chancellor's office expresses "concern at the creation of private armies within the Republic". ?]
 
 @train
-view-if: pact_formed
-subtitle: −1 political capital. +1 member-world forces.
-choose-if: capital >= 1
-unavailable-subtitle: Not enough political capital.
-on-arrival: capital -= 1; member_forces += 1; hawk_dissent -= 3; pacifist_dissent += 2; fear += 0.5
+view-if: pact_formed and member_forces < 8
+subtitle: −2 political capital. +1 member-world forces.
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: capital -= 2; member_forces += 1; hawk_dissent -= 3; pacifist_dissent += 2; fear += 0.5
 
 CorSec instructors and Alderaanian quartermasters work through the night.
 
 @exercise
-view-if: pact_formed
+view-if: pact_formed and member_forces < 8
 subtitle: +0.5 member-world forces; the Hawks are pleased.
 on-arrival: member_forces += 0.5; hawk_dissent -= 4; sec_relation += 2
 

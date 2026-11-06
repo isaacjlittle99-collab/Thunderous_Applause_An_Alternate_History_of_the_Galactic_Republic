@@ -25,7 +25,7 @@ if (Math.random() < c) { Q.dooku_turned = 1; Q.evidence += 4; Q.jedi_suspicion +
 else { Q.dooku_failed = 1; Q.peace_talks -= 1; Q.investigators_lost += 1; }
 !}
 
-[? if dooku_turned : The name arrives on an encrypted datacard: **Darth Sidious is Supreme Chancellor Palpatine.** With it come years of evidence: holograms, payments, orders. Dooku himself vanishes into hiding. ?][? if dooku_failed : The meeting is a trap, or perhaps someone was listening. Our envoy never returns. Dooku's next broadcast is more violent than ever. ?]
+[? if dooku_turned : The name arrives on an encrypted datacard: **Darth Sidious is [? if pal_chancellor : Supreme Chancellor ?][? if not pal_chancellor : Senator ?]Palpatine.** With it come years of evidence: holograms, payments, orders. Dooku himself vanishes into hiding. ?][? if dooku_failed : The meeting is a trap, or perhaps someone was listening. Our envoy never returns. Dooku's next broadcast is more violent than ever. ?]
 
 @refuse
 on-arrival: hawk_dissent -= 3; dooku_doubt -= 2

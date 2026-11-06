@@ -21,7 +21,7 @@ Viceroy, senator and husband to Alderaan’s queen, Bail Organa is a consensus-b
 subtitle: +5 relations with the Core Moderates and Independents, +3 with the Rimward Coalition.
 choose-if: advisor_action_timer <= 0
 unavailable-subtitle: Our advisors have already acted recently.
-on-arrival: mod_relation += 5; ind_relation += 5; rim_relation += 3; advisor_action_timer = 3
+on-arrival: mod_relation += 5; ind_relation += 5; rim_relation += 3; advisor_action_timer = 4
 
 Organa hosts a reception at the Alderaanian embassy. By the end of the evening three blocs believe he is on their side, and he is not entirely lying.
 
@@ -29,14 +29,14 @@ Organa hosts a reception at the Alderaanian embassy. By the end of the evening t
 subtitle: +0.5 evidence, +4 relations with the Jedi.
 choose-if: advisor_action_timer <= 0
 unavailable-subtitle: Our advisors have already acted recently.
-on-arrival: evidence += 0.3; jedi_relation += 4; jedi_suspicion += 0.3; advisor_action_timer = 3
+on-arrival: evidence += 0.3; jedi_relation += 4; jedi_suspicion += 0.3; advisor_action_timer = 4
 
 Organa shares tea with Jedi he has known for years. They tell him little, but what they leave unsaid is telling.
 
 @organa_fundraise
-subtitle: +2 political capital; each use irritates the Institutionalists more.
+subtitle: +1 political capital; each use irritates the Institutionalists more.
 choose-if: advisor_action_timer <= 0
 unavailable-subtitle: Our advisors have already acted recently.
-on-arrival: capital += 2; inst_dissent += organa_funds * 3; organa_funds += 1; advisor_action_timer = 3
+on-arrival: capital += 1; inst_dissent += 3 + organa_funds * 3; organa_funds += 1; advisor_action_timer = 4
 
 The royal house of Alderaan is generous. It is also keeping count.

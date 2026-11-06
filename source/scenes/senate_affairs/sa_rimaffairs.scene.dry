@@ -3,7 +3,7 @@ subtitle: Relief, piracy, slavery and representation for the Rim.
 is-card: true
 tags: senate_affairs
 card-image: img/card_rim.svg
-view-if: rimaffairs_timer <= 0 and chair_rimaffairs = "rc"
+view-if: rimaffairs_timer <= 0 and chair_rimaffairs = "rc" and cardok_rimaffairs
 on-arrival: turn_actions += 1; rimaffairs_timer = 3; last_card_timer = "rimaffairs"
 new-page: true
 
@@ -19,6 +19,7 @@ The Caucus chairs the Outer Rim Affairs Committee. Hardship on the Rim is [+ rim
 - @easy_discard
 
 @relief
+view-if: rim_hardship > 15
 subtitle: −2 treasury. A lasting reduction in Rim hardship.
 choose-if: treasury >= 2
 unavailable-subtitle: The treasury cannot afford it.
@@ -27,6 +28,7 @@ on-arrival: treasury -= 2; rim_relief += 1; rim_hardship -= 4; outer_sep -= 2; r
 The Rim Relief Programme funds clinics, shipyards and grain ships for a hundred worlds.
 
 @piracy
+view-if: rim_hardship > 20 and not war
 subtitle: −1 treasury. Less hardship; the Security Bloc approves.
 choose-if: treasury >= 1
 unavailable-subtitle: The treasury cannot afford it.

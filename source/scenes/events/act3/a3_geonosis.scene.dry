@@ -1,7 +1,7 @@
 title: The Battle of Geonosis
 subtitle: Jedi are trapped on Geonosis. The Senate must decide whether to go to war.
 tags: event
-view-if: date >= 135 and dooku_movement and not war and not geonosis_seen and (seceded_total >= 5 or sep_total >= 42)
+view-if: date >= 135 and dooku_movement and not war and not geonosis_seen and ((seceded_total >= 5 and (outer_seceded > 0.02 or midrim_seceded > 0.02)) or seceded_total >= 10 or outer_sep >= 55 or midrim_sep >= 55)
 max-visits: 1
 priority: 5
 new-page: true
@@ -21,10 +21,10 @@ On Geonosis, the Jedi have discovered a vast droid army being built for the Conf
 
 [? if kamino_army : The clone army of Kamino is ready, but the Senate has never authorised it. ?][? if not kamino_army : The clone army was decommissioned. The Republic has only the Judicial Forces ([+ judicial_forces : strength +]) and whatever member worlds will send. ?] [? if mca_result = "oversight" : Under the Caucus's amendment, any army deployed now would answer to a Senate oversight committee. ?]
 
-In an emergency session, a Gungan representative rises to move that the Senate grant the Chancellor **emergency powers** to deploy the army. [? if pal_chancellor : Palpatine accepts the suggestion with every appearance of reluctance. ?]
+[? if not rc_chancellor : In an emergency session, a Gungan representative rises to move that the Senate grant the Chancellor **emergency powers** to deploy the army. ?][? if pal_chancellor : Palpatine accepts the suggestion with every appearance of reluctance. ?][? if rc_chancellor : In an emergency session, the Security Bloc moves that the Senate grant **our own Chancellor, [+ chancellor +],** emergency powers to deploy the army. Senator Palpatine, of all people, speaks warmly in favour. The decision is ours. ?]
 
-- @powers_no: Vote against emergency powers.
-- @powers_yes: Vote for emergency powers.
+- @powers_no: [? if rc_chancellor : Our Chancellor declines emergency powers. ?][? if not rc_chancellor : Vote against emergency powers. ?]
+- @powers_yes: [? if rc_chancellor : Our Chancellor accepts emergency powers. ?][? if not rc_chancellor : Vote for emergency powers. ?]
 - @oversight: Move to deploy the clones under Senate command, without emergency powers.
 - @judicials: Send the Judicial Forces and the Defence Pact instead.
 
@@ -34,7 +34,7 @@ on-arrival: geo_choice = "no"; pacifist_dissent -= 5; hawk_dissent += 5
 go-to: geo_vote
 
 @powers_yes
-subtitle: The Hawks will be relieved.
+subtitle: [? if rc_chancellor : The powers would be ours. The Hawks will be relieved; the Pacifists will remember. ?][? if not rc_chancellor : The Hawks will be relieved. ?]
 on-arrival: geo_choice = "yes"; hawk_dissent -= 5; pacifist_dissent += 8
 go-to: geo_vote
 
@@ -56,6 +56,7 @@ go-to: geo_vote
 new-page: true
 on-arrival: {!
 var ep = {pal: 1, sec: 0.95, mod: 0.5 + Q.fear / 200, guild: 0.45, ind: 0.5 + Q.fear / 250, rim: 0.4, rfc: 0.3, cis: 0};
+if (Q.rc_chancellor) { var follow = Q.geo_choice === 'yes' ? 0.25 : -0.25; for (var gb in ep) if ((Q.govt_blocs || []).indexOf(gb) >= 0) ep[gb] = SW.clamp(ep[gb] + follow, 0, 1); }
 var html = '';
 Q.geo_outcome = '';
 if (Q.geo_choice === 'oversight') {
@@ -67,7 +68,7 @@ if (Q.geo_choice === 'oversight') {
 if (!Q.geo_outcome && Q.kamino_army) {
     var v2 = SW.vote(Q, ep, Q.geo_choice === 'yes' ? 1 : 0);
     html += SW.voteBanner('Emergency powers for the Chancellor', v2);
-    if (v2 >= 50) { Q.geo_outcome = 'powers'; Q.emergency_powers += Q.ep_cost; }
+    if (v2 >= 50) { Q.geo_outcome = 'powers'; Q.emergency_powers += Q.ep_cost; if (Q.rc_chancellor) Q.rc_emergency_taken += Q.ep_cost; }
 }
 if (!Q.geo_outcome) Q.geo_outcome = 'none';
 Q.vote_html = html;
@@ -89,6 +90,6 @@ SW.senateSession(Q);
 
 [+ vote_html +]
 
-[? if geo_outcome = "powers" : The Senate grants the Chancellor emergency powers, to thunderous applause. Within hours, the Chancellor authorises the creation of the **Grand Army of the Republic**. Clone troopers led by Master Yoda arrive on Geonosis in time to rescue the surviving Jedi. ?][? if geo_outcome = "oversight" : The Senate itself orders the clones into battle, under a standing oversight committee. The Chancellor receives no new powers. Clone troopers arrive on Geonosis in time to rescue the surviving Jedi. ?][? if geo_outcome = "none" : The Senate refuses to hand over its authority. Judicial cruisers and Defence Pact squadrons race to Geonosis and arrive too late for many of the Jedi. The Republic has kept its constitution, but its first battle has been bloody. ?]
+[? if geo_outcome = "powers" : The Senate grants [? if rc_chancellor : our ?][? if not rc_chancellor : the ?] Chancellor emergency powers, to thunderous applause. Within hours, [+ chancellor +] authorises the creation of the **Grand Army of the Republic**. Clone troopers led by Master Yoda arrive on Geonosis in time to rescue the surviving Jedi. ?][? if geo_outcome = "oversight" : The Senate itself orders the clones into battle, under a standing oversight committee. The Chancellor receives no new powers. Clone troopers arrive on Geonosis in time to rescue the surviving Jedi. ?][? if geo_outcome = "none" : The Senate refuses to hand over its authority. Judicial cruisers and Defence Pact squadrons race to Geonosis and arrive too late for many of the Jedi. The Republic has kept its constitution, but its first battle has been bloody. ?]
 
 The Separatist senators walk out of the rotunda for the last time. The **Clone Wars** have begun.

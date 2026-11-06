@@ -5,13 +5,25 @@ view-if: dooku_movement and seceded_total >= secession_next and not finale
 priority: 2
 new-page: true
 face-image: img/ev_separatist.svg
-on-arrival: {! Q.secession_shown = Q.secession_next; Q.secession_next += 10; Q.fear += 3; Q.faith -= 1; SW.senateSession(Q); !}
+on-arrival: {!
+Q.secession_shown = Q.secession_next; Q.secession_next += 10; Q.fear += 3; Q.faith -= 1; SW.senateSession(Q);
+var w = Q.secession_where || '';
+var parts = [];
+if (w.indexOf('corporate') >= 0) parts.push('the guild-owned corporate worlds' + (Q.guild_grievance > 0.8 ? ', furious at the Senate\'s war on the trade guilds' : ''));
+if (w.indexOf('midrim') >= 0) parts.push('a scattering of Mid Rim systems');
+if (w.indexOf('outer') >= 0) parts.push('Outer Rim worlds who feel the Republic has abandoned them');
+var who = parts.length ? 'Those leaving are mostly ' + parts.join(', ') + '.' : '';
+if (Q.rim_enfranchised && w.indexOf('outer') < 0) who += ' The Outer Rim, thanks to the Caucus\'s reforms, has stayed loyal almost to a world.';
+else if (Q.rim_enfranchised) who += ' The Rim Enfranchisement Act has kept many wavering Rim worlds loyal, but not all.';
+if (w.indexOf('corporate') >= 0 && w.indexOf('outer') < 0) who += ' This is a secession of the trade guilds more than of the people. Better relations with the guilds would cool it.';
+Q.secession_who = who || ' ';
+!}
 
 = Systems Leave the Republic
 
 [+ seceded_total +]% of the Senate's delegations have now left the Republic to join Count Dooku's Confederacy. Their empty repulsorpods hang in the rotunda like missing teeth. The Senate that remains is smaller, more frightened, and more inclined to trust a strong Chancellor.
 
-[? if rim_enfranchised : Even so, the Rim Enfranchisement Act has kept many wavering worlds loyal. ?]
+[+ secession_who +]
 
 - @appeal: Appeal to the departing worlds to come back.
 - @condemn: Condemn the secessions as treason.

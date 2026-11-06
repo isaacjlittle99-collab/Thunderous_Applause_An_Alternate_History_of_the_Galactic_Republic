@@ -27,9 +27,7 @@ SW.computeSupport(Q);
 
 On the industrial world of Raxus, **Count Dooku**, the former Jedi Master, delivers a speech that is broadcast across the galaxy. The Republic, he says, is rotten beyond repair: owned by the Core, run by bribes, deaf to the Rim. He invites every world that agrees to leave it and join a new **Confederacy of Independent Systems**.
 
-Hundreds of worlds are listening. A **Separatist Caucus** has formed in the Senate, made up of senators whose worlds are thinking about leaving.
-
-[? if rim_enfranchised : Thanks to the Rim Enfranchisement Act, Dooku's message falls on stonier ground than he hoped. ?]
+[? if rim_grievance >= 0.6 : Hundreds of worlds are listening. ?][? if rim_grievance < 0.6 : On the Outer Rim, the speech falls strangely flat: the Rim has a voice in the Senate now, and fewer reasons to leave. Dooku's audience is mostly among the trade guilds' worlds. ?] A **Separatist Caucus** has formed in the Senate, made up of senators whose worlds are thinking about leaving.
 
 - @condemn: Condemn Dooku as a traitor.
 - @dialogue: Call for dialogue with the disaffected worlds.

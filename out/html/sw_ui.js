@@ -74,6 +74,7 @@
     for (var j = 0; j < SW.FACTIONS.length; j++) {
       var f = SW.FACTIONS[j];
       h += row(SW.FACTION_NAMES[f], Math.round(Q[f + '_strength']) + '% · ' + SW.label('dissent', Q[f + '_dissent']));
+      if (Q[f + '_unmet']) h += '<div class="sb-note warn">Restless: they want ' + Q[f + '_demand'] + '.</div>';
     }
     if (Q.hawks_split) h += '<p class="sb-note">The Hawks have broken away to the Security Bloc.</p>';
     if (Q.rimward_split) h += '<p class="sb-note">The Rimward wing has split off as the Rim Freedom Caucus.</p>';

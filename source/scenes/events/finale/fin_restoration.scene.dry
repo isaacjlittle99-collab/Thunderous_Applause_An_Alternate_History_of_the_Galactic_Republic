@@ -17,7 +17,7 @@ Q.rest_stance = st;
 
 = The Restoration Vote
 
-[? if trial_held : Darth Sidious, once Supreme Chancellor Palpatine, will stand trial before the Supreme Court in full view of the galaxy. The evidence the Caucus gathered over fifteen years will be read into the record. ?][? if not trial_held : Darth Sidious is dead. The evidence of his crimes is being made public, piece by piece. ?]
+[? if trial_held : Darth Sidious, once [? if pal_was_chancellor : Supreme Chancellor ?][? if not pal_was_chancellor : Senator ?]Palpatine, will stand trial before the Supreme Court in full view of the galaxy. The evidence the Caucus gathered over fifteen years will be read into the record. ?][? if not trial_held : Darth Sidious is dead. The evidence of his crimes is being made public, piece by piece. ?]
 
 The Chancellor's office still holds [+ emergency_powers : powers +] emergency powers. [? if rc_chancellor : The Chancellor is now one of ours, [+ chancellor +], and the decision is ours too. ?][? if not rc_chancellor : The Caucus has tabled a **Restoration Act**: every emergency power to be repealed, the Senate's authority restored. ?]
 
