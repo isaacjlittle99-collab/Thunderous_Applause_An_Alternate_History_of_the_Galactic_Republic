@@ -3,7 +3,7 @@ subtitle: Who controls the Grand Army of the Republic?
 is-card: true
 tags: senate_affairs
 card-image: img/card_clones.svg
-view-if: clone_oversight_timer <= 0 and (clones > 0 or kamino_known) and (rc_in_govt or chair_security = "rc")
+view-if: clone_oversight_timer <= 0 and (clones > 0 or kamino_known) and (rc_in_govt or chair_security = "rc") and cardok_clones
 on-arrival: turn_actions += 1; clone_oversight_timer = 3; last_card_timer = "clone_oversight"
 new-page: true
 
@@ -36,7 +36,7 @@ unavailable-subtitle: Not enough political capital.
 on-arrival: {!
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.5, guild: 0.3, rim: 0.65, sec: 0.25, ind: 0.55, pal: 0.2, cis: 0.3}, true);
-Q.cc_vote = SW.vote(Q, st, 1);
+Q.cc_vote = SW.vote(Q, st, 1, 'oversight');
 Q.vote_html = SW.voteBanner('Clone Citizenship Act', Q.cc_vote);
 if (Q.cc_vote >= 50) { Q.clone_citizenship = 1; Q.navy_loyalty += 8; Q.clone_trust += 3; this.achieve('citizens'); }
 !}
@@ -55,7 +55,7 @@ on-arrival: {! Q.treasury -= 3; Q.chip_removal += 1; if (Q.chip_removal >= 3) { 
 [? if chips_removed : The last of the inhibitor chips has been removed. Whatever they were for, they will never be used. ?][? if not chips_removed : Republic medical teams work through the army one battalion at a time, citing "a routine neurological screening". The Kaminoans protest. ?]
 
 @limit
-view-if: clones > 2
+view-if: clones > 6
 subtitle: Fewer clones, less risk, and a harder war.
 on-arrival: clones -= 1; fear += 2; war_balance -= 1; pacifist_dissent -= 4; hawk_dissent += 5
 

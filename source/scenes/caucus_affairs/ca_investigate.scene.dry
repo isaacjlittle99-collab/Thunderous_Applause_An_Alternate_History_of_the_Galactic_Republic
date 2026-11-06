@@ -3,7 +3,7 @@ subtitle: Dig into the hidden currents behind the Republic's crises.
 is-card: true
 tags: caucus_affairs
 card-image: img/card_shadow.svg
-view-if: investigate_timer <= 0 and date >= 12
+view-if: investigate_timer <= 0 and date >= 12 and cardok_investigate
 on-arrival: turn_actions += 1; investigate_timer = 2; last_card_timer = "investigate"
 new-page: true
 
@@ -65,7 +65,7 @@ on-arrival: capital -= 1; kamino_hunt += 1; evidence += 0.3
 Our people work through old hyperspace charts, cargo manifests and the travel logs of a dead Jedi Master named Sifo-Dyas. [? if kamino_hunt >= 2 : The gap is closing. One more push and we will find the missing world. ?]
 
 @charges
-view-if: evidence >= 7 and not sidious_known and (pal_chancellor or pal_was_chancellor) and not finale
+view-if: evidence >= 7 and not sidious_known and not finale
 subtitle: [? if evidence >= 10 : Our case is conclusive. This is the moment. ?][? if evidence < 10 : Our case is strong but not conclusive. If it fails, the Caucus may not survive. ?]
 choose-if: capital >= 2
 unavailable-subtitle: Needs 2 political capital.

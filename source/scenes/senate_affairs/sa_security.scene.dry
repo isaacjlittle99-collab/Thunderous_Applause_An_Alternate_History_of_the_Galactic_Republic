@@ -3,7 +3,7 @@ subtitle: The Judicial Forces, defence policy and the Senate Guard.
 is-card: true
 tags: senate_affairs
 card-image: img/card_forces.svg
-view-if: security_timer <= 0 and chair_security = "rc"
+view-if: security_timer <= 0 and chair_security = "rc" and cardok_security
 on-arrival: turn_actions += 1; security_timer = 3; last_card_timer = "security"
 new-page: true
 
@@ -20,6 +20,7 @@ The Caucus chairs the Security & Defence Committee.
 - @easy_discard
 
 @judicials
+view-if: judicial_forces < 8
 subtitle: −2 treasury. +1 Judicial Forces, loyal to the Senate.
 choose-if: treasury >= 2
 unavailable-subtitle: The treasury cannot afford it.
@@ -35,7 +36,7 @@ unavailable-subtitle: Needs 1 political capital and a seat in government.
 on-arrival: {!
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.6, guild: 0.4, rim: 0.6, sec: 0.25, ind: 0.55, pal: 0.1, cis: 0.5}, true);
-Q.ov_vote = SW.vote(Q, st, 1);
+Q.ov_vote = SW.vote(Q, st, 1, 'oversight');
 Q.vote_html = SW.voteBanner('Grand Army Oversight Act', Q.ov_vote);
 if (Q.ov_vote >= 50) { Q.army_oversight = 1; Q.navy_loyalty += 10; this.achieve('oversight'); }
 !}
@@ -52,7 +53,7 @@ unavailable-subtitle: Needs 1 political capital and a seat in government.
 on-arrival: {!
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.55, guild: 0.45, rim: 0.55, sec: 0.35, ind: 0.55, pal: 0.05, cis: 0.5}, true);
-Q.sg_vote = SW.vote(Q, st, 1);
+Q.sg_vote = SW.vote(Q, st, 1, 'oversight');
 Q.vote_html = SW.voteBanner('Senate Guard Restoration Act', Q.sg_vote);
 if (Q.sg_vote >= 50) { Q.senate_guard_reformed = 1; Q.pal_relation -= 10; }
 !}
@@ -62,15 +63,16 @@ if (Q.sg_vote >= 50) { Q.senate_guard_reformed = 1; Q.pal_relation -= 10; }
 [? if senate_guard_reformed : The Senate Guard returns to its ancient blue robes and to the command of the Senate itself. ?][? if not senate_guard_reformed : The Guard remains under the Chancellor's office. ?]
 
 @navy
-view-if: clones > 0
+view-if: clones > 0 and navy_loyalty < 90
 subtitle: +8 Navy loyalty to the Senate; the Security Bloc objects.
 on-arrival: navy_loyalty += 8; sec_relation -= 4
 
 The committee confirms a slate of officers known for their loyalty to the constitution. A few promising officers loyal mainly to the Chancellor, such as one Captain Tarkin, are passed over.
 
 @audit
+view-if: security_audits < 3
 subtitle: −1 corruption; the Security Bloc is annoyed.
-on-arrival: corruption -= 1; sec_relation -= 4; treasury += 1
+on-arrival: corruption -= 1; sec_relation -= 4; treasury += 1; security_audits += 1
 
 The audit finds that the Republic has paid for the same frigate four times.
 

@@ -16,8 +16,10 @@ Grand strategy is all very well, but the business of the Republic does not stop 
 - @easy_discard
 
 @favours
-subtitle: +1 political capital.
-on-arrival: capital += 1
+subtitle: +1 political capital. Only when the Caucus's coffers are nearly empty.
+choose-if: capital <= 1
+unavailable-subtitle: Only when the Caucus's coffers are nearly empty (1 capital or less).
+on-arrival: capital += 1; corruption += 0.3
 
 You trade a vote on the subsidy bill for a promise to be named later. It is not glamorous, but it is how the Senate works.
 

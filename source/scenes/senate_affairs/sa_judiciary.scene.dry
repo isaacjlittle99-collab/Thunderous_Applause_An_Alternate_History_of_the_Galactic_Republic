@@ -3,7 +3,7 @@ subtitle: Courts, investigations and the Senate Bureau of Intelligence.
 is-card: true
 tags: senate_affairs
 card-image: img/card_law.svg
-view-if: judiciary_timer <= 0 and chair_judiciary = "rc"
+view-if: judiciary_timer <= 0 and chair_judiciary = "rc" and cardok_judiciary
 on-arrival: turn_actions += 1; judiciary_timer = 3; last_card_timer = "judiciary"
 new-page: true
 
@@ -19,6 +19,7 @@ The Caucus chairs the Judiciary & Intelligence Committee: the Republic's courts,
 - @easy_discard
 
 @prosecute
+view-if: corruption > 20
 subtitle: −3 corruption; some blocs feel targeted.
 on-arrival: corruption -= 3; mod_relation -= 3; guild_relation -= 3; faith += 0.5
 
@@ -32,7 +33,7 @@ unavailable-subtitle: Needs 1 political capital and a seat in government.
 on-arrival: {!
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.55, guild: 0.15, rim: 0.7, sec: 0.45, ind: 0.55, pal: 0.45, cis: 0.3}, true);
-Q.eth_vote = SW.vote(Q, st, 1);
+Q.eth_vote = SW.vote(Q, st, 1, ['oversight', 'regulate']);
 Q.vote_html = SW.voteBanner('Senate Ethics Commission Act', Q.eth_vote);
 if (Q.eth_vote >= 50) { Q.anti_corruption = 1; Q.corruption -= 4; Q.faith += 2; }
 !}
@@ -42,8 +43,9 @@ if (Q.eth_vote >= 50) { Q.anti_corruption = 1; Q.corruption -= 4; Q.faith += 2; 
 [? if anti_corruption : The Senate Ethics Commission is born, with real powers of audit. Corruption will be harder from now on. ?][? if not anti_corruption : Too many senators have too much to hide. The bill fails. ?]
 
 @intel
+view-if: intel_runs < 3
 subtitle: +1 evidence. The Chancellery may notice.
-on-arrival: {! Q.evidence += 1; if (Math.random() < 0.15 + Q.grand_plan / 500) Q.leak_pending = 1; !}
+on-arrival: {! Q.evidence += 1; Q.intel_runs += 1; if (Math.random() < 0.15 + Q.grand_plan / 500) Q.leak_pending = 1; !}
 
 The Bureau's analysts map the Chancellery's contacts. A disturbing number of them lead to people who later died, disappeared or became very rich.
 

@@ -3,8 +3,8 @@ subtitle: Work with the guardians of peace and justice.
 is-card: true
 tags: caucus_affairs
 card-image: img/card_jedi.svg
-view-if: jedi_timer <= 0
-on-arrival: turn_actions += 1; jedi_timer = 2; last_card_timer = "jedi"
+view-if: jedi_timer <= 0 and cardok_jedi
+on-arrival: turn_actions += 1; jedi_timer = 3; last_card_timer = "jedi"
 new-page: true
 
 = Jedi Relations
@@ -19,13 +19,14 @@ The Jedi Order is the Republic's oldest institution, and its most misunderstood.
 - @easy_discard
 
 @visit
+view-if: jedi_relation < 85
 subtitle: +6 relations with the Jedi.
 on-arrival: jedi_relation += 6
 
 The Caucus delegation leaves with no promises and a great many proverbs.
 
 @hunt
-view-if: date >= 18
+view-if: date >= 18 and jedi_suspicion < 9 and not sidious_known
 subtitle: [? if jedi_relation >= 45 : They may listen. ?][? if jedi_relation < 45 : They do not trust us enough to listen. ?]
 choose-if: jedi_relation >= 45
 unavailable-subtitle: Our relations with the Jedi are too weak.
@@ -34,20 +35,21 @@ on-arrival: jedi_suspicion += 1; jedi_relation -= 2; evidence += 0.2
 The Council agrees to quietly expand its search. "The dark side clouds everything," Yoda warns. "Impossible to see, the future is."
 
 @defend
+view-if: jedi_standing < 85
 subtitle: +4 public trust in the Jedi.
 on-arrival: jedi_standing += 4; jedi_relation += 2; sec_relation -= 2
 
 The Caucus reminds the Senate that the Jedi have kept the peace for a thousand years without an army.
 
 @reform
-view-if: date >= 108 or war
+view-if: date >= 108 or war and jedi_reform < 3 and not jedi_reformed
 subtitle: The Order resents it, but a less rigid Order might keep its troubled Knights.
 on-arrival: jedi_reform += 1; jedi_relation -= 4; anakin_fall -= 0.5; jedi_standing += 1
 
 The Caucus argues that the Order's rules, on attachment, on the recruitment of infants, on becoming generals, belong to a calmer age. Some younger Jedi quietly agree.
 
 @anakin
-view-if: anakin_found and date >= 20
+view-if: anakin_found and date >= 20 and anakin_fall > 0.5
 subtitle: [? if jedi_relation >= 60 : The Council may confide in us. ?][? if jedi_relation < 60 : The Council is protective of its own. ?]
 choose-if: jedi_relation >= 60
 unavailable-subtitle: Our relations with the Jedi are not close enough.

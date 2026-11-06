@@ -6,6 +6,7 @@ view-if: not finale and not game_ending and not election_suspended and (election
 new-page: true
 face-image: img/ev_senate.svg
 on-arrival: {!
+SW.rotateRcLeader(Q);
 SW.senateSession(Q);
 var c = [];
 if (Q.rc_r >= 7) c.push('rc');
@@ -15,6 +16,8 @@ if (Q.parties.indexOf('rim') >= 0 && Q.rim_r >= 10) c.push('rim');
 if (Q.date >= 108 && Q.sec_r >= 14) c.push('sec');
 if (c.length < 2) c.push('ind');
 Q.el_cands = c;
+SW.dropPartnerCandidates(Q);
+c = Q.el_cands;
 Q.el_has_rc = c.indexOf('rc') >= 0 ? 1 : 0;
 Q.el_has_mod = c.indexOf('mod') >= 0 ? 1 : 0;
 Q.el_has_rim = c.indexOf('rim') >= 0 ? 1 : 0;

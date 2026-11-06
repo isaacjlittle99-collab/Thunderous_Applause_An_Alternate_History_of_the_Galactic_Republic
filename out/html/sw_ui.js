@@ -74,6 +74,9 @@
     for (var j = 0; j < SW.FACTIONS.length; j++) {
       var f = SW.FACTIONS[j];
       h += row(SW.FACTION_NAMES[f], Math.round(Q[f + '_strength']) + '% · ' + SW.label('dissent', Q[f + '_dissent']));
+      var led = (Q[f + '_leader'] && SW.firmLabel) ? 'Led by ' + Q[f + '_leader'] + ' (' + SW.firmLabel(Q, f) + ').' : '';
+      if (Q[f + '_unmet']) h += '<div class="sb-note warn">' + led + ' Restless: they want ' + Q[f + '_demand'] + '.</div>';
+      else if (led) h += '<div class="sb-note">' + led + '</div>';
     }
     if (Q.hawks_split) h += '<p class="sb-note">The Hawks have broken away to the Security Bloc.</p>';
     if (Q.rimward_split) h += '<p class="sb-note">The Rimward wing has split off as the Rim Freedom Caucus.</p>';
@@ -95,6 +98,8 @@
       var bb = Q.parties[k];
       if (bb === 'rc') continue;
       h += row(bloc(Q, bb), SW.label('relation', Q[bb + '_relation']));
+      var ref = SW.leader ? (SW.leader(Q, bb).refuses || []).filter(function (x) { return Q.parties.indexOf(x) >= 0; }) : [];
+      if (ref.length) h += '<div class="sb-note">' + Q[bb + '_leader'] + ' won\'t govern with the ' + ref.map(function (x) { return SW.name(Q, x); }).join(' or the ') + '.</div>';
     }
     h += head('Committee chairs');
     for (var c = 0; c < SW.COMMITTEES.length; c++) {
@@ -178,8 +183,10 @@
     h += head('Bloc leaders');
     for (var i = 0; i < Q.parties.length; i++) {
       var b = Q.parties[i];
-      h += row(bloc(Q, b), Q[b + '_leader'] || '—');
+      var tag = (SW.CONTEST_BLOCS && SW.CONTEST_BLOCS.indexOf(b) >= 0 && SW.firmLabel) ? ' <span class="sb-tag">' + SW.firmLabel(Q, b) + '</span>' : '';
+      h += row(bloc(Q, b), (Q[b + '_leader'] || '—') + tag);
     }
+    h += '<p class="sb-note">Leaders change with the times. Hardliners vote as a block and hold grudges; pragmatists bargain. See the Holocron.</p>';
     h += head('Our advisors');
     var any = false;
     for (var a in SW.ADVISOR_NAMES) {

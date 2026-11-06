@@ -45,7 +45,7 @@ on-arrival: main_enemy = "separatists"; cis_relation -= 10; sec_relation += 4; h
 The Caucus declares that secession is treason against the Ruusan constitution.
 
 @overreach
-view-if: date >= 21
+view-if: date >= 21 and not rc_chancellor
 subtitle: [? if emergency_powers >= 1 or evidence >= 3 : The danger is real and visible. ?][? if emergency_powers < 1 and evidence < 3 : Many will think we are chasing shadows. ?]
 on-arrival: main_enemy = "overreach"; pal_relation -= 8; senate_resolve += 0.5; inst_dissent += 4 if emergency_powers < 1 and evidence < 3; faith -= 0.5 if emergency_powers < 1 and evidence < 3
 

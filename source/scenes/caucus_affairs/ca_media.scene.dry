@@ -3,8 +3,8 @@ subtitle: Shape what the galaxy sees and hears.
 is-card: true
 tags: caucus_affairs
 card-image: img/card_holonet.svg
-view-if: media_timer <= 0
-on-arrival: turn_actions += 1; media_timer = 3; last_card_timer = "media"
+view-if: media_timer <= 0 and cardok_media
+on-arrival: turn_actions += 1; media_timer = 4; last_card_timer = "media"
 new-page: true
 
 = HoloNet Media
@@ -18,6 +18,7 @@ The HoloNet reaches every corner of the Republic. What story should the Caucus t
 - @easy_discard
 
 @corruption
+view-if: corruption > 20
 subtitle: −1 political capital. Less corruption, more faith; the guilds will be angry.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
@@ -26,6 +27,7 @@ on-arrival: capital -= 1; corruption -= 1.5; faith += 1; guild_relation -= 3; rc
 A Caucus-backed investigation into "the Senate's thousand hands in the till" leads every HoloNet bulletin for a week.
 
 @republic
+view-if: faith < 85
 subtitle: −1 political capital. More faith in the Republic.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
@@ -34,6 +36,7 @@ on-arrival: capital -= 1; faith += 2; fear -= 1
 The Caucus sponsors a series on the Ruusan Reformation: a thousand years of peace, built by people who refused to give up on the Senate.
 
 @overreach
+view-if: not rc_chancellor and senate_resolve < 10
 subtitle: [? if emergency_powers >= 1 or evidence >= 3 : Credible: the threat is visible. ?][? if emergency_powers < 1 and evidence < 3 : Nobody sees the threat yet. This may look like alarmism. ?]
 on-arrival: senate_resolve += 0.7 if emergency_powers >= 1 or evidence >= 3; faith -= 1 if emergency_powers < 1 and evidence < 3; pal_relation -= 3
 

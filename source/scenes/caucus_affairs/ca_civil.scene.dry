@@ -3,7 +3,7 @@ subtitle: Build support for democracy beyond the Senate chamber.
 is-card: true
 tags: caucus_affairs
 card-image: img/card_civil.svg
-view-if: civil_timer <= 0 and date >= 24
+view-if: civil_timer <= 0 and date >= 24 and cardok_civil
 on-arrival: turn_actions += 1; civil_timer = 3; last_card_timer = "civil"
 new-page: true
 
@@ -18,6 +18,7 @@ The Senate is not the Republic. Its strength lies with the billions who still be
 - @easy_discard
 
 @networks
+view-if: faith < 85
 subtitle: −1 political capital. More faith; broader support for the Caucus.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
@@ -26,6 +27,7 @@ on-arrival: {! Q.capital -= 1; Q.faith += 1.5; for (var i = 0; i < SW.REGIONS.le
 "Friends of the Republic" societies spring up on hundreds of worlds.
 
 @holonet
+view-if: free_press < 3
 subtitle: −1 political capital. Protects the free press; harder to silence later.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
@@ -34,7 +36,7 @@ on-arrival: capital -= 1; free_press += 1; faith += 0.5; evidence += 0.2
 An independent HoloNet foundation, funded from a dozen worlds, begins broadcasting from Chandrila.
 
 @clones
-view-if: clones > 0
+view-if: clones > 0 and clone_trust < 8
 subtitle: The clones trust the Senate more; the Security Bloc objects.
 on-arrival: clone_trust += 1; navy_loyalty += 3; sec_relation -= 3; faith += 0.5
 

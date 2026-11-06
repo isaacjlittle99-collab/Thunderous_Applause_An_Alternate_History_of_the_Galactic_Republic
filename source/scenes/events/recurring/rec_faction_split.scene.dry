@@ -1,22 +1,22 @@
 title: The Caucus Splits
 subtitle: A faction has had enough.
 tags: event
-view-if: (hawk_dissent >= 60 and not hawks_split) or (rimward_dissent >= 60 and not rimward_split) or (pacifist_dissent >= 60 and not pacifists_resigned) or (inst_dissent >= 70 and not inst_crisis)
+view-if: hawk_split_ready or rimward_split_ready or pacifist_split_ready or inst_split_ready
 priority: 7
 new-page: true
 face-image: img/ev_senate.svg
 on-arrival: {!
 Q.split_kind = '';
-if (Q.hawk_dissent >= 60 && !Q.hawks_split) {
+if (Q.hawk_split_ready) {
     Q.split_kind = 'hawk'; Q.hawks_split = 1; Q.adv_bel_iblis = 0;
     for (var i = 0; i < SW.REGIONS.length; i++) { var r = SW.REGIONS[i]; var mv = Q[r + '_rc'] * 0.15; Q[r + '_rc'] -= mv; Q[r + '_sec'] += mv; }
     Q.hawk_strength *= 0.3; Q.hawk_dissent = 20; Q.member_forces *= 0.7; Q.sec_relation += 10;
-} else if (Q.rimward_dissent >= 60 && !Q.rimward_split) {
+} else if (Q.rimward_split_ready) {
     Q.split_kind = 'rimward'; Q.rimward_split = 1; Q.rfc_formed = 1; Q.adv_farr = 0; Q.adv_chuchi = 0;
     if (Q.parties.indexOf('rfc') < 0) Q.parties.push('rfc');
     for (var j = 0; j < SW.REGIONS.length; j++) { var g = SW.REGIONS[j]; var mv2 = Q[g + '_rc'] * (g === 'outer' || g === 'midrim' ? 0.35 : 0.1); Q[g + '_rc'] -= mv2; Q[g + '_rfc'] += mv2; }
     Q.rimward_strength *= 0.3; Q.rimward_dissent = 20; Q.rfc_relation = 45;
-} else if (Q.pacifist_dissent >= 60 && !Q.pacifists_resigned) {
+} else if (Q.pacifist_split_ready) {
     Q.split_kind = 'pacifist'; Q.pacifists_resigned = 1; Q.adv_mothma = 0;
     Q.pacifist_strength *= 0.4; Q.pacifist_dissent = 25; Q.faith -= 2; Q.capital -= 2;
     for (var k = 0; k < SW.REGIONS.length; k++) Q[SW.REGIONS[k] + '_rc'] *= 0.94;

@@ -3,8 +3,8 @@ subtitle: Help the forgotten worlds of the Outer Rim.
 is-card: true
 tags: caucus_affairs
 card-image: img/card_rim.svg
-view-if: rim_outreach_timer <= 0
-on-arrival: turn_actions += 1; rim_outreach_timer = 2; last_card_timer = "rim_outreach"
+view-if: rim_outreach_timer <= 0 and cardok_rim
+on-arrival: turn_actions += 1; rim_outreach_timer = 3; last_card_timer = "rim_outreach"
 new-page: true
 
 = Rim Outreach
@@ -19,6 +19,7 @@ The Outer Rim is poor, overtaxed and preyed upon by pirates and the Hutt cartels
 - @easy_discard
 
 @relief
+view-if: rim_hardship > 15
 subtitle: −1 political capital. Less hardship, less separatism.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
@@ -27,6 +28,7 @@ on-arrival: capital -= 1; rim_hardship -= 3; outer_sep -= 2; outer_rc += 1; rimw
 Caucus-funded convoys reach worlds the Republic has not visited in decades.
 
 @slavery
+view-if: not slavery_abolished and slavery_campaign < 2
 subtitle: −2 political capital. Builds the case for abolition; the Hutts will retaliate.
 choose-if: capital >= 2
 unavailable-subtitle: Needs 2 political capital.
@@ -45,13 +47,14 @@ achievement: shmi_free
 A Caucus envoy buys Shmi Skywalker's freedom from a junk dealer in Mos Espa and brings her to a safe life on a Caucus world. When young Anakin is told, he weeps, and asks who did it. The Jedi tell him only that "friends in the Senate" did.
 
 @listen
+view-if: outer_sep > 12
 subtitle: The Rimward Coalition notices; the Institutionalists fidget.
 on-arrival: rim_relation += 6; outer_sep -= 1.5; midrim_sep -= 1; inst_dissent += 2
 
 Rim delegates testify for three days. For once, the Senate listens.
 
 @moderates
-view-if: dooku_movement
+view-if: dooku_movement and outer_sep > 20
 subtitle: −1 political capital. Cools separatism; the Hawks object.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.

@@ -29,7 +29,7 @@ subtitle: [? if member_forces >= 2 or pact_formed : The Defence Pact worlds can 
 choose-if: member_forces >= 2 or pact_formed
 unavailable-subtitle: We have no forces to defend a Free Republic (needs the Defence Pact or member-world forces).
 on-arrival: {!
-Q.no_vote = SW.vote(Q, Q.no_stance, 0);
+Q.no_vote = SW.vote(Q, Q.no_stance, 0, 'powers');
 Q.vote_html = SW.voteBanner('Declaration of the New Order', Q.no_vote);
 if (Q.no_vote >= 50) Q.empire_declared = 1;
 Q.free_republic = 1; Q.civil_war_pending = 1;
@@ -41,7 +41,7 @@ Q.free_republic = 1; Q.civil_war_pending = 1;
 
 @no
 on-arrival: {!
-Q.no_vote = SW.vote(Q, Q.no_stance, 0);
+Q.no_vote = SW.vote(Q, Q.no_stance, 0, 'powers');
 Q.vote_html = SW.voteBanner('Declaration of the New Order', Q.no_vote);
 if (Q.no_vote >= 50) { Q.empire_declared = 1; Q.game_ending = 1; } else { Q.civil_war_pending = 1; }
 !}
@@ -52,7 +52,7 @@ if (Q.no_vote >= 50) { Q.empire_declared = 1; Q.game_ending = 1; } else { Q.civi
 
 @yes
 on-arrival: {!
-Q.no_vote = SW.vote(Q, Q.no_stance, 1);
+Q.no_vote = SW.vote(Q, Q.no_stance, 1, 'powers');
 Q.vote_html = SW.voteBanner('Declaration of the New Order', Q.no_vote);
 if (Q.no_vote >= 50) { Q.empire_declared = 1; } else { Q.civil_war_pending = 1; }
 Q.game_ending = Q.empire_declared ? 1 : 0;
