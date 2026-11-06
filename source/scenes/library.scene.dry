@@ -15,6 +15,7 @@ is-special: true
 - @lib_regions: The regions of the galaxy
 - @lib_factions: The factions of the Ruusan Caucus
 - @lib_meters: The state of the Republic, explained
+- @lib_systems: How the systems interact
 - @lib_reforms: Safeguards and how to win them
 - @lib_charts: The Senate in charts
 - @lib_timeline: Timeline of the Republic to 33 BBY
@@ -112,6 +113,158 @@ go-to: menu
 **Senate resolve** is how seriously the Senate takes the danger to its own authority. The Defence Pact, a no-confidence vote and the Petition all need it.
 
 **In the corridors** is the only hint the game gives of the Sith Lord's hidden progress.
+
+For how these numbers feed each other, see *How the systems interact*.
+
+@lib_systems
+is-special: true
+new-page: true
+go-to: lib_sys_menu
+
+= How the systems interact
+
+Every number in the Status panel feeds several others, so a problem left alone in one place spreads to the rest. When you play a card, the turn ends and the galaxy moves in this order:
+
+• The calendar advances, and card and advisor cooldowns tick down.
+
+• Each faction's dissent drifts, and relations with other blocs fade toward their natural level.
+
+• Corruption, fear, faith, Rim hardship, separatism and the Sith's hidden plan update.
+
+• Each bloc's support in each region drifts toward a natural level set by those numbers. Your campaigns push it away from that level for a while.
+
+• Worlds with strong separatism secede. In wartime, the front moves.
+
+• Events fire. Seats are recounted only every January and at Chancellor elections, so the polls run ahead of the seats.
+
+Figures are per quarter. Half-year turns count double.
+
+@lib_sys_menu
+is-special: true
+
+- @lib_sys_corruption: Corruption, faith and fear
+- @lib_sys_rim: Rim hardship, the guilds and secession
+- @lib_sys_powers: Emergency powers and the Sith's plan
+- @lib_sys_proof: Evidence and Senate resolve
+- @lib_sys_senate: Seats, elections and relations
+- @lib_sys_caucus: Capital, factions and dissent
+- @lib_sys_war: The war, Anakin and the final reckoning
+- @library: Back to the Holocron's contents
+
+@lib_sys_corruption
+is-special: true
+new-page: true
+go-to: lib_sys_menu
+
+= Corruption, faith and fear
+
+**Corruption** (starts at 60) is the most connected number in the game. It rises by about 0.3 a quarter on its own, and faster for each emergency power the Chancellor holds, during the war, and when the Commerce Guilds are strong in the Senate. Prosecutions, exposés and breaking up the Trade Federation knock it down once. Only a **Senate Ethics Commission** reverses the trend, taking off 0.6 every quarter.
+
+Corruption lowers faith and shrinks the Core Moderates. It grows Palpatine's bloc by 4% for each point above 55, so his natural support doubles at 80. It feeds Rim and corporate grievances, speeds the Sith's hidden plan, and tilts Chancellor elections toward Palpatine. At 62, scandals begin and the Institutionalists grow restless. The best ending needs corruption below 65, or an Ethics Commission.
+
+**Faith in the Republic** (starts at 50) drifts toward a target rather than moving directly. Corruption, fear, war-weariness and emergency powers lower the target. Each safeguard you pass raises it by 2.5, and so does a larger Caucus. Speeches and good news lift faith for a while, but only a better target makes the change last. Faith grows the Caucus, makes every bloc likelier to vote for reform, and decides a sitting Chancellor's re-election. The best ending needs 55.
+
+**Fear** (starts at 20) rises fast in a crisis and fades fast once it passes. Dooku's movement, the war, defeats at the front and each wave of secession raise its target. Fear grows Palpatine's bloc and the Security Bloc, lowers faith, speeds the Sith's plan, and makes the Senate readier to hand out emergency powers.
+
+@lib_sys_rim
+is-special: true
+new-page: true
+go-to: lib_sys_menu
+
+= Rim hardship, the guilds and secession
+
+**Outer Rim hardship** (starts at 30) creeps up by itself, and faster during guild credit strikes and the war. Each Rim relief programme, the abolition of slavery and Rim enfranchisement slow it for good. Hardship grows the Rimward Coalition and feeds Rim separatism. At 38, pirate raids begin; at 55, famines. Above 40, the Caucus's Rimward wing grows restless unless the Rim is enfranchised.
+
+**The guild embargo** is the guilds' willingness to squeeze the Republic. Taxing trade routes, regulating the guilds and breaking up the Trade Federation raise it. At 5 the guilds strike back, and at 8 they mount a full credit strike. The embargo raises Rim hardship and drains the treasury.
+
+**Separatism** has two different sources. **Rim worlds** leave over hardship and corruption. Enfranchisement, abolition and relief cut those grievances, and an enfranchised Rim slowly settles back toward loyalty. **Corporate worlds** leave over how the guilds are treated: embargoes, the Trade Federation's break-up, trade taxes and poor relations with the guilds. Both kinds grow much faster once Dooku speaks on Raxus.
+
+From then on, any region whose separatism is above 50 loses delegations every quarter. Each departure shrinks the Senate, raises fear, and leaves the Chancellor's bloc relatively larger. The Clone Wars break out only if Rim worlds have left, a tenth of the Senate has gone, or Rim separatism has reached 55. A guild walkout alone is not enough.
+
+@lib_sys_powers
+is-special: true
+new-page: true
+go-to: lib_sys_menu
+
+= Emergency powers and the Sith's plan
+
+**Emergency powers** (0 to 10) measure how much authority the Senate has handed the Chancellor. Most steps are Senate votes you can contest: the term extension (24 BBY), Geonosis (22 BBY), powers "for the duration", the security act, the Banking Clan takeover, the sector governors, and Anakin's seat on the Council. Safeguards block steps outright. Entrenched term limits stop the extensions, banking independence protects the banks, Jedi independence protects the Council, and sunset clauses can stop the governors.
+
+Each power adds corruption and lowers faith. Powers held by anyone but your own Chancellor also speed the Sith's plan, and at 4 or more they anger the Pacifists. A failed yearly sunset review takes two away, and after Sidious falls the Restoration Act can repeal them all. If 8 or more remain at the end, the Empire is born. If 5 or more survive Sidious's fall unrepealed, the admirals keep them. If your own Chancellor keeps them, the result is the Hollow Crown.
+
+**The Sith's plan** is hidden. Only *In the corridors*, on the Shadow tab, hints at it, and the hint changes every 20 points. It grows with corruption, fear, the war and other people's emergency powers, and much faster while Palpatine is Chancellor. It grows more slowly when he is out of office, and slowest of all under a Caucus Chancellor. Evidence, Senate resolve and a suspicious Jedi Council slow it. Decommissioning the clones or putting them under oversight sets it back.
+
+As the plan advances, Palpatine's bloc grows, elections lean his way, your evidence goes stale faster, and leaks and assassinations become likelier. Past 70, he may have a second Order 66 ready even if he is arrested, unless the clones' chips have been removed.
+
+@lib_sys_proof
+is-special: true
+new-page: true
+go-to: lib_sys_menu
+
+= Evidence and Senate resolve
+
+**Evidence** (0 to 12) is what the Caucus can prove about the Sith. The richest sources are Gunray's trials, finding Kamino early, the Sifo-Dyas mystery, the Damask money trail, Fives and the chips, and a Count Dooku turned against his master. Shadow Investigation and intelligence reviews add a little at a time. Above 5, evidence goes stale each quarter, and faster as the Sith's plan advances; a free press slows the decay. Leaks, murdered investigators and failed charges cost you.
+
+Evidence slows the Sith's plan, and it opens doors. At 2 you can share findings with the Jedi. At 3, warnings of overreach sound credible. At 6, a false flag can be exposed. At 7 you can lay charges, at a risk. At 8 the Senate can issue a warrant. At 10 the proof is conclusive. Evidence made public shrinks Palpatine's bloc and his appeal at elections.
+
+**Senate resolve** (0 to 10) is how seriously the Senate takes the danger to its own authority. Confronting the Chancellery, holding the term limit, Mon Mothma's warnings and the Chancellor's own overreach raise it. Failed charges and failed no-confidence votes lower it. Every point makes reform votes easier and slows the Sith's plan. Resolve works like a set of keys:
+
+• 2: at Geonosis, the clones can deploy under Senate command.
+
+• 3: the Free Worlds Defence Pact, and the Petition of 2000.
+
+• 4: a vote of no confidence in the Chancellor, and sheltering Fives.
+
+• 5: the Delegation of 2000 forms.
+
+@lib_sys_senate
+is-special: true
+new-page: true
+go-to: lib_sys_menu
+
+= Seats, elections and relations
+
+Every bloc's support in every region drifts toward a natural level. Faith grows the Caucus, and your own dissent shrinks it. Low corruption grows the Core Moderates. Corruption, fear, the Sith's plan and holding office grow Palpatine's bloc. Fear and the war grow the Security Bloc, and Rim hardship grows the Rimward Coalition. Campaigns push support away from these levels for a while.
+
+**Chancellor elections.** Each bloc backs the candidate it likes most: its own leader, an endorsed ally, or the candidate it leans toward, weighed by how strong that candidate's bloc really is. Without a majority, the top two go to a second ballot. Capital spent courting a bloc buys a large lean toward your candidate. In 32 BBY only, Naboo's plight gives Palpatine a sympathy vote.
+
+**Incumbency.** Partners in a stable coalition back the sitting Chancellor instead of running against them. The Chancellor's record moves every bloc: faith, corruption, coalition harmony, and whether the war is going badly. A coalition whose dissent reaches 4 falls, unless constructive no-confidence has passed.
+
+**Relations** with other blocs fade each quarter toward each bloc's natural attitude toward the Caucus. The Core Moderates are the friendliest; the guilds and the Separatists are the coldest. Relations decide coalitions (every partner must be at 35 or more) and sway votes and elections. Inter-bloc Relations, advisors and policies a bloc likes raise them.
+
+@lib_sys_caucus
+is-special: true
+new-page: true
+go-to: lib_sys_menu
+
+= Capital, factions and dissent
+
+**Political capital** arrives each January: 2 on Senator, 3 on Story, 1 on Jedi Master. You get 1 more if Caucus dissent is low, 1 more while the Caucus sits in government, and 1 less if dissent is high. Patron Contributions, some advisors and Routine Senate Business (only when you are nearly broke) add a little more. Courting blocs at elections, the Defence Pact, Rim enfranchisement, the Federal Compact and laying charges cost the most.
+
+**The factions** each have a strength and a dissent level. Every turn, a faction's dissent rises if it has no advisor in the leadership and if its cause is neglected, and falls while its cause is being met. Advisors slow dissent but don't erase it. The Status panel shows what a restless faction wants:
+
+• Institutionalists: corruption no higher than 62, or an Ethics Commission.
+
+• Rimward: Rim hardship no higher than 40 or the Rim enfranchised, and a campaign against slavery from 28 BBY.
+
+• Pacifists: peace talks while Dooku's movement grows and during the war, and no Chancellor but yours with 4 or more powers.
+
+• Hawks: a Defence Pact or forces of our own once Dooku moves, and a war that isn't being lost.
+
+Overall dissent shrinks most of the Caucus's gains and its natural size, and changes the yearly capital bonus. At 60, a faction breaks. The Institutionalists' crisis costs capital and support, the Rimward walk out to form the Rim Freedom Caucus, the Pacifists resign their posts, and the Hawks defect to the Security Bloc.
+
+@lib_sys_war
+is-special: true
+new-page: true
+go-to: lib_sys_menu
+
+= The war, Anakin and the final reckoning
+
+**The front** runs from −10 to +10. Sidious wants a long war, so if nobody pushes, it drifts toward a slow Republic advance. Funding the front, Jedi generals and a turned Dooku push it forward. Every quarter of war drains the treasury, adds corruption, Rim hardship and war-weariness, and wears down the Jedi. The war ends with the Federal Compact, with victory at +9, or with a Treaty of Separation if the front is behind or weariness reaches 60. At −9.5, the Confederacy wins.
+
+**Anakin** is hidden too. Palpatine's grip on him tightens with Shmi's death, Qui-Gon's death, Palpatine's mentorship, the Council seat and every quarter of war. Freeing Shmi, an honest marriage accepted by a reformed Council, Padmé and honesty from the Jedi pull him back. At the arrest, an Anakin still in the light helps Windu; one far gone strikes Windu down.
+
+**The final reckoning.** If it comes to a fight, the game weighs everyone loyal to the Senate against everyone who would obey the Sith Lord. The Senate side has the Jedi (scaled by public trust), the Judicial Forces, the Defence Pact, the Senate Guard (if it was reformed or the Chancellery is yours), unchipped clones, a loyal Navy and Anakin. The Sith side has chipped clones, the Guard and the sector governors if his camp holds the Chancellery, a disloyal Navy, the Security Bloc's men and Vader. Clearly stronger means victory, roughly even means a long civil war, and much weaker means the Empire. Acting without a Senate warrant risks a Jedi Protectorate, even in victory.
 
 @lib_reforms
 is-special: true
