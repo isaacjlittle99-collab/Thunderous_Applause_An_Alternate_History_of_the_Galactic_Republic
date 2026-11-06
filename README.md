@@ -65,12 +65,16 @@ The game can be installed from its website as an app. It gets its own Start-menu
 desktop icon, opens in its own window, and works offline. Saves are kept.
 
 1. Open the game's site in **Microsoft Edge** or **Google Chrome**:
-   <https://isaacjlittle99-collab.github.io/dynamic_social_democracy_fork/>
+   <https://isaacjlittle99-collab.github.io/Thunderous_Applause_An_Alternate_History_of_the_Galactic_Republic/>
 2. Click **Install game** in the links at the top of the page, then **Install**. Alternatively, click
    the install icon at the right of the address bar.
 3. Optional: right-click the new **Thunderous Applause** icon in the Start menu and choose **Pin to taskbar**.
 
 To remove it, right-click the icon and choose **Uninstall**.
+
+If you installed the game before the repository was renamed (from the old
+`.../dynamic_social_democracy_fork/` address), that copy no longer receives updates. Uninstall it and
+install again from the address above. Your saves and achievements carry over.
 
 **One-time GitHub setup** (needed before the site exists):
 

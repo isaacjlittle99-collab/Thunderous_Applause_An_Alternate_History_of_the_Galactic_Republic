@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/isaacjlittle99-collab/dynamic_social_democracy_fork.git"
+    "url": "git+https://github.com/isaacjlittle99-collab/Thunderous_Applause_An_Alternate_History_of_the_Galactic_Republic.git"
   },
   "keywords": [],
   "author": "isaacjlittle99-collab, after Autumn Chen",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/isaacjlittle99-collab/dynamic_social_democracy_fork/issues"
+    "url": "https://github.com/isaacjlittle99-collab/Thunderous_Applause_An_Alternate_History_of_the_Galactic_Republic/issues"
   },
-  "homepage": "https://github.com/isaacjlittle99-collab/dynamic_social_democracy_fork",
+  "homepage": "https://github.com/isaacjlittle99-collab/Thunderous_Applause_An_Alternate_History_of_the_Galactic_Republic",
   "dependencies": {
     "dendrynexus": "github:originn0/dendrynexus",
     "parliament-svg": "^3.0.0"
