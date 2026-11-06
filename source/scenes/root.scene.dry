@@ -4,7 +4,7 @@ go-to: post_event if started = 1; start_menu if not started
 
 @start_menu
 new-page: true
-set-bg: img/bg_stars.svg
+set-bg: img/bg_galaxy.jpg
 go-to: start_menu_2
 
 @start_menu_2
@@ -92,7 +92,7 @@ Q.adv_farr = 1;
 SW.countAdvisors(Q);
 SW.everyVisit(Q);
 !}
-set-bg: img/bg_senate.svg
+set-bg: img/bg_galaxy.jpg
 new-page: true
 
 = 33 BBY

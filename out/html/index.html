@@ -32,7 +32,7 @@
       }
     </script>
   </head>
-  <body class="dark-mode">
+  <body>
     <div class="background" id="bg2">
     </div>
 
@@ -161,6 +161,17 @@
                 </tr>
                 <tr>
                     <td>
+                        Custom art:
+                    </td>
+                    <td colspan="4">
+                        <button onclick="window.showCustomArt();">Use your own images…</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <hr> </td>
+                </tr>
+                <tr>
+                    <td>
                         <button onclick="window.hideOptions();">Close</button>
                     </td>
                     <td></td>
@@ -171,6 +182,20 @@
 
                 </tr>
             </table>
+        </div>
+    </div>
+
+    <div id="custom_art" class="overlay" style="display: none;">
+        <div class="overlay_top">
+            <h2>Use your own images</h2>
+            <p>Replace any card, portrait, event picture or the background with an image of your own.
+            Your images are kept in this browser only: they are never uploaded, and other players won't see them.</p>
+            <input type="file" id="custom_art_file" accept="image/*" style="display: none;">
+            <div id="custom_art_list"></div>
+            <p>
+                <button onclick="window.resetAllArt();">Reset all</button>
+                <button onclick="window.hideCustomArt();">Close</button>
+            </p>
         </div>
     </div>
 

@@ -1,19 +1,20 @@
 /* Thunderous Applause - stylesheet (based on the dendrynexus / Social Democracy layout) */
 
 body {
-  --bg-color: #e9e6dc;
+  --bg-color: #141826;
   --border-color: #3a3f4a;
-  --content-bg-color: #f6f4ee;
-  --text-color: #2b2a26;
-  --muted-color: #6d6a62;
+  --content-bg-color: #f3f2ee;
+  --text-color: #26251f;
+  --muted-color: #6a675f;
   --link-color: #1d5c9a;
   --link-hover-color: rgba(59, 130, 196, 0.12);
   --unavailable-bg-color: rgba(0, 0, 0, 0.06);
   --unavailable-color: #9a978f;
-  --tab-bg-color: #dcd8cc;
-  --tab-hover-color: #ecebe5;
-  --card-border-color: #c9c4b6;
-  --card-bg-color: #dedad0;
+  --tab-bg-color: #e1dfd7;
+  --tab-hover-color: #efeee9;
+  --card-border-color: #c9c6bc;
+  --card-bg-color: #ffffff;
+  --bg-opacity: 1;
   --accent: #3b82c4;
   --good: #2f8a43;
   --warn: #b5701c;
@@ -29,6 +30,7 @@ body {
 }
 
 body.dark-mode {
+  --bg-opacity: 0.32;
   --bg-color: #05070d;
   --border-color: #b9c4d6;
   --content-bg-color: rgba(14, 19, 31, 0.94);
@@ -111,8 +113,15 @@ header h1 {
   color: #e8c76a;
 }
 
+/* the title sits on the map in both themes */
+header h2 {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+body:not(.dark-mode) header h2 {
+  color: #d7dbe4;
+}
 body:not(.dark-mode) header h1 {
-  color: #8a6a12;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 header h2 {
@@ -533,7 +542,7 @@ svg .tick line {
   z-index: -99;
   background-size: cover;
   background-position: center;
-  opacity: 0.55;
+  opacity: var(--bg-opacity);
 }
 
 /* cards */
@@ -794,3 +803,47 @@ th {
 }
 
 .sb-tag { display: block; font-size: 0.78em; opacity: 0.7; font-style: italic; }
+
+/* light theme: white card tiles with a soft shadow, as on a printed card */
+body:not(.dark-mode) a.card {
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* custom art manager */
+#custom_art .overlay_top {
+  max-height: 80vh;
+  overflow-y: auto;
+  max-width: 760px;
+}
+.art-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.art-slot {
+  width: 110px;
+  text-align: center;
+  font-size: 0.8em;
+  line-height: 1.25;
+}
+.art-slot img {
+  width: 96px;
+  height: 120px;
+  object-fit: cover;
+  border: 3px solid var(--card-border-color);
+  background: #fff;
+  display: block;
+  margin: 0 auto 4px;
+}
+.art-slot.wide img {
+  width: 104px;
+  height: 66px;
+}
+.art-slot .custom-mark {
+  color: var(--good);
+  font-weight: bold;
+}
+.art-slot button {
+  font-size: 0.9em;
+  margin: 2px 1px 0;
+}

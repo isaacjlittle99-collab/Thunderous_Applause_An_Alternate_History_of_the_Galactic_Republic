@@ -35,6 +35,16 @@
     var w = Math.max(0, Math.min(100, Math.round(100 * v / max)));
     return '<div class="meter"><div class="meter-fill ' + (cls || '') + '" style="width:' + w + '%"></div></div>';
   }
+  // Bloc names are coloured text; on the light theme the pale colours need darker shades to stay readable.
+  var LIGHT_TEXT = {rc: '#2f6fae', mod: '#7a6a2e', pal: '#b3141b', guild: '#9a6312', rim: '#c4520f', sec: '#56616b',
+    ind: '#4c8459', cis: '#7a4aa8', rfc: '#a07410'};
+  SW.textColor = function (b) {
+    var dark = typeof document !== 'undefined' && document.body && document.body.classList.contains('dark-mode');
+    return (!dark && LIGHT_TEXT[b]) || SW.color(b);
+  };
+  SW.span = function (Q, b, text) {
+    return '<span class="bloc" style="color:' + SW.textColor(b) + '">' + (text || SW.name(Q, b)) + '</span>';
+  };
   function bloc(Q, b) { return SW.span(Q, b); }
 
   SW.statusHTML = function (Q, tab) {
@@ -64,7 +74,7 @@
     if (chairs.length) h += row('Our chairs', chairs.join(', '));
     h += row('Caucus mood', SW.label('dissent', Q.dissent_percent));
     h += head('The Republic');
-    h += row('Chancellor', '<span style="color:' + SW.color(Q.chancellor_bloc) + '">' + Q.chancellor + '</span>');
+    h += row('Chancellor', '<span style="color:' + SW.textColor(Q.chancellor_bloc) + '">' + Q.chancellor + '</span>');
     h += row('Faith in the Republic', SW.label('faith', Q.faith)) + bar(Q.faith, 100, 'good-fill');
     h += row('Corruption', SW.label('level', Q.corruption)) + bar(Q.corruption, 100, 'bad-fill');
     h += row('Fear', SW.label('level', Q.fear)) + bar(Q.fear, 100, 'bad-fill');
@@ -177,7 +187,7 @@
 
   function chancelleryTab(Q) {
     var h = head('The Chancellery');
-    h += '<div class="figure"><div class="figure-name" style="color:' + SW.color(Q.chancellor_bloc) + '">' + Q.chancellor_title + ' ' + Q.chancellor + '</div>';
+    h += '<div class="figure"><div class="figure-name" style="color:' + SW.textColor(Q.chancellor_bloc) + '">' + Q.chancellor_title + ' ' + Q.chancellor + '</div>';
     h += '<div class="figure-sub">' + SW.name(Q, Q.chancellor_bloc) + '</div></div>';
     h += row('Vice Chair', Q.vice_chair);
     h += head('Bloc leaders');
