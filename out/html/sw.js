@@ -9,6 +9,9 @@
   'use strict';
 
   var SW = {};
+  // test-only switches for the simulator (SW_OFF=gavel,bought,...); always empty in the browser
+  SW.OFF = (typeof process !== 'undefined' && process.env && process.env.SW_OFF) ? process.env.SW_OFF.split(',') : [];
+  SW.off = function (k) { return SW.OFF.indexOf(k) >= 0; };
   SW.SAVE_VERSION = 1;
 
   // ---------------------------------------------------------------- metadata
@@ -181,7 +184,7 @@
       D[lg + '_leader_id'] = SW.LEADER_START[lg];
       D[lg + '_leader'] = SW.LEADERS[SW.LEADER_START[lg]].name;
     }
-    D.gavel_year = 0; D.gavels = 0; D.vote_tabled = 0;
+    D.trial_cleanup = 0; D.force_war = SW.off('war') ? 0 : 1; D.amend_threshold = 66.7; D.gavel_date = -99; D.gavels = 0; D.vote_tabled = 0;
     D.scheme_pending = ''; D.scheme_due = 0; D.scheme_countered = 0; D.scheme_warned = 0; D.scheme_foreseen = 0;
     D.scheme_foresee = ''; D.scheme_counter = ''; D.scheme_text = ''; D.scheme_was_foiled = 0; D.schemes_total = 0; D.schemes_foiled = 0;
     D.scheme_timer = 4; D.misfortunes = []; D.investigated_at = -99; D.contest_rigged = 0;
@@ -1120,7 +1123,7 @@
   SW.SPLIT_FLAG = {hawk: 'hawks_split', rimward: 'rimward_split', pacifist: 'pacifists_resigned', inst: 'inst_crisis'};
   SW.SENATE_SIZE = 2400;
   SW.factionSplit = function (Q, f) {
-    var share = SW.clamp(Q[f + '_strength'] / 100 * 0.8, 0.05, 0.6);
+    var share = SW.off('splits') ? 0 : SW.clamp(Q[f + '_strength'] / 100 * 0.5, 0.04, 0.4);
     var L = SW.leader(Q, f), leaderId = Q[f + '_leader_id'];
     var dest = SW.SPLIT_DEST[f];
     var own = L.firm >= 0.7 && !Q.rfc_formed;
@@ -1193,7 +1196,7 @@
       counter: 'Get ahead of the story',
       foiled: 'The Caucus publishes its own accounts first. The smear story runs, and no one cares.',
       apply: function (Q) {
-        Q.faith -= 2; Q.inst_dissent += 8; Q.mod_relation -= 4;
+        Q.faith -= 1; Q.inst_dissent += 6; Q.mod_relation -= 4;
         for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_rc'] *= 0.95;
         return 'The HoloNet runs a story about Caucus senators taking money from shipping cartels. Most of it is false. All of it is repeated.';
       }
@@ -1285,6 +1288,7 @@
   };
   // called each turn: Sidious picks his next move
   SW.schemeTick = function (Q) {
+    if (SW.off('schemes')) return;
     if (Q.finale || Q.sidious_defeated || Q.sidious_gone || Q.date < 12 || Q.scheme_pending) return;
     if (Q.scheme_timer > 0) return;
     var ids = [], ws = [], tot = 0;
@@ -1299,7 +1303,7 @@
     Q.scheme_foreseen = (Q.jedi_suspicion >= 4 || Q.evidence >= 5 || (Q.time - (Q.investigated_at || -99)) <= 2) ? 1 : 0;
     Q.scheme_foresee = SW.SCHEMES[pick].foresee;
     Q.scheme_counter = SW.SCHEMES[pick].counter;
-    Q.scheme_timer = threat >= 10 ? 2 + Math.floor(SW.rnd() * 2) : 4 + Math.floor(SW.rnd() * 2);
+    Q.scheme_timer = threat >= 10 ? 3 + Math.floor(SW.rnd() * 2) : 5 + Math.floor(SW.rnd() * 2);
     Q.schemes_total = (Q.schemes_total || 0) + 1;
   };
   SW.resolveScheme = function (Q) {
@@ -1343,6 +1347,7 @@
     Q.bureau_reforms_seen = SW.reformCount(Q);
   };
   SW.bureauTick = function (Q) {
+    if (SW.off('bureau')) return;
     var f = Q.months_per_turn > 0 ? Q.months_per_turn / 3 : 0.1;
     var rcount = SW.reformCount(Q);
     var inGov = Q.rc_in_govt || Q.rc_chairs > 0;
@@ -1406,16 +1411,16 @@
     var live = !Q.finale && !Q.sidious_defeated;
     var reformVote = rcYes === 1 && topics.some(function (t) { return SW.REFORM_TOPICS.indexOf(t) >= 0; });
     // the Vice Chair controls the agenda: once a year he rules a Caucus reform out of order
-    if (live && reformVote && !Q.rc_chancellor && (Q.pal_chancellor || Q.puppet_chancellor || (Q.govt_blocs || []).indexOf('pal') >= 0) &&
-        Q.senate_resolve < 4 && !Q.senate_guard_reformed && Q.gavel_year !== Q.bby) {
-      Q.gavel_year = Q.bby; Q.vote_tabled = 1; SW._tabled = 1; Q.gavels = (Q.gavels || 0) + 1;
+    if (!SW.off('gavel') && live && reformVote && !Q.rc_chancellor && (Q.pal_chancellor || Q.puppet_chancellor || (Q.govt_blocs || []).indexOf('pal') >= 0) &&
+        Q.senate_resolve < 3 && !Q.senate_guard_reformed && Q.date - (Q.gavel_date === undefined ? -99 : Q.gavel_date) >= 24) {
+      Q.gavel_date = Q.date; Q.vote_tabled = 1; SW._tabled = 1; Q.gavels = (Q.gavels || 0) + 1;
       Q.last_vote = 0;
       return 0;
     }
     // delegations on the Chancellery's payroll follow its line on powers and oversight
     var bought = 0;
-    if (live && topics.some(function (t) { return /powers|oversight/.test(t); })) {
-      bought = SW.clamp((Q.corruption - 55) / 100 + Q.grand_plan / 400, 0, 0.3);
+    if (!SW.off('bought') && live && topics.some(function (t) { return /powers|oversight/.test(t); })) {
+      bought = SW.clamp((Q.corruption - 60) / 150 + Q.grand_plan / 600, 0, 0.2);
       if (bought >= 0.08) SW._notes.push('bought votes');
     }
     var palLine = stance.pal !== undefined ? stance.pal : (topics.indexOf('powers') >= 0 ? 1 : 0);
@@ -1445,7 +1450,7 @@
     if (total <= 0) total = 1;
     var share = SW.round1(100 * yes / total);
     // cold bureaucrats lose Caucus bills in committee
-    if (live && reformVote && Q.bureau_relation < 25 && (Q.rc_in_govt || Q.rc_chairs > 0)) {
+    if (!SW.off('committee') && live && reformVote && Q.bureau_relation < 25 && (Q.rc_in_govt || Q.rc_chairs > 0)) {
       share = SW.round1(Math.max(0, share - 3));
       SW._notes.push('\u22123, lost in committee');
     }
@@ -1473,7 +1478,7 @@
     threshold = threshold || 50;
     if (SW._tabled) {
       SW._tabled = 0;
-      return '<div class="vote vote-fail">' + label + ': <b>ruled out of order</b> by the Vice Chair. The bill never reaches the floor.</div>';
+      return '<div class="vote vote-fail">' + label + ': <b>ruled out of order</b> by the Vice Chair. The bill never reaches the floor. <i>(Mas Amedda can do this once every two years while the Chancellery controls the agenda. Senate resolve of 3 or more, or a reformed Senate Guard, stops him.)</i></div>';
     }
     var pass = share >= threshold;
     var notes = SW._notes.length ? ' <span class="vote-note">(' + SW._notes.join('; ') + ')</span>' : '';
@@ -1489,8 +1494,8 @@
     var noise = function () { return (SW.rnd() - 0.5) * 0.6 * f; };
 
     // corruption, fear, faith
-    Q.corruption += f * (0.3 + Q.emergency_powers * 0.08 - Q.anti_corruption * 0.6 + (Q.war ? 0.35 : 0) + ((Q.guild_r || 20) - 20) * 0.02);
-    var targetFear = 18 + (Q.dooku_movement ? 14 : 0) + (Q.war ? 14 + Math.max(0, -Q.war_balance) * 3 + Math.min(10, Q.war_turns * 0.5) : 0) + (Q.secession_recent || 0) * 2;
+    Q.corruption += f * (0.3 + Q.emergency_powers * 0.08 - Q.anti_corruption * 0.6 + (Q.war ? 0.25 : 0) + ((Q.guild_r || 20) - 20) * 0.02);
+    var targetFear = 18 + (Q.dooku_movement ? 14 : 0) + (Q.war ? 14 + Math.max(0, -Q.war_balance) * 3 + Math.min(5, Q.war_turns * 0.25) : 0) + (Q.secession_recent || 0) * 2;
     Q.fear += (targetFear - Q.fear) * 0.25 * f;
     Q.secession_recent = 0;
     var reforms = Q.emergency_sunset + Q.term_limits_protected + Q.army_oversight + Q.senate_guard_reformed +
@@ -1763,7 +1768,10 @@
     for (var j = 0; j < SW.FACTIONS.length; j++) {
       var fct = SW.FACTIONS[j];
       var calm = SW.advisorsOfFaction(Q, fct);
-      var drift = (calm === 0 ? 1.6 : (calm === 1 ? 0.4 : -0.3)) + (Q[fct + '_unmet'] ? 1.2 : -0.5);
+      // as in the original, Institutionalist (centrist) advisors calm every faction, not just their own
+      var base = calm === 0 ? 1.0 : (calm === 1 ? 0.2 : -0.3);
+      if (base > 0) base *= Math.max(0.4, 1 - 0.2 * SW.advisorsOfFaction(Q, 'inst'));
+      var drift = base + (Q[fct + '_unmet'] ? 0.8 : -0.5);
       Q[fct + '_dissent'] += drift * (Q.months_per_turn > 0 ? 1 : 0.2);
     }
     // relations with other blocs fade back toward their natural attitude unless tended
@@ -1840,8 +1848,8 @@
     }
     if (Q.sidious_defeated && !Q.restoration_passed && Q.emergency_powers >= 5) return 'admirals';
     if (Q.civil_war_result === 'won') return 'blood';
-    if (Q.sidious_defeated && Q.restoration_passed && Q.faith >= 55 && (Q.corruption < 65 || Q.anti_corruption) &&
-        Q.sidious_method === 'trial' && SW.safeguardCount(Q) >= 3) return 'reborn';
+    if (Q.sidious_defeated && Q.restoration_passed && Q.faith >= 50 && (Q.corruption < 65 || Q.anti_corruption) &&
+        Q.sidious_method === 'trial' && SW.safeguardCount(Q) >= 1) return 'reborn';
     if (Q.sidious_defeated) return 'endures';
     // the Sith Lord was never stopped: only a stripped, exposed Chancellery leaves the Republic standing
     if (Q.emergency_powers <= 2 && Q.evidence_public >= 4 && Q.term_limits_protected) { Q.shadow_remains = 1; return 'endures'; }
