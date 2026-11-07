@@ -134,7 +134,7 @@ function playOne(gameIndex) {
   const endings = {}, stucks = {}, nanKeys = {};
   const stats = {pal_chancellor_32: 0, war: 0, finale: 0, turns: 0, empire_powers: 0, kamino_early: 0, chips: 0, rc_chancellor: 0, reforms: 0, beaten: 0, restoration_votes: 0, restored: 0, faith55: 0};
   const seen = {}; const paths = {};
-  const audit = {cap20: [], cap40: [], capEnd: [], rcWon32: 0, rcWon32ThenPal: 0, rcHeldToEnd: 0, enf: 0, enfSeceded: [], enfWar: 0, maxDissent: [], repeatCards: {}, contests: [], changes: [], endLeaders: {}, refused: 0, radicalRim: 0, radicalRimWar: 0, radicalRimSep: [], softRimSep: []};
+  const audit = {cap20: [], cap40: [], capEnd: [], rcWon32: 0, rcWon32ThenPal: 0, rcHeldToEnd: 0, enf: 0, enfSeceded: [], enfWar: 0, maxDissent: [], repeatCards: {}, contests: [], changes: [], endLeaders: {}, refused: 0, radicalRim: 0, radicalRimWar: 0, radicalRimSep: [], softRimSep: [], schemes: [], foiled: 0, purges: 0, purgeGames: 0, gavels: 0, minBureau: [], schemeKinds: {}};
   for (let g = 0; g < GAMES; g++) {
     rng = mulberry(SEED * 1000 + g);
     const r = await playOne(g);
@@ -180,6 +180,10 @@ function playOne(gameIndex) {
         const k = grp + ':' + Q[grp + '_leader_id'];
         audit.endLeaders[k] = (audit.endLeaders[k] || 0) + 1;
       }
+      audit.schemes.push(Q.schemes_total || 0); audit.foiled += Q.schemes_foiled || 0;
+      audit.purges += Q.bureau_purges || 0; if (Q.bureau_purges) audit.purgeGames++;
+      audit.gavels += Q.gavels || 0;
+      for (const k in Q) if (k.indexOf('scheme_seen_') === 0) audit.schemeKinds[k.slice(12)] = (audit.schemeKinds[k.slice(12)] || 0) + Q[k];
       const rimSep = Math.round((Q.outer_sep + Q.midrim_sep) / 2);
       if (Q.rim_was_radical) { audit.radicalRim++; if (Q.geonosis_seen) audit.radicalRimWar++; audit.radicalRimSep.push(rimSep); }
       else audit.softRimSep.push(rimSep);
@@ -200,6 +204,8 @@ function playOne(gameIndex) {
   origLog('audit: enfranchised before 22 BBY in ' + audit.enf + ' games; avg seceded ' + avg(audit.enfSeceded) + '%; war in ' + audit.enfWar);
   origLog('audit: leadership contests per game avg ' + avg(audit.contests) + ', leader changes avg ' + avg(audit.changes) + ', coalition offers refused by a leader ' + audit.refused);
   origLog('audit: radical Rim leader at some point in ' + audit.radicalRim + ' games (war in ' + audit.radicalRimWar + ', end Rim sep avg ' + avg(audit.radicalRimSep) + ') vs end Rim sep avg ' + avg(audit.softRimSep) + ' otherwise');
+  origLog('audit: schemes per game avg ' + avg(audit.schemes) + ', foiled total ' + audit.foiled + ', kinds ' + JSON.stringify(audit.schemeKinds));
+  origLog('audit: bureaucrat purges ' + audit.purges + ' (in ' + audit.purgeGames + ' games), Vice Chair gavels ' + audit.gavels);
   origLog('audit: leaders at the end: ' + Object.entries(audit.endLeaders).sort().map(([k, v]) => k + '=' + v).join(' '));
   origLog('audit: avg peak faction dissent ' + avg(audit.maxDissent) + '; cards played 6+ times (games): ' + JSON.stringify(audit.repeatCards));
   origLog('paths:'); Object.keys(paths).sort((a, b) => paths[b] - paths[a]).slice(0, 18).forEach(k => origLog('  ' + paths[k] + 'x ' + k));
