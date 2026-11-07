@@ -9,7 +9,7 @@ on-arrival: temple_bombing_seen = 1; jedi_standing -= 6
 
 = The Temple Bombing
 
-A bomb has exploded in the hangar of the Jedi Temple, killing workers and clones. The Jedi Order's own investigation points to a young Padawan, **Ahsoka Tano**, Anakin Skywalker's apprentice. The Order has expelled her and handed her over for a military tribunal presided over by an admiral named Tarkin. The public mood has turned sharply against the Jedi.
+A bomb has exploded in the hangar of the Jedi Temple, killing [? if clones > 0 : workers and clone troopers?][? if clones <= 0 : workers?]. The Jedi Order's own investigation points to a young Padawan, **Ahsoka Tano**, Anakin Skywalker's apprentice. The Order has expelled her and handed her over for a military tribunal presided over by an admiral named Tarkin. The public mood has turned sharply against the Jedi.
 
 - @defend: Insist on a civilian trial with a proper defence.
 - @tribunal: Let the military tribunal proceed.

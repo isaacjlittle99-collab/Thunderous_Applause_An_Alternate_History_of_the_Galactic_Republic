@@ -14,13 +14,13 @@
     evidence: [[0.9, 'nothing'], [2.9, 'rumours'], [4.9, 'suspicions'], [7.9, 'circumstantial'], [9.9, 'compelling'], [1e9, '<b class="good">conclusive</b>']],
     resolve: [[0.9, 'complacent'], [2.9, 'uneasy'], [4.9, 'alarmed'], [6.9, 'determined'], [1e9, '<b class="good">defiant</b>']],
     powers: [[0, '<span class="good">constitutional</span>'], [2, 'extended mandate'], [4, '<span class="warn">wartime emergency</span>'], [6, '<span class="warn">sweeping</span>'], [8, '<b class="bad">near-absolute</b>'], [1e9, '<b class="bad">absolute</b>']],
-    unease: [[0, 'business as usual'], [1, 'a vague disquiet'], [2, 'unease no one can name'], [3, '<span class="warn">a shadow over the Senate</span>'], [4, '<b class="bad">darkness clouds every vision</b>'], [1e9, '<b class="bad">the dark side is ascendant</b>']],
+    unease: [[0.99, 'business as usual'], [1.99, 'a vague disquiet'], [2.99, 'unease no one can name'], [3.99, '<span class="warn">a shadow over the Senate</span>'], [4.99, '<b class="bad">darkness clouds every vision</b>'], [1e9, '<b class="bad">the dark side is ascendant</b>']],
     sep: [[20, 'loyal'], [35, 'grumbling'], [50, '<span class="warn">disaffected</span>'], [65, '<b class="bad">seceding</b>'], [1e9, '<b class="bad">in revolt</b>']],
     strength: [[0.5, 'none'], [2, 'token'], [4, 'modest'], [6, 'substantial'], [8, 'strong'], [1e9, 'formidable']],
     ratio: [[0.6, '<b class="bad">hopeless</b>'], [0.9, '<span class="warn">outmatched</span>'], [1.1, 'evenly matched'], [1.6, '<span class="good">favourable</span>'], [1e9, '<b class="good">overwhelming</b>']],
     war: [[-7, '<b class="bad">catastrophic</b>'], [-3, '<span class="warn">losing ground</span>'], [-1, 'faltering'], [1, 'stalemate'], [4, '<span class="good">gaining ground</span>'], [7, '<span class="good">winning</span>'], [1e9, '<b class="good">nearly won</b>']],
     dissent: [[5, '<span class="good">united</span>'], [12, 'murmuring'], [22, 'restless'], [35, '<span class="warn">quarrelsome</span>'], [50, '<b class="bad">fractious</b>'], [1e9, '<b class="bad">on the verge of schism</b>']],
-    cdissent: [[0, 'harmonious'], [1, 'grumbling'], [2, 'strained'], [3, '<span class="warn">fraying</span>'], [1e9, '<b class="bad">collapsing</b>']]
+    cdissent: [[0.99, 'harmonious'], [1.99, 'grumbling'], [2.99, 'strained'], [3.99, '<span class="warn">fraying</span>'], [1e9, '<b class="bad">collapsing</b>']]
   };
   SW.label = function (type, v) {
     var t = LABELS[type];
@@ -149,7 +149,11 @@
     ];
     for (var i = 0; i < reforms.length; i++) {
       var on = Q[reforms[i][0]];
-      h += '<div class="sb-check ' + (on ? 'on' : 'off') + '">' + (on ? '✔ ' : '○ ') + reforms[i][1] + '</div>';
+      var label = reforms[i][1];
+      // with no clone army there is nothing to oversee and no chips to remove
+      if (!Q.kamino_army && reforms[i][0] === 'army_oversight') { on = 1; label = 'The clone army was disbanded'; }
+      if (!Q.kamino_army && reforms[i][0] === 'chips_removed') continue;
+      h += '<div class="sb-check ' + (on ? 'on' : 'off') + '">' + (on ? '✔ ' : '○ ') + label + '</div>';
     }
     return h;
   }

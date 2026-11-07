@@ -13,7 +13,7 @@ Q.coalition_label = Q.coalition_name + (Q.minority_govt ? ' (minority)' : '');
 
 Supreme Chancellor **[+ chancellor +]** leads the [+ coalition_label +][? if rc_in_govt : , and the Caucus sits in government?][? if not rc_in_govt : . The Caucus is in opposition?].[? if rc_chairs > 0 : The Caucus chairs [+ rc_chairs +] Senate committee(s). ?]
 
-[? if war : The Clone Wars grind on: the front is [+ war_balance : war +]. ?][? if not war and dooku_movement : The Separatist crisis deepens. [+ seceded_total +]% of the Senate's delegations have walked out. ?][? if emergency_powers > 0 : The Chancellor holds [+ emergency_powers : powers +] emergency powers. ?]
+[? if war : The [+ war_name +] grind[? if not kamino_army : s ?] on: the front is [+ war_balance : war +]. ?][? if not war and dooku_movement : The Separatist crisis deepens. [+ seceded_total +]% of the Senate's delegations have walked out. ?][? if emergency_powers > 0 : The Chancellor holds [+ emergency_powers : powers +] emergency powers. ?]
 
 [? if capital <= 0 : *The Caucus's coffers are empty. Patron Contributions or Routine Senate Business will help.* ?]
 

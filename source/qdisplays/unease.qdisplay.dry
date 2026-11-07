@@ -1,7 +1,7 @@
 
-(..0) business as usual in the Senate
-(1..1) a vague disquiet in the corridors
-(2..2) unease that no one can name
-(3..3) <span style="color: #e0745a;">a shadow over the Senate</span>
-(4..4) <span style="color: #d24a4a;">a darkness clouding every vision</span>
-(5..) <span style="color: #b3141b;">the dark side is ascendant</span>
+(..0.99) business as usual in the Senate
+(..1.99) a vague disquiet in the corridors
+(..2.99) unease that no one can name
+(..3.99) <span style="color: #e0745a;">a shadow over the Senate</span>
+(..4.99) <span style="color: #d24a4a;">a darkness clouding every vision</span>
+(4.99..) <span style="color: #b3141b;">the dark side is ascendant</span>

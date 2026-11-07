@@ -10,7 +10,7 @@ on-arrival: false_flag_seen = 1; fear += 18; faith -= 3; crisis_months = 0
 
 = Fire on Coruscant
 
-A bomb has torn through the Senate Office Building, killing hundreds, among them three senators. Within hours, a group calling itself the Rim Liberation Front claims responsibility. [? if chancellor_bloc = "pal" : The Chancellor's office calls for emergency powers and the immediate creation of an army. One, it emerges, happens to be ready on a planet called Kamino. ?][? if chancellor_bloc != "pal" : Senator Palpatine leads the call for emergency powers and an army. ?]
+A bomb has torn through the Senate Office Building, killing hundreds, among them three senators. Within hours, a group calling itself the Rim Liberation Front claims responsibility. [? if chancellor_bloc = "pal" : The Chancellor's office calls for emergency powers and the immediate creation of an army. [? if kamino_army and not kamino_known : One, it emerges, happens to be ready on a planet called Kamino. ?][? if kamino_army and kamino_known : The clone army on Kamino, it says, is ready. ?] ?][? if chancellor_bloc != "pal" : Senator Palpatine leads the call for emergency powers and an army. ?]
 
 [? if evidence >= 6 or jedi_suspicion >= 6 : Something about the attack is wrong. Our investigators have seen this pattern before: the Rim Liberation Front's weapons were bought with Damask money. ?]
 

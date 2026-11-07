@@ -1,7 +1,7 @@
 title: Hostages in the Senate
 subtitle: A bounty hunter seizes the Senate building.
 tags: event
-view-if: war and date >= 144 and not hostage_seen and not security_act_seen and not finale and not game_ending
+view-if: war and date >= 144 and (pal_chancellor or puppet_chancellor) and not hostage_seen and not security_act_seen and not finale and not game_ending
 max-visits: 1
 new-page: true
 face-image: img/ev_war.svg

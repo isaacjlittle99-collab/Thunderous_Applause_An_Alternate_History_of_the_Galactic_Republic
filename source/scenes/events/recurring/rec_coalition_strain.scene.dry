@@ -14,7 +14,9 @@ Q.coalition_dissent += 1;
 
 = Strains in the Coalition
 
-The [+ strain_name +] complain that the Caucus is setting the government's agenda without consulting them. Coalition dissent is now [+ coalition_dissent : coalition_dissent +].
+The [+ strain_name +] complain that the Caucus is setting the government's agenda without consulting them. The coalition's mood is now **[+ coalition_dissent : coalition_dissent +]**.
+
+*If the mood reaches **collapsing**, our partners will walk out. [? if not constructive_vonc : That brings the government down. ?][? if constructive_vonc : The constructive no-confidence rule keeps the Chancellor in office, but not the partner. ?]A partner that walks out will not serve with us again for two years.*
 
 - @soothe: Reassure them with a concession.
 - @hold: Hold firm.

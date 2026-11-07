@@ -1,7 +1,7 @@
 title: The Slave Markets of the Rim
 subtitle: A report on Hutt slavery shocks the Core.
 tags: event
-view-if: date >= 30
+view-if: date >= 30 and not slavery_abolished
 max-visits: 1
 new-page: true
 face-image: img/ev_rim.svg
