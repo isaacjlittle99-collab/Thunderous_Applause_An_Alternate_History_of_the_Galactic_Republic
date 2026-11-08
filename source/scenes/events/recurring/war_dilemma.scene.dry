@@ -1,0 +1,36 @@
+title: A Decision of the War
+new-page: true
+face-image: img/ev_war.svg
+
+= [+ wd_heading +]
+
+[? if wc_lobby_failed : Our lobbying fails. The War Council will [+ wc_plan_text +]. ?][? if not wc_lobby_failed : The War Council will [+ wc_plan_text +]. ?]
+
+[? if wd_has : [+ wd_text +] ?]
+
+[? if wd_has and not wc_command : The Chancellor's people mean to *[+ wd_def_label +]*. If the Caucus wants otherwise, it will have to carry the Senate. ?]
+
+- @opt_a: [+ wd_a_label +]
+- @opt_b: [+ wd_b_label +]
+- @no_dilemma: Continue.
+
+@opt_a
+view-if: wd_has
+subtitle: [+ wd_a_sub +]
+on-arrival: {! SW.dilemmaResolve(Q, 'a'); !}
+go-to: war_dilemma_result
+
+@opt_b
+view-if: wd_has
+subtitle: [+ wd_b_sub +]
+on-arrival: {! SW.dilemmaResolve(Q, 'b'); !}
+go-to: war_dilemma_result
+
+@no_dilemma
+view-if: not wd_has
+
+The orders go out, and the fleets move.
+
+@war_dilemma_result
+
+[? if wd_overruled : The Senate does not follow the Caucus. ?][+ wd_result +]

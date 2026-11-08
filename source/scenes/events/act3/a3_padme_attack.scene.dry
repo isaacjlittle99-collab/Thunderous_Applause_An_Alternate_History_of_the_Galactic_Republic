@@ -28,7 +28,7 @@ Anakin Skywalker is given the job of escorting Senator Amidala back to Naboo. He
 subtitle: Safer from scandal; Anakin feels shut out.
 on-arrival: anakin_fall += 0.5; padme_hidden = 1
 
-Padmé retreats to the Lake Country under Naboo's own guards. Anakin, refused the assignment, sulks at the Temple and confides in the Chancellor.
+Padmé retreats to the Lake Country under Naboo's own guards. Anakin, refused the assignment, sulks at the Temple and confides in [+ pal_title +].
 
 @investigate
 subtitle: −1 political capital. Follows the trail.

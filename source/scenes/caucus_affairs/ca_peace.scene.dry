@@ -20,7 +20,7 @@ new-page: true
 subtitle: Calms fear and the Pacifists; the Hawks are irritated.
 on-arrival: pacifist_dissent -= 6; faith += 1; fear -= 2; hawk_dissent += 3; war_weariness -= 1
 
-Millions march on Coruscant. The Chancellery calls them "well-meaning but naive".
+Millions march on Coruscant. [? if rc_chancellor : The Security Bloc calls them "well-meaning but naive". ?][? if not rc_chancellor : The Chancellery calls them "well-meaning but naive". ?]
 
 @channel
 view-if: peace_talks < 3

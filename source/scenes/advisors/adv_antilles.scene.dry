@@ -46,6 +46,6 @@ Antilles knows the Senate rulebook better than its authors did. A well-timed poi
 subtitle: Warms the Senate bureaucracy towards us a little.
 choose-if: advisor_action_timer <= 0
 unavailable-subtitle: Our advisors have already acted recently.
-on-arrival: bureau_relation += 6; advisor_action_timer = 5
+on-arrival: bureau_relation += 6; bureau_dossier -= 1; advisor_action_timer = 5
 
 Antilles has sat on more procedural committees than anyone alive. The clerks who serve them still take his calls.

@@ -52,4 +52,4 @@ Q.evidence_public += 1; Q.fear += 3;
 subtitle: +1.5 evidence and a chance to learn more; the risk is that whoever paid for it notices.
 on-arrival: {! Q.evidence += 1.5; Q.grand_plan -= 2; if (Math.random() < 0.3) Q.chips_found = 1; if (Math.random() < 0.3) Q.leak_pending = 1; !}
 
-The Caucus says nothing publicly. Our agents trace the payments: through the Banking Clan, through Damask Holdings, and into accounts controlled by someone in the Chancellery's orbit. [? if chips_found : One Kaminoan technician, bribed, admits that every clone carries a "behavioural modification chip". ?]
+The Caucus says nothing publicly. Our agents trace the payments: through the Banking Clan, through Damask Holdings, and into accounts controlled by someone close to [+ pal_office +]. [? if chips_found : One Kaminoan technician, bribed, admits that every clone carries a "behavioural modification chip". ?]

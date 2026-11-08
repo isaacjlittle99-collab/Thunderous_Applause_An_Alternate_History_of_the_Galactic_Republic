@@ -1,0 +1,27 @@
+title: The Republic Cannot Pay
+subtitle: The debt has grown beyond what the treasury can carry.
+tags: event
+view-if: debt >= 32 and debt_crisis_timer <= 0 and not finale and not game_ending
+priority: 3
+new-page: true
+face-image: img/ev_trade.svg
+on-arrival: debt_crisis_timer = 8
+
+= The Republic Cannot Pay
+
+The Republic owes [+ debt_txt +], and this year's interest alone would empty the treasury. The Banking Clan offers to roll the debt over, on terms. The Core Moderates want cuts instead.
+
+- @austerity: Cut spending across the Republic.
+- @bailout: Accept the Banking Clan's terms.
+
+@austerity
+subtitle: The debt shrinks; the Rim and faith in the Republic pay for it.
+on-arrival: debt -= 6; rim_hardship += 5; faith -= 3; mod_relation += 4; rimward_dissent += 6
+
+Relief convoys are cancelled, patrols grounded, pensions frozen. The books balance. The Rim goes hungry.
+
+@bailout
+subtitle: The debt is rolled over; the banks gain the whip hand, and someone in the shadows profits.
+on-arrival: debt -= 4; banking_dereg = 1; grand_plan += 3; guild_relation += 5; corruption += 2
+
+The Banking Clan restructures the Republic's debts. Months later, Caucus investigators find that the new bonds were underwritten by a shell company last seen in the accounts of Damask Holdings.

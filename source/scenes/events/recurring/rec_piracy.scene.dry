@@ -4,7 +4,7 @@ tags: event
 view-if: rim_hardship >= 38 and piracy_timer <= 0 and time >= 2 and not war and not finale
 new-page: true
 face-image: img/ev_rim.svg
-on-arrival: {! Q.piracy_timer = 6 + Math.floor(Math.random() * 4); Q.rim_hardship += 2; Q.outer_sep += 1; !}
+on-arrival: {! Q.piracy_timer = 6 + Math.floor(Math.random() * 4); Q.rim_hardship += 2; Q.outer_sep += 1; Q.trade -= 6; !}
 
 = Pirates on the Rim
 
@@ -16,7 +16,7 @@ A pirate fleet has sacked a convoy in the Outer Rim, killing hundreds. Rim senat
 
 @judicials
 subtitle: The Security Bloc approves; Rim hardship eases a little.
-on-arrival: judicial_forces += 0.2; rim_hardship -= 2; sec_relation += 3
+on-arrival: judicial_forces += 0.2; rim_hardship -= 2; sec_relation += 3; trade += 4
 
 Judicial cruisers hunt down the raiders, eventually.
 

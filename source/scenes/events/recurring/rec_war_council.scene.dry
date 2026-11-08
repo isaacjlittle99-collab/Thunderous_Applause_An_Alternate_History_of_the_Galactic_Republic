@@ -1,0 +1,62 @@
+title: The War Council
+subtitle: The season's fighting, and where the Republic commits its strength next.
+tags: event
+view-if: war and battle_timer <= 0 and war_begins_seen and war_aim != "" and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_war.svg
+on-arrival: {! SW.warCouncilOpen(Q); !}
+
+= The War Council
+
+**The Battle of [+ battle_name +].** The Confederacy struck at [+ battle_desc +], on [+ battle_front +]. [? if battle_won : Republic forces carry the day, at terrible cost. ?][? if not battle_won : Republic forces are thrown back, and the HoloNet is full of grim images. ?]
+
+**The fronts:** [+ wc_fronts +]. The Republic is fighting for [+ war_aim_text +].
+
+*Each front feeds a different part of the galaxy. Losing the Outer Rim Sieges means hunger and separatism on the Rim. Losing the Hydian Way strangles the Republic's trade. Losing the Core approaches brings fear to Coruscant.*
+
+[? if wc_command : The War Council follows the Caucus's lead. Where does the Republic commit its strength this season? ?][? if not wc_command : The Chancellor's War Council means to [+ wc_gov_text +]. The Caucus can lobby for a different priority (1 political capital, and no guarantee), or let the plan stand. ?]
+
+- @outer: Relieve the Outer Rim sieges.
+- @mid: Secure the Hydian Way.
+- @core: Fortify the Core approaches.
+- @hold: Hold the line everywhere.
+- @accept: Let the Council's plan stand.
+
+@outer
+view-if: wc_command or wc_gov_plan != "outer"
+subtitle: The Rim front gains; the Rim is grateful, the Core feels exposed. [? if not wc_command : (Lobbying: 1 political capital.)?]
+choose-if: wc_command or capital >= 1
+unavailable-subtitle: Lobbying needs 1 political capital.
+on-arrival: {! SW.warCouncilPriority(Q, 'outer'); !}
+go-to: war_dilemma
+
+@mid
+view-if: wc_command or wc_gov_plan != "mid"
+subtitle: The Hydian Way front gains; trade recovers and the guilds approve. [? if not wc_command : (Lobbying: 1 political capital.)?]
+choose-if: wc_command or capital >= 1
+unavailable-subtitle: Lobbying needs 1 political capital.
+on-arrival: {! SW.warCouncilPriority(Q, 'mid'); !}
+go-to: war_dilemma
+
+@core
+view-if: wc_command or wc_gov_plan != "core"
+subtitle: The Core front gains and fear eases; the Rim feels abandoned. [? if not wc_command : (Lobbying: 1 political capital.)?]
+choose-if: wc_command or capital >= 1
+unavailable-subtitle: Lobbying needs 1 political capital.
+on-arrival: {! SW.warCouncilPriority(Q, 'core'); !}
+go-to: war_dilemma
+
+@hold
+view-if: wc_command or wc_gov_plan != "hold"
+subtitle: −1 treasury. Every front steadies, and the war weighs more on everyone. [? if not wc_command : (Lobbying: 1 political capital.)?]
+choose-if: wc_command or capital >= 1
+unavailable-subtitle: Lobbying needs 1 political capital.
+on-arrival: {! SW.warCouncilPriority(Q, 'hold'); !}
+go-to: war_dilemma
+
+@accept
+view-if: not wc_command
+subtitle: The Council will [+ wc_gov_text +].
+on-arrival: {! SW.warCouncilPriority(Q, 'accept'); !}
+go-to: war_dilemma

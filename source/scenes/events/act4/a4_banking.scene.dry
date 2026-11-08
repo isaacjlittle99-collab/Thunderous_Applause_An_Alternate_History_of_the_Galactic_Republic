@@ -9,7 +9,7 @@ on-arrival: banking_bill_seen = 1
 
 = The Banking Bill
 
-The war is bankrupting the Republic. The Chancellor's allies propose to **deregulate the banks** so the Republic can borrow enough for [? if kamino_army : five million more clone troopers?][? if not kamino_army : a crash expansion of the Judicial Forces and the member-world fleets, since there is no clone army to grow?]. [? if bonteri_contact : At the same moment, Mina Bonteri has persuaded the Separatist Parliament to vote on a peace overture, if the Republic will show restraint. ?]
+The war is bankrupting the Republic. [? if rc_chancellor : The Security Bloc and the guilds propose?][? if not rc_chancellor : The Chancellor's allies propose?] to **deregulate the banks** so the Republic can borrow enough for [? if kamino_army : five million more clone troopers?][? if not kamino_army : a crash expansion of the Judicial Forces and the member-world fleets, since there is no clone army to grow?]. [? if bonteri_contact : At the same moment, Mina Bonteri has persuaded the Separatist Parliament to vote on a peace overture, if the Republic will show restraint. ?]
 
 - @peace: Oppose deregulation and give the peace overture a chance.
 - @clones: Support deregulation to fund the war.

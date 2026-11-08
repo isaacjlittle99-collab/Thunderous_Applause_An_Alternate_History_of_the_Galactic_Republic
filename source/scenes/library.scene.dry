@@ -20,6 +20,8 @@ is-special: true
 - @lib_bureaucrats: The bureaucrats
 - @lib_schemes: Sidious's schemes
 - @lib_endings: How the game ends
+- @lib_war: The War Council
+- @lib_purse: The Republic's purse
 - @lib_reforms: Safeguards and how to win them
 - @lib_charts: The Senate in charts
 - @lib_timeline: Timeline of the Republic to 33 BBY
@@ -97,6 +99,7 @@ Each faction has a **strength**, a **dissent** level and a **leader**. Overall d
 @lib_leaders
 is-special: true
 go-to: menu
+on-arrival: {! Q.leaders_html = (typeof SW.leadersHTML === 'function') ? SW.leadersHTML(Q) : ''; !}
 
 = Leaders and their views
 
@@ -113,6 +116,20 @@ Every Senate bloc and every faction of the Caucus has a leader, and leaders chan
 • *Demands.* Each Caucus faction leader has their own demands, shown in the Status panel when they are not met.
 
 • *The galaxy.* Radical Rim leaders feed separatism, and a Banking Clan hardliner pushes the guilds toward the Confederacy. Pragmatists cool both.
+
+**Moods and memory**
+
+• *What they care about.* Every leader has a motive and a list of things that please or anger them: tariffs, Rim relief, the war, emergency powers, who sits in government. The sidebar shows each leader's current stance and the main reason for it.
+
+• *Anger hardens, goodwill softens.* An angry leader holds their bloc's line harder: in votes, in coalition talks and in how long they bear a grudge. A pleased leader bends. Inside the Caucus, an angry faction leader makes the faction restless sooner.
+
+• *Memory.* Leaders remember whether we backed them or their rival in a leadership fight, whether we met or refused their demands, and whether their bloc walked out of our government. Memories fade over a few years.
+
+• *Ultimatums and offers.* A leader who is angry and on poor terms with the Caucus will make a demand: the guilds want tariffs or regulation dropped, the Rim wants relief, the Security Bloc wants the fleet funded, the Moderates want reform slowed, the unaligned worlds want exemptions. Meeting it earns their favour; refusing it earns a grudge and a cost. A pleased leader on good terms offers help instead.
+
+**The leaders today**
+
+[+ leaders_html +]
 
 **Who rises, and when**
 
@@ -206,7 +223,7 @@ The Senate's permanent staff of clerks, committee secretaries and procedural off
 
 **What turns them.** While the Caucus governs or chairs committees, they cool every turn that its partners worry them, and faster when the Caucus polls well, passes reforms, or squeezes the guilds who pay them. An Ethics Commission and good relations with the guilds help.
 
-**What they do.** When they turn **cold**, our reform bills lose support in committee. When they turn **hostile**, they prepare to move against us. If relations hit bottom, they strike. If the Caucus is a junior partner, a "reorganisation" throws it out of government and strips its chairs, and the Chancellor's bloc will not take it back for a year. Against a Caucus Chancellor they manufacture a crisis, the partners abandon the government, and it **falls**, as Valorum's did; the scandal follows our candidate into the next election. Only the constructive no-confidence amendment keeps a Caucus Chancellor in office.
+**What they do.** When they turn **cold**, our reform bills lose support in committee. When they turn **hostile**, they prepare to move against us. While they are cold they also **build a case against us**, faster once they turn hostile; the Senate tab shows how far it has got (gathering files, half built, ready to strike). When the case is complete, or relations hit bottom, they strike. If the Caucus is a junior partner, a "reorganisation" throws it out of government and strips its chairs, and the Chancellor's bloc will not take it back for a year. Against a Caucus Chancellor they manufacture a crisis, the partners abandon the government, and it **falls**, as Valorum's did; the scandal follows our candidate into the next election. Only the constructive no-confidence amendment keeps a Caucus Chancellor in office.
 
 **Winning them back.** Finis Valorum, Bail Organa and Bail Antilles can each work with the bureaucrats as advisors. The Judiciary & Intelligence Committee can reform the bureaucracy itself. A more establishment coalition, or easing off the guilds, reassures them.
 
@@ -226,6 +243,44 @@ A hidden hand answers the Caucus's successes. Every few turns, someone moves aga
 **Seeing it coming.** If the Jedi are suspicious (4 or more), our evidence is strong (5 or more), or we have run a Shadow Investigation in the last two turns, the scheme is **foreseen** a turn early, and we can counter it with political capital or an advisor's time. A foiled scheme leaves a little evidence behind.
 
 The Shadow tab lists the last three misfortunes.
+
+@lib_war
+is-special: true
+go-to: menu
+
+= The War Council
+
+When the war begins, the Senate sets its **war aims**. *Total victory* pushes the fronts forward but freezes the peace talks and keeps fear high; the Hawks like it. *A negotiated peace* is slower on the battlefield but grows the talks; the Pacifists like it. *The liberation of the Rim* favours the Outer Rim front and lets Rim reforms win seceded worlds back.
+
+The war is fought on **three fronts**, shown on the Forces tab. Each one feeds a different part of the galaxy:
+
+• *The Outer Rim Sieges.* Losing ground here means hunger and separatism on the Rim; gaining ground eases both.
+
+• *The Hydian Way and the Mid Rim.* This is the Republic's trade road. Losing it strangles trade, and with it the budget.
+
+• *The Core approaches.* Raids on the Core bring fear to Coruscant, and fear feeds the Chancellor's powers. Holding them calms the Senate.
+
+Every second turn, the **War Council** meets. It reports the season's battle, fought where the Confederacy chose to strike, then sets a priority: one front gains at the expense of the other two, or the Republic holds everywhere at a cost. If the Caucus holds the Chancellery or the Security & Defence chair, it decides. Otherwise the Chancellor's council decides (Palpatine always protects the Core and keeps the war going), and the Caucus can only lobby.
+
+Each council also faces a **dilemma** from the war: General Krell's orders on Umbara, arming Cham Syndulla's Free Ryloth fighters, blockades and humanitarian corridors, Mandalore's neutrality, the member-world fleets, a clone surge from Kamino, refugees, the Zygerrian slavers, the overstretched Jedi, Tarkin's Citadel, the bacta convoys and the Hydian Way convoys. Each choice reaches beyond the battlefield: into the Jedi's standing, Anakin's heart, the Rim's loyalty, the budget, the markets and the Sith's plan. Without command, the Caucus's choice needs a Senate majority.
+
+When a front reaches **breaking point**, worlds change sides: a collapse loses systems to the Confederacy, and a breakthrough brings seceded worlds home.
+
+@lib_purse
+is-special: true
+go-to: menu
+
+= The Republic's purse
+
+The Economy tab shows the treasury, the Republic's debt to the InterGalactic Banking Clan, the health of hyperlane trade, and three markets.
+
+**The budget.** Once a year, after the Senate's new session, the Republic passes a budget. Whoever holds the Chancellery or the Finance & Commerce chair writes it; otherwise the Caucus can support the government's budget, vote against it (a failed budget means a stopgap with no priorities), or, if it is in government, pay to change its priority. A budget raises money one way (trade-route tariffs, a levy on the Core worlds, a loan from the Banking Clan, war bonds, or once legalised the spice duty) and spends on one priority (Rim relief and hyperlane patrols, defence, subsidies for the Core and the guilds, or repaying the debt). Trade and existing taxes pay for the Republic's upkeep and interest. Every revenue has its enemies: the guilds hate tariffs, the Core hates the levy, and leaders remember.
+
+**Debt.** Any shortfall, in the budget or during the year, is lent by the Banking Clan. Interest grows with the debt. A heavy debt lets the Banking Clan name its price; a crushing one forces a choice between austerity and a bailout that makes the banks, and whoever stands behind them, stronger. It also gives a Chancellor who wants the banks an excuse to seize them. The war is expensive, and wars are how republics fall into debt.
+
+**Trade.** Hyperlane trade feeds the budget. Piracy, the guild embargo, Rim hardship and the war on the Hydian Way choke it; patrols, Rim representation and peace revive it. When trade is strangled, hardship on the Rim grows.
+
+**Markets.** *Bacta* from Thyferra runs short when the war fills the field hospitals. *Tibanna gas* from Bespin, which powers blasters and hyperdrives, grows dear as the Republic arms. *Spice* from Kessel flourishes when the Rim suffers and the Senate is corrupt, and the Pyke Syndicate and the Hutts fight over it. When a market reaches crisis, the Senate must choose who pays: the treasury, the guilds, the front, or the poor. The Finance & Commerce Committee can act early: patrols, bacta stockpiles, and refinancing the debt.
 
 @lib_endings
 is-special: true

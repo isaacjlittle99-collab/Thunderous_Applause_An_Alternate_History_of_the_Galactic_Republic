@@ -1,0 +1,34 @@
+title: The Spice Wars
+subtitle: The Kessel trade is spilling blood across the Rim.
+tags: event
+view-if: spice >= 60 and spice_crisis_timer <= 0 and not finale and not game_ending
+priority: 2
+new-page: true
+face-image: img/ev_rim.svg
+on-arrival: spice_crisis_timer = 8; spice_crises += 1
+
+= The Spice Wars
+
+Hard times on the Rim and a corrupt Senate have made the Kessel spice trade more profitable than ever. The Pyke Syndicate and the Hutt cartels are fighting over it, and their war is spilling onto Republic worlds. Senators on both sides of the aisle are said to be on the syndicates' payroll.
+
+- @crackdown: Crack down on the syndicates.
+- @legalise: Legalise the trade, and tax it.
+- @look_away: Look away.
+
+@crackdown
+subtitle: Corruption falls; the Judicial Forces are tied up and the Hutts retaliate on the Rim.
+on-arrival: corruption -= 2; judicial_forces -= 0.5; rim_hardship += 2; spice -= 30; sec_relation += 2
+
+Judicial strike teams raid spice dens from Nar Shaddaa to Coruscant's lower levels. The Hutts answer with blockades of their own.
+
+@legalise
+subtitle: The violence ebbs and a new tax becomes possible; corruption grows, and the Rimward and Pacifist wings are uneasy.
+on-arrival: spice_legal = 1; corruption += 2; spice -= 40; rimward_dissent += 4; pacifist_dissent += 3
+
+Spice becomes a regulated commodity. The syndicates go into business; the Republic collects its cut. (The yearly budget can now include a spice duty.)
+
+@look_away
+subtitle: Nothing is spent; corruption grows, and the money reaches dark places.
+on-arrival: corruption += 3; grand_plan += 1; spice -= 10
+
+The Senate decides it is a matter for local authorities. Pyke Syndicate credits find their way into campaign funds, and some of them into accounts nobody can trace.

@@ -48,7 +48,7 @@
   SW.TIMERS = [
     'advisor_action', 'shuffle', 'contributions', 'campaign', 'media', 'relations', 'platform',
     'enemy', 'confront', 'pact', 'investigate', 'jedi', 'rim_outreach', 'peace', 'disunity',
-    'civil', 'routine',
+    'civil', 'routine', 'leader_moment', 'bacta_crisis', 'tibanna_crisis', 'spice_crisis', 'banking_clan', 'debt_crisis',
     'finance', 'judiciary', 'security', 'rimaffairs', 'constitution', 'diplomacy', 'clone_oversight',
     'coalition', 'shuffle_committees', 'emergency_measures',
     'corruption_scandal', 'piracy', 'famine', 'embargo', 'secession', 'profiteering', 'protest',
@@ -183,8 +183,21 @@
     for (var lg in SW.LEADER_START) {
       D[lg + '_leader_id'] = SW.LEADER_START[lg];
       D[lg + '_leader'] = SW.LEADERS[SW.LEADER_START[lg]].name;
+      D[lg + '_favour'] = 0; D[lg + '_grudge'] = 0; D[lg + '_asked'] = -99; D['vote_boost_' + lg] = 0;
     }
-    D.walkout_bloc = ''; D.walkout_until = -99; D.cc_dropped = 0; D.cc_kept = 0; D.el_walkout_blocks = 0; D.walkout_name = ''; D.govt_fell_now = 0; D.fall_reason = ''; D.war_name = 'Clone Wars';
+    D.treasury_txt = 4; D.debt_txt = 8; D.debt_label = ''; D.trade_label = '';
+    D.budget_due = 0; D.budget_rev = ''; D.budget_pri = ''; D.budgets = 0; D.spice_legal = 0; D.bacta_crises = 0; D.tibanna_crises = 0; D.spice_crises = 0; D.lost_finance = 0; D.debt_refinanced = 0; D.debt_premium_until = -99;
+    D.bd_write = 0; D.bd_gov_rev = ''; D.bd_gov_pri = ''; D.bd_gov_text = ''; D.bd_rev = ''; D.bd_pri = ''; D.bd_income_base = 0; D.bd_upkeep = 0; D.bd_interest = 0; D.bd_tariff_yield = 0; D.bd_bond_yield = 0; D.bd_defence_cost = 3;
+    D.bd_borrowed = 0; D.bd_income = 0; D.bd_cost = 0; D.bd_net = 0; D.bd_summary = ''; D.bd_rev_name = ''; D.bd_pri_name = ''; D.bd_failed = 0; D.bd_vote = 0;
+    D.bacta_crisis_timer = 4; D.tibanna_crisis_timer = 4; D.spice_crisis_timer = 4; D.banking_clan_timer = 0; D.debt_crisis_timer = 0;
+    D.war_off_outer = 0; D.war_off_mid = 0; D.war_off_core = 0; D.front_outer = 0; D.front_mid = 0; D.front_core = 0; D.war_aim = ''; D.war_aim_text = ''; D.war_priority = ''; D.wa_overruled = 0; D.wa_vote = 0;
+    D.wc_command = 0; D.wc_gov_plan = ''; D.wc_gov_text = ''; D.wc_plan_text = ''; D.wc_lobby_failed = 0; D.wc_fronts = ''; D.battle_front = ''; D.battles_fought = 0;
+    D.wd_id = ''; D.wd_has = 0; D.wd_heading = ''; D.wd_title = ''; D.wd_text = ''; D.wd_a_label = ''; D.wd_a_sub = ''; D.wd_b_label = ''; D.wd_b_sub = ''; D.wd_def = ''; D.wd_def_label = ''; D.wd_overruled = 0; D.wd_result = ''; D.dilemmas_decided = 0;
+    D.front_ev_ready = 0; D.front_ev = ''; D.front_ev_kind = ''; D.fe_name = ''; D.fe_heading = ''; D.fe_lib = 0; D.fe_front = ''; D.front_ev_outer = -99; D.front_ev_mid = -99; D.front_ev_core = -99;
+    D.free_ryloth = 0; D.citadel = 0; D.fleet_levy = 0; D.mandalore_pressed = 0; D.krell_backed = 0; D.trade = 60; D.bacta = 10; D.tibanna = 10; D.spice = 15; D.debt = 10; D.leaders_html = '';
+    D.lm_ready = 0; D.lm_group = ''; D.lm_ultimatum = 0; D.lm_leader = ''; D.lm_group_name = ''; D.lm_reason = ''; D.lm_motive = ''; D.lm_title = ''; D.lm_ask = ''; D.lm_label = ''; D.lm_cost = 0; D.lm_accept_sub = ''; D.lm_refuse_sub = ''; D.lm_offer = '';
+    D.leader_moment_timer = 8; D.ultimatums_met = 0; D.ultimatums_refused = 0; D.guild_regulations = 0; D.sanctions_lifted = 0; D.tariff_ban_until = -99;
+    D.pal_title = 'Senator Palpatine'; D.pal_office = 'Palpatine\'s office'; D.pal_people = 'Palpatine\'s people'; D.chair_cap = 4; D.chair_partners = 0; D.walkout_bloc = ''; D.walkout_until = -99; D.cc_dropped = 0; D.cc_kept = 0; D.el_walkout_blocks = 0; D.walkout_name = ''; D.govt_fell_now = 0; D.fall_reason = ''; D.war_name = 'Clone Wars';
     D.trial_cleanup = 0; D.force_war = SW.off('war') ? 0 : 1; D.amend_threshold = 66.7; D.gavel_date = -99; D.gavels = 0; D.vote_tabled = 0;
     D.scheme_pending = ''; D.scheme_due = 0; D.scheme_countered = 0; D.scheme_warned = 0; D.scheme_foreseen = 0;
     D.scheme_foresee = ''; D.scheme_counter = ''; D.scheme_text = ''; D.scheme_was_foiled = 0; D.schemes_total = 0; D.schemes_foiled = 0;
@@ -196,7 +209,7 @@
     D.loyalist_seen = 0; D.loyalist_member = 0; D.hostage_seen = 0; D.security_fast = 0; D.labyrinth_seen = 0; D.labyrinth_result = 0;
     D.arrest_missing = ''; D.cis_negotiated = 0; D.shadow_remains = 0; D.admirals_coup = 0;
     D.bp_gov = 0; D.bp_walkout = 0; D.bp_chancellor = 0; D.bp_vote = 0; D.bp_fell = 0; D.bp_saved = 0; D.bp_survived = 0;
-    D.bureau_relation = 45; D.bureau_reforms_seen = 0; D.bureau_captured = 0; D.bureau_warn_cold = 0; D.bureau_warn_hostile = 0;
+    D.bureau_relation = 45; D.bureau_reforms_seen = 0; D.bureau_captured = 0; D.bureau_warn_cold = 0; D.bureau_warn_hostile = 0; D.bureau_dossier = 0;
     D.bureau_purges = 0; D.bureau_purge_kind = ''; D.bureau_vote = 0; D.bureau_fell = 0; D.el_join_bureau = '';
     for (var bo = 0; bo < 7; bo++) D['el_opt' + bo + '_bureau'] = '';
     D.pal_can_run = 1; D.naboo_jedi = 1; D.unease_next = 40; D.secession_next = 10; D.next_election_date = 21;
@@ -331,7 +344,9 @@
     if (Q.loyalist_member && Q.pal_chancellor) Q.evidence += 0.4;
     // half-year turns cover two turns per year; quarters four; income is per year either way
     Q.capital += Math.max(0, Q.base_contrib + bonus);
-    Q.treasury += 2 + (Q.trade_tax ? 1 : 0) - Math.round(Q.guild_embargo / 3);
+    // the treasury is set by the yearly budget (rec_budget); the old trade tax still pays in
+    if (Q.trade_tax) Q.treasury += 1;
+    Q.budget_due = 1;
   };
 
   // ------------------------------------------------------------------ factions
@@ -549,6 +564,206 @@
       },
       rise: function (Q) { return 0.15 + 0.15 * on(Q.clones > 0 && !Q.army_oversight) + 0.1 * on(Q.senate_resolve >= 3) + Math.max(0, 25 - Q.hawk_dissent) / 60; }}
   };
+  // ------------------------------------------------------------------ what leaders want
+  // Each leader has a motive (why they hold or bend) and things they care about. What they care
+  // about, plus what they remember of the Caucus, sets their mood; an angry leader digs in, a
+  // pleased one bends. mc(test, weight, phrase): weight < 0 angers them, > 0 pleases them.
+  var mc = function (test, weight, phrase) { return [test, weight, phrase]; };
+  var inGovt = function (Q, b) { return (Q.govt_blocs || []).indexOf(b) >= 0; };
+  var tariffsOn = function (Q) { return Q.trade_tax || Q.budget_rev === 'tariffs'; };
+  var frontLosing = function (Q, f) { return Q.war && (Q.war_balance + (Q['war_off_' + f] || 0)) < -2; };
+  SW.LEADER_MINDS = {
+    teem: {motive: 'Ainlee Teem built his career on Malastare\'s grievances. He bargains because a deal that feeds his worlds beats a principle that starves them, but he never forgets a broken promise.',
+      cares: [mc(function (Q) { return Q.rim_relief >= 1; }, 2, 'relief for the Rim'), mc(function (Q) { return Q.rim_enfranchised; }, 2, 'Rim seats in the Senate'),
+        mc(function (Q) { return Q.rim_hardship > 45; }, -2, 'hunger on the Rim'), mc(function (Q) { return inGovt(Q, 'rim'); }, 1, 'a seat in government'),
+        mc(function (Q) { return frontLosing(Q, 'outer'); }, -2, 'the sieges of the Rim')]},
+    orn_free_taa: {motive: 'Ryloth is poor and its senator is not. Orn Free Taa trades votes for favours because the favours keep him rich and his rivals at home quiet. He bends to whoever pays, and digs in against anyone who looks at his accounts.',
+      cares: [mc(function (Q) { return inGovt(Q, 'rim'); }, 2, 'a share of power'), mc(function (Q) { return Q.guild_relation > 35; }, 1, 'the guilds\' generosity'),
+        mc(function (Q) { return Q.anti_corruption; }, -2, 'the Ethics Commission'), mc(function (Q) { return tariffsOn(Q); }, -1, 'the trade tariffs'),
+        mc(function (Q) { return Q.free_ryloth; }, -2, 'arming Cham Syndulla\'s rebels')]},
+    ardana: {motive: 'Tal Ardana watched Ord Mantell starve while Coruscant debated. Every compromise the Rim has made has been broken, so she makes none.',
+      cares: [mc(function (Q) { return Q.rim_hardship > 40; }, -2, 'the Rim\'s suffering'), mc(function (Q) { return Q.rim_enfranchised; }, 2, 'Rim enfranchisement'),
+        mc(function (Q) { return inGovt(Q, 'guild'); }, -2, 'guild ministers in government'), mc(function (Q) { return Q.date >= 60 && !Q.slavery_abolished; }, -1, 'the slave markets'),
+        mc(function (Q) { return frontLosing(Q, 'outer'); }, -2, 'the sieges of the Rim')]},
+    dod: {motive: 'Neimoidian fortunes rest on the Trade Federation\'s monopolies. Lott Dod defends them line by line, because a single concession invites the next.',
+      cares: [mc(tariffsOn, -2, 'the trade-route tariffs'), mc(function (Q) { return Q.tf_broken_up; }, -3, 'the break-up of the Federation'),
+        mc(function (Q) { return Q.guild_regulations >= 1; }, -1, 'guild regulation'), mc(function (Q) { return Q.sanctions_lifted; }, 1, 'the lifting of sanctions'),
+        mc(function (Q) { return inGovt(Q, 'guild'); }, 1, 'a seat at the table'), mc(function (Q) { return Q.gunray_convicted; }, -2, 'Viceroy Gunray\'s conviction')]},
+    san_hill: {motive: 'San Hill lends to everyone and owes loyalty to no one. A Republic in debt is a Republic he can lean on; a Republic that audits him is one he will leave.',
+      cares: [mc(function (Q) { return (Q.debt || 0) >= 15; }, 2, 'the Republic\'s debts to his Clan'), mc(function (Q) { return Q.banking_audit; }, -2, 'the audit of the Banking Clan'),
+        mc(function (Q) { return Q.banking_independent; }, -1, 'limits on the Clan\'s charter'), mc(tariffsOn, -1, 'the trade tariffs'),
+        mc(function (Q) { return Q.tf_broken_up; }, -2, 'the break-up of the Federation')]},
+    clovis: {motive: 'Rush Clovis thinks the guilds would be richer inside a lawful Republic than outside it. He compromises easily, unless the banks he wants to save are being looted.',
+      cares: [mc(function (Q) { return Q.banking_independent; }, 2, 'an independent Banking Clan'), mc(function (Q) { return Q.anti_corruption; }, 1, 'a cleaner Senate'),
+        mc(function (Q) { return (Q.debt || 0) >= 25; }, -2, 'a Republic drowning in debt'), mc(function (Q) { return Q.banks_seized; }, -3, 'the seizure of the banks')]},
+    valorum: {motive: 'Finis Valorum believes the Senate can still be made to work, by procedure and patience. He holds firm on his reforms and gives way on almost everything else.',
+      cares: [mc(tariffsOn, 2, 'his trade-route tax'), mc(function (Q) { return Q.valorum_scandal; }, -1, 'the shipping scandal'),
+        mc(function (Q) { return Q.corruption > 65; }, -1, 'the Senate\'s corruption')]},
+    quill: {motive: 'Davan Quill speaks for the Core worlds that have done well out of the Republic as it is. He is not against reform, only against anything that moves faster than a committee.',
+      cares: [mc(function (Q) { return SW.reformCount(Q) >= 3; }, -2, 'the pace of reform'), mc(function (Q) { return inGovt(Q, 'mod'); }, 2, 'a stable government'),
+        mc(function (Q) { return inGovt(Q, 'rim') && Q.rc_in_govt; }, -1, 'Rim radicals in government'), mc(function (Q) { return Q.fear > 45; }, -1, 'the disorder'),
+        mc(function (Q) { return Q.budget_rev === 'levy'; }, -2, 'the levy on the Core')]},
+    fang_zar: {motive: 'Fang Zar has watched the Senate hand away its powers one emergency at a time. He will work with anyone who wants them back, and with no one who wants more.',
+      cares: [mc(function (Q) { return Q.emergency_powers >= 3 && !Q.rc_chancellor; }, -2, 'the Chancellor\'s emergency powers'), mc(function (Q) { return Q.emergency_sunset; }, 2, 'sunset clauses'),
+        mc(function (Q) { return Q.term_limits_protected; }, 1, 'entrenched term limits'), mc(function (Q) { return Q.delegation_formed; }, 1, 'the Delegation of 2000')]},
+    hask: {motive: 'Orvos Hask wants order, and a Republic able to keep it. He is steady rather than fierce, and grows fiercer when the lanes are unsafe.',
+      cares: [mc(function (Q) { return Q.judicial_forces >= 5; }, 2, 'a stronger Judicial Force'), mc(function (Q) { return Q.pact_formed; }, 1, 'the Defence Pact'),
+        mc(function (Q) { return Q.rim_hardship > 45 || (Q.trade || 60) < 35; }, -1, 'piracy on the lanes'), mc(function (Q) { return Q.fear > 45; }, -1, 'the disorder')]},
+    tarkin: {motive: 'Wilhuff Tarkin learned on Eriadu that order comes from fear of force. He holds his line because he thinks compromise is weakness, and he has Palpatine\'s ear.',
+      cares: [mc(function (Q) { return Q.war && Q.war_balance < 0; }, -2, 'a war being lost'), mc(function (Q) { return Q.war && Q.peace_talks >= 2; }, -2, 'talk of peace'),
+        mc(function (Q) { return Q.emergency_powers >= 4; }, 2, 'a strong executive'), mc(function (Q) { return Q.army_oversight; }, -1, 'the Senate meddling in the army'),
+        mc(function (Q) { return inGovt(Q, 'rim'); }, -2, 'Rim agitators in government'), mc(function (Q) { return Q.citadel; }, 1, 'the Citadel')]},
+    danu: {motive: 'Giddean Danu builds warships at Kuat and wants them commanded by the Senate. He bends on budgets and never on who holds the leash.',
+      cares: [mc(function (Q) { return Q.army_oversight || !Q.kamino_army; }, 2, 'Senate command of the forces'), mc(function (Q) { return Q.judicial_forces >= 5; }, 1, 'the Judicial Forces'),
+        mc(function (Q) { return Q.emergency_powers >= 5; }, -2, 'a Chancellor with an army of his own'), mc(function (Q) { return Q.fleet_levy; }, 1, 'the member-world fleets')]},
+    vell: {motive: 'Tamsar Vell speaks for worlds that joined the Republic for trade and protection, and nothing more. He sells his votes for exemptions, and resents every new burden.',
+      cares: [mc(function (Q) { return Q.budget_rev === 'levy' || tariffsOn(Q); }, -1, 'new taxes on unaligned worlds'), mc(function (Q) { return inGovt(Q, 'ind'); }, 1, 'being consulted'),
+        mc(function (Q) { return Q.war; }, -1, 'the war\'s demands'), mc(function (Q) { return Q.fleet_levy; }, -2, 'the fleet levy')]},
+    satine: {motive: 'Duchess Satine rebuilt Mandalore on the promise that it would never go to war again. She compromises on everything but that.',
+      cares: [mc(function (Q) { return Q.peace_talks >= 1; }, 2, 'the peace talks'), mc(function (Q) { return Q.war; }, -1, 'the war'),
+        mc(function (Q) { return Q.mandalore_pressed; }, -3, 'pressure on Mandalore\'s neutrality'), mc(function (Q) { return Q.satine_friend; }, 1, 'the Caucus\'s friendship')]},
+    shale: {motive: 'Corwin Shale\'s worlds pay their dues and ask for nothing. He wants the Republic to return the favour by leaving them alone, and treats every levy as a betrayal.',
+      cares: [mc(tariffsOn, -2, 'Coruscant\'s taxes'), mc(function (Q) { return Q.budget_rev === 'levy'; }, -2, 'the Core levy'),
+        mc(function (Q) { return Q.war; }, -1, 'the war'), mc(function (Q) { return Q.fleet_levy; }, -2, 'the fleet levy')]},
+    farr: {motive: 'Onaconda Farr left the Caucus over the Rim, but he still believes it can be persuaded. He bargains warmly and remembers betrayal for ever.',
+      cares: [mc(function (Q) { return Q.rim_relief >= 1; }, 2, 'relief for the Rim'), mc(function (Q) { return Q.farr_relation_broken; }, -3, 'the Caucus\'s betrayal'),
+        mc(function (Q) { return Q.rim_hardship > 45; }, -2, 'hunger on Rodia')]},
+    tandeth: {motive: 'Mira Tandeth thinks the Caucus sold the Rim for committee seats. She sets the price of her votes high, and in public.',
+      cares: [mc(function (Q) { return Q.rim_hardship > 40; }, -2, 'the Rim\'s suffering'), mc(function (Q) { return inGovt(Q, 'guild'); }, -2, 'guild ministers in government'),
+        mc(function (Q) { return Q.rim_enfranchised; }, 2, 'Rim enfranchisement'), mc(function (Q) { return Q.farr_dead; }, -2, 'Farr\'s murder')]},
+    // Caucus factions
+    ryder: {motive: 'Horox Ryder has sat through forty years of scandals. He is patient with the Caucus as long as it is visibly cleaner than the Senate around it.',
+      cares: [mc(function (Q) { return Q.corruption > 62; }, -2, 'the corruption scandals'), mc(function (Q) { return Q.anti_corruption; }, 2, 'the Ethics Commission'),
+        mc(function (Q) { return Q.rc_in_govt; }, 1, 'a seat in government')]},
+    papanoida: {motive: 'Chi Eekway Papanoida believes a constitution bent once will break. She will not trade procedure for advantage, even her own side\'s.',
+      cares: [mc(function (Q) { return Q.emergency_powers >= 3 && !Q.emergency_sunset; }, -2, 'emergency powers without a sunset'), mc(function (Q) { return Q.anti_corruption; }, 2, 'the Ethics Commission'),
+        mc(function (Q) { return Q.corruption > 58; }, -1, 'the Senate\'s corruption')]},
+    taneel: {motive: 'Terr Taneel has made a hundred committee deals and regrets few of them. Power matters more to him than purity, so he forgives almost anything except being left out.',
+      cares: [mc(function (Q) { return Q.rc_in_govt; }, 2, 'being in government'), mc(function (Q) { return Q.rc_chancellor; }, 1, 'our Chancellor'),
+        mc(function (Q) { return Q.corruption > 70; }, -1, 'runaway corruption')]},
+    tills: {motive: 'Meena Tills wants the Rim treated as part of the Republic. She is patient while it improves and hard to calm when it does not.',
+      cares: [mc(function (Q) { return Q.rim_hardship > 40; }, -2, 'hardship on the Rim'), mc(function (Q) { return Q.rim_relief >= 1; }, 1, 'Rim relief'),
+        mc(function (Q) { return Q.rim_enfranchised; }, 2, 'Rim representation'), mc(function (Q) { return Q.slavery_abolished; }, 1, 'abolition')]},
+    corvane: {motive: 'Jessa Corvane grew up on Dantooine hearing that help was coming. She has stopped believing it, and wants the Caucus to stop promising it.',
+      cares: [mc(function (Q) { return Q.rim_enfranchised; }, 2, 'enfranchisement'), mc(function (Q) { return Q.rc_in_govt && inGovt(Q, 'guild'); }, -3, 'governing with the guilds'),
+        mc(function (Q) { return Q.rim_hardship > 36; }, -2, 'the Rim\'s hunger'), mc(function (Q) { return Q.slavery_abolished; }, 2, 'abolition')]},
+    rusk: {motive: 'Hollin Rusk thinks half a loaf now beats a whole one never. He is the easiest of the Rimward leaders to satisfy, and the slowest to anger.',
+      cares: [mc(function (Q) { return Q.rim_relief >= 1; }, 2, 'steady relief'), mc(function (Q) { return Q.rim_hardship > 50; }, -2, 'famine on the Rim')]},
+    venn: {motive: 'Aya Venn trusts law over arms. She accepts defence when it is lawful, and turns hard against powers that answer to no one.',
+      cares: [mc(function (Q) { return Q.peace_talks >= 1; }, 1, 'the peace talks'), mc(function (Q) { return Q.emergency_powers >= 4 && !Q.rc_chancellor; }, -2, 'the emergency powers'),
+        mc(function (Q) { return Q.war && Q.peace_talks < 2; }, -1, 'a war without talks')]},
+    shen: {motive: 'Tamra Shen believes every weapon built makes a war likelier. She will not compromise with the war, and barely with the Caucus.',
+      cares: [mc(function (Q) { return Q.war; }, -2, 'the war'), mc(function (Q) { return Q.peace_talks >= 2; }, 2, 'real peace talks'),
+        mc(function (Q) { return Q.pact_formed; }, -1, 'Caucus militias'), mc(function (Q) { return Q.krell_backed; }, -2, 'what was done on Umbara')]},
+    dask: {motive: 'Orrin Dask accepts that a Republic may need to defend itself, so long as someone is still trying to end the war.',
+      cares: [mc(function (Q) { return Q.peace_talks >= 1; }, 2, 'a channel for peace'), mc(function (Q) { return Q.emergency_powers >= 6; }, -2, 'the Chancellor\'s powers')]},
+    kelt: {motive: 'Varo Kelt served in the Judicial Forces and buried friends after Yinchorri. He wants the Republic able to defend itself, and grows impatient when it cannot.',
+      cares: [mc(function (Q) { return Q.pact_formed; }, 2, 'the Defence Pact'), mc(function (Q) { return Q.war && Q.war_balance < 0; }, -2, 'defeats at the front')]},
+    voss: {motive: 'Darra Voss grew up under Anaxes\'s shipyards and believes talks are for after victory. Every setback makes her harder.',
+      cares: [mc(function (Q) { return Q.war && Q.peace_talks >= 2; }, -2, 'talk of compromise'), mc(function (Q) { return Q.war && Q.war_balance > 2; }, 2, 'victories'),
+        mc(function (Q) { return Q.pact_formed; }, 1, 'the Defence Pact'), mc(function (Q) { return Q.war_aim === 'peace'; }, -2, 'a war aimed at talks')]},
+    morn: {motive: 'Talia Morn wants a strong Republic and a lawful one. She bends on money and digs in on command.',
+      cares: [mc(function (Q) { return Q.army_oversight || !Q.kamino_army; }, 2, 'Senate command of the army'), mc(function (Q) { return Q.clones > 0 && !Q.army_oversight; }, -2, 'an army answerable to no one'),
+        mc(function (Q) { return Q.pact_formed; }, 1, 'the Defence Pact')]}
+  };
+
+  // A leader's mood: what they care about, plus what they remember of the Caucus.
+  SW.leaderMood = function (Q, group) {
+    var id = Q[group + '_leader_id'];
+    var mind = SW.LEADER_MINDS[id];
+    var score = (Q[group + '_favour'] || 0) - (Q[group + '_grudge'] || 0);
+    var best = null, bestW = 0;
+    if ((Q[group + '_grudge'] || 0) >= 1.5) { best = 'remembers how we crossed them'; bestW = -(Q[group + '_grudge']); }
+    if ((Q[group + '_favour'] || 0) >= 1.5 && Q[group + '_favour'] > -bestW) { best = 'grateful for our help'; bestW = Q[group + '_favour']; }
+    if (mind) {
+      for (var i = 0; i < mind.cares.length; i++) {
+        var cr = mind.cares[i];
+        var on;
+        try { on = cr[0](Q); } catch (e) { on = false; }
+        if (!on) continue;
+        score += cr[1];
+        if (Math.abs(cr[1]) > Math.abs(bestW)) {
+          bestW = cr[1];
+          best = (cr[1] <= -3 ? 'furious about ' : (cr[1] <= -2 ? 'angry about ' : (cr[1] < 0 ? 'uneasy about ' : (cr[1] >= 2 ? 'pleased with ' : 'content with ')))) + cr[2];
+        }
+      }
+    }
+    return {score: SW.clamp(score, -6, 6), reason: best || 'keeping their own counsel'};
+  };
+  // How firmly a group holds its line: the leader's temperament, hardened by anger, softened by goodwill.
+  SW.firm = function (Q, group) {
+    var base = SW.leader(Q, group).firm;
+    if (!Q || !Q[group + '_leader_id']) return base;
+    return SW.clamp(base - SW.clamp(0.07 * SW.leaderMood(Q, group).score, -0.25, 0.25), 0.05, 0.95);
+  };
+  SW.stanceWord = function (f) {
+    return f >= 0.8 ? 'uncompromising' : (f >= 0.62 ? 'hardline' : (f >= 0.45 ? 'firm' : (f >= 0.3 ? 'pragmatic' : 'accommodating')));
+  };
+  SW.leaderLine = function (Q, group) {
+    return SW.stanceWord(SW.firm(Q, group)) + ' · ' + SW.leaderMood(Q, group).reason;
+  };
+
+
+  // ------------------------------------------------------------------ ultimatums and offers
+  // An angry bloc leader with poor relations makes demands; a pleased one with good relations offers help.
+  SW.LEADER_DEMANDS = {
+    guild: {ask: function (Q) { return tariffsOn(Q) ? 'Drop the trade-route tariffs, or the guilds\' credit lines close.' : 'Stop regulating the guilds, or the credit lines close.'; },
+      label: 'Give the guilds what they want.', cost: 0, acceptSub: 'The guilds ease off and the embargo lifts a little; the Rimward wing is furious.',
+      accept: function (Q) { Q.trade_tax = 0; Q.tariff_ban_until = Q.date + 24; Q.guild_regulations = 0; Q.guild_embargo = Math.max(0, Q.guild_embargo - 2); Q.corruption += 1; Q.rimward_dissent += 5; },
+      refuseSub: 'The guild embargo tightens.', refuse: function (Q) { Q.guild_embargo += 1; }},
+    rim: {ask: function () { return 'Relief for the Rim, now, or our votes go to whoever will feed our worlds.'; },
+      label: 'Send relief convoys.', cost: 2, acceptSub: '−2 treasury. Less hardship on the Rim.',
+      accept: function (Q) { Q.treasury -= 2; Q.rim_hardship -= 3; Q.rim_relief += 0.5; },
+      refuseSub: 'Separatism grows on the Rim.', refuse: function (Q) { Q.outer_sep += 2; Q.midrim_sep += 1; }},
+    sec: {ask: function () { return 'Money for the fleet, or the Security Bloc votes against everything the Caucus sponsors.'; },
+      label: 'Fund the fleet.', cost: 2, acceptSub: '−2 treasury. Stronger forces; the Pacifists object.',
+      accept: function (Q) { Q.treasury -= 2; Q.judicial_forces += 0.5; Q.pacifist_dissent += 4; if (Q.war) SW.pushFront(Q, SW.weakestFront(Q), 1); },
+      refuseSub: 'Fear rises, and the Hawks grow restless.', refuse: function (Q) { Q.fear += 2; Q.hawk_dissent += 3; }},
+    mod: {ask: function () { return 'Slow down. Give the Senate a year without another constitutional fight.'; },
+      label: 'Agree to a pause.', cost: 0, acceptSub: 'Constitutional and judicial reform waits a while; the Institutionalists approve, the Rimward wing does not.',
+      accept: function (Q) { Q.constitution_timer = Math.max(Q.constitution_timer || 0, 4); Q.judiciary_timer = Math.max(Q.judiciary_timer || 0, 4); Q.inst_dissent -= 3; Q.rimward_dissent += 3; },
+      refuseSub: 'The Core Moderates will be harder to work with.', refuse: function () {}},
+    ind: {ask: function () { return 'Exempt the unaligned worlds from your levies, or find your majorities elsewhere.'; },
+      label: 'Grant the exemption.', cost: 1, acceptSub: '−1 treasury.',
+      accept: function (Q) { Q.treasury -= 1; },
+      refuseSub: 'The unaligned worlds drift away from Coruscant.', refuse: function (Q) { Q.corporate_sep += 1; Q.midrim_sep += 1; }}
+  };
+  SW.LEADER_DEMANDS.rfc = SW.LEADER_DEMANDS.rim;
+  SW.LEADER_OFFERS = {
+    guild: 'The guilds are prepared to be helpful, for now.', rim: 'The Rimward Coalition remembers who stood by it.',
+    sec: 'The Security Bloc respects a Caucus that takes defence seriously.', mod: 'The Core Moderates are ready to work with us.',
+    ind: 'The unaligned worlds are inclined to be friendly.', rfc: 'Our old Rimward friends want to work together again.'
+  };
+  SW.leaderMomentCheck = function (Q) {
+    if (Q.lm_ready || Q.leader_moment_timer > 0 || Q.finale || Q.game_ending || Q.date < 24) return;
+    var pick = null, pickScore = 0, kind = '';
+    for (var i = 0; i < SW.CONTEST_BLOCS.length; i++) {
+      var g = SW.CONTEST_BLOCS[i];
+      if (Q.parties.indexOf(g) < 0 || !Q[g + '_leader_id'] || Q.date - (Q[g + '_asked'] || -99) < 36) continue;
+      var m = SW.leaderMood(Q, g).score, rel = Q[g + '_relation'] || 0;
+      if (m <= -3 && rel < 35 && m < pickScore) { pick = g; pickScore = m; kind = 'ultimatum'; }
+      else if (!kind && m >= 2 && rel >= 50 && m > pickScore) { pick = g; pickScore = m; kind = 'offer'; }
+    }
+    if (pick) { Q.lm_ready = 1; Q.lm_group = pick; Q.lm_ultimatum = kind === 'ultimatum' ? 1 : 0; }
+  };
+  SW.leaderMomentOpen = function (Q) {
+    var g = Q.lm_group, L = SW.leader(Q, g), mind = SW.LEADER_MINDS[Q[g + '_leader_id']] || {}, d = SW.LEADER_DEMANDS[g] || SW.LEADER_DEMANDS.ind;
+    Q.lm_ready = 0; Q[g + '_asked'] = Q.date; Q.leader_moment_timer = 6;
+    Q.lm_leader = L.name || Q[g + '_leader']; Q.lm_group_name = SW.name(Q, g);
+    Q.lm_reason = SW.leaderMood(Q, g).reason; Q.lm_motive = mind.motive || L.blurb || '';
+    Q.lm_title = (Q.lm_ultimatum ? 'An Ultimatum from ' : 'An Offer from ') + Q.lm_leader;
+    Q.lm_ask = d.ask(Q); Q.lm_label = d.label; Q.lm_cost = d.cost; Q.lm_accept_sub = d.acceptSub; Q.lm_refuse_sub = d.refuseSub;
+    Q.lm_offer = SW.LEADER_OFFERS[g] || '';
+  };
+  SW.leaderMomentResolve = function (Q, choice) {
+    var g = Q.lm_group, d = SW.LEADER_DEMANDS[g] || SW.LEADER_DEMANDS.ind;
+    if (choice === 'accept') { d.accept(Q); Q[g + '_favour'] = (Q[g + '_favour'] || 0) + 2; Q[g + '_relation'] += 8; Q.ultimatums_met = (Q.ultimatums_met || 0) + 1; }
+    else if (choice === 'refuse') { d.refuse(Q); Q[g + '_grudge'] = (Q[g + '_grudge'] || 0) + 2; Q[g + '_relation'] -= 6; Q.ultimatums_refused = (Q.ultimatums_refused || 0) + 1; }
+    else if (choice === 'vote') { Q['vote_boost_' + g] = 0.15; }
+    else if (choice === 'capital') { Q.capital += 1; }
+    else { Q[g + '_relation'] += 4; Q[g + '_favour'] = (Q[g + '_favour'] || 0) + 1; }
+  };
+
   SW.LEADER_START = {
     rim: 'teem', guild: 'dod', mod: 'valorum', sec: 'hask', ind: 'vell', rfc: 'farr',
     inst: 'ryder', rimward: 'tills', pacifist: 'venn', hawk: 'kelt'
@@ -560,7 +775,6 @@
     var id = Q && Q[group + '_leader_id'];
     return (id && SW.LEADERS[id]) || SW.NEUTRAL_LEADER;
   };
-  SW.firm = function (Q, group) { return SW.leader(Q, group).firm; };
   SW.leaderPool = function (Q, group) {
     var out = [];
     for (var id in SW.LEADERS) {
@@ -578,6 +792,7 @@
     if (SW.FACTIONS.indexOf(group) >= 0) Q[group + '_dissent_prev'] = Q[group + '_dissent'];
     else Q[group + '_relation_prev'] = Q[group + '_relation'];
     Q.leader_changes = (Q.leader_changes || 0) + 1;
+    Q[group + '_favour'] = 0; Q[group + '_grudge'] = 0;
     if (id === 'ardana') Q.rim_was_radical = 1;
   };
   SW.leaderRefuses = function (Q, a, b) {
@@ -739,6 +954,8 @@
     var backedWon = (backing === 'ch' && won) || (backing === 'inc' && !won);
     Q.contest_backed_won = ours && backedWon ? 1 : 0;
     Q.contest_backed_lost = ours && !backedWon ? 1 : 0;
+    if (Q.contest_backed_won) Q[g + '_favour'] = (Q[g + '_favour'] || 0) + 2;
+    if (Q.contest_backed_lost) Q[g + '_grudge'] = (Q[g + '_grudge'] || 0) + 2;
     if (Q.contest_kind === 'bloc') {
       if (Q.contest_backed_won) Q[g + '_relation'] += 6;
       if (Q.contest_backed_lost) Q[g + '_relation'] -= 8;
@@ -876,6 +1093,7 @@
     Q.walkout_until = Q.date + (months || 24);
     Q.walkout_name = SW.name(Q, bloc);
     Q[bloc + '_relation'] = (Q[bloc + '_relation'] || 0) - 10;
+    Q[bloc + '_grudge'] = (Q[bloc + '_grudge'] || 0) + 1.5;
     return bloc;
   };
 
@@ -894,6 +1112,7 @@
     for (var i = 0; i < SW.COMMITTEES.length; i++) if (Q['chair_' + SW.COMMITTEES[i]] === 'rc') chairs++;
     Q.rc_chairs = chairs;
     Q.rc_has_access = (Q.rc_in_govt || chairs > 0) ? 1 : 0;
+    SW.palStrings(Q);
   };
 
   SW.coalitionName = function (Q, blocs) {
@@ -903,7 +1122,7 @@
       if (has('mod') && has('guild')) return 'Grand Concord';
       if (has('rim') && !has('mod')) return 'Rimward Compact';
       if (has('mod')) return 'Reform Concord';
-      if (has('pal')) return 'Chancellor\'s Coalition';
+      if (has('pal')) return Q && Q.chancellor_bloc === 'pal' ? 'Chancellor\'s Coalition' : 'Naboo Compact';
       return 'Caucus Government';
     }
     if (has('pal') && has('sec')) return 'Security Coalition';
@@ -929,7 +1148,7 @@
     if (Q['bonus_' + a + '_for_' + b]) base += Q['bonus_' + a + '_for_' + b];
     if (a !== b) {
       var La = SW.leader(Q, a);
-      base += ((La.likes && La.likes[b]) || 0) + (0.5 - La.firm) * 16;
+      base += ((La.likes && La.likes[b]) || 0) + (0.5 - SW.firm(Q, a)) * 16;
       if (SW.leaderRefuses(Q, a, b)) base -= 20;
     }
     // incumbency: partners stick with a Chancellor who has governed well
@@ -1099,7 +1318,7 @@
     Q.elections_held += 1;
     Q.naboo_sympathy = 0;
     if (prev === 'Valorum' && Q.chancellor !== 'Valorum') Q.valorum_fallen = 1;
-    if (bloc === 'pal') { Q.pal_name = 'Chancellor\'s Bloc'; if (Q.chancellor === 'Palpatine') { Q.pal_was_chancellor = 1; Q.pal_terms = (Q.pal_terms || 0) + 1; } }
+    if (bloc === 'pal') { if (Q.chancellor === 'Palpatine') { Q.pal_was_chancellor = 1; Q.pal_terms = (Q.pal_terms || 0) + 1; } }
     if (bloc === 'rc') { Q.rc_was_chancellor = 1; Q.rc_terms = (Q.rc_terms || 0) + 1; }
     SW.recomputeGovt(Q);
   };
@@ -1124,7 +1343,7 @@
     var blocs = Q.el_opts[i];
     SW.setGovt(Q, blocs);
     SW.bureauJoin(Q, blocs);
-    Q.leverage = Math.round(Q.rc_r) + 15;
+    SW.openChairs(Q, Math.round(Q.rc_r) + 15);
   };
 
   SW.joinGovernment = function (Q) {
@@ -1132,7 +1351,19 @@
     if (blocs.indexOf('rc') < 0) blocs.push('rc');
     SW.setGovt(Q, blocs, Q.coalition_name);
     SW.bureauJoin(Q, blocs);
-    Q.leverage = Math.round(Q.rc_r * 0.8);
+    SW.openChairs(Q, Math.round(Q.rc_r * 0.8));
+  };
+
+  // Every new government renegotiates the committee chairs from scratch: the Caucus gives up the
+  // chairs it held and buys back what it can. Each partner insists on at least one chair.
+  SW.openChairs = function (Q, leverage) {
+    for (var i = 0; i < SW.COMMITTEES.length; i++) if (Q['chair_' + SW.COMMITTEES[i]] === 'rc') Q['chair_' + SW.COMMITTEES[i]] = '';
+    SW.assignChairs(Q);
+    var partners = (Q.govt_blocs || []).filter(function (b) { return b !== 'rc'; }).length || 1;
+    Q.chair_partners = partners;
+    Q.chair_cap = Math.max(1, SW.COMMITTEES.length - partners);
+    Q.rc_chairs = 0;
+    Q.leverage = leverage;
   };
 
   // ------------------------------------------------------------------ faction splits
@@ -1293,12 +1524,12 @@
     },
     turn_senator: {
       weight: function (Q) { return 0.4 + Math.max(0, (Q.rc_votes || 0) - 15) * 0.08; },
-      foresee: 'Three Caucus senators have been seen dining with the Chancellor\'s people.',
+      foresee: function (Q) { return 'Three Caucus senators have been seen dining with ' + Q.pal_people + '.'; },
       counter: 'Keep them on side',
       foiled: 'The Caucus finds the three senators better committee seats. They stay.',
       apply: function (Q) {
         for (var i = 0; i < SW.REGIONS.length; i++) { var r = SW.REGIONS[i]; var mv = Q[r + '_rc'] * 0.03; Q[r + '_rc'] -= mv; Q[r + '_pal'] += mv; }
-        return 'Three Caucus senators cross the floor to the Chancellor\'s bloc, citing "the needs of the hour".';
+        return 'Three Caucus senators cross the floor to the ' + SW.name(Q, 'pal') + ', citing "the needs of the hour".';
       }
     }
   };
@@ -1321,7 +1552,8 @@
     Q.scheme_due = Q.time + 1;
     Q.scheme_countered = 0; Q.scheme_warned = 0;
     Q.scheme_foreseen = (Q.jedi_suspicion >= 4 || Q.evidence >= 5 || (Q.time - (Q.investigated_at || -99)) <= 2) ? 1 : 0;
-    Q.scheme_foresee = SW.SCHEMES[pick].foresee;
+    var fs = SW.SCHEMES[pick].foresee;
+    Q.scheme_foresee = typeof fs === 'function' ? fs(Q) : fs;
     Q.scheme_counter = SW.SCHEMES[pick].counter;
     Q.scheme_timer = threat >= 10 ? 3 + Math.floor(SW.rnd() * 2) : 5 + Math.floor(SW.rnd() * 2);
     Q.schemes_total = (Q.schemes_total || 0) + 1;
@@ -1373,6 +1605,7 @@
     var inGov = Q.rc_in_govt || Q.rc_chairs > 0;
     if (!inGov) {
       Q.bureau_relation += (45 - Q.bureau_relation) * 0.1 * f;
+      Q.bureau_dossier = Math.max(0, (Q.bureau_dossier || 0) - f);
       Q.bureau_reforms_seen = rcount;
       return;
     }
@@ -1386,6 +1619,10 @@
     var gain = (Q.anti_corruption ? 3 : 0) + ((Q.guild_relation || 0) - 30) / 10;
     Q.bureau_relation += f * (gain - loss);
     Q.bureau_reforms_seen = rcount;
+    // while they are unhappy with us, they build a case: files, leaks, partners who could govern without us
+    var r = Q.bureau_relation;
+    Q.bureau_dossier = (Q.bureau_dossier || 0) + (r <= 10 ? 2 : (r < 25 ? 1 : -0.5)) * f;
+    Q.bureau_dossier = SW.clamp(Q.bureau_dossier, 0, 6);
   };
 
   // The bureaucrats strike: a "reorganisation" ejects the Caucus from government, or, against a
@@ -1417,6 +1654,7 @@
       Q.inst_dissent += 5; Q.rc_momentum -= 0.5;
     }
     Q.bureau_relation = 30;
+    Q.bureau_dossier = 0;
   };
 
   // ------------------------------------------------------------------ votes
@@ -1460,7 +1698,8 @@
           if (tp.charAt(0) === '-') { sign = -1; tp = tp.slice(1); }
           p += sign * ((L.views && L.views[tp]) || 0);
         }
-        p = 0.5 + (p - 0.5) * (0.7 + 0.6 * L.firm);
+        p = 0.5 + (p - 0.5) * (0.7 + 0.6 * SW.firm(Q, b));
+        if (Q['vote_boost_' + b] && reformVote) { p += Q['vote_boost_' + b]; Q['vote_boost_' + b] = 0; SW._notes.push(SW.name(Q, b) + ' kept their word'); }
         if (bought > 0 && b !== 'pal' && b !== 'cis') p = p * (1 - bought) + palLine * bought;
       }
       p = SW.clamp(p, 0, 1);
@@ -1516,7 +1755,7 @@
 
     // corruption, fear, faith
     Q.corruption += f * (0.3 + Q.emergency_powers * 0.08 - Q.anti_corruption * 0.6 + (Q.war ? 0.25 : 0) + ((Q.guild_r || 20) - 20) * 0.02);
-    var targetFear = 18 + (Q.dooku_movement ? 14 : 0) + (Q.war ? 14 + Math.max(0, -Q.war_balance) * 3 + Math.min(5, Q.war_turns * 0.25) : 0) + (Q.secession_recent || 0) * 2;
+    var targetFear = 18 + (Q.dooku_movement ? 14 : 0) + (Q.war ? 14 + Math.max(0, -Q.war_balance) * 1.5 + Math.max(0, -SW.front(Q, 'core')) * 2 - Math.max(0, SW.front(Q, 'core')) + Math.min(5, Q.war_turns * 0.25) + (Q.war_aim === 'victory' ? 5 : 0) : 0) + (Q.secession_recent || 0) * 2;
     Q.fear += (targetFear - Q.fear) * 0.25 * f;
     Q.secession_recent = 0;
     var reforms = Q.emergency_sunset + Q.term_limits_protected + Q.army_oversight + Q.senate_guard_reformed +
@@ -1596,16 +1835,18 @@
       var rep = Q.clones * 0.6 + Q.judicial_forces * 0.25 + Q.member_forces * 0.2 + Q.jedi_strength * 0.25 + (Q.navy_loyalty - 50) / 50;
       var cis = Q.droid_armies + (Q.guild_embargo * 0.2);
       // Sidious keeps the war going: the front drifts back toward a slow Republic advance
-      var drift_target = 0.5 + Math.max(0, Q.date - 135) / 30;
+      var drift_target = 0.5 + Math.max(0, Q.date - 135) / 30 + (Q.war_aim === 'victory' ? 0.8 : (Q.war_aim === 'peace' ? -0.5 : 0));
       Q.war_balance += f * ((rep - cis) * 0.08 + (drift_target - Q.war_balance) * 0.18 + (SW.rnd() - 0.5) * 1.2);
       Q.war_weariness += f * 3;
-      Q.treasury -= f * (0.6 + Q.clones * 0.06);
+      Q.treasury -= f * (1.0 + Q.clones * 0.08);
       if (Q.jedi_generals) { Q.jedi_strength -= f * 0.12; Q.jedi_standing -= f * 0.6; }
       if (Q.anakin_found) Q.anakin_fall += f * 0.15;
       if (Q.kamino_army && Q.clones > 0 && Q.clones < 10) Q.clones += f * 0.35;
       if (!Q.kamino_army) Q.clones = 0;
       if (Q.droid_armies > 0) Q.droid_armies += f * 0.15;
+      SW.frontsTick(Q, f);
     }
+    SW.economyTick(Q, f);
     SW.clampAll(Q);
   };
 
@@ -1650,6 +1891,374 @@
     return lost;
   };
 
+
+  // ------------------------------------------------------------------ the war: three fronts and a War Council
+  // war_balance is the overall front; each front is war_balance plus an offset, and the offsets sum to zero,
+  // so every older effect on war_balance still moves all three fronts together.
+  SW.FRONTS = ['outer', 'mid', 'core'];
+  SW.FRONT_NAMES = {outer: 'the Outer Rim Sieges', mid: 'the Hydian Way', core: 'the Core approaches'};
+  SW.FRONT_SHORT = {outer: 'Outer Rim Sieges', mid: 'Hydian Way and Mid Rim', core: 'Core approaches'};
+  SW.FRONT_BATTLES = {
+    outer: [['Christophsis', 'the crystal world of Christophsis'], ['Ryloth', 'the Twi\'lek homeworld of Ryloth'], ['Saleucami', 'the desert world of Saleucami'], ['Felucia', 'the jungle world of Felucia'], ['Mygeeto', 'the crystal-banking world of Mygeeto']],
+    mid: [['Malastare', 'the fuel world of Malastare'], ['Rodia', 'Onaconda Farr\'s homeworld of Rodia'], ['Hypori', 'the droid foundries of Hypori'], ['Kashyyyk', 'the Wookiee world of Kashyyyk'], ['Umbara', 'the shadow world of Umbara']],
+    core: [['Anaxes', 'the shipyards of Anaxes'], ['Kuat', 'the Kuat Drive Yards'], ['Corellia', 'the Corellian shipyards'], ['Kamino', 'the cloning world of Kamino'], ['Ord Mantell', 'the staging world of Ord Mantell']]
+  };
+  SW.front = function (Q, f) { return (Q.war_balance || 0) + (Q['war_off_' + f] || 0); };
+  // move one front against the other two (the war as a whole is unchanged)
+  SW.shiftFront = function (Q, f, amt) {
+    for (var i = 0; i < SW.FRONTS.length; i++) {
+      var g = SW.FRONTS[i];
+      Q['war_off_' + g] = (Q['war_off_' + g] || 0) + (g === f ? amt : -amt / 2);
+    }
+  };
+  // move one front on its own (the war as a whole moves by a third as much)
+  SW.pushFront = function (Q, f, amt) {
+    Q.war_balance += amt / 3;
+    SW.shiftFront(Q, f, amt * 2 / 3);
+  };
+  SW.weakestFront = function (Q) {
+    var w = 'outer';
+    for (var i = 0; i < SW.FRONTS.length; i++) if (SW.front(Q, SW.FRONTS[i]) < SW.front(Q, w)) w = SW.FRONTS[i];
+    return w;
+  };
+  SW.frontLabel = function (Q, f) { return SW.label ? SW.label('war', SW.front(Q, f)) : String(SW.round1(SW.front(Q, f))); };
+
+  // each war turn: the fronts feed the rest of the galaxy
+  SW.frontsTick = function (Q, f) {
+    for (var i = 0; i < SW.FRONTS.length; i++) Q['war_off_' + SW.FRONTS[i]] *= Math.pow(0.9, f);
+    if (Q.war_aim === 'rim') SW.shiftFront(Q, 'outer', 0.3 * f);
+    var fo = SW.front(Q, 'outer'), fm = SW.front(Q, 'mid');
+    // the Outer Rim sieges: hunger and separatism, or relief
+    Q.rim_hardship += f * (fo < 0 ? -fo * 0.15 : -Math.min(fo, 5) * 0.06);
+    if (fo < -2) Q.outer_sep += f * 0.25;
+    // the Hydian Way: the Republic's trade
+    Q.trade = (Q.trade || 60) + f * fm * 0.6;
+    if (fm < -2) Q.midrim_sep += f * 0.25;
+    // war aims pull the factions and the talks
+    if (Q.war_aim === 'victory') { Q.peace_talks = Math.max(0, Q.peace_talks - 0.1 * f); Q.hawk_dissent -= 0.3 * f; Q.pacifist_dissent += 0.3 * f; }
+    if (Q.war_aim === 'peace') { Q.peace_talks += 0.05 * f; Q.pacifist_dissent -= 0.3 * f; Q.hawk_dissent += 0.3 * f; }
+    if (Q.war_aim === 'rim') {
+      Q.rimward_dissent -= 0.3 * f;
+      if (Q.rim_enfranchised && fo > 0) Q.outer_seceded = Math.max(0, Q.outer_seceded - 0.01 * f);
+    }
+    // a front that breaks, or a front that is won
+    if (!Q.front_ev_ready) {
+      for (var j = 0; j < SW.FRONTS.length; j++) {
+        var fr = SW.FRONTS[j], v = SW.front(Q, fr);
+        if (Q.date - (Q['front_ev_' + fr] || -99) < 24) continue;
+        if (v <= -6) { Q.front_ev_ready = 1; Q.front_ev = fr; Q.front_ev_kind = 'collapse'; break; }
+        if (v >= 6) { Q.front_ev_ready = 1; Q.front_ev = fr; Q.front_ev_kind = 'liberation'; break; }
+      }
+    }
+    for (var k = 0; k < SW.FRONTS.length; k++) Q['front_' + SW.FRONTS[k]] = SW.round1(SW.front(Q, SW.FRONTS[k]));
+  };
+
+  SW.frontEvent = function (Q) {
+    var fr = Q.front_ev, lib = Q.front_ev_kind === 'liberation';
+    Q.front_ev_ready = 0; Q['front_ev_' + fr] = Q.date;
+    Q.fe_name = SW.FRONT_SHORT[fr]; Q.fe_lib = lib ? 1 : 0; Q.fe_front = fr;
+    Q.fe_heading = lib ? 'Breakthrough: ' + SW.FRONT_SHORT[fr] : 'Collapse: ' + SW.FRONT_SHORT[fr];
+    if (fr === 'outer') {
+      if (lib) { Q.outer_seceded = Math.max(0, Q.outer_seceded - 0.1); Q.rim_relation += 5; Q.outer_sep -= 5; Q.rimward_dissent -= 4; }
+      else { Q.outer_seceded = Math.min(0.9, Q.outer_seceded + 0.08); Q.rim_hardship += 5; Q.fear += 3; Q.rimward_dissent += 5; }
+    } else if (fr === 'mid') {
+      if (lib) { Q.midrim_seceded = Math.max(0, Q.midrim_seceded - 0.1); Q.trade += 10; Q.midrim_sep -= 5; Q.guild_relation += 3; }
+      else { Q.midrim_seceded = Math.min(0.9, Q.midrim_seceded + 0.08); Q.trade -= 10; Q.fear += 3; Q.guild_relation -= 3; }
+    } else {
+      if (lib) { Q.fear -= 6; Q.faith += 2; Q.hawk_dissent -= 4; }
+      else { Q.fear += 8; Q.faith -= 2; Q.navy_loyalty -= 5; Q.hawk_dissent += 5; }
+    }
+    // the front settles after a breakthrough or a collapse
+    Q['war_off_' + fr] *= 0.4;
+    SW.secession(Q);
+  };
+
+  SW.warCommand = function (Q) { return (Q.rc_chancellor || Q.chair_security === 'rc') ? 1 : 0; };
+  SW.governmentWarPlan = function (Q) {
+    if (Q.chancellor_bloc === 'pal') return 'core';  // Sidious keeps the Core safe and the war going
+    if (Q.chancellor_bloc === 'rim') return 'outer';
+    return SW.weakestFront(Q);
+  };
+  SW.WAR_PLAN_TEXT = {outer: 'relieve the Outer Rim sieges', mid: 'secure the Hydian Way', core: 'fortify the Core approaches', hold: 'hold the line everywhere'};
+
+  // the season's battle, fought where the Confederacy chooses to strike
+  SW.warCouncilOpen = function (Q) {
+    Q.battle_timer = 2;
+    Q.wc_command = SW.warCommand(Q);
+    Q.wc_gov_plan = SW.governmentWarPlan(Q);
+    Q.wc_gov_text = SW.WAR_PLAN_TEXT[Q.wc_gov_plan];
+    // the Confederacy strikes the weakest front more often than not
+    var target = SW.rnd() < 0.55 ? SW.weakestFront(Q) : SW.FRONTS[Math.floor(SW.rnd() * 3)];
+    Q.battles_fought = (Q.battles_fought || 0) + 1;
+    var list = SW.FRONT_BATTLES[target].filter(function (b) { return !(b[0] === 'Kamino' && !Q.kamino_army); });
+    var bt = list[(Q['battles_' + target] || 0) % list.length];
+    Q['battles_' + target] = (Q['battles_' + target] || 0) + 1;
+    var swing = (SW.rnd() - 0.45) * 3 + Q.clones * 0.08 + Q.member_forces * 0.05 - Q.droid_armies * 0.08 + (Q.war_priority === target ? 0.8 : 0);
+    SW.pushFront(Q, target, swing);
+    Q.war_weariness += 2;
+    Q.battle_won = swing >= 0 ? 1 : 0;
+    Q.battle_name = bt[0]; Q.battle_desc = bt[1]; Q.battle_front = SW.FRONT_NAMES[target];
+    Q.wc_fronts = SW.FRONTS.map(function (fr) { return SW.FRONT_SHORT[fr] + ': ' + SW.frontLabel(Q, fr).replace(/<[^>]+>/g, ''); }).join(' · ');
+    for (var k = 0; k < SW.FRONTS.length; k++) Q['front_' + SW.FRONTS[k]] = SW.round1(SW.front(Q, SW.FRONTS[k]));
+  };
+
+  // the season's priority: chosen front +2 against the other two; side effects on the systems each front feeds
+  SW.warCouncilPriority = function (Q, choice) {
+    Q.wc_lobby_failed = 0;
+    var plan = choice;
+    if (!Q.wc_command && choice !== 'accept') {
+      Q.capital -= 1;
+      var chance = 0.3 + (Q.rc_in_govt ? 0.15 : 0) + ((Q[Q.chancellor_bloc + '_relation'] || 30) - 40) / 100 + Q.senate_resolve * 0.03;
+      if (SW.rnd() >= SW.clamp(chance, 0.1, 0.8)) { plan = Q.wc_gov_plan; Q.wc_lobby_failed = 1; }
+    }
+    if (choice === 'accept') plan = Q.wc_gov_plan;
+    Q.war_priority = plan;
+    Q.wc_plan_text = SW.WAR_PLAN_TEXT[plan];
+    if (plan === 'hold') { for (var i = 0; i < SW.FRONTS.length; i++) Q['war_off_' + SW.FRONTS[i]] *= 0.5; Q.war_balance += 0.3; Q.treasury -= 1; Q.war_weariness += 1; }
+    else SW.shiftFront(Q, plan, 2);
+    if (plan === 'outer') { Q.rim_relation += 3; Q.rimward_dissent -= 2; Q.fear += 1; }
+    if (plan === 'mid') { Q.guild_relation += 3; Q.trade = (Q.trade || 60) + 4; }
+    if (plan === 'core') { Q.sec_relation += 3; Q.fear -= 3; Q.rim_relation -= 3; Q.rimward_dissent += 3; }
+    for (var k = 0; k < SW.FRONTS.length; k++) Q['front_' + SW.FRONTS[k]] = SW.round1(SW.front(Q, SW.FRONTS[k]));
+    SW.pickDilemma(Q);
+  };
+
+  // ---------------------------------------------------- war dilemmas: each ripples into other systems
+  // options: [label, subtitle, apply(Q), result text]; def is what the government does if the Caucus does not prevail
+  SW.DILEMMAS = {
+    umbara: {title: 'General Krell\'s Orders', when: function (Q) { return Q.date >= 150; },
+      text: 'On Umbara, Jedi Master Pong Krell has ordered his troops into one suicidal assault after another, and finally to fire on their own allies. His officers want him relieved. The Security Bloc says he gets results.',
+      def: 'a', options: {
+        a: ['Back the general.', 'The Mid Rim front gains; the Jedi\'s name suffers, and Anakin grows harder.', function (Q) { SW.pushFront(Q, 'mid', 1.5); Q.jedi_standing -= 5; Q.anakin_fall += 0.5; Q.clone_trust -= 1; Q.krell_backed = 1; },
+          'Umbara falls. So do thousands of troopers who did not need to die. Krell is quietly reassigned, and no one asks why his "mistakes" all helped the enemy.'],
+        b: ['Demand an inquiry.', 'The front slips; the troops trust the Senate more, and the inquiry may find more than incompetence.', function (Q) { SW.pushFront(Q, 'mid', -0.5); Q.jedi_standing += 2; Q.clone_trust += 1; Q.faith += 0.5; Q.evidence += 0.5; },
+          'The inquiry finds that Krell was in contact with Count Dooku. Someone placed a traitor in command, and someone else made sure no one looked.']}},
+    ryloth: {title: 'Free Ryloth', when: function (Q) { return Q.date >= 140 && SW.front(Q, 'outer') < 3; },
+      text: 'Twi\'lek freedom fighters under Cham Syndulla offer to fight the droid occupation of Ryloth, in exchange for arms and the promise of self-government. Ryloth\'s senator, Orn Free Taa, wants nothing of the kind.',
+      def: 'b', options: {
+        a: ['Arm Cham Syndulla.', 'The Outer Rim front gains and the Rim is grateful; Orn Free Taa is furious.', function (Q) { SW.pushFront(Q, 'outer', 1.5); Q.rim_relation += 4; Q.outer_sep -= 2; Q.free_ryloth = 1; },
+          'Syndulla\'s fighters and Republic troops liberate Ryloth together. The Twi\'leks remember who armed them, and Orn Free Taa remembers who did not ask him.'],
+        b: ['Leave it to the Republic\'s forces.', 'Slower, and the Twi\'leks resent liberators who never leave.', function (Q) { SW.pushFront(Q, 'outer', 0.5); Q.rim_relation -= 2; Q.outer_sep += 1; },
+          'Ryloth is retaken street by street. The occupation ends; the garrison stays.']}},
+    blockade: {title: 'Siege or Corridors', when: function (Q) { return SW.front(Q, 'outer') <= 2; },
+      text: 'The Republic blockade of Separatist-held worlds is working, and the people inside them are starving. Relief agencies ask for humanitarian corridors. The admirals say corridors are how droid armies get resupplied.',
+      def: 'a', options: {
+        a: ['Tighten the blockade.', 'The front gains; hunger and resentment grow on the Rim.', function (Q) { SW.pushFront(Q, 'outer', 1); Q.rim_hardship += 3; Q.faith -= 1; Q.outer_sep += 2; Q.bacta += 5; },
+          'The blockade holds, and the sieges grind on. The worlds inside it will remember who starved them.'],
+        b: ['Open humanitarian corridors.', 'The front slips; faith rises, the hunger eases, and the talks gain a little.', function (Q) { SW.pushFront(Q, 'outer', -0.5); Q.faith += 1; Q.rim_hardship -= 2; Q.peace_talks += 0.2; },
+          'Relief convoys roll through the lines under truce flags. Some droids get through too. So do some letters, between people on both sides who want this to end.']}},
+    mandalore: {title: 'Mandalore\'s Neutrality', when: function (Q) { return Q.date >= 146 && !Q.mandalore_pressed; },
+      text: 'Duchess Satine\'s Council of Neutral Systems refuses to let Republic forces through Mandalorian space. The Security Bloc wants bases there, neutrality or not.',
+      def: 'b', options: {
+        a: ['Respect Mandalore\'s neutrality.', 'The Core approaches stay exposed; the neutral worlds and Satine are grateful.', function (Q) { SW.pushFront(Q, 'core', -0.5); Q.ind_relation += 6; Q.satine_friend = 1; Q.peace_talks += 0.1; },
+          'The Republic keeps its word to the neutrals. Satine keeps a channel open to both sides, and to the Caucus.'],
+        b: ['Press Mandalore for bases.', 'The Core front gains; the neutrals are furious, and Death Watch finds recruits.', function (Q) { SW.pushFront(Q, 'core', 1.5); Q.ind_relation -= 8; Q.mandalore_pressed = 1; Q.fear += 1; },
+          'Republic cruisers take station over Mandalore. Satine protests to the Senate; in the cities below, Death Watch tells anyone who will listen that the Duchess has sold them out.']}},
+    levy: {title: 'The Member-World Fleets', when: function (Q) { return !Q.fleet_levy; },
+      text: 'Corellia, Kuat and Mon Calamari could raise fleets of their own for the Republic, if the Senate pays for them and lets them keep their own command.',
+      def: 'b', options: {
+        a: ['Levy the member-world fleets.', '−2 treasury. Forces loyal to their worlds and the Senate; the unaligned worlds resent the cost.', function (Q) { Q.treasury -= 2; Q.member_forces += 1.5; Q.navy_loyalty += 5; Q.fleet_levy = 1; Q.war_balance += 0.5; Q.tibanna += 8; },
+          'Corellian and Mon Calamari squadrons join the line under their own flags. They answer to their worlds, and their worlds answer to the Senate.'],
+        b: ['Leave defence to the Grand Army.', 'Cheaper; the Chancellery\'s army grows instead.', function (Q) { Q.sec_relation += 2; Q.grand_plan += 1; if (Q.kamino_army) Q.clones += 0.5; },
+          'The member worlds keep their ships at home. The war belongs to the Grand Army, and the Grand Army belongs to the Chancellor.']}},
+    clone_surge: {title: 'A Surge from Kamino', when: function (Q) { return Q.kamino_army && Q.clones > 0; },
+      text: 'The Kaminoans can double clone production, if the Republic pays. The generals want the troops; the Pacifists ask who these soldiers will answer to.',
+      def: 'a', options: {
+        a: ['Order the surge.', 'The whole war goes better; the Sith\'s plan advances, and the debt grows.', function (Q) { Q.clones += 1.5; Q.war_balance += 1; Q.grand_plan += 2; Q.treasury -= 1; Q.bacta += 5; },
+          'New legions pour out of Tipoca City. Every one of them carries a chip no one in the Senate has seen.'],
+        b: ['Hold production where it is.', 'The war goes slower; the Pacifists approve.', function (Q) { Q.war_balance -= 0.5; Q.pacifist_dissent -= 2; Q.hawk_dissent += 2; },
+          'Kamino\'s new production lines stand idle. The Security Bloc calls it unilateral disarmament.']}},
+    refugees: {title: 'Refugees from the Sieges', when: function (Q) { return SW.front(Q, 'outer') < 0; },
+      text: 'Millions are fleeing the Outer Rim sieges toward the Colonies and the Core. The Core Moderates want the hyperlanes closed to them.',
+      def: 'b', options: {
+        a: ['Open the Core worlds to them.', '−1 treasury. The Rim is grateful; the Core Moderates are not.', function (Q) { Q.treasury -= 1; Q.faith += 1; Q.rim_relation += 5; Q.mod_relation -= 4; Q.rim_hardship -= 2; },
+          'Refugee ships land at Corellia, Chandrila and Alderaan. Bail Organa meets the first of them himself.'],
+        b: ['Turn them back.', 'The Core Moderates approve; the Rim will not forget.', function (Q) { Q.mod_relation += 3; Q.rim_relation -= 6; Q.outer_sep += 3; Q.faith -= 1; },
+          'Patrol cruisers turn the refugee convoys back toward the war. Some of them turn toward the Confederacy instead.']}},
+    zygerria: {title: 'The Zygerrian Slavers', when: function (Q) { return Q.date >= 148; },
+      text: 'The Confederacy\'s Zygerrian allies are enslaving the populations of captured worlds; the whole colony of Kiros has vanished into their markets. A rescue would pull ships off the front.',
+      def: 'b', options: {
+        a: ['Mount a rescue.', '−1 treasury. Faith rises, and the case against slavery grows.', function (Q) { Q.treasury -= 1; Q.faith += 1; Q.slavery_campaign += 0.5; Q.jedi_standing += 2; SW.pushFront(Q, 'outer', -0.3); },
+          'A Jedi task force frees the Togruta of Kiros. The HoloNet carries the pictures from Zygerria\'s slave markets for weeks.'],
+        b: ['Stay on strategy.', 'The front is unaffected; the Rimward wing is appalled.', function (Q) { Q.rimward_dissent += 4; Q.faith -= 0.5; },
+          'The fleet holds its positions. Somewhere in Zygerrian space, the colonists of Kiros wait for a rescue that does not come.']}},
+    jedi_stretch: {title: 'The Jedi Are Overstretched', when: function (Q) { return Q.jedi_generals && Q.jedi_strength < 7; },
+      text: 'A tenth of the Jedi Order has died in command. The Council asks to withdraw its Knights from the front lines and return to keeping the peace.',
+      def: 'b', options: {
+        a: ['Let them withdraw.', 'The Order survives; the war goes harder.', function (Q) { Q.jedi_strength += 0.5; Q.war_balance -= 0.7; Q.jedi_relation += 5; Q.anakin_fall -= 0.3; },
+          'Jedi Masters hand their commands to clone officers. The Order begins, slowly, to remember what it was.'],
+        b: ['Keep them at the front.', 'The war goes better; the Order bleeds, and Anakin grows darker.', function (Q) { Q.war_balance += 0.5; Q.jedi_strength -= 0.5; Q.jedi_standing -= 3; Q.anakin_fall += 0.3; },
+          'The Jedi stay at the front. The war needs them, the Senate says. Fewer come back each season.']}},
+    citadel: {title: 'The Citadel', when: function (Q) { return Q.date >= 150 && (Q.tarkin_rising > 0 || Q.sec_leader_id === 'tarkin') && !Q.citadel; },
+      text: 'Wilhuff Tarkin proposes the Citadel: an unbreakable prison for Separatist commanders and Jedi "deserters", run by the military, outside the courts.',
+      def: 'a', options: {
+        a: ['Approve the Citadel.', 'The Security Bloc and Tarkin rise; faith in the law suffers.', function (Q) { Q.sec_relation += 5; Q.citadel = 1; Q.faith -= 1; Q.tarkin_rising += 1; Q.fear -= 1; },
+          'The Citadel opens on Lola Sayu. Its first inmates never see a judge.'],
+        b: ['Insist on the courts.', 'The Security Bloc is angry; the law holds.', function (Q) { Q.sec_relation -= 5; Q.faith += 1; Q.senate_resolve += 0.3; },
+          'Prisoners of war will be tried, not disappeared. Tarkin calls the Senate "a debating society at war".']}},
+    bacta: {title: 'The Bacta Convoys', when: function (Q) { return (Q.bacta || 0) >= 25; },
+      text: 'Separatist raiders are hitting the bacta convoys from Thyferra. Field hospitals are running short, and the Xucphra and Zaltin cartels are raising their prices.',
+      def: 'b', options: {
+        a: ['Escort the convoys.', '−1 treasury. Bacta flows; ships are pulled from the Outer Rim.', function (Q) { Q.treasury -= 1; Q.bacta -= 20; SW.pushFront(Q, 'outer', -0.5); },
+          'Republic frigates shepherd the bacta tankers from Thyferra. The wounded get their tanks; the sieges wait a little longer.'],
+        b: ['Let the cartels pay for escorts.', 'The guilds are pleased; prices rise, and someone profits.', function (Q) { Q.bacta += 10; Q.guild_relation += 2; Q.corruption += 1; },
+          'The cartels hire mercenary escorts and pass the cost on, with a margin.']}},
+    hydian: {title: 'The Hydian Way Convoys', when: function (Q) { return SW.front(Q, 'mid') < 1 || (Q.trade || 60) < 50; },
+      text: 'Separatist raiders are strangling the Hydian Way, the great trade road from the Core to the Rim. Merchant captains want armed escorts.',
+      def: 'b', options: {
+        a: ['Run armed convoys.', '−1 treasury. Trade recovers and the Mid Rim front firms up.', function (Q) { Q.treasury -= 1; Q.trade = (Q.trade || 60) + 8; SW.pushFront(Q, 'mid', 0.5); },
+          'Convoys run the Hydian Way under escort. Freight rates fall, and so do the raiders\' profits.'],
+        b: ['Reroute along the Perlemian.', 'Cheaper now; trade suffers and the guilds grumble.', function (Q) { Q.trade = (Q.trade || 60) - 4; Q.guild_relation -= 2; },
+          'Freighters take the long way round. The Mid Rim worlds along the Hydian Way are left to fend for themselves.']}}
+  };
+  SW.pickDilemma = function (Q) {
+    Q.wd_id = ''; Q.wd_has = 0; Q.wd_heading = 'The Season\'s Orders';
+    var pool = [];
+    for (var id in SW.DILEMMAS) {
+      if (Q['wd_seen_' + id]) continue;
+      var ok = false;
+      try { ok = SW.DILEMMAS[id].when(Q); } catch (e) { ok = false; }
+      if (ok) pool.push(id);
+    }
+    if (!pool.length) return;
+    var id2 = pool[Math.floor(SW.rnd() * pool.length)];
+    var D = SW.DILEMMAS[id2];
+    Q.wd_id = id2; Q.wd_has = 1; Q['wd_seen_' + id2] = 1; Q.wd_heading = D.title;
+    Q.wd_title = D.title; Q.wd_text = D.text;
+    Q.wd_a_label = D.options.a[0]; Q.wd_a_sub = D.options.a[1];
+    Q.wd_b_label = D.options.b[0]; Q.wd_b_sub = D.options.b[1];
+    Q.wd_def = D.def;
+    var dl = D.options[D.def][0].replace(/\.$/, '');
+    Q.wd_def_label = dl.charAt(0).toLowerCase() + dl.slice(1);
+  };
+  // when the Caucus does not command, its choice needs a Senate majority; otherwise the government's choice stands
+  SW.dilemmaResolve = function (Q, key) {
+    var D = SW.DILEMMAS[Q.wd_id];
+    if (!D) return;
+    Q.wd_overruled = 0;
+    var pick = key;
+    if (!Q.wc_command && key !== D.def) {
+      var chance = 0.35 + (Q.rc_in_govt ? 0.15 : 0) + Q.senate_resolve * 0.03 + ((Q.rc_votes || 15) - 15) / 100;
+      if (SW.rnd() >= SW.clamp(chance, 0.1, 0.8)) { pick = D.def; Q.wd_overruled = 1; }
+    }
+    D.options[pick][2](Q);
+    Q.wd_result = D.options[pick][3];
+    Q.dilemmas_decided = (Q.dilemmas_decided || 0) + 1;
+  };
+
+  // war aims: set once, when the war begins
+  SW.WAR_AIM_TEXT = {victory: 'total victory', peace: 'a negotiated peace', rim: 'the liberation of the Rim'};
+  SW.setWarAim = function (Q, aim) {
+    Q.wa_overruled = 0;
+    var gov = Q.chancellor_bloc === 'rim' ? 'rim' : 'victory';
+    var chosen = aim;
+    if (!SW.warCommand(Q) && aim !== gov) {
+      var st = SW.stance(Q, {pal: 0.1, sec: 0.15, mod: aim === 'peace' ? 0.45 : 0.5, guild: aim === 'peace' ? 0.55 : 0.3, ind: aim === 'peace' ? 0.7 : 0.45, rim: aim === 'rim' ? 0.85 : 0.55, rfc: 0.8, cis: 0}, true);
+      Q.wa_vote = SW.vote(Q, st, 1, aim === 'peace' ? 'peace' : 'rim');
+      Q.vote_html = SW.voteBanner('War aims: ' + SW.WAR_AIM_TEXT[aim], Q.wa_vote);
+      if (Q.wa_vote < 50) { chosen = gov; Q.wa_overruled = 1; }
+    } else Q.vote_html = '';
+    Q.war_aim = chosen;
+    Q.war_aim_text = SW.WAR_AIM_TEXT[chosen];
+  };
+
+
+  // ------------------------------------------------------------------ the Republic's purse
+  // A yearly budget raises money one way and spends it on one priority. Shortfalls are lent by the
+  // InterGalactic Banking Clan, whose debts buy it influence. Trade along the hyperlanes feeds the
+  // budget; bacta, Tibanna gas and spice markets can each tip into crisis.
+  SW.REVENUE = {
+    tariffs: {name: 'trade-route tariffs', yield: function (Q) { return 1 + (Q.trade || 60) / 25; },
+      apply: function (Q) { Q.guild_relation -= 6; Q.guild_embargo += 1; Q.rim_hardship -= 1; }},
+    levy: {name: 'a levy on the Core worlds', yield: function () { return 3; },
+      apply: function (Q) { Q.core_rc *= 0.97; Q.colonies_rc *= 0.98; Q.mod_relation -= 4; Q.ind_relation -= 2; }},
+    loan: {name: 'a loan from the Banking Clan', yield: function () { return 3; },
+      apply: function (Q) { Q.debt += 3; }},
+    bonds: {name: 'war bonds', yield: function (Q) { return 1 + Q.faith / 25; },
+      apply: function (Q) { Q.war_weariness -= 1; }},
+    spice: {name: 'the spice duty', yield: function () { return 2; },
+      apply: function (Q) { Q.corruption += 0.75; }},
+    none: {name: 'existing taxes only', yield: function () { return 0; }, apply: function () {}}
+  };
+  SW.PRIORITY = {
+    relief: {name: 'Rim relief and hyperlane patrols', cost: function () { return 3; },
+      apply: function (Q) { Q.rim_hardship -= 4; Q.trade = (Q.trade || 60) + 6; Q.rim_relation += 3; }},
+    defence: {name: 'defence', cost: function (Q) { return 3 + ((Q.tibanna || 0) >= 60 ? 1 : 0); },
+      apply: function (Q) { Q.judicial_forces += 0.7; Q.tibanna += 6; if (Q.war) SW.pushFront(Q, SW.weakestFront(Q), 1); Q.sec_relation += 2; }},
+    subsidies: {name: 'subsidies for the Core and the guilds', cost: function () { return 2; },
+      apply: function (Q) { Q.mod_relation += 4; Q.guild_relation += 4; Q.corruption += 0.5; }},
+    repay: {name: 'repaying the Banking Clan', cost: function () { return 3; },
+      apply: function (Q) { Q.debt -= 3; }},
+    none: {name: 'nothing in particular', cost: function () { return 0; },
+      apply: function () {}}
+  };
+  SW.interestRate = function (Q) {
+    return (0.05 + (Q.debt || 0) / 600) * (Q.banking_independent ? 0.5 : 1) * (Q.debt_refinanced ? 0.8 : 1) * (Q.debt_premium_until > Q.date ? 1.3 : 1);
+  };
+  SW.interestDue = function (Q) { return SW.round1((Q.debt || 0) * SW.interestRate(Q)); };
+  // the fixed cost of running the Republic and keeping its forces
+  SW.upkeep = function (Q) { return SW.round1(1.5 + (Q.judicial_forces || 0) * 0.15 + (Q.member_forces || 0) * 0.15); };
+  SW.baseIncome = function (Q) { return SW.round1(2 + (Q.trade || 60) / 30 - Q.guild_embargo / 3); };
+  SW.budgetWriter = function (Q) { return (Q.rc_chancellor || Q.chair_finance === 'rc') ? 1 : 0; };
+  SW.GOV_BUDGET = {pal: ['levy', 'subsidies'], mod: ['levy', 'repay'], rim: ['tariffs', 'relief'], sec: ['levy', 'defence'],
+    guild: ['loan', 'subsidies'], ind: ['levy', 'none'], rfc: ['tariffs', 'relief']};
+  // in wartime, Palpatine and the Security Bloc borrow: a Republic in debt is a Republic the Banking Clan can lean on
+  SW.GOV_BUDGET_WAR = {pal: ['loan', 'subsidies'], sec: ['loan', 'defence']};
+  SW.budgetOpen = function (Q) {
+    Q.budget_due = 0;
+    Q.bd_write = SW.budgetWriter(Q);
+    var gov = (Q.war && SW.GOV_BUDGET_WAR[Q.chancellor_bloc]) || SW.GOV_BUDGET[Q.chancellor_bloc] || ['levy', 'none'];
+    if (gov[1] !== 'repay' && (Q.debt || 0) >= 22 && Q.treasury >= 4) gov = [gov[0], 'repay'];
+    // governments only raise new money when the treasury runs low
+    if (Q.treasury >= 6) gov = ['none', gov[1]];
+    if (gov[0] === 'tariffs' && Q.date < Q.tariff_ban_until) gov = ['loan', gov[1]];
+    Q.bd_gov_rev = gov[0]; Q.bd_gov_pri = gov[1];
+    Q.bd_gov_text = 'raise money through ' + SW.REVENUE[gov[0]].name + ', and spend on ' + SW.PRIORITY[gov[1]].name;
+    Q.bd_rev = ''; Q.bd_pri = '';
+    Q.bd_income_base = SW.baseIncome(Q); Q.bd_interest = SW.interestDue(Q); Q.bd_upkeep = SW.upkeep(Q);
+    Q.bd_tariff_yield = SW.round1(SW.REVENUE.tariffs.yield(Q)); Q.bd_bond_yield = SW.round1(SW.REVENUE.bonds.yield(Q));
+    Q.bd_defence_cost = SW.PRIORITY.defence.cost(Q);
+    SW.econStrings(Q);
+  };
+  // apply a budget: one revenue line, one priority, interest; the Banking Clan lends any shortfall
+  SW.budgetApply = function (Q, rev, pri) {
+    var R = SW.REVENUE[rev], P = SW.PRIORITY[pri || 'none'];
+    var income = SW.baseIncome(Q) + (R ? R.yield(Q) : 0);
+    var interest = SW.interestDue(Q), cost = P.cost(Q) + SW.upkeep(Q);
+    if (R) R.apply(Q);
+    P.apply(Q);
+    var net = SW.round1(income - cost - interest);
+    Q.treasury += net;
+    Q.bd_borrowed = 0;
+    if (Q.treasury < 0) { Q.bd_borrowed = SW.round1(-Q.treasury); Q.debt += -Q.treasury; Q.treasury = 0; }
+    Q.budget_rev = rev || ''; Q.budget_pri = pri || 'none';
+    Q.bd_income = SW.round1(income); Q.bd_cost = cost; Q.bd_interest = interest; Q.bd_net = net;
+    Q.bd_summary = 'Income ' + SW.round1(income) + ' · spending ' + SW.round1(cost) + ' (upkeep ' + SW.upkeep(Q) + ') · interest ' + interest + ' · ' + (net >= 0 ? 'surplus ' + net : 'deficit ' + (-net));
+    Q.bd_rev_name = R ? R.name : 'no new revenue';
+    Q.bd_pri_name = P.name;
+    Q.budgets = (Q.budgets || 0) + 1;
+    SW.econStrings(Q);
+  };
+  SW.econStrings = function (Q) {
+    Q.treasury_txt = SW.round1(Q.treasury); Q.debt_txt = SW.round1(Q.debt || 0);
+    Q.debt_label = SW.debtLabel(Q.debt || 0); Q.trade_label = SW.tradeLabel(Q.trade || 60);
+  };
+  SW.debtLabel = function (d) { return d < 8 ? 'light' : (d < 16 ? 'manageable' : (d < 25 ? '<span class="warn">heavy</span>' : (d < 35 ? '<b class="bad">crushing</b>' : '<b class="bad">owned by the Banking Clan</b>'))); };
+  SW.tradeLabel = function (t) { return t >= 70 ? '<span class="good">thriving</span>' : (t >= 55 ? 'steady' : (t >= 40 ? '<span class="warn">disrupted</span>' : '<b class="bad">strangled</b>')); };
+  SW.marketLabel = function (p) { return p < 30 ? 'steady' : (p < 50 ? 'tight' : (p < 65 ? '<span class="warn">scarce</span>' : '<b class="bad">in crisis</b>')); };
+
+  // every turn: trade drifts toward what the galaxy allows; markets move; empty treasuries borrow
+  SW.economyTick = function (Q, f) {
+    var tTarget = 60 + (Q.rim_enfranchised ? 5 : 0) + (Q.federal_compact ? 10 : 0) - Q.guild_embargo * 3 - (Q.rim_hardship > 45 ? 5 : 0) - (Q.war ? 5 : 0);
+    Q.trade = (Q.trade || 60) + (tTarget - (Q.trade || 60)) * 0.1 * f;
+    Q.rim_hardship += f * Math.max(0, 50 - Q.trade) / 60;
+    Q.bacta += f * (Q.war ? 4.5 + Math.max(0, -Q.war_balance) * 0.5 : -2);
+    Q.tibanna += f * ((Q.war ? 4.5 : 0) + (Q.judicial_forces > 5 ? 1 : 0) - 1);
+    Q.spice += f * ((Q.rim_hardship - 38) / 14 + (Q.corruption - 62) / 30 - (Q.spice_legal ? 1.5 : 0));
+    if (Q.debt > 28) { Q.faith -= 0.06 * f; Q.corporate_sep += 0.1 * f; }
+    if (Q.treasury < 0) { Q.debt += -Q.treasury; Q.treasury = 0; }
+  };
+
   SW.clampAll = function (Q) {
     var bounded = {
       grand_plan: [0, 100], emergency_powers: [0, 10], evidence: [0, 12], jedi_suspicion: [0, 10],
@@ -1658,7 +2267,7 @@
       war_balance: [-10, 10], war_weariness: [0, 100], anakin_fall: [0, 10], dooku_doubt: [0, 10],
       jedi_strength: [0, 10], jedi_standing: [0, 100], jedi_relation: [0, 100], judicial_forces: [0, 10],
       member_forces: [0, 10], clones: [0, 10], navy_loyalty: [0, 100], droid_armies: [0, 12],
-      coalition_dissent: [0, 10], capital: [-5, 40], treasury: [-10, 30], leverage: [0, 60], bureau_relation: [0, 100]
+      coalition_dissent: [0, 10], capital: [-5, 40], treasury: [-10, 30], leverage: [0, 60], bureau_relation: [0, 100], bureau_dossier: [0, 6], trade: [0, 100], bacta: [0, 100], tibanna: [0, 100], spice: [0, 100], debt: [0, 80]
     };
     for (var k in bounded) Q[k] = SW.clamp(Q[k], bounded[k][0], bounded[k][1]);
     var rels = SW.BLOCS;
@@ -1746,13 +2355,25 @@
   };
 
   // ------------------------------------------------------------------ every visit
+  // Names and phrases for Palpatine that follow whether he (or his bloc) actually holds the Chancellery.
+  SW.palStrings = function (Q) {
+    var bloc = Q.chancellor_bloc === 'pal';
+    Q.pal_name = bloc ? 'Chancellor\'s Bloc' : 'Chommell Circle';
+    Q.pal_title = Q.chancellor === 'Palpatine' ? 'Chancellor Palpatine' : 'Senator Palpatine';
+    Q.pal_office = bloc ? 'the Chancellery' : 'Palpatine\'s office';
+    Q.pal_people = bloc ? 'the Chancellor\'s people' : 'Palpatine\'s people';
+  };
+
   SW.everyVisit = function (Q) {
     SW.scaleChanges(Q);
     SW.updateDissent(Q);
     if (Q.bureau_relation >= 35) Q.bureau_warn_cold = 0;
-    if (Q.bureau_relation >= 20) Q.bureau_warn_hostile = 0;
+    if (Q.bureau_relation >= 20 && (Q.bureau_dossier || 0) < 2) Q.bureau_warn_hostile = 0;
     SW.computeSupport(Q);
     SW.recomputeGovt(Q);
+    SW.palStrings(Q);
+    SW.econStrings(Q);
+    SW.leaderMomentCheck(Q);
     SW.factionAgendas(Q);
     SW.cardAvailability(Q);
     SW.grievances(Q);
@@ -1799,6 +2420,12 @@
       Q[fct + '_dissent'] += drift * (Q.months_per_turn > 0 ? 1 : 0.2);
     }
     // relations with other blocs fade back toward their natural attitude unless tended
+    // leaders' memories of the Caucus fade
+    var rf0 = Q.months_per_turn > 0 ? Q.months_per_turn / 3 : 0.1;
+    for (var lg in SW.LEADER_START) {
+      Q[lg + '_favour'] = Math.max(0, (Q[lg + '_favour'] || 0) - 0.25 * rf0);
+      Q[lg + '_grudge'] = Math.max(0, (Q[lg + '_grudge'] || 0) - 0.25 * rf0);
+    }
     var REL_BASE = {mod: 42, pal: 38, guild: 22, rim: 32, sec: 28, ind: 40, cis: 12, rfc: 40};
     var rf = Q.months_per_turn > 0 ? Q.months_per_turn / 3 : 0.1;
     for (var rb in REL_BASE) {

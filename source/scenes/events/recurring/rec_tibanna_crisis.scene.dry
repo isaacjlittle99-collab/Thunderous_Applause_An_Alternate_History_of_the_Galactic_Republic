@@ -1,0 +1,40 @@
+title: Tibanna Prices Soar
+subtitle: The gas that powers blasters and hyperdrives is suddenly scarce.
+tags: event
+view-if: tibanna >= 50 and tibanna_crisis_timer <= 0 and not finale and not game_ending
+priority: 2
+new-page: true
+face-image: img/ev_trade.svg
+on-arrival: tibanna_crisis_timer = 8; tibanna_crises += 1
+
+= Tibanna Prices Soar
+
+Tibanna gas, mined in the clouds of Bespin and refined into blaster gas and hyperdrive coolant, has tripled in price. The Bespin Mining Guild blames demand; the Security Bloc blames profiteers. Every warship and every Judicial cruiser costs more to run.
+
+*While Tibanna is scarce, defence costs more in the budget.*
+
+- @contracts: Sign long contracts with the Bespin Mining Guild.
+- @nationalise: Take over the refineries.
+- @cut: Cut military purchases.
+
+@contracts
+subtitle: −1 treasury. Prices settle; the guilds profit and corruption grows.
+choose-if: treasury >= 1
+unavailable-subtitle: The treasury cannot afford it.
+on-arrival: treasury -= 1; tibanna -= 30; corruption += 1.5; guild_relation += 4
+
+The Republic locks in supply for a decade. The Mining Guild's shareholders celebrate on Cloud City.
+
+@nationalise
+subtitle: −2 treasury. Supply is secure; the guilds are outraged and the Security Bloc approves.
+choose-if: treasury >= 2
+unavailable-subtitle: The treasury cannot afford it.
+on-arrival: treasury -= 2; tibanna -= 40; sec_relation += 4; guild_relation -= 8
+
+Republic engineers take over the refineries in Bespin's clouds. The Mining Guild calls it theft; the Navy calls it overdue.
+
+@cut
+subtitle: Prices ease; the Republic's forces are thinner.
+on-arrival: {! Q.tibanna -= 25; Q.judicial_forces -= 0.5; if (Q.war) Q.war_balance -= 0.5; Q.hawk_dissent += 3; !}
+
+Patrols are cut back and ships stay in dock. The Hawks are appalled.

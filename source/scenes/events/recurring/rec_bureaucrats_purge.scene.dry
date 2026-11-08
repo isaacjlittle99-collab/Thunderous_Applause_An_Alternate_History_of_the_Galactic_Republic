@@ -1,7 +1,7 @@
 title: The Bureaucrats Strike
 subtitle: The true rulers of the Republic move against the Caucus.
 tags: event
-view-if: bureau_relation <= 0 and (rc_in_govt or rc_chairs > 0) and not finale and not game_ending
+view-if: (bureau_relation <= 0 or bureau_dossier >= 6) and (rc_in_govt or rc_chairs > 0) and not finale and not game_ending
 priority: 6
 new-page: true
 face-image: img/ev_chancellery.svg

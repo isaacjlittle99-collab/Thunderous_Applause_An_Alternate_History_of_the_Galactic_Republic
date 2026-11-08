@@ -43,7 +43,7 @@ if (Q.ov_vote >= 50) { Q.army_oversight = 1; Q.navy_loyalty += 10; this.achieve(
 
 [+ vote_html +]
 
-[? if army_oversight : The Grand Army will answer to a standing Senate committee, which has full access to the army's orders, contingency plans and Kaminoan contracts. ?][? if not army_oversight : The Chancellor's allies argue that "a war cannot be run by committee". The bill fails. ?]
+[? if army_oversight : The Grand Army will answer to a standing Senate committee, which has full access to the army's orders, contingency plans and Kaminoan contracts. ?][? if not army_oversight and not rc_chancellor : The Chancellor's allies argue that "a war cannot be run by committee". The bill fails. ?][? if not army_oversight and rc_chancellor : The Security Bloc argues that "a war cannot be run by committee". The bill fails. ?]
 
 @guard
 view-if: not senate_guard_reformed
@@ -67,7 +67,7 @@ view-if: clones > 0 and navy_loyalty < 90
 subtitle: +8 Navy loyalty to the Senate; the Security Bloc objects.
 on-arrival: navy_loyalty += 8; sec_relation -= 4
 
-The committee confirms a slate of officers known for their loyalty to the constitution. A few promising officers loyal mainly to the Chancellor, such as one Captain Tarkin, are passed over.
+The committee confirms a slate of officers known for their loyalty to the constitution. A few promising officers whose loyalty runs to [+ pal_title +] rather than to the Senate, such as one Captain Tarkin, are passed over.
 
 @audit
 view-if: security_audits < 3

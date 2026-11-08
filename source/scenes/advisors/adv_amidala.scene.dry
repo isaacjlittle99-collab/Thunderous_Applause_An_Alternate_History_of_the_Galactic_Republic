@@ -27,12 +27,12 @@ Senator Amidala’s appeal for honest government carries a special weight. Every
 
 @amidala_anakin
 view-if: anakin_found and date >= 132
-subtitle: His trust in the Chancellor wavers a little.
+subtitle: His trust in [+ pal_title +] wavers a little.
 choose-if: advisor_action_timer <= 0
 unavailable-subtitle: Our advisors have already acted recently.
 on-arrival: anakin_fall -= 1; advisor_action_timer = 5
 
-Padmé and Anakin talk for hours, about Tatooine, the war and the Chancellor’s kindness to him. She does not tell him what she fears. She asks him what he fears.
+Padmé and Anakin talk for hours, about Tatooine, the war and [+ pal_title +]’s kindness to him. She does not tell him what she fears. She asks him what he fears.
 
 @amidala_moderates
 subtitle: +5 relations with the Core Moderates and Independents.

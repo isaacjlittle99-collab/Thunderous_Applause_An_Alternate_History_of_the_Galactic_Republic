@@ -37,6 +37,6 @@ The Core Moderates still remember Valorum’s better days. He reminds them that 
 subtitle: Warms the Senate bureaucracy towards us considerably; −1 corruption.
 choose-if: advisor_action_timer <= 0
 unavailable-subtitle: Our advisors have already acted recently.
-on-arrival: bureau_relation += 15; corruption -= 1; advisor_action_timer = 5
+on-arrival: bureau_relation += 15; bureau_dossier -= 1; corruption -= 1; advisor_action_timer = 5
 
 Valorum ran the Senate's machinery for years. He knows which clerks owe him favours, which committee secretaries he promoted, and which audits were never finished. He calls the favours in.

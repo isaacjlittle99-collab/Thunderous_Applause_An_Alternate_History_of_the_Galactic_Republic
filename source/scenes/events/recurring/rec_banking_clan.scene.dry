@@ -1,0 +1,36 @@
+title: The Banking Clan's Price
+subtitle: The Republic owes the Muuns too much, and they know it.
+tags: event
+view-if: debt >= 20 and banking_clan_timer <= 0 and not finale and not game_ending
+priority: 2
+new-page: true
+face-image: img/ev_trade.svg
+on-arrival: banking_clan_timer = 8
+
+= The Banking Clan's Price
+
+The Republic owes the InterGalactic Banking Clan [+ debt_txt +], and the Clan's chairman, **San Hill**, has come to Coruscant to discuss it. He is very polite. He would like the Republic to be polite in return.
+
+*The more the Republic owes, the more the Banking Clan can ask. Paying the debt down in the yearly budget, or guaranteeing the Clan's independence, loosens its grip.*
+
+- @deregulate: Lift the rules on the Banking Clan's lending.
+- @seat: Give the Clan's friends the Finance chair.
+- @refuse: Refuse, and pay the higher rates.
+
+@deregulate
+subtitle: The guilds are pleased and San Hill's star rises; corruption grows.
+on-arrival: guild_relation += 6; corruption += 2; banking_dereg = 1; debt -= 1; guild_grievance -= 0.1
+
+The Clan's lending rules are relaxed "for the duration". Credits flow, and so does influence.
+
+@seat
+subtitle: The Finance & Commerce chair goes to the guilds; the debt is eased a little.
+on-arrival: {! if (Q.chair_finance === 'rc') Q.lost_finance = 1; Q.chair_finance = 'guild'; Q.guild_relation += 8; Q.debt -= 2; Q.rimward_dissent += 4; !}
+
+The Finance & Commerce Committee passes to the guilds' nominee. [? if lost_finance : The Caucus loses the chair, and with it the right to write the budget. ?]
+
+@refuse
+subtitle: Interest rises for two years; the guilds tighten their embargo.
+on-arrival: debt_premium_until = date + 24; guild_embargo += 1; guild_relation -= 5; faith += 0.5
+
+The Republic will not be lectured by its creditors. San Hill bows, and raises the rate.

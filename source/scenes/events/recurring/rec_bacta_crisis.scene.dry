@@ -1,0 +1,43 @@
+title: The Bacta Shortage
+subtitle: Field hospitals are running dry.
+tags: event
+view-if: bacta >= 55 and bacta_crisis_timer <= 0 and not finale and not game_ending
+priority: 2
+new-page: true
+face-image: img/ev_rim.svg
+on-arrival: bacta_crisis_timer = 8; bacta_crises += 1
+
+= The Bacta Shortage
+
+Bacta, the healing fluid that only Thyferra produces, is running out. The Xucphra and Zaltin cartels have doubled their prices. Wounded soldiers wait for tanks, and on the Rim, ordinary clinics have none at all.
+
+- @subsidise: Subsidise bacta for hospitals.
+- @requisition: Requisition the cartels' stocks.
+- @ration: Ration it to the front.
+- @market: Let the market decide.
+
+@subsidise
+subtitle: −2 treasury. The shortage eases, and the public notices.
+choose-if: treasury >= 2
+unavailable-subtitle: The treasury cannot afford it.
+on-arrival: treasury -= 2; faith += 1; bacta -= 30
+
+The Republic pays the cartels' prices so the hospitals do not have to.
+
+@requisition
+subtitle: The shortage ends at once; the guilds are furious.
+on-arrival: guild_relation -= 8; bacta -= 40; corruption -= 0.5; guild_embargo += 1
+
+Judicial officers seal the cartels' warehouses on Thyferra. The bacta flows; so do the lawsuits.
+
+@ration
+subtitle: The war goes a little better; the Rim's clinics go without.
+on-arrival: faith -= 2; war_balance += 0.5; bacta -= 20; rim_hardship += 2
+
+Every tank goes to the front. Civilians are told to wait.
+
+@market
+subtitle: Nothing is spent; the poor pay, and someone gets rich.
+on-arrival: faith -= 2; rim_hardship += 2; corruption += 1; bacta -= 10
+
+Prices rise until demand falls. It falls first on the Rim.

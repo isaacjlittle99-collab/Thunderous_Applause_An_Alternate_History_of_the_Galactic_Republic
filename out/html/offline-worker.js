@@ -6,7 +6,7 @@
  * it in the background, so a new version arrives the next time the game is opened.
  * Bump CACHE when the list of files changes.
  */
-var CACHE = 'thunderous-applause-v2';
+var CACHE = 'thunderous-applause-v3';
 var SHELL = [
   "./",
   "index.html",

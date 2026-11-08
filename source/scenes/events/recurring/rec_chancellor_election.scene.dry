@@ -238,7 +238,7 @@ go-to: el_chairs
 
 @el_coal_minority
 subtitle: Every vote will be a struggle, and the coalition will be fragile.
-on-arrival: {! SW.setGovt(Q, ['rc', 'ind'], 'Caucus Minority Government'); Q.leverage = Math.round(Q.rc_r) + 20; Q.coalition_dissent = 2; !}
+on-arrival: {! SW.setGovt(Q, ['rc', 'ind'], 'Caucus Minority Government'); SW.openChairs(Q, Math.round(Q.rc_r) + 20); Q.coalition_dissent = 2; !}
 go-to: el_chairs
 
 @el_result_other
@@ -282,7 +282,7 @@ new-page: true
 
 = Committee Chairs
 
-The Caucus has [+ leverage +] leverage to spend on committee chairs. Each chair unlocks new Senate Affairs cards.
+Every new government shares out the committee chairs afresh. The Caucus has [+ leverage +] leverage to spend, and holds [+ rc_chairs +] of the [+ chair_cap +] chairs our partners will let us have: each partner insists on at least one for itself. Each chair unlocks new Senate Affairs cards.
 
 - @el_chair_rimaffairs: Outer Rim Affairs (5 leverage).
 - @el_chair_finance: Finance & Commerce (10 leverage).
@@ -292,34 +292,34 @@ The Caucus has [+ leverage +] leverage to spend on committee chairs. Each chair 
 
 @el_chair_rimaffairs
 view-if: chair_rimaffairs != "rc"
-choose-if: leverage >= 5
-unavailable-subtitle: Not enough leverage.
+choose-if: leverage >= 5 and rc_chairs < chair_cap
+unavailable-subtitle: [? if rc_chairs >= chair_cap : Our partners will not give up another chair. ?][? if rc_chairs < chair_cap : Not enough leverage. ?]
 subtitle: Relief, piracy, slavery and Rim representation.
-on-arrival: chair_rimaffairs = "rc"; leverage -= 5
+on-arrival: chair_rimaffairs = "rc"; leverage -= 5; rc_chairs += 1
 go-to: el_chairs
 
 @el_chair_finance
 view-if: chair_finance != "rc"
-choose-if: leverage >= 10
-unavailable-subtitle: Not enough leverage.
+choose-if: leverage >= 10 and rc_chairs < chair_cap
+unavailable-subtitle: [? if rc_chairs >= chair_cap : Our partners will not give up another chair. ?][? if rc_chairs < chair_cap : Not enough leverage. ?]
 subtitle: Trade policy, the Banking Clan, and the treasury.
-on-arrival: chair_finance = "rc"; leverage -= 10
+on-arrival: chair_finance = "rc"; leverage -= 10; rc_chairs += 1
 go-to: el_chairs
 
 @el_chair_judiciary
 view-if: chair_judiciary != "rc"
-choose-if: leverage >= 10
-unavailable-subtitle: Not enough leverage.
+choose-if: leverage >= 10 and rc_chairs < chair_cap
+unavailable-subtitle: [? if rc_chairs >= chair_cap : Our partners will not give up another chair. ?][? if rc_chairs < chair_cap : Not enough leverage. ?]
 subtitle: Courts, investigations and intelligence. Vital for unmasking the Sith.
-on-arrival: chair_judiciary = "rc"; leverage -= 10
+on-arrival: chair_judiciary = "rc"; leverage -= 10; rc_chairs += 1
 go-to: el_chairs
 
 @el_chair_security
 view-if: chair_security != "rc"
-choose-if: leverage >= 12
-unavailable-subtitle: Not enough leverage.
+choose-if: leverage >= 12 and rc_chairs < chair_cap
+unavailable-subtitle: [? if rc_chairs >= chair_cap : Our partners will not give up another chair. ?][? if rc_chairs < chair_cap : Not enough leverage. ?]
 subtitle: The Judicial Forces, defence policy and, one day, the army.
-on-arrival: chair_security = "rc"; leverage -= 12
+on-arrival: chair_security = "rc"; leverage -= 12; rc_chairs += 1
 go-to: el_chairs
 
 @el_chairs_done

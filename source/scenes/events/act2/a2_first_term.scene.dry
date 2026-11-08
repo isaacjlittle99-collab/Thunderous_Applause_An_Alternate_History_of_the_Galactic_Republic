@@ -19,13 +19,13 @@ on-arrival: grand_plan += 3 if pal_chancellor; capital += 2 if rc_chancellor; fa
 subtitle: Good relations, and some real progress.
 on-arrival: pal_relation += 5 if pal_chancellor; corruption -= 1; faith += 1; grand_plan += 1 if pal_chancellor; mod_relation += 2
 
-The Caucus helps pass the Chancellor's first reforms. They are genuinely useful. That is the clever part.
+[? if pal_chancellor : The Caucus helps pass the Chancellor's first reforms. They are genuinely useful. That is the clever part. ?][? if rc_chancellor : The whole Caucus throws itself behind our Chancellor's first reforms, and the Senate notices how much gets done. ?][? if not pal_chancellor and not rc_chancellor : The Caucus helps pass the new government's first reforms. They are modest, but they are real, and the Caucus shares the credit. ?]
 
 @scrutinise
 subtitle: A little evidence; a little friction.
 on-arrival: evidence += 0.4; pal_relation -= 5; senate_resolve += 0.2
 
-Caucus researchers start a quiet file on everyone in the Chancellor's circle. Most of them have no past to speak of, which is itself a little strange.
+Caucus researchers start a quiet file on everyone in [+ pal_title +]'s circle. Most of them have no past to speak of, which is itself a little strange.
 
 @agenda
 subtitle: +1 political capital.
