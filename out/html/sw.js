@@ -2298,6 +2298,7 @@
     return p >= 75 ? '<span class="good">generous</span>' : (p >= 50 ? 'patient' : (p >= 35 ? '<span class="warn">wearing thin</span>' : (p >= 20 ? '<b class="bad">exhausted</b>' : (p >= 10 ? '<b class="bad">hostile</b>' : '<b class="bad">at war with us</b>'))));
   };
   SW.guildNextStep = function (Q) {
+    for (var k = 0; k < SW.GUILD_STEPS.length; k++) if (Q.guild_patience < SW.GUILD_STEPS[k] && !Q['guild_step_' + (k + 1)]) return 'Coming: ' + SW.GUILD_STEP_NAMES[k] + '.';
     for (var i = 0; i < SW.GUILD_STEPS.length; i++) if (Q.guild_patience >= SW.GUILD_STEPS[i]) return 'Next, below ' + SW.GUILD_STEPS[i] + ': ' + SW.GUILD_STEP_NAMES[i] + '.';
     return 'They have nothing left to try but the Separatists.';
   };
@@ -2320,7 +2321,7 @@
       if (SW.CONTEST_BLOCS.indexOf(b) >= 0 && Q[b + '_leader_id']) p += 0.03 * SW.leaderMood(Q, b).score;
       if (b === 'cis') p = 0;
       st[b] = SW.clamp(p, 0, 1);
-      why[b] = lr < -0.15 ? SW.REVENUE[rev].name : (lp < -0.05 ? SW.PRIORITY[pri].name : '');
+      why[b] = lr < -0.15 ? SW.REVENUE[rev].name : (lp < -0.05 ? (pri === 'none' ? 'the spending cuts' : SW.PRIORITY[pri].name) : '');
     }
     Q._budget_why = why;
     return st;
