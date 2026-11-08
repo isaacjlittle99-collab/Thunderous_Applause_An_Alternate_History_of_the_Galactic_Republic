@@ -11,15 +11,18 @@ on-arrival: {! SW.budgetOpen(Q); !}
 
 The treasury holds **[+ treasury_txt +]**, and the Republic owes the InterGalactic Banking Clan **[+ debt_txt +]** ([+ debt_label +]). Trade along the hyperlanes is [+ trade_label +], which brings in about [+ bd_income_base +] before any new revenue. Running the Republic and its forces costs [+ bd_upkeep +], and interest comes to [+ bd_interest +].
 
-[? if bd_write : The Caucus [? if rc_chancellor : holds the Chancellery?][? if not rc_chancellor : chairs the Finance & Commerce Committee?], so we write this year's budget. First: how will the Republic raise money? ?][? if not bd_write : The government proposes to [+ bd_gov_text +]. ?]
+The guilds' patience is [+ gp_label +]; our Core patrons are [+ pg_label +].
 
-*A budget raises money one way and spends it on one priority. Any shortfall is lent by the Banking Clan, and every credit it lends buys the Muuns a little more influence over the Republic.*
+[? if bd_write : The Caucus [? if rc_chancellor : holds the Chancellery?][? if not rc_chancellor : chairs the Finance & Commerce Committee?], so we write this year's budget, but it must still pass the Senate. First: how will the Republic raise money? ?][? if not bd_write : The government proposes to [+ bd_gov_text +]. On present form it would win about [+ bd_gov_outlook +]% of the Senate. ?]
+
+*Every source of money has people who pay for it, and they push back harder each year it is used in a row. Every budget must pass the Senate, where each bloc judges what it costs their own worlds.*
 
 - @rev_tariffs: Trade-route tariffs (about [+ bd_tariff_yield +]).
 - @rev_levy: A levy on the Core worlds (3).
 - @rev_loan: Borrow from the Banking Clan (3).
 - @rev_bonds: Sell war bonds (about [+ bd_bond_yield +]).
 - @rev_spice: Collect the spice duty (2).
+- @rev_print: Debase the Republic credit (4).
 - @rev_none: No new revenue: existing taxes only.
 - @support: Support the government's budget.
 - @oppose: Vote against it.
@@ -27,7 +30,7 @@ The treasury holds **[+ treasury_txt +]**, and the Republic owes the InterGalact
 
 @rev_tariffs
 view-if: bd_write
-subtitle: Valorum's old policy. The guilds will be angry and may tighten their embargo; the Rim gains a little.
+subtitle: The guilds' patience wears thinner[? if rev_streak_tariffs >= 1 : , faster than last year?]; shippers pass the cost on to the Rim. The guilds will vote against it.
 choose-if: date >= tariff_ban_until
 unavailable-subtitle: We promised the guilds no new tariffs for now.
 on-arrival: bd_rev = "tariffs"
@@ -35,26 +38,34 @@ go-to: priority
 
 @rev_levy
 view-if: bd_write
-subtitle: Reliable. The Core worlds and the Moderates resent it, and our support in the Core dips.
+subtitle: Our own Core patrons pay it[? if rev_streak_levy >= 1 : , for another year?]: their goodwill and donations fall, and the Moderates vote against.
+choose-if: date >= levy_ban_until
+unavailable-subtitle: We promised the Core no new levy for now.
 on-arrival: bd_rev = "levy"
 go-to: priority
 
 @rev_loan
 view-if: bd_write
-subtitle: Painless now. The debt grows, and so does the Banking Clan's leverage.
+subtitle: Painless now, and the guilds approve. The debt grows, and so does the Banking Clan's leverage.
 on-arrival: bd_rev = "loan"
 go-to: priority
 
 @rev_bonds
 view-if: bd_write and war
-subtitle: What they raise depends on faith in the Republic. Buying them feels patriotic.
+subtitle: [? if faith >= 45 : Faith in the Republic is high enough to sell them. ?][? if faith < 45 : Faith in the Republic is low: the drive may fail, in public. ?]
 on-arrival: bd_rev = "bonds"
 go-to: priority
 
 @rev_spice
 view-if: bd_write and spice_legal
-subtitle: Easy money from the Kessel trade. Corruption grows.
+subtitle: Easy money from the Kessel trade. Corruption grows, and the syndicates' money goes where it likes.
 on-arrival: bd_rev = "spice"
+go-to: priority
+
+@rev_print
+view-if: bd_write
+subtitle: The most money, for now. Prices rise, the Rim suffers first, Core savers turn on us, and if it goes too far the Rim stops using Republic credits.
+on-arrival: bd_rev = "print"
 go-to: priority
 
 @rev_none
@@ -65,23 +76,14 @@ go-to: priority
 
 @support
 view-if: not bd_write
-subtitle: The government is grateful. [? if rc_in_govt : The coalition is calmer. ?]
-on-arrival: {! SW.budgetApply(Q, Q.bd_gov_rev, Q.bd_gov_pri); Q[Q.chancellor_bloc + '_relation'] += 2; if (Q.rc_in_govt) Q.coalition_dissent -= 0.5; !}
+subtitle: Our votes go to the government's budget. If it passes, the government is grateful[? if rc_in_govt : , and the coalition calmer?].
+on-arrival: {! SW.budgetPropose(Q, Q.bd_gov_rev, Q.bd_gov_pri, 1, 0); if (!Q.bd_failed) { Q[Q.chancellor_bloc + '_relation'] += 2; if (Q.rc_in_govt) Q.coalition_dissent -= 0.5; } !}
 go-to: budget_result
 
 @oppose
 view-if: not bd_write
-subtitle: If it fails, a stopgap budget passes: no new revenue and no priorities. The government will not forgive it.
-on-arrival: {!
-var st = {};
-for (var i = 0; i < Q.parties.length; i++) { var b = Q.parties[i]; st[b] = (Q.govt_blocs || []).indexOf(b) >= 0 ? 0.85 : 0.35; }
-Q.bd_vote = SW.vote(Q, st, 0);
-Q.vote_html = SW.voteBanner('The government\'s budget', Q.bd_vote);
-if (Q.bd_vote >= 50) { Q.bd_failed = 0; SW.budgetApply(Q, Q.bd_gov_rev, Q.bd_gov_pri); }
-else { Q.bd_failed = 1; SW.budgetApply(Q, '', 'none'); Q.faith -= 0.5; Q.rc_momentum += 0.3; }
-Q[Q.chancellor_bloc + '_relation'] -= 4;
-if (Q.rc_in_govt) Q.coalition_dissent += 1;
-!}
+subtitle: If it fails, a stopgap passes: no new revenue and no priorities. The government will not forgive it.
+on-arrival: {! SW.budgetPropose(Q, Q.bd_gov_rev, Q.bd_gov_pri, 0, 0); Q[Q.chancellor_bloc + '_relation'] -= 4; if (Q.rc_in_govt) Q.coalition_dissent += 1; if (Q.bd_failed) { Q.faith -= 0.5; Q.rc_momentum += 0.3; } !}
 go-to: budget_result
 
 @amend
@@ -94,10 +96,11 @@ go-to: priority
 
 @priority
 new-page: true
+on-arrival: {! SW.budgetPriorityOutlook(Q); !}
 
 = What Will the Republic Pay For?
 
-Choose one priority for the year. The treasury has [+ treasury_txt +], with upkeep of [+ bd_upkeep +] and interest of [+ bd_interest +] to cover; anything we cannot pay, the Banking Clan will lend.
+Choose one priority for the year. The treasury has [+ treasury_txt +], with upkeep of [+ bd_upkeep +] and interest of [+ bd_interest +] to cover; anything we cannot pay, the Banking Clan will lend. Each option shows roughly how much of the Senate would back the whole budget.
 
 - @pri_relief: Rim relief and hyperlane patrols (3).
 - @pri_defence: Defence ([+ bd_defence_cost +]).
@@ -106,37 +109,43 @@ Choose one priority for the year. The treasury has [+ treasury_txt +], with upke
 - @pri_none: Nothing new: balance the books.
 
 @pri_relief
-subtitle: Less hardship on the Rim, and safer, busier trade lanes.
-on-arrival: {! SW.budgetApply(Q, Q.bd_rev, 'relief'); !}
+subtitle: Less hardship on the Rim, busier trade lanes, Rim donors for the Caucus; the Core grumbles. Expected support [+ bd_out_relief +]%.
+on-arrival: {! SW.budgetPropose(Q, Q.bd_rev, 'relief', 1, Q.bd_write); !}
 go-to: budget_result
 
 @pri_defence
-subtitle: Stronger Judicial Forces. [? if war : The weakest front gets help. ?]Tibanna gas grows dearer.
-on-arrival: {! SW.budgetApply(Q, Q.bd_rev, 'defence'); !}
+subtitle: Stronger Judicial Forces[? if war : , with help for the weakest front?]; the Pacifists object and Tibanna grows dearer. Expected support [+ bd_out_defence +]%.
+on-arrival: {! SW.budgetPropose(Q, Q.bd_rev, 'defence', 1, Q.bd_write); !}
 go-to: budget_result
 
 @pri_subsidies
-subtitle: The Core Moderates and the guilds are pleased; corruption grows.
-on-arrival: {! SW.budgetApply(Q, Q.bd_rev, 'subsidies'); !}
+subtitle: The guilds' patience and our Core patrons recover; corruption grows and the Rimward wing objects. Expected support [+ bd_out_subsidies +]%.
+on-arrival: {! SW.budgetPropose(Q, Q.bd_rev, 'subsidies', 1, Q.bd_write); !}
 go-to: budget_result
 
 @pri_repay
-subtitle: The debt shrinks, and with it the Banking Clan's grip.
-on-arrival: {! SW.budgetApply(Q, Q.bd_rev, 'repay'); !}
+subtitle: The debt shrinks, and with it the Banking Clan's grip. Expected support [+ bd_out_repay +]%.
+on-arrival: {! SW.budgetPropose(Q, Q.bd_rev, 'repay', 1, Q.bd_write); !}
 go-to: budget_result
 
 @pri_none
-subtitle: No new spending this year.
-on-arrival: {! SW.budgetApply(Q, Q.bd_rev, 'none'); !}
+subtitle: No new spending this year[? if budget_pri = "relief" : , and the Rim will feel its relief cut?]. Expected support [+ bd_out_none +]%.
+on-arrival: {! SW.budgetPropose(Q, Q.bd_rev, 'none', 1, Q.bd_write); !}
 go-to: budget_result
 
 @budget_result
 new-page: true
 
-= The Budget Passes
+= The Budget Vote
 
-[? if bd_failed : [+ vote_html +] The government's budget fails, and a stopgap measure keeps the Republic running: no new revenue, no new priorities. ?][? if not bd_failed : The Republic will raise money through **[+ bd_rev_name +]** and spend on **[+ bd_pri_name +]**. ?]
+[+ vote_html +]
 
-[+ bd_summary +]. [? if bd_borrowed > 0 : The Banking Clan lends the shortfall of [+ bd_borrowed +]. ?]
+*How the blocs lined up:* [+ bd_stances +].
 
-The treasury now holds [+ treasury_txt +], and the debt stands at [+ debt_txt +] ([+ debt_label +]).
+[? if bd_failed : The budget is defeated. A stopgap keeps the Republic running: no new revenue, no new priorities. ?][? if not bd_failed : The Republic will raise money through **[+ bd_rev_name +]** and spend on **[+ bd_pri_name +]**. ?]
+
+**How the galaxy reacts**
+
+[+ bd_reactions +]
+
+[+ bd_summary +]. The treasury now holds [+ treasury_txt +], and the debt stands at [+ debt_txt +] ([+ debt_label +]).

@@ -274,7 +274,25 @@ go-to: menu
 
 The Economy tab shows the treasury, the Republic's debt to the InterGalactic Banking Clan, the health of hyperlane trade, and three markets.
 
-**The budget.** Once a year, after the Senate's new session, the Republic passes a budget. Whoever holds the Chancellery or the Finance & Commerce chair writes it; otherwise the Caucus can support the government's budget, vote against it (a failed budget means a stopgap with no priorities), or, if it is in government, pay to change its priority. A budget raises money one way (trade-route tariffs, a levy on the Core worlds, a loan from the Banking Clan, war bonds, or once legalised the spice duty) and spends on one priority (Rim relief and hyperlane patrols, defence, subsidies for the Core and the guilds, or repaying the debt). Trade and existing taxes pay for the Republic's upkeep and interest. Every revenue has its enemies: the guilds hate tariffs, the Core hates the levy, and leaders remember.
+**The budget.** Once a year, after the Senate's new session, the Republic passes a budget. Whoever holds the Chancellery or the Finance & Commerce chair writes it; otherwise the Caucus can support the government's budget, vote against it, or, in government, pay to change its priority. **Every budget must pass the Senate.** Each bloc judges what it costs its own worlds: the guilds vote against tariffs, the Core Moderates against the levy, the Rim against cuts. Coalition partners object to lines that cross their red lines, which strains the coalition. A defeated budget means a stopgap with no new revenue and no priority. Two of our own budgets defeated in a row bring down a Caucus Chancellor, unless the constructive no-confidence amendment protects them.
+
+**Every tax has a price.** A budget raises money one way: trade-route tariffs, a levy on the Core worlds, a loan from the Banking Clan, war bonds, debasing the Republic credit, or, once legalised, a spice duty. Each has people who pay for it, and they push back **harder every year it is used in a row**:
+
+• *Tariffs* wear down the guilds' patience, and shippers pass the cost on to the Rim.
+
+• *The Core levy* falls on the Caucus's own patrons in Alderaan, Chandrila and Corellia. Their goodwill sets how much political capital we raise each year, and if it collapses, the Core revolts.
+
+• *Loans* please the guilds but grow the debt.
+
+• *War bonds* only sell when faith in the Republic is high; a failed bond drive is a public humiliation.
+
+• *Debasing the credit* raises the most money and causes inflation: prices rise, the Rim suffers first, Core savers turn on us, and eventually Rim worlds stop accepting Republic credits at all.
+
+• *Spending* has losers too: relief annoys the Core, subsidies anger the Rimward wing, defence the Pacifists, and cutting relief after funding it makes the Rim feel betrayed. Relief also earns the Caucus small donations from Rim worlds.
+
+**The guilds' patience.** The Trade Federation once blockaded Naboo over a tax on trade routes, and the guilds still know how to fight. Tariffs, regulation, audits, seizures and the Federation's break-up wear their patience down; subsidies, loans, lifted sanctions and concessions rebuild it, and it returns slowly when the pressure stops. As it falls they go further, step by step: lobbying against our bills, a shipping slowdown, a credit strike, a blockade of a Caucus-friendly world, and finally defection to the Separatists. The Economy tab shows what angered them and what comes next.
+
+**Money is politics.** Angry guilds, and creditors owed a fortune, bankroll our rivals in Chancellor elections and fund HoloNet campaigns that wear down our support. Pleased guilds fund us instead, for a price. Angry Core patrons keep their purses shut.
 
 **Debt.** Any shortfall, in the budget or during the year, is lent by the Banking Clan. Interest grows with the debt. A heavy debt lets the Banking Clan name its price; a crushing one forces a choice between austerity and a bailout that makes the banks, and whoever stands behind them, stronger. It also gives a Chancellor who wants the banks an excuse to seize them. The war is expensive, and wars are how republics fall into debt.
 

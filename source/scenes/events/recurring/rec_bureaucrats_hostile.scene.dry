@@ -19,7 +19,7 @@ The Senate bureaucracy is **[+ bureau_relation : relationships +]** towards us, 
 
 @truce
 subtitle: The guilds and their clerks relax, and the file stops growing for a while; the Rimward wing is furious.
-on-arrival: guild_relation += 8; bureau_relation += 8; bureau_dossier -= 1; rimward_dissent += 5; guild_embargo -= 1
+on-arrival: guild_relation += 8; bureau_relation += 8; bureau_dossier -= 1; rimward_dissent += 5; guild_embargo -= 1; guild_patience += 8
 
 The Caucus quietly drops two bills the guilds dislike. Their lobbyists call off the clerks, for now.
 

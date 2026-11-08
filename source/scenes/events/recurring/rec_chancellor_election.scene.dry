@@ -26,15 +26,18 @@ Q.el_has_sec = c.indexOf('sec') >= 0 ? 1 : 0;
 Q.el_backing = '';
 Q.el_courted_mod = 0; Q.el_courted_rim = 0; Q.el_courted_ind = 0; Q.el_courted_guild = 0; Q.el_courted_sec = 0; Q.el_attacked = 0;
 Q.el_text = SW.electionIntro(Q);
+SW.warChest(Q);
 Q.el_incumbent = Q.chancellor;
 Q.el_sec_leader = Q.sec_leader;
 !}
 
 = Election of the Supreme Chancellor
 
-[? if valorum_fallen and elections_held = 0 : With Valorum brought down, the Senate must choose a new Supreme Chancellor. ?][? if govt_fell_now : The government of Chancellor [+ el_incumbent +] has fallen. [? if fall_reason = "collapse" : The [+ walkout_name +] walked out of the coalition and brought it down. ?][? if fall_reason = "bureaucrats" : A crisis manufactured by the Senate bureaucracy brought it down. ?][? if fall_reason = "vonc" : The Senate withdrew its confidence. ?][? if fall_reason = "withdrew" : The Caucus withdrew its support. ?] The Senate must choose who will lead the Republic for the next four years. ?][? if not govt_fell_now and (elections_held > 0 or not valorum_fallen) : Supreme Chancellor [+ el_incumbent +]'s term has run its course, and the Senate must choose who will lead the Republic for the next four years. ?] Each bloc will back the candidate it trusts most. If no one wins a majority on the first ballot, the two leading candidates go to a second.
+[? if valorum_fallen and elections_held = 0 : With Valorum brought down, the Senate must choose a new Supreme Chancellor. ?][? if govt_fell_now : The government of Chancellor [+ el_incumbent +] has fallen. [? if fall_reason = "collapse" : The [+ walkout_name +] walked out of the coalition and brought it down. ?][? if fall_reason = "bureaucrats" : A crisis manufactured by the Senate bureaucracy brought it down. ?][? if fall_reason = "vonc" : The Senate withdrew its confidence. ?][? if fall_reason = "budget" : The Senate rejected its budget twice in a row. ?][? if fall_reason = "withdrew" : The Caucus withdrew its support. ?] The Senate must choose who will lead the Republic for the next four years. ?][? if not govt_fell_now and (elections_held > 0 or not valorum_fallen) : Supreme Chancellor [+ el_incumbent +]'s term has run its course, and the Senate must choose who will lead the Republic for the next four years. ?] Each bloc will back the candidate it trusts most. If no one wins a majority on the first ballot, the two leading candidates go to a second.
 
 [+ el_text +]
+
+[? if el_warchest : *Money in the race:* [+ el_warchest_text +] ?]
 
 [? if naboo_sympathy and el_has_pal : The Senate is moved by the plight of Naboo, and Senator Palpatine is widely seen as the sympathetic candidate. ?]
 

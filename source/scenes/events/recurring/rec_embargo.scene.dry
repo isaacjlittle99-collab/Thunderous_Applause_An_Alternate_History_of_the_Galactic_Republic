@@ -31,7 +31,7 @@ The Caucus refuses to bend. The strike drags on.
 subtitle: −1 political capital. The embargo eases; the Rimward wing is unhappy.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
-on-arrival: capital -= 1; guild_embargo -= 3; guild_relation += 6; rimward_dissent += 5
+on-arrival: capital -= 1; guild_embargo -= 3; guild_relation += 6; rimward_dissent += 5; guild_patience += 8
 
 A quiet compromise ends the strike. Some call it a surrender.
 

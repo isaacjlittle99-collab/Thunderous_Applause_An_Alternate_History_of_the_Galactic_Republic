@@ -1,0 +1,36 @@
+title: Republic Credits Are No Good Out Here
+subtitle: The Outer Rim is abandoning the Republic's money.
+tags: event
+view-if: inflation > 50 and credits_timer <= 0 and not finale and not game_ending
+priority: 2
+new-page: true
+face-image: img/ev_rim.svg
+on-arrival: {! Q.credits_timer = 12; Q.credit_refusals += 1; Q.outer_sep += 6; Q.trade -= 8; Q.outer_rc -= 1; !}
+
+= Republic Credits Are No Good Out Here
+
+The Treasury has printed so many credits that they are worth less every month. On the Outer Rim, traders have stopped taking them at all. Tatooine's junk dealers want Hutt peggats or wupiupi; Ryloth's spice dealers want truguts; even Republic garrisons are being paid in goods. Every world that stops using the Republic's money is a world that has started to leave it.
+
+- @back: Back the credit with the Core's reserves.
+- @float: Let it float.
+- @hutts: Strike currency deals with the Hutt cartels.
+
+@back
+subtitle: −3 treasury. Inflation falls, and the credit regains some trust.
+choose-if: treasury >= 3
+unavailable-subtitle: The treasury cannot afford it.
+on-arrival: treasury -= 3; inflation -= 20; faith += 0.5
+
+The Treasury buys back credits with Core reserves. Prices steady, slowly.
+
+@float
+subtitle: Nothing is spent; the Rim keeps drifting away from the Republic's money.
+on-arrival: inflation -= 5; rim_hardship += 1
+
+The Senate lets the credit find its own level. On the Rim, that level is "worthless".
+
+@hutts
+subtitle: Trade on the Rim recovers; the Hutts and corruption gain.
+on-arrival: corruption += 2; rim_hardship -= 2; trade += 4
+
+Republic envoys and Hutt clan accountants agree exchange rates. Jabba the Hutt is said to be very pleased.

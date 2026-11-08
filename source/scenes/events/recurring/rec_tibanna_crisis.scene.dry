@@ -29,7 +29,7 @@ The Republic locks in supply for a decade. The Mining Guild's shareholders celeb
 subtitle: −2 treasury. Supply is secure; the guilds are outraged and the Security Bloc approves.
 choose-if: treasury >= 2
 unavailable-subtitle: The treasury cannot afford it.
-on-arrival: treasury -= 2; tibanna -= 40; sec_relation += 4; guild_relation -= 8
+on-arrival: {! Q.treasury -= 2; Q.tibanna -= 40; Q.sec_relation += 4; Q.guild_relation -= 8; SW.guildPatience(Q, -10, 'the seizure of the Tibanna refineries'); !}
 
 Republic engineers take over the refineries in Bespin's clouds. The Mining Guild calls it theft; the Navy calls it overdue.
 
