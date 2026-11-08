@@ -10,7 +10,7 @@ on-arrival: war_begins_seen = 1
 
 = Generals of the Republic
 
-[? if clones > 0 : The Grand Army needs commanders, and the clones were bred to follow Jedi. ?][? if clones <= 0 : The Republic's patchwork forces need commanders. ?] The Chancellor proposes that Jedi Knights be commissioned as generals. Many Jedi are uneasy: they are keepers of the peace, not soldiers.
+[? if clones > 0 : The Grand Army needs commanders, and the clones were bred to follow Jedi. ?][? if clones <= 0 : The Republic's patchwork forces need commanders. ?] [? if rc_chancellor : The Security Bloc proposes?][? if not rc_chancellor : The Chancellor proposes?] that Jedi Knights be commissioned as generals. Many Jedi are uneasy: they are keepers of the peace, not soldiers.
 
 - @generals: Accept Jedi as generals.
 - @advisors: Insist that the Jedi serve as advisors and peacekeepers, not commanders.

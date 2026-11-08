@@ -14,7 +14,7 @@ The HoloNet reaches every corner of the Republic. What story should the Caucus t
 - @corruption: Expose corruption in the Senate.
 - @republic: Champion the Republic and its laws.
 - @overreach: Warn of executive overreach.
-- @counter: Answer the Chancellery's propaganda.
+- @counter: Answer the Chancellor's HoloNet campaigns.
 - @easy_discard
 
 @corruption
@@ -40,7 +40,7 @@ view-if: not rc_chancellor and senate_resolve < 10
 subtitle: [? if emergency_powers >= 1 or evidence >= 3 : Credible: the threat is visible. ?][? if emergency_powers < 1 and evidence < 3 : Nobody sees the threat yet. This may look like alarmism. ?]
 on-arrival: senate_resolve += 0.7 if emergency_powers >= 1 or evidence >= 3; faith -= 1 if emergency_powers < 1 and evidence < 3; pal_relation -= 3
 
-[? if emergency_powers >= 1 or evidence >= 3 : The Caucus's warnings strike a nerve. Senators who voted for the emergency measures begin to ask how they will ever be undone. ?][? if emergency_powers < 1 and evidence < 3 : The HoloNet pundits laugh at "the Caucus's phantom tyrant". The Chancellor's office issues a gentle, wounded denial. ?]
+[? if emergency_powers >= 1 or evidence >= 3 : The Caucus's warnings strike a nerve. Senators who voted for the emergency measures begin to ask how they will ever be undone. ?][? if emergency_powers < 1 and evidence < 3 : The HoloNet pundits laugh at "the Caucus's phantom tyrant". A gentle, wounded denial arrives from [+ pal_office +]. ?]
 
 @counter
 view-if: pal_chancellor and grand_plan >= 35

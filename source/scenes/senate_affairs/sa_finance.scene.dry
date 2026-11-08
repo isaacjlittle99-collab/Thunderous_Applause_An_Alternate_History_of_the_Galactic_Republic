@@ -65,7 +65,7 @@ if (Q.bi_vote >= 50) { Q.banking_independent = 1; Q.guild_relation += 4; }
 
 [+ vote_html +]
 
-[? if banking_independent : The Banking Clan's charter now forbids any transfer of control to the executive. The Chancellery says it never intended any such thing. ?][? if not banking_independent : The bill fails. The Chancellor's allies say it "ties the Republic's hands in wartime". ?]
+[? if banking_independent : The Banking Clan's charter now forbids any transfer of control to the executive. Nobody in [+ pal_office +] admits to ever wanting any such thing. ?][? if not banking_independent and not rc_chancellor : The bill fails. The Chancellor's allies say it "ties the Republic's hands in wartime". ?][? if not banking_independent and rc_chancellor : The bill fails. The guilds and the Security Bloc say it "ties the Republic's hands in wartime". ?]
 
 @books
 view-if: treasury < 6

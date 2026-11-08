@@ -15,4 +15,4 @@ SW.countAdvisors(Q);
 
 = Death in the Senate
 
-[? if farr_dead : Senator **Onaconda Farr** of Rodia has been found dead in his apartment, poisoned. The killer is his own aide, Lolo Purs, who wanted to stop any separate peace with the Confederacy. The Rim has lost its most beloved voice, and the Caucus has lost a friend. ?][? if farr_foiled : An attempt to poison Onaconda Farr has been foiled. His aide, Lolo Purs, is arrested. Under questioning she admits she was promised a fortune by "someone in the Chancellery's orbit" if Farr died before he could negotiate. ?]
+[? if farr_dead : Senator **Onaconda Farr** of Rodia has been found dead in his apartment, poisoned. The killer is his own aide, Lolo Purs, who wanted to stop any separate peace with the Confederacy. The Rim has lost its most beloved voice, and the Caucus has lost a friend. ?][? if farr_foiled : An attempt to poison Onaconda Farr has been foiled. His aide, Lolo Purs, is arrested. Under questioning she admits she was promised a fortune by "someone close to [+ pal_office +]" if Farr died before he could negotiate. ?]

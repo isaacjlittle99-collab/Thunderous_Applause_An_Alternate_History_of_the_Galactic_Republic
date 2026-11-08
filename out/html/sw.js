@@ -184,7 +184,7 @@
       D[lg + '_leader_id'] = SW.LEADER_START[lg];
       D[lg + '_leader'] = SW.LEADERS[SW.LEADER_START[lg]].name;
     }
-    D.walkout_bloc = ''; D.walkout_until = -99; D.cc_dropped = 0; D.cc_kept = 0; D.el_walkout_blocks = 0; D.walkout_name = ''; D.govt_fell_now = 0; D.fall_reason = ''; D.war_name = 'Clone Wars';
+    D.pal_title = 'Senator Palpatine'; D.pal_office = 'Palpatine\'s office'; D.pal_people = 'Palpatine\'s people'; D.chair_cap = 4; D.chair_partners = 0; D.walkout_bloc = ''; D.walkout_until = -99; D.cc_dropped = 0; D.cc_kept = 0; D.el_walkout_blocks = 0; D.walkout_name = ''; D.govt_fell_now = 0; D.fall_reason = ''; D.war_name = 'Clone Wars';
     D.trial_cleanup = 0; D.force_war = SW.off('war') ? 0 : 1; D.amend_threshold = 66.7; D.gavel_date = -99; D.gavels = 0; D.vote_tabled = 0;
     D.scheme_pending = ''; D.scheme_due = 0; D.scheme_countered = 0; D.scheme_warned = 0; D.scheme_foreseen = 0;
     D.scheme_foresee = ''; D.scheme_counter = ''; D.scheme_text = ''; D.scheme_was_foiled = 0; D.schemes_total = 0; D.schemes_foiled = 0;
@@ -196,7 +196,7 @@
     D.loyalist_seen = 0; D.loyalist_member = 0; D.hostage_seen = 0; D.security_fast = 0; D.labyrinth_seen = 0; D.labyrinth_result = 0;
     D.arrest_missing = ''; D.cis_negotiated = 0; D.shadow_remains = 0; D.admirals_coup = 0;
     D.bp_gov = 0; D.bp_walkout = 0; D.bp_chancellor = 0; D.bp_vote = 0; D.bp_fell = 0; D.bp_saved = 0; D.bp_survived = 0;
-    D.bureau_relation = 45; D.bureau_reforms_seen = 0; D.bureau_captured = 0; D.bureau_warn_cold = 0; D.bureau_warn_hostile = 0;
+    D.bureau_relation = 45; D.bureau_reforms_seen = 0; D.bureau_captured = 0; D.bureau_warn_cold = 0; D.bureau_warn_hostile = 0; D.bureau_dossier = 0;
     D.bureau_purges = 0; D.bureau_purge_kind = ''; D.bureau_vote = 0; D.bureau_fell = 0; D.el_join_bureau = '';
     for (var bo = 0; bo < 7; bo++) D['el_opt' + bo + '_bureau'] = '';
     D.pal_can_run = 1; D.naboo_jedi = 1; D.unease_next = 40; D.secession_next = 10; D.next_election_date = 21;
@@ -894,6 +894,7 @@
     for (var i = 0; i < SW.COMMITTEES.length; i++) if (Q['chair_' + SW.COMMITTEES[i]] === 'rc') chairs++;
     Q.rc_chairs = chairs;
     Q.rc_has_access = (Q.rc_in_govt || chairs > 0) ? 1 : 0;
+    SW.palStrings(Q);
   };
 
   SW.coalitionName = function (Q, blocs) {
@@ -903,7 +904,7 @@
       if (has('mod') && has('guild')) return 'Grand Concord';
       if (has('rim') && !has('mod')) return 'Rimward Compact';
       if (has('mod')) return 'Reform Concord';
-      if (has('pal')) return 'Chancellor\'s Coalition';
+      if (has('pal')) return Q && Q.chancellor_bloc === 'pal' ? 'Chancellor\'s Coalition' : 'Naboo Compact';
       return 'Caucus Government';
     }
     if (has('pal') && has('sec')) return 'Security Coalition';
@@ -1099,7 +1100,7 @@
     Q.elections_held += 1;
     Q.naboo_sympathy = 0;
     if (prev === 'Valorum' && Q.chancellor !== 'Valorum') Q.valorum_fallen = 1;
-    if (bloc === 'pal') { Q.pal_name = 'Chancellor\'s Bloc'; if (Q.chancellor === 'Palpatine') { Q.pal_was_chancellor = 1; Q.pal_terms = (Q.pal_terms || 0) + 1; } }
+    if (bloc === 'pal') { if (Q.chancellor === 'Palpatine') { Q.pal_was_chancellor = 1; Q.pal_terms = (Q.pal_terms || 0) + 1; } }
     if (bloc === 'rc') { Q.rc_was_chancellor = 1; Q.rc_terms = (Q.rc_terms || 0) + 1; }
     SW.recomputeGovt(Q);
   };
@@ -1124,7 +1125,7 @@
     var blocs = Q.el_opts[i];
     SW.setGovt(Q, blocs);
     SW.bureauJoin(Q, blocs);
-    Q.leverage = Math.round(Q.rc_r) + 15;
+    SW.openChairs(Q, Math.round(Q.rc_r) + 15);
   };
 
   SW.joinGovernment = function (Q) {
@@ -1132,7 +1133,19 @@
     if (blocs.indexOf('rc') < 0) blocs.push('rc');
     SW.setGovt(Q, blocs, Q.coalition_name);
     SW.bureauJoin(Q, blocs);
-    Q.leverage = Math.round(Q.rc_r * 0.8);
+    SW.openChairs(Q, Math.round(Q.rc_r * 0.8));
+  };
+
+  // Every new government renegotiates the committee chairs from scratch: the Caucus gives up the
+  // chairs it held and buys back what it can. Each partner insists on at least one chair.
+  SW.openChairs = function (Q, leverage) {
+    for (var i = 0; i < SW.COMMITTEES.length; i++) if (Q['chair_' + SW.COMMITTEES[i]] === 'rc') Q['chair_' + SW.COMMITTEES[i]] = '';
+    SW.assignChairs(Q);
+    var partners = (Q.govt_blocs || []).filter(function (b) { return b !== 'rc'; }).length || 1;
+    Q.chair_partners = partners;
+    Q.chair_cap = Math.max(1, SW.COMMITTEES.length - partners);
+    Q.rc_chairs = 0;
+    Q.leverage = leverage;
   };
 
   // ------------------------------------------------------------------ faction splits
@@ -1293,12 +1306,12 @@
     },
     turn_senator: {
       weight: function (Q) { return 0.4 + Math.max(0, (Q.rc_votes || 0) - 15) * 0.08; },
-      foresee: 'Three Caucus senators have been seen dining with the Chancellor\'s people.',
+      foresee: function (Q) { return 'Three Caucus senators have been seen dining with ' + Q.pal_people + '.'; },
       counter: 'Keep them on side',
       foiled: 'The Caucus finds the three senators better committee seats. They stay.',
       apply: function (Q) {
         for (var i = 0; i < SW.REGIONS.length; i++) { var r = SW.REGIONS[i]; var mv = Q[r + '_rc'] * 0.03; Q[r + '_rc'] -= mv; Q[r + '_pal'] += mv; }
-        return 'Three Caucus senators cross the floor to the Chancellor\'s bloc, citing "the needs of the hour".';
+        return 'Three Caucus senators cross the floor to the ' + SW.name(Q, 'pal') + ', citing "the needs of the hour".';
       }
     }
   };
@@ -1321,7 +1334,8 @@
     Q.scheme_due = Q.time + 1;
     Q.scheme_countered = 0; Q.scheme_warned = 0;
     Q.scheme_foreseen = (Q.jedi_suspicion >= 4 || Q.evidence >= 5 || (Q.time - (Q.investigated_at || -99)) <= 2) ? 1 : 0;
-    Q.scheme_foresee = SW.SCHEMES[pick].foresee;
+    var fs = SW.SCHEMES[pick].foresee;
+    Q.scheme_foresee = typeof fs === 'function' ? fs(Q) : fs;
     Q.scheme_counter = SW.SCHEMES[pick].counter;
     Q.scheme_timer = threat >= 10 ? 3 + Math.floor(SW.rnd() * 2) : 5 + Math.floor(SW.rnd() * 2);
     Q.schemes_total = (Q.schemes_total || 0) + 1;
@@ -1373,6 +1387,7 @@
     var inGov = Q.rc_in_govt || Q.rc_chairs > 0;
     if (!inGov) {
       Q.bureau_relation += (45 - Q.bureau_relation) * 0.1 * f;
+      Q.bureau_dossier = Math.max(0, (Q.bureau_dossier || 0) - f);
       Q.bureau_reforms_seen = rcount;
       return;
     }
@@ -1386,6 +1401,10 @@
     var gain = (Q.anti_corruption ? 3 : 0) + ((Q.guild_relation || 0) - 30) / 10;
     Q.bureau_relation += f * (gain - loss);
     Q.bureau_reforms_seen = rcount;
+    // while they are unhappy with us, they build a case: files, leaks, partners who could govern without us
+    var r = Q.bureau_relation;
+    Q.bureau_dossier = (Q.bureau_dossier || 0) + (r <= 10 ? 2 : (r < 25 ? 1 : -0.5)) * f;
+    Q.bureau_dossier = SW.clamp(Q.bureau_dossier, 0, 6);
   };
 
   // The bureaucrats strike: a "reorganisation" ejects the Caucus from government, or, against a
@@ -1417,6 +1436,7 @@
       Q.inst_dissent += 5; Q.rc_momentum -= 0.5;
     }
     Q.bureau_relation = 30;
+    Q.bureau_dossier = 0;
   };
 
   // ------------------------------------------------------------------ votes
@@ -1658,7 +1678,7 @@
       war_balance: [-10, 10], war_weariness: [0, 100], anakin_fall: [0, 10], dooku_doubt: [0, 10],
       jedi_strength: [0, 10], jedi_standing: [0, 100], jedi_relation: [0, 100], judicial_forces: [0, 10],
       member_forces: [0, 10], clones: [0, 10], navy_loyalty: [0, 100], droid_armies: [0, 12],
-      coalition_dissent: [0, 10], capital: [-5, 40], treasury: [-10, 30], leverage: [0, 60], bureau_relation: [0, 100]
+      coalition_dissent: [0, 10], capital: [-5, 40], treasury: [-10, 30], leverage: [0, 60], bureau_relation: [0, 100], bureau_dossier: [0, 6]
     };
     for (var k in bounded) Q[k] = SW.clamp(Q[k], bounded[k][0], bounded[k][1]);
     var rels = SW.BLOCS;
@@ -1746,13 +1766,23 @@
   };
 
   // ------------------------------------------------------------------ every visit
+  // Names and phrases for Palpatine that follow whether he (or his bloc) actually holds the Chancellery.
+  SW.palStrings = function (Q) {
+    var bloc = Q.chancellor_bloc === 'pal';
+    Q.pal_name = bloc ? 'Chancellor\'s Bloc' : 'Chommell Circle';
+    Q.pal_title = Q.chancellor === 'Palpatine' ? 'Chancellor Palpatine' : 'Senator Palpatine';
+    Q.pal_office = bloc ? 'the Chancellery' : 'Palpatine\'s office';
+    Q.pal_people = bloc ? 'the Chancellor\'s people' : 'Palpatine\'s people';
+  };
+
   SW.everyVisit = function (Q) {
     SW.scaleChanges(Q);
     SW.updateDissent(Q);
     if (Q.bureau_relation >= 35) Q.bureau_warn_cold = 0;
-    if (Q.bureau_relation >= 20) Q.bureau_warn_hostile = 0;
+    if (Q.bureau_relation >= 20 && (Q.bureau_dossier || 0) < 2) Q.bureau_warn_hostile = 0;
     SW.computeSupport(Q);
     SW.recomputeGovt(Q);
+    SW.palStrings(Q);
     SW.factionAgendas(Q);
     SW.cardAvailability(Q);
     SW.grievances(Q);

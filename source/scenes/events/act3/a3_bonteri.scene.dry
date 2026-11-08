@@ -21,7 +21,8 @@ on-arrival: peace_talks += 1; cis_relation += 5; pacifist_dissent -= 3
 Bonteri and Caucus envoys begin to meet, quietly, on neutral worlds.
 
 @report
+view-if: not rc_chancellor
 subtitle: The Chancellor's office will be grateful.
-on-arrival: pal_relation += 5; cis_relation -= 8; hawk_dissent -= 3
+on-arrival: {! Q[Q.chancellor_bloc + '_relation'] += 5; Q.cis_relation -= 8; Q.hawk_dissent -= 3; !}
 
 The Chancellor thanks the Caucus for its loyalty. Bonteri never writes again.

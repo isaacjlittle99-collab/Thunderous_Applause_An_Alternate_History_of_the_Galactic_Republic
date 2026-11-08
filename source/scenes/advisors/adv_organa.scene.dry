@@ -47,6 +47,6 @@ The royal house of Alderaan is generous. It is also keeping count.
 subtitle: Warms the Senate bureaucracy towards us.
 choose-if: advisor_action_timer <= 0
 unavailable-subtitle: Our advisors have already acted recently.
-on-arrival: bureau_relation += 8; advisor_action_timer = 5
+on-arrival: bureau_relation += 8; bureau_dossier -= 1; advisor_action_timer = 5
 
 Bail Organa never forgets a clerk's name. A few quiet dinners later, the Caucus's paperwork moves a little faster.

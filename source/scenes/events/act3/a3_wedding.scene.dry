@@ -21,7 +21,7 @@ if (Q.jedi_reform >= 1 || Q.jedi_relation >= 70) { Q.anakin_fall -= 2; Q.wedding
 else { Q.anakin_fall += 1; Q.wedding_accepted = 0; Q.jedi_relation -= 4; }
 !}
 
-[? if wedding_accepted : After long deliberation, the Council does something it has never done before. It allows Anakin to remain a Jedi, and married, provided he is honest with them. For the first time in years, Anakin has nothing to hide. ?][? if not wedding_accepted : The Council is appalled, and Anakin is put on probation. He goes to the Chancellor for comfort, as he always does. ?]
+[? if wedding_accepted : After long deliberation, the Council does something it has never done before. It allows Anakin to remain a Jedi, and married, provided he is honest with them. For the first time in years, Anakin has nothing to hide. ?][? if not wedding_accepted : The Council is appalled, and Anakin is put on probation. He goes to [+ pal_title +] for comfort, as he always does. ?]
 
 @secret
 subtitle: Their secret, their choice.

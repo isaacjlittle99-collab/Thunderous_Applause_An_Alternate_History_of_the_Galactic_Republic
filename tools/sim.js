@@ -127,6 +127,8 @@ function checkPremises(id, Q, game, out) {
     if (sc && (sc.tags || []).indexOf('event') >= 0 && Q.sidious_defeated && !Q.finale) out['event after Sidious fell'] = (out['event after Sidious fell'] || 0) + 1;
   }
   if (Q.clones > 0 && !Q.kamino_army) out['clones without an army'] = (out['clones without an army'] || 0) + 1;
+  if (Q.pal_name === 'Chancellor\'s Bloc' && Q.chancellor_bloc !== 'pal') out['Palpatine\'s bloc named for an office it does not hold'] = (out['Palpatine\'s bloc named for an office it does not hold'] || 0) + 1;
+  if (Q.rc_chairs > (Q.chair_cap || 4) && Q.rc_in_govt) out['more chairs than partners allow'] = (out['more chairs than partners allow'] || 0) + 1;
 }
 
 function playOne(gameIndex) {

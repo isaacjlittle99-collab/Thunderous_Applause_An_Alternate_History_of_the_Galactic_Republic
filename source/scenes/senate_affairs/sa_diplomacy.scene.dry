@@ -76,4 +76,4 @@ else { Q.hawk_dissent += 10; Q.faith -= 2; }
 
 [+ vote_html +]
 
-[? if recognized_cis : The Senate votes to let the Confederacy go. The war is over. The Republic is smaller, poorer and humbled, but it is still a republic. ?][? if not recognized_cis : The Senate refuses. "We will not dismember the Republic," thunders the Chancellor's spokesman. ?]
+[? if recognized_cis : The Senate votes to let the Confederacy go. The war is over. The Republic is smaller, poorer and humbled, but it is still a republic. ?][? if not recognized_cis : The Senate refuses. "We will not dismember the Republic," thunders [? if rc_chancellor : the Security Bloc's spokesman?][? if not rc_chancellor : the Chancellor's spokesman?]. ?]

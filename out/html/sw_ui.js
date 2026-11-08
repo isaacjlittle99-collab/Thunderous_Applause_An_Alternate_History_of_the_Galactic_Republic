@@ -114,6 +114,8 @@
     // the Senate's permanent staff, shown like a bloc ("the true rulers of the Republic")
     h += row('The Senate bureaucracy', SW.label('relation', Q.bureau_relation));
     if (Q.bureau_relation < 25 && (Q.rc_in_govt || Q.rc_chairs > 0)) h += '<div class="sb-note warn">Our bills are being lost in committee.</div>';
+    var dos = Q.bureau_dossier || 0;
+    if (dos >= 0.5 && (Q.rc_in_govt || Q.rc_chairs > 0)) h += '<div class="sb-note ' + (dos >= 3 ? 'bad' : 'warn') + '">Their case against us: ' + (dos >= 5 ? '<b>ready to strike</b>' : (dos >= 3 ? 'half built' : 'gathering files')) + '.</div>';
     h += head('Committee chairs');
     for (var c = 0; c < SW.COMMITTEES.length; c++) {
       var cm = SW.COMMITTEES[c];
@@ -133,7 +135,7 @@
       h += head('Recent misfortunes');
       for (var mf = Q.misfortunes.length - 1; mf >= 0; mf--) h += '<div class="sb-note">' + Q.misfortunes[mf] + '.</div>';
     }
-    if (Q.evidence >= 6 && Q.bureau_captured > 0) h += '<p class="sb-note warn">The bureaucracy\'s payroll leads to the Chancellery.</p>';
+    if (Q.evidence >= 6 && Q.bureau_captured > 0) h += '<p class="sb-note warn">The bureaucracy\'s payroll leads to ' + (Q.pal_office || 'the Chancellery') + '.</p>';
     else if (Q.evidence >= 6) h += '<p class="sb-note">The bureaucracy\'s payroll leads to the Trade Federation, and through it to someone else.</p>';
     h += head('Safeguards');
     var reforms = [

@@ -13,7 +13,7 @@ The Caucus chairs the Judiciary & Intelligence Committee: the Republic's courts,
 
 - @prosecute: Prosecute corruption.
 - @ethics: Establish a Senate Ethics Commission.
-- @intel: Order an intelligence review of the Chancellery's contacts.
+- @intel: Order an intelligence review of Palpatine's contacts.
 - @gunray: Press the case against Nute Gunray.
 - @warrant: Prepare a Senate warrant for the Sith Lord.
 - @bureau_reform: Reform the Senate bureaucracy.
@@ -45,10 +45,10 @@ if (Q.eth_vote >= 50) { Q.anti_corruption = 1; Q.corruption -= 4; Q.faith += 2; 
 
 @intel
 view-if: intel_runs < 3
-subtitle: +1 evidence. The Chancellery may notice.
+subtitle: +1 evidence. Palpatine's people may notice.
 on-arrival: {! Q.evidence += 1; Q.intel_runs += 1; if (Math.random() < 0.15 + Q.grand_plan / 500) Q.leak_pending = 1; !}
 
-The Bureau's analysts map the Chancellery's contacts. A disturbing number of them lead to people who later died, disappeared or became very rich.
+The Bureau's analysts map [+ pal_title +]'s contacts. A disturbing number of them lead to people who later died, disappeared or became very rich.
 
 @gunray
 view-if: gunray_stage >= 1 and gunray_stage <= 4 and not gunray_convicted
@@ -71,6 +71,6 @@ view-if: bureau_reform_timer <= 0 and bureau_relation < 70
 subtitle: −2 political capital. Clears out the guilds' placemen: the bureaucracy warms to us considerably, the guilds less so.
 choose-if: capital >= 2
 unavailable-subtitle: Needs 2 political capital.
-on-arrival: capital -= 2; bureau_relation += 30; guild_relation -= 5; inst_dissent -= 3; bureau_reform_timer = 6
+on-arrival: capital -= 2; bureau_relation += 30; bureau_dossier = 0; guild_relation -= 5; inst_dissent -= 3; bureau_reform_timer = 6
 
 The Committee audits the Senate's payroll. Forty officials on retainer to the Trade Federation are quietly retired; their replacements owe their jobs to the reform. For a while, at least, the Caucus's bills reach the floor on time.

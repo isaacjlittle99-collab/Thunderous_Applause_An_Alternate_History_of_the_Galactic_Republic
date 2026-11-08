@@ -42,7 +42,7 @@ unavailable-subtitle: Needs 2 political capital.
 on-arrival: {!
 Q.capital -= 2;
 Q.evidence += 0.8 + (Q.chair_judiciary === 'rc' ? 0.3 : 0);
-Q.inv_result = 'Our slicer cracks a sealed archive of Chancellery correspondence. Most of it is dull. A little of it is chilling.';
+Q.inv_result = 'Our slicer cracks a sealed archive of ' + (Q.chancellor_bloc === 'pal' ? 'Chancellery correspondence' : 'correspondence from Senator Palpatine\'s office') + '. Most of it is dull. A little of it is chilling.';
 if (Math.random() < 0.2 + Q.grand_plan / 400) { Q.leak_pending = 1; Q.inv_result += ' Then the slicer stops answering her comlink.'; }
 !}
 

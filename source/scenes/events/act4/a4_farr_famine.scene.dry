@@ -30,7 +30,8 @@ on-arrival: peace_talks += 0.5; farr_compromised = 1
 Farr opens a quiet line to Raxus. He tells almost no one, not even his own aide, Lolo Purs. Almost.
 
 @report
+view-if: not rc_chancellor
 subtitle: The Chancellor is grateful; Farr is humiliated.
-on-arrival: pal_relation += 4; rimward_dissent += 10; adv_farr = 0; farr_relation_broken = 1
+on-arrival: {! Q[Q.chancellor_bloc + '_relation'] += 4; Q.rimward_dissent += 10; Q.adv_farr = 0; Q.farr_relation_broken = 1; !}
 
 Farr is summoned to the Chancellor's office. He leaves the Caucus's leadership circle that week.
