@@ -184,6 +184,7 @@
       D[lg + '_leader_id'] = SW.LEADER_START[lg];
       D[lg + '_leader'] = SW.LEADERS[SW.LEADER_START[lg]].name;
     }
+    D.walkout_bloc = ''; D.walkout_until = -99; D.cc_dropped = 0; D.cc_kept = 0; D.el_walkout_blocks = 0; D.walkout_name = ''; D.govt_fell_now = 0; D.fall_reason = ''; D.war_name = 'Clone Wars';
     D.trial_cleanup = 0; D.force_war = SW.off('war') ? 0 : 1; D.amend_threshold = 66.7; D.gavel_date = -99; D.gavels = 0; D.vote_tabled = 0;
     D.scheme_pending = ''; D.scheme_due = 0; D.scheme_countered = 0; D.scheme_warned = 0; D.scheme_foreseen = 0;
     D.scheme_foresee = ''; D.scheme_counter = ''; D.scheme_text = ''; D.scheme_was_foiled = 0; D.schemes_total = 0; D.schemes_foiled = 0;
@@ -194,7 +195,7 @@
     D.split_senators = 0; D.split_share_pct = 0; D.split_share_total = 0;
     D.loyalist_seen = 0; D.loyalist_member = 0; D.hostage_seen = 0; D.security_fast = 0; D.labyrinth_seen = 0; D.labyrinth_result = 0;
     D.arrest_missing = ''; D.cis_negotiated = 0; D.shadow_remains = 0; D.admirals_coup = 0;
-    D.bp_gov = 0; D.bp_chancellor = 0; D.bp_vote = 0; D.bp_fell = 0; D.bp_saved = 0; D.bp_survived = 0;
+    D.bp_gov = 0; D.bp_walkout = 0; D.bp_chancellor = 0; D.bp_vote = 0; D.bp_fell = 0; D.bp_saved = 0; D.bp_survived = 0;
     D.bureau_relation = 45; D.bureau_reforms_seen = 0; D.bureau_captured = 0; D.bureau_warn_cold = 0; D.bureau_warn_hostile = 0;
     D.bureau_purges = 0; D.bureau_purge_kind = ''; D.bureau_vote = 0; D.bureau_fell = 0; D.el_join_bureau = '';
     for (var bo = 0; bo < 7; bo++) D['el_opt' + bo + '_bureau'] = '';
@@ -585,6 +586,9 @@
   };
   // Whether a set of blocs can govern together; returns '' or the reason.
   SW.coalitionBlock = function (Q, blocs) {
+    if (Q.walkout_bloc && Q.date < Q.walkout_until && blocs.indexOf('rc') >= 0 && blocs.indexOf(Q.walkout_bloc) >= 0) {
+      return 'The ' + SW.name(Q, Q.walkout_bloc) + ' walked out of our last government and will not serve with us yet.';
+    }
     for (var i = 0; i < blocs.length; i++) {
       for (var j = 0; j < blocs.length; j++) {
         if (i !== j && SW.leaderRefuses(Q, blocs[i], blocs[j])) {
@@ -860,6 +864,21 @@
     SW.recomputeGovt(Q);
   };
 
+  // A partner that brings down a Caucus government will not serve with the Caucus again for a while.
+  SW.walkout = function (Q, months, bloc) {
+    if (!bloc) {
+      var partners = (Q.govt_blocs || []).filter(function (b) { return b !== 'rc'; });
+      partners.sort(function (a, b) { return (Q[a + '_relation'] || 0) - (Q[b + '_relation'] || 0); });
+      bloc = partners[0] || Q.strain_bloc || '';
+    }
+    if (!bloc || bloc === 'rc') return '';
+    Q.walkout_bloc = bloc;
+    Q.walkout_until = Q.date + (months || 24);
+    Q.walkout_name = SW.name(Q, bloc);
+    Q[bloc + '_relation'] = (Q[bloc + '_relation'] || 0) - 10;
+    return bloc;
+  };
+
   SW.recomputeGovt = function (Q) {
     var blocs = Q.govt_blocs || [];
     // drop blocs that left the senate
@@ -1076,6 +1095,7 @@
     Q.chancellor_bloc = bloc;
     Q.next_election_date = Q.date + 48;
     Q.election_due = 0;
+    Q.govt_fell_now = 0;
     Q.elections_held += 1;
     Q.naboo_sympathy = 0;
     if (prev === 'Valorum' && Q.chancellor !== 'Valorum') Q.valorum_fallen = 1;
@@ -1372,27 +1392,27 @@
   // Caucus Chancellor, a manufactured crisis and a no-confidence vote (Valorum's fate).
   SW.bureauPurge = function (Q) {
     Q.bureau_purges += 1;
-    Q.bp_gov = 0; Q.bp_chancellor = 0; Q.bp_vote = 0; Q.bp_fell = 0; Q.bp_saved = 0; Q.bp_survived = 0;
+    Q.bp_gov = 0; Q.bp_walkout = 0; Q.bp_chancellor = 0; Q.bp_vote = 0; Q.bp_fell = 0; Q.bp_saved = 0; Q.bp_survived = 0;
     Q.vote_html = '';
     if (Q.rc_chancellor) {
+      // Valorum's fate: a manufactured crisis, and the coalition abandons the Chancellor
       Q.bp_chancellor = 1; Q.bureau_purge_kind = 'chancellor';
       Q.fear += 8; Q.faith -= 3;
       if (Q.constructive_vonc) {
         Q.bp_saved = 1;
       } else {
-        var st = SW.stance(Q, {mod: 0.45, guild: 0.8, rim: 0.35, sec: 0.6, ind: 0.45, pal: 0.9, cis: 0.6, rfc: 0.2}, false);
-        var partners = (Q.govt_blocs || []).filter(function (b) { return b !== 'rc'; });
-        for (var i = 0; i < partners.length; i++) if (st[partners[i]] !== undefined) st[partners[i]] = SW.clamp(st[partners[i]] - 0.25, 0, 1);
-        Q.bureau_vote = SW.vote(Q, st, 0, 'vonc');
-        Q.vote_html = SW.voteBanner('No confidence in Chancellor ' + Q.chancellor, Q.bureau_vote);
-        Q.bp_vote = 1;
-        if (Q.bureau_vote >= 50) { Q.bp_fell = 1; Q.election_due = 1; Q.vc_passed = 1; Q.bureau_fell += 1; }
-        else Q.bp_survived = 1;
+        Q.bp_fell = 1; Q.election_due = 1; Q.govt_fell_now = 1; Q.fall_reason = 'bureaucrats';
+        Q.vc_passed = 1; Q.bureau_fell += 1;
+        // the scandal follows our candidate into the next election
+        for (var i = 0; i < SW.BLOCS.length; i++) Q['bonus_' + SW.BLOCS[i] + '_for_rc'] = (Q['bonus_' + SW.BLOCS[i] + '_for_rc'] || 0) - 10;
       }
     } else {
       Q.bp_gov = 1; Q.bureau_purge_kind = 'government';
       var blocs = (Q.govt_blocs || []).filter(function (b) { return b !== 'rc'; });
-      SW.setGovt(Q, blocs, Q.coalition_name);
+      if (blocs.length) {
+        SW.setGovt(Q, blocs, Q.coalition_name);
+        if (SW.walkout(Q, 12, Q.chancellor_bloc)) Q.bp_walkout = 1;
+      }
       SW.assignChairs(Q);
       Q.inst_dissent += 5; Q.rc_momentum -= 0.5;
     }
@@ -1488,6 +1508,7 @@
   };
 
   // ------------------------------------------------------------------ drift each turn
+  SW.PAL_GROWTH = 75; // months for Palpatine's bloc to gain one more 'natural size'
   SW.drift = function (Q) {
     var m = Q.months_per_turn;
     var f = m > 0 ? m / 3 : 0.15;
@@ -1540,7 +1561,9 @@
     var mult = {
       rc: Math.max(0.3, 1 + (Q.faith - 50) / 40 - (Q.dissent - 0.15) * 1.2 + (Q.rc_in_govt ? 0.05 : 0)),
       mod: Math.max(0.2, 1 + (50 - Q.corruption) / 40 - (Q.valorum_scandal && Q.mod_leader === 'Finis Valorum' ? 0.3 : 0)),
-      pal: Math.max(0.3, 1 + (Q.corruption - 55) / 25 + (Q.fear - 25) / 20 + Q.grand_plan / (palInPower ? 40 : 70) + (Q.pal_chancellor ? 0.8 : 0) - Q.evidence_public * 0.4 - (Q.rc_chancellor ? 0.3 : 0)),
+      // Sidious's agents work the Senate every year, in office or not; a clean Senate only slows them
+      pal: Math.max(0.3, 1 + Math.max(-0.2, (Q.corruption - 55) / 25) + Math.max(-0.2, (Q.fear - 25) / 20) + Q.grand_plan / (palInPower ? 40 : 70) +
+        (Q.sidious_defeated || Q.pal_disgraced ? 0 : Q.date / SW.PAL_GROWTH) + (Q.pal_chancellor ? 0.8 : 0) - Q.evidence_public * 0.4 - (Q.rc_chancellor ? 0.3 : 0)),
       guild: Math.max(0.3, 1 - (Q.tf_broken_up ? 0.3 : 0) + Q.guild_embargo * 0.03),
       rim: 1, sec: Math.max(0.2, 1 + (Q.fear - 20) / 25 + (Q.war ? 0.3 : 0)), ind: 1
     };
@@ -1579,7 +1602,8 @@
       Q.treasury -= f * (0.6 + Q.clones * 0.06);
       if (Q.jedi_generals) { Q.jedi_strength -= f * 0.12; Q.jedi_standing -= f * 0.6; }
       if (Q.anakin_found) Q.anakin_fall += f * 0.15;
-      if (Q.clones > 0 && Q.clones < 10) Q.clones += f * 0.35;
+      if (Q.kamino_army && Q.clones > 0 && Q.clones < 10) Q.clones += f * 0.35;
+      if (!Q.kamino_army) Q.clones = 0;
       if (Q.droid_armies > 0) Q.droid_armies += f * 0.15;
     }
     SW.clampAll(Q);
@@ -1829,7 +1853,8 @@
 
   // ------------------------------------------------------------------ endings
   SW.safeguardCount = function (Q) {
-    return Q.emergency_sunset + Q.term_limits_protected + Q.army_oversight + Q.senate_guard_reformed + Q.jedi_independence +
+    // a disbanded clone army counts as the army safeguard
+    return Q.emergency_sunset + Q.term_limits_protected + ((Q.army_oversight || !Q.kamino_army) ? 1 : 0) + Q.senate_guard_reformed + Q.jedi_independence +
       Q.banking_independent + Q.rim_enfranchised + Q.anti_corruption;
   };
   SW.routeEnding = function (Q) {

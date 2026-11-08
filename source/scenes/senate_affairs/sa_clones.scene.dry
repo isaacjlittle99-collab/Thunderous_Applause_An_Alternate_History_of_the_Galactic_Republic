@@ -3,7 +3,7 @@ subtitle: Who controls the Grand Army of the Republic?
 is-card: true
 tags: senate_affairs
 card-image: img/card_clones.svg
-view-if: clone_oversight_timer <= 0 and (clones > 0 or kamino_known) and (rc_in_govt or chair_security = "rc") and cardok_clones
+view-if: clone_oversight_timer <= 0 and kamino_army and (clones > 0 or kamino_known) and (rc_in_govt or chair_security = "rc") and cardok_clones
 on-arrival: turn_actions += 1; clone_oversight_timer = 3; last_card_timer = "clone_oversight"
 new-page: true
 

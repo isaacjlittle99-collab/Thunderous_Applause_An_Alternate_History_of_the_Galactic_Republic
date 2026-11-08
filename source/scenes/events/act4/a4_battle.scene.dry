@@ -6,7 +6,7 @@ new-page: true
 face-image: img/ev_war.svg
 on-arrival: {!
 Q.battle_timer = 2;
-var battles = [[135, 'Christophsis', 'the Outer Rim world of Christophsis'], [140, 'Ryloth', 'the Twi\'lek homeworld of Ryloth'], [144, 'the Malevolence', 'the Separatist super-weapon Malevolence'], [148, 'Kamino', 'the cloning world of Kamino'], [152, 'Umbara', 'the shadow world of Umbara'], [158, 'Mandalore', 'neutral Mandalore'], [162, 'the Outer Rim Sieges', 'a hundred fortified worlds across the Outer Rim']];
+var battles = [[135, 'Christophsis', 'the Outer Rim world of Christophsis'], [140, 'Ryloth', 'the Twi\'lek homeworld of Ryloth'], [144, 'the Malevolence', 'the Separatist super-weapon Malevolence'], (Q.kamino_army ? [148, 'Kamino', 'the cloning world of Kamino'] : [148, 'Felucia', 'the jungle world of Felucia']), [152, 'Umbara', 'the shadow world of Umbara'], [158, 'Mandalore', 'neutral Mandalore'], [162, 'the Outer Rim Sieges', 'a hundred fortified worlds across the Outer Rim']];
 var pick = battles[0];
 for (var i = 0; i < battles.length; i++) if (Q.date >= battles[i][0] && !Q['battle_' + i]) { pick = battles[i]; Q.battle_idx = i; }
 Q['battle_' + (Q.battle_idx || 0)] = 1;

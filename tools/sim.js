@@ -106,6 +106,29 @@ function pick(list, idf) {
   return list[list.length - 1];
 }
 
+// Premises: an event or card must not appear once an earlier outcome has made it impossible.
+// Each rule is [scene id regex, condition that must hold on arrival, label].
+const PAL_OFFICE = Q => Q.pal_chancellor || Q.puppet_chancellor;
+const PREMISES = [
+  [/^(sa_clones|a4_fives)$/, Q => Q.kamino_army, 'clone scene without a clone army'],
+  [/^a2_tf_sanctions$/, Q => !Q.tf_broken_up, 'sanctions after the Trade Federation was broken up'],
+  [/^a2_hutt_report$/, Q => !Q.slavery_abolished, 'slavery report after abolition'],
+  [/^a4_farr_(famine|murder)$/, Q => !Q.farr_dead || Q.farr_murder_seen, 'Farr event after Farr died'],
+  [/^(a3_padme_attack|a3_wedding)$/, Q => Q.padme_alive, 'Padme event after her death'],
+  [/^(a4_delegation|a4_elections_suspended|a4_hostage_crisis|a4_security_act|a4_sector_governance|a4_indefinite_term|a4_banking_seizure|a4_loyalist_committee|a3_term_limit|rec_early_empire|rec_empire_looming|rec_arrests_warning|rec_senatorial_arrests)$/,
+    PAL_OFFICE, 'Chancellery event without Palpatine in office'],
+  [/^(a4_battle|rec_profiteering|rec_protest|a4_banking|a4_bonteri_dead)$/, Q => Q.war, 'war event without a war'],
+];
+const PREMISE_HITS = {};
+function checkPremises(id, Q, game, out) {
+  if (id.indexOf('.') < 0) {
+    for (const [re, ok, label] of PREMISES) if (re.test(id) && !ok(Q)) out[label] = (out[label] || 0) + 1;
+    const sc = game.scenes[id];
+    if (sc && (sc.tags || []).indexOf('event') >= 0 && Q.sidious_defeated && !Q.finale) out['event after Sidious fell'] = (out['event after Sidious fell'] || 0) + 1;
+  }
+  if (Q.clones > 0 && !Q.kamino_army) out['clones without an army'] = (out['clones without an army'] || 0) + 1;
+}
+
 function playOne(gameIndex) {
   return new Promise((resolve) => {
     engineLib.convertJSONToGame(json, function (err, game) {
@@ -119,10 +142,12 @@ function playOne(gameIndex) {
       const trace = {capital: {}, chancellors: [], enfranchisedAt: null, maxDissent: 0, cardPlays: {}};
       let lastChancellor = Q.chancellor;
       const visits = {};
+      let lastScene = null;
       while (!eng.isGameOver() && steps < 6000) {
         steps++;
         const sc = eng.getCurrentScene();
         visits[eng.state.sceneId] = (visits[eng.state.sceneId] || 0) + 1;
+        if (eng.state.sceneId !== lastScene) { lastScene = eng.state.sceneId; checkPremises(lastScene, Q, game, PREMISE_HITS); }
         if (Q.time && trace.capital[Q.time] === undefined) trace.capital[Q.time] = Q.capital;
         if (Q.chancellor !== lastChancellor) { trace.chancellors.push(Q.bby + ':' + Q.chancellor_bloc + (process.env.TRACE ? '[fell' + (Q.govt_fell||0) + ' rc' + Q.rc_r + ' pal' + Q.pal_r + ' mod' + Q.mod_r + ' faith' + Math.round(Q.faith) + ' corr' + Math.round(Q.corruption) + ']' : '')); lastChancellor = Q.chancellor; }
         if (Q.rim_enfranchised && trace.enfranchisedAt === null) trace.enfranchisedAt = Q.date;
@@ -245,6 +270,7 @@ function playOne(gameIndex) {
   origLog('endings', JSON.stringify(endings));
   origLog('stuck', JSON.stringify(stucks));
   origLog('NaN qualities', JSON.stringify(nanKeys));
+  origLog('premise violations', JSON.stringify(PREMISE_HITS));
   origLog('stats', JSON.stringify(Object.assign(stats, {turns: (stats.turns / GAMES).toFixed(1), reforms: (stats.reforms / GAMES).toFixed(2)})));
   const errCount = {};
   for (const e of errors) { const k = e.slice(0, 160); errCount[k] = (errCount[k] || 0) + 1; }

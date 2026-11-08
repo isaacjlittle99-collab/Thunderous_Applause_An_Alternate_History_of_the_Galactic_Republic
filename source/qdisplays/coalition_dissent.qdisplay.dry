@@ -1,6 +1,6 @@
 
-(..0) harmonious
-(1..1) grumbling
-(2..2) strained
-(3..3) <span style="color: #e0745a;">fraying</span>
-(4..) <span style="color: #d24a4a;">collapsing</span>
+(..0.99) harmonious
+(..1.99) grumbling
+(..2.99) strained
+(..3.99) <span style="color: #e0745a;">fraying</span>
+(3.99..) <span style="color: #d24a4a;">collapsing</span>

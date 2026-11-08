@@ -1,7 +1,7 @@
 title: Lifting the Sanctions
 subtitle: The Trade Federation wants its privileges back.
 tags: event
-view-if: date >= 54
+view-if: date >= 54 and not tf_broken_up
 max-visits: 1
 new-page: true
 face-image: img/ev_trade.svg

@@ -99,7 +99,7 @@ go-to: legacy
 
 = A Republic Dissolved
 
-[? if recognized_cis : The Treaty of Separation ends the Clone Wars. ?][? if not recognized_cis : The Republic does not go to war. It simply comes apart. ?] The Separatist worlds go their own way, and the Republic that remains is smaller, poorer and humbled. It has lost half the galaxy and a thousand years of pride.
+[? if recognized_cis : The Treaty of Separation ends the [+ war_name +]. ?][? if not recognized_cis : The Republic does not go to war. It simply comes apart. ?] The Separatist worlds go their own way, and the Republic that remains is smaller, poorer and humbled. It has lost half the galaxy and a thousand years of pride.
 
 But it is still a republic. Its Senate still meets, and its Chancellor still answers to it. Without his war, the Sith Lord's grand design has no foundation. Perhaps, one day, the worlds that left will want to come home to something better.
 
@@ -108,7 +108,7 @@ go-to: legacy
 
 = The Endless War
 
-The Clone Wars do not end. Neither side can win, and neither will yield. Year after year the front moves a few systems one way, then back again. The clones age twice as fast as the men who ordered them, and the factories on Kamino never stop.
+The [+ war_name +] [? if kamino_army : do ?][? if not kamino_army : does ?]not end. Neither side can win, and neither will yield. Year after year the front moves a few systems one way, then back again. [? if kamino_army : The clones age twice as fast as the men who ordered them, and the factories on Kamino never stop. ?][? if not kamino_army : Conscription reaches world after world, and the shipyards of Kuat and Corellia never stop. ?]
 
 [? if sidious_defeated : The Sith Lord is gone, but the war he started has outlived him. The guilds that profit from it on both sides have no reason to let it stop. ?][? if not sidious_defeated : In the Chancellery, the man who started it waits. Every year of war makes the Senate more afraid, and every frightened Senate gives him a little more. He has time. ?]
 

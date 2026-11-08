@@ -50,7 +50,7 @@ go-to: menu
 
 **[+ mod_name +]**: the Core establishment, cautious and comfortable. Valorum's bloc. Weakened by corruption and scandal.
 
-**[+ pal_name +]**: Senator Palpatine of Naboo and his allies, Mas Amedda among them. Small at first. Grows on corruption, fear and the Chancellor's office.
+**[+ pal_name +]**: Senator Palpatine of Naboo and his allies, Mas Amedda among them. Small at first, but it **grows every year**, in office or not: Sidious's agents are always at work. Corruption, fear and the Chancellor's office make it grow faster; a clean Senate slows it, and only public evidence against him can shrink it.
 
 **[+ guild_name +]**: the Trade Federation, Commerce Guild, Banking Clan and Techno Union. Strongest in the corporate holdings. Retaliates with credit strikes when squeezed.
 
@@ -206,7 +206,7 @@ The Senate's permanent staff of clerks, committee secretaries and procedural off
 
 **What turns them.** While the Caucus governs or chairs committees, they cool every turn that its partners worry them, and faster when the Caucus polls well, passes reforms, or squeezes the guilds who pay them. An Ethics Commission and good relations with the guilds help.
 
-**What they do.** When they turn **cold**, our reform bills lose support in committee. When they turn **hostile**, they prepare to move against us. If relations hit bottom, they strike: a "reorganisation" throws the Caucus out of government and strips its chairs, or, against a Caucus Chancellor, a manufactured crisis and a vote of no confidence, as they did to Valorum. Constructive no-confidence protects a Chancellor.
+**What they do.** When they turn **cold**, our reform bills lose support in committee. When they turn **hostile**, they prepare to move against us. If relations hit bottom, they strike. If the Caucus is a junior partner, a "reorganisation" throws it out of government and strips its chairs, and the Chancellor's bloc will not take it back for a year. Against a Caucus Chancellor they manufacture a crisis, the partners abandon the government, and it **falls**, as Valorum's did; the scandal follows our candidate into the next election. Only the constructive no-confidence amendment keeps a Caucus Chancellor in office.
 
 **Winning them back.** Finis Valorum, Bail Organa and Bail Antilles can each work with the bureaucrats as advisors. The Judiciary & Intelligence Committee can reform the bureaucracy itself. A more establishment coalition, or easing off the guilds, reassures them.
 
@@ -327,11 +327,11 @@ go-to: lib_sys_menu
 
 = Seats, elections and relations
 
-Every bloc's support in every region drifts toward a natural level. Faith grows the Caucus, and your own dissent shrinks it. Low corruption grows the Core Moderates. Corruption, fear, the Sith's plan and holding office grow Palpatine's bloc. Fear and the war grow the Security Bloc, and Rim hardship grows the Rimward Coalition. Campaigns push support away from these levels for a while.
+Every bloc's support in every region drifts toward a natural level. Faith grows the Caucus, and your own dissent shrinks it. Low corruption grows the Core Moderates. Palpatine's bloc grows a little every year whatever happens, and corruption, fear, the Sith's plan and holding office make it grow faster. Fear and the war grow the Security Bloc, and Rim hardship grows the Rimward Coalition. Campaigns push support away from these levels for a while.
 
 **Chancellor elections.** Each bloc backs the candidate it likes most: its own leader, an endorsed ally, or the candidate it leans toward, weighed by how strong that candidate's bloc really is. Without a majority, the top two go to a second ballot. Capital spent courting a bloc buys a large lean toward your candidate. In 32 BBY only, Naboo's plight gives Palpatine a sympathy vote.
 
-**Incumbency.** Partners in a stable coalition back the sitting Chancellor instead of running against them. The Chancellor's record moves every bloc: faith, corruption, coalition harmony, and whether the war is going badly. A coalition whose dissent reaches 4 falls, unless constructive no-confidence has passed.
+**Incumbency.** Partners in a stable coalition back the sitting Chancellor instead of running against them. The Chancellor's record moves every bloc: faith, corruption, coalition harmony, and whether the war is going badly. **Coalition mood** worsens every turn the Caucus governs, faster with hardline partners and when we hold firm in a strain. When it reaches *collapsing*, the unhappiest partner walks out and the government falls. With constructive no-confidence, the Chancellor survives and the partner simply leaves, or, if the Caucus is the junior partner, the Caucus is dropped instead. A partner that walks out will not serve with the Caucus for two years.
 
 **Votes.** Ordinary laws need half the Senate; constitutional amendments need **two-thirds**. While Palpatine's people control the Senate, the **Vice Chair** rules a Caucus reform out of order every two years or so, unless Senate resolve is 3 or more or the Senate Guard has been reformed. On votes about powers and oversight, **delegations on the Chancellery's payroll** follow its line; the more corrupt the Senate and the further the Sith's plan has gone, the more of them there are. If the **bureaucrats** turn cold, our bills also lose support in committee.
 
@@ -381,7 +381,7 @@ go-to: menu
 
 Some reforms permanently close doors that the Sith would otherwise walk through.
 
-**Sunset clauses** (Constitutional Reform): emergency powers expire unless renewed each year. **Term limits entrenched** (Constitutional Reform): no Chancellor can have his term extended. **Senate oversight of the army** (Security & Defence, or at Kamino and Geonosis): the clones answer to the Senate too. **Senate Guard reformed** (Security & Defence): the Red Guards stop answering to the Chancellor alone. **Jedi independence** (Constitutional Reform): the Chancellor cannot place the Council under his authority. **Banking independence** (Finance & Commerce): the Chancellery cannot seize the banks. **Rim enfranchisement** (Outer Rim Affairs or Constitutional Reform): a lasting cure for separatism. **Ethics Commission** (Judiciary & Intelligence): a lasting check on corruption. **Inhibitor chips removed** (Clone Army Oversight, once found): Order 66 will fail.
+**Sunset clauses** (Constitutional Reform): emergency powers expire unless renewed each year. **Term limits entrenched** (Constitutional Reform): no Chancellor can have his term extended. **Senate oversight of the army** (Security & Defence, or at Kamino and Geonosis): the clones answer to the Senate too. Disbanding the clone army at Kamino counts as this safeguard: with no army there is nothing to oversee, no chips to remove and no Order 66, but the war must then be fought with the Judicial Forces and the member worlds. **Senate Guard reformed** (Security & Defence): the Red Guards stop answering to the Chancellor alone. **Jedi independence** (Constitutional Reform): the Chancellor cannot place the Council under his authority. **Banking independence** (Finance & Commerce): the Chancellery cannot seize the banks. **Rim enfranchisement** (Outer Rim Affairs or Constitutional Reform): a lasting cure for separatism. **Ethics Commission** (Judiciary & Intelligence): a lasting check on corruption. **Inhibitor chips removed** (Clone Army Oversight, once found): Order 66 will fail.
 
 Most of these need a seat in government and a Senate majority. Constitutional amendments need two-thirds.
 

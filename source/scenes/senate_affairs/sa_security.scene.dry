@@ -29,7 +29,7 @@ on-arrival: treasury -= 2; judicial_forces += 1; judicial_expansion = 1; sec_rel
 New Judicial cruisers are commissioned, crewed by volunteers sworn to the Senate.
 
 @oversight
-view-if: not army_oversight and (clones > 0 or kamino_known)
+view-if: not army_oversight and kamino_army and (clones > 0 or kamino_known)
 subtitle: −1 political capital. A permanent Senate committee over the army's commanders.
 choose-if: capital >= 1 and rc_in_govt
 unavailable-subtitle: Needs 1 political capital and a seat in government.

@@ -9,7 +9,7 @@ new-page: true
 
 = Coalition Affairs
 
-The [+ coalition_name +] is [+ coalition_dissent : coalition_dissent +].[? if not constructive_vonc : If coalition dissent reaches 4, our partners may bring the government down. ?]
+The [+ coalition_name +] is [+ coalition_dissent : coalition_dissent +]. [? if not constructive_vonc : If its mood reaches *collapsing*, our partners will walk out and bring the government down. ?][? if constructive_vonc : If its mood reaches *collapsing*, a partner will walk out. ?]
 
 - @concede: Make concessions to our partners.
 - @chair: Give up a committee chair to a partner.
@@ -37,6 +37,6 @@ We hand the [+ lost_chair +] Committee to our partners. They are mollified.
 
 @collapse
 subtitle: The Senate will choose a new Chancellor.
-on-arrival: election_due = 1; rc_momentum += 0.5; inst_dissent += 4
+on-arrival: election_due = 1; govt_fell_now = 1; fall_reason = "withdrew"; rc_momentum += 0.5; inst_dissent += 4
 
 The Caucus withdraws from the government. A new Chancellor election will follow.
