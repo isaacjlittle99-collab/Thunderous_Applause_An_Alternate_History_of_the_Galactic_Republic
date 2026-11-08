@@ -1,7 +1,7 @@
 title: The Banking Clan Crisis
 subtitle: The Chancellery moves to take control of the galaxy's banks.
 tags: event
-view-if: war and date >= 156 and (pal_chancellor or puppet_chancellor) and not banking_seizure_seen and not finale
+view-if: war and (date >= 156 or (debt >= 30 and date >= 146)) and (pal_chancellor or puppet_chancellor) and not banking_seizure_seen and not finale
 max-visits: 1
 new-page: true
 face-image: img/ev_trade.svg

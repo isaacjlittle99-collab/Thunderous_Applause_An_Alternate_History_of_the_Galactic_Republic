@@ -25,6 +25,13 @@ on-arrival: {! Q.sb_html = (typeof SW !== 'undefined' && SW.statusHTML) ? SW.sta
 
 [+ sb_html +]
 
+@economy
+title: Economy
+is-special: true
+on-arrival: {! Q.sb_html = (typeof SW !== 'undefined' && SW.statusHTML) ? SW.statusHTML(Q, 'economy') : ''; !}
+
+[+ sb_html +]
+
 @polls
 title: Polls
 is-special: true

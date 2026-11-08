@@ -48,7 +48,7 @@
   SW.TIMERS = [
     'advisor_action', 'shuffle', 'contributions', 'campaign', 'media', 'relations', 'platform',
     'enemy', 'confront', 'pact', 'investigate', 'jedi', 'rim_outreach', 'peace', 'disunity',
-    'civil', 'routine', 'leader_moment',
+    'civil', 'routine', 'leader_moment', 'bacta_crisis', 'tibanna_crisis', 'spice_crisis', 'banking_clan', 'debt_crisis',
     'finance', 'judiciary', 'security', 'rimaffairs', 'constitution', 'diplomacy', 'clone_oversight',
     'coalition', 'shuffle_committees', 'emergency_measures',
     'corruption_scandal', 'piracy', 'famine', 'embargo', 'secession', 'profiteering', 'protest',
@@ -185,11 +185,16 @@
       D[lg + '_leader'] = SW.LEADERS[SW.LEADER_START[lg]].name;
       D[lg + '_favour'] = 0; D[lg + '_grudge'] = 0; D[lg + '_asked'] = -99; D['vote_boost_' + lg] = 0;
     }
+    D.treasury_txt = 4; D.debt_txt = 8; D.debt_label = ''; D.trade_label = '';
+    D.budget_due = 0; D.budget_rev = ''; D.budget_pri = ''; D.budgets = 0; D.spice_legal = 0; D.bacta_crises = 0; D.tibanna_crises = 0; D.spice_crises = 0; D.lost_finance = 0; D.debt_refinanced = 0; D.debt_premium_until = -99;
+    D.bd_write = 0; D.bd_gov_rev = ''; D.bd_gov_pri = ''; D.bd_gov_text = ''; D.bd_rev = ''; D.bd_pri = ''; D.bd_income_base = 0; D.bd_upkeep = 0; D.bd_interest = 0; D.bd_tariff_yield = 0; D.bd_bond_yield = 0; D.bd_defence_cost = 3;
+    D.bd_borrowed = 0; D.bd_income = 0; D.bd_cost = 0; D.bd_net = 0; D.bd_summary = ''; D.bd_rev_name = ''; D.bd_pri_name = ''; D.bd_failed = 0; D.bd_vote = 0;
+    D.bacta_crisis_timer = 4; D.tibanna_crisis_timer = 4; D.spice_crisis_timer = 4; D.banking_clan_timer = 0; D.debt_crisis_timer = 0;
     D.war_off_outer = 0; D.war_off_mid = 0; D.war_off_core = 0; D.front_outer = 0; D.front_mid = 0; D.front_core = 0; D.war_aim = ''; D.war_aim_text = ''; D.war_priority = ''; D.wa_overruled = 0; D.wa_vote = 0;
     D.wc_command = 0; D.wc_gov_plan = ''; D.wc_gov_text = ''; D.wc_plan_text = ''; D.wc_lobby_failed = 0; D.wc_fronts = ''; D.battle_front = ''; D.battles_fought = 0;
     D.wd_id = ''; D.wd_has = 0; D.wd_heading = ''; D.wd_title = ''; D.wd_text = ''; D.wd_a_label = ''; D.wd_a_sub = ''; D.wd_b_label = ''; D.wd_b_sub = ''; D.wd_def = ''; D.wd_def_label = ''; D.wd_overruled = 0; D.wd_result = ''; D.dilemmas_decided = 0;
     D.front_ev_ready = 0; D.front_ev = ''; D.front_ev_kind = ''; D.fe_name = ''; D.fe_heading = ''; D.fe_lib = 0; D.fe_front = ''; D.front_ev_outer = -99; D.front_ev_mid = -99; D.front_ev_core = -99;
-    D.free_ryloth = 0; D.citadel = 0; D.fleet_levy = 0; D.mandalore_pressed = 0; D.krell_backed = 0; D.trade = 60; D.bacta = 10; D.tibanna = 10; D.spice = 15; D.debt = 8; D.leaders_html = '';
+    D.free_ryloth = 0; D.citadel = 0; D.fleet_levy = 0; D.mandalore_pressed = 0; D.krell_backed = 0; D.trade = 60; D.bacta = 10; D.tibanna = 10; D.spice = 15; D.debt = 10; D.leaders_html = '';
     D.lm_ready = 0; D.lm_group = ''; D.lm_ultimatum = 0; D.lm_leader = ''; D.lm_group_name = ''; D.lm_reason = ''; D.lm_motive = ''; D.lm_title = ''; D.lm_ask = ''; D.lm_label = ''; D.lm_cost = 0; D.lm_accept_sub = ''; D.lm_refuse_sub = ''; D.lm_offer = '';
     D.leader_moment_timer = 8; D.ultimatums_met = 0; D.ultimatums_refused = 0; D.guild_regulations = 0; D.sanctions_lifted = 0; D.tariff_ban_until = -99;
     D.pal_title = 'Senator Palpatine'; D.pal_office = 'Palpatine\'s office'; D.pal_people = 'Palpatine\'s people'; D.chair_cap = 4; D.chair_partners = 0; D.walkout_bloc = ''; D.walkout_until = -99; D.cc_dropped = 0; D.cc_kept = 0; D.el_walkout_blocks = 0; D.walkout_name = ''; D.govt_fell_now = 0; D.fall_reason = ''; D.war_name = 'Clone Wars';
@@ -339,7 +344,9 @@
     if (Q.loyalist_member && Q.pal_chancellor) Q.evidence += 0.4;
     // half-year turns cover two turns per year; quarters four; income is per year either way
     Q.capital += Math.max(0, Q.base_contrib + bonus);
-    Q.treasury += 2 + (Q.trade_tax ? 1 : 0) - Math.round(Q.guild_embargo / 3);
+    // the treasury is set by the yearly budget (rec_budget); the old trade tax still pays in
+    if (Q.trade_tax) Q.treasury += 1;
+    Q.budget_due = 1;
   };
 
   // ------------------------------------------------------------------ factions
@@ -1831,7 +1838,7 @@
       var drift_target = 0.5 + Math.max(0, Q.date - 135) / 30 + (Q.war_aim === 'victory' ? 0.8 : (Q.war_aim === 'peace' ? -0.5 : 0));
       Q.war_balance += f * ((rep - cis) * 0.08 + (drift_target - Q.war_balance) * 0.18 + (SW.rnd() - 0.5) * 1.2);
       Q.war_weariness += f * 3;
-      Q.treasury -= f * (0.6 + Q.clones * 0.06);
+      Q.treasury -= f * (1.0 + Q.clones * 0.08);
       if (Q.jedi_generals) { Q.jedi_strength -= f * 0.12; Q.jedi_standing -= f * 0.6; }
       if (Q.anakin_found) Q.anakin_fall += f * 0.15;
       if (Q.kamino_army && Q.clones > 0 && Q.clones < 10) Q.clones += f * 0.35;
@@ -1839,6 +1846,7 @@
       if (Q.droid_armies > 0) Q.droid_armies += f * 0.15;
       SW.frontsTick(Q, f);
     }
+    SW.economyTick(Q, f);
     SW.clampAll(Q);
   };
 
@@ -2154,6 +2162,103 @@
     Q.war_aim_text = SW.WAR_AIM_TEXT[chosen];
   };
 
+
+  // ------------------------------------------------------------------ the Republic's purse
+  // A yearly budget raises money one way and spends it on one priority. Shortfalls are lent by the
+  // InterGalactic Banking Clan, whose debts buy it influence. Trade along the hyperlanes feeds the
+  // budget; bacta, Tibanna gas and spice markets can each tip into crisis.
+  SW.REVENUE = {
+    tariffs: {name: 'trade-route tariffs', yield: function (Q) { return 1 + (Q.trade || 60) / 25; },
+      apply: function (Q) { Q.guild_relation -= 6; Q.guild_embargo += 1; Q.rim_hardship -= 1; }},
+    levy: {name: 'a levy on the Core worlds', yield: function () { return 3; },
+      apply: function (Q) { Q.core_rc *= 0.97; Q.colonies_rc *= 0.98; Q.mod_relation -= 4; Q.ind_relation -= 2; }},
+    loan: {name: 'a loan from the Banking Clan', yield: function () { return 3; },
+      apply: function (Q) { Q.debt += 3; }},
+    bonds: {name: 'war bonds', yield: function (Q) { return 1 + Q.faith / 25; },
+      apply: function (Q) { Q.war_weariness -= 1; }},
+    spice: {name: 'the spice duty', yield: function () { return 2; },
+      apply: function (Q) { Q.corruption += 1.5; }},
+    none: {name: 'existing taxes only', yield: function () { return 0; }, apply: function () {}}
+  };
+  SW.PRIORITY = {
+    relief: {name: 'Rim relief and hyperlane patrols', cost: function () { return 3; },
+      apply: function (Q) { Q.rim_hardship -= 4; Q.trade = (Q.trade || 60) + 6; Q.rim_relation += 3; }},
+    defence: {name: 'defence', cost: function (Q) { return 3 + ((Q.tibanna || 0) >= 60 ? 1 : 0); },
+      apply: function (Q) { Q.judicial_forces += 0.7; Q.tibanna += 6; if (Q.war) SW.pushFront(Q, SW.weakestFront(Q), 1); Q.sec_relation += 2; }},
+    subsidies: {name: 'subsidies for the Core and the guilds', cost: function () { return 2; },
+      apply: function (Q) { Q.mod_relation += 4; Q.guild_relation += 4; Q.corruption += 1; }},
+    repay: {name: 'repaying the Banking Clan', cost: function () { return 3; },
+      apply: function (Q) { Q.debt -= 3; }},
+    none: {name: 'nothing in particular', cost: function () { return 0; },
+      apply: function () {}}
+  };
+  SW.interestRate = function (Q) {
+    return (0.05 + (Q.debt || 0) / 600) * (Q.banking_independent ? 0.5 : 1) * (Q.debt_refinanced ? 0.8 : 1) * (Q.debt_premium_until > Q.date ? 1.3 : 1);
+  };
+  SW.interestDue = function (Q) { return SW.round1((Q.debt || 0) * SW.interestRate(Q)); };
+  // the fixed cost of running the Republic and keeping its forces
+  SW.upkeep = function (Q) { return SW.round1(1.5 + (Q.judicial_forces || 0) * 0.15 + (Q.member_forces || 0) * 0.15); };
+  SW.baseIncome = function (Q) { return SW.round1(2 + (Q.trade || 60) / 30 - Q.guild_embargo / 3); };
+  SW.budgetWriter = function (Q) { return (Q.rc_chancellor || Q.chair_finance === 'rc') ? 1 : 0; };
+  SW.GOV_BUDGET = {pal: ['levy', 'subsidies'], mod: ['levy', 'repay'], rim: ['tariffs', 'relief'], sec: ['levy', 'defence'],
+    guild: ['loan', 'subsidies'], ind: ['levy', 'none'], rfc: ['tariffs', 'relief']};
+  // in wartime, Palpatine and the Security Bloc borrow: a Republic in debt is a Republic the Banking Clan can lean on
+  SW.GOV_BUDGET_WAR = {pal: ['loan', 'subsidies'], sec: ['loan', 'defence']};
+  SW.budgetOpen = function (Q) {
+    Q.budget_due = 0;
+    Q.bd_write = SW.budgetWriter(Q);
+    var gov = (Q.war && SW.GOV_BUDGET_WAR[Q.chancellor_bloc]) || SW.GOV_BUDGET[Q.chancellor_bloc] || ['levy', 'none'];
+    if (gov[1] !== 'repay' && (Q.debt || 0) >= 22 && Q.treasury >= 4) gov = [gov[0], 'repay'];
+    // governments only raise new money when the treasury runs low
+    if (Q.treasury >= 6) gov = ['none', gov[1]];
+    if (gov[0] === 'tariffs' && Q.date < Q.tariff_ban_until) gov = ['loan', gov[1]];
+    Q.bd_gov_rev = gov[0]; Q.bd_gov_pri = gov[1];
+    Q.bd_gov_text = 'raise money through ' + SW.REVENUE[gov[0]].name + ', and spend on ' + SW.PRIORITY[gov[1]].name;
+    Q.bd_rev = ''; Q.bd_pri = '';
+    Q.bd_income_base = SW.baseIncome(Q); Q.bd_interest = SW.interestDue(Q); Q.bd_upkeep = SW.upkeep(Q);
+    Q.bd_tariff_yield = SW.round1(SW.REVENUE.tariffs.yield(Q)); Q.bd_bond_yield = SW.round1(SW.REVENUE.bonds.yield(Q));
+    Q.bd_defence_cost = SW.PRIORITY.defence.cost(Q);
+    SW.econStrings(Q);
+  };
+  // apply a budget: one revenue line, one priority, interest; the Banking Clan lends any shortfall
+  SW.budgetApply = function (Q, rev, pri) {
+    var R = SW.REVENUE[rev], P = SW.PRIORITY[pri || 'none'];
+    var income = SW.baseIncome(Q) + (R ? R.yield(Q) : 0);
+    var interest = SW.interestDue(Q), cost = P.cost(Q) + SW.upkeep(Q);
+    if (R) R.apply(Q);
+    P.apply(Q);
+    var net = SW.round1(income - cost - interest);
+    Q.treasury += net;
+    Q.bd_borrowed = 0;
+    if (Q.treasury < 0) { Q.bd_borrowed = SW.round1(-Q.treasury); Q.debt += -Q.treasury; Q.treasury = 0; }
+    Q.budget_rev = rev || ''; Q.budget_pri = pri || 'none';
+    Q.bd_income = SW.round1(income); Q.bd_cost = cost; Q.bd_interest = interest; Q.bd_net = net;
+    Q.bd_summary = 'Income ' + SW.round1(income) + ' · spending ' + SW.round1(cost) + ' (upkeep ' + SW.upkeep(Q) + ') · interest ' + interest + ' · ' + (net >= 0 ? 'surplus ' + net : 'deficit ' + (-net));
+    Q.bd_rev_name = R ? R.name : 'no new revenue';
+    Q.bd_pri_name = P.name;
+    Q.budgets = (Q.budgets || 0) + 1;
+    SW.econStrings(Q);
+  };
+  SW.econStrings = function (Q) {
+    Q.treasury_txt = SW.round1(Q.treasury); Q.debt_txt = SW.round1(Q.debt || 0);
+    Q.debt_label = SW.debtLabel(Q.debt || 0); Q.trade_label = SW.tradeLabel(Q.trade || 60);
+  };
+  SW.debtLabel = function (d) { return d < 8 ? 'light' : (d < 16 ? 'manageable' : (d < 25 ? '<span class="warn">heavy</span>' : (d < 35 ? '<b class="bad">crushing</b>' : '<b class="bad">owned by the Banking Clan</b>'))); };
+  SW.tradeLabel = function (t) { return t >= 70 ? '<span class="good">thriving</span>' : (t >= 55 ? 'steady' : (t >= 40 ? '<span class="warn">disrupted</span>' : '<b class="bad">strangled</b>')); };
+  SW.marketLabel = function (p) { return p < 30 ? 'steady' : (p < 50 ? 'tight' : (p < 65 ? '<span class="warn">scarce</span>' : '<b class="bad">in crisis</b>')); };
+
+  // every turn: trade drifts toward what the galaxy allows; markets move; empty treasuries borrow
+  SW.economyTick = function (Q, f) {
+    var tTarget = 60 + (Q.rim_enfranchised ? 5 : 0) + (Q.federal_compact ? 10 : 0) - Q.guild_embargo * 3 - (Q.rim_hardship > 45 ? 5 : 0) - (Q.war ? 5 : 0);
+    Q.trade = (Q.trade || 60) + (tTarget - (Q.trade || 60)) * 0.1 * f;
+    Q.rim_hardship += f * Math.max(0, 50 - Q.trade) / 60;
+    Q.bacta += f * (Q.war ? 4.5 + Math.max(0, -Q.war_balance) * 0.5 : -2);
+    Q.tibanna += f * ((Q.war ? 4.5 : 0) + (Q.judicial_forces > 5 ? 1 : 0) - 1);
+    Q.spice += f * ((Q.rim_hardship - 38) / 14 + (Q.corruption - 62) / 30 - (Q.spice_legal ? 1.5 : 0));
+    if (Q.debt > 25) { Q.faith -= 0.1 * f; Q.corporate_sep += 0.1 * f; }
+    if (Q.treasury < 0) { Q.debt += -Q.treasury; Q.treasury = 0; }
+  };
+
   SW.clampAll = function (Q) {
     var bounded = {
       grand_plan: [0, 100], emergency_powers: [0, 10], evidence: [0, 12], jedi_suspicion: [0, 10],
@@ -2267,6 +2372,7 @@
     SW.computeSupport(Q);
     SW.recomputeGovt(Q);
     SW.palStrings(Q);
+    SW.econStrings(Q);
     SW.leaderMomentCheck(Q);
     SW.factionAgendas(Q);
     SW.cardAvailability(Q);

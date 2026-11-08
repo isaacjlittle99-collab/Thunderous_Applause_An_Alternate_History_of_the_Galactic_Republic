@@ -77,6 +77,7 @@
       case 'shadow': h = shadowTab(Q); break;
       case 'forces': h = forcesTab(Q); break;
       case 'polls': h = pollsTab(Q); break;
+      case 'economy': h = economyTab(Q); break;
       case 'chancellery': h = chancelleryTab(Q); break;
     }
     return h;
@@ -89,7 +90,7 @@
     h += row(bloc(Q, 'rc'), pos);
     if (Q.rc_in_govt) h += row('Coalition', Q.coalition_name + (Q.minority_govt ? ' (minority)' : ''));
     if (Q.rc_in_govt) h += row('Coalition mood', SW.label('cdissent', Q.coalition_dissent));
-    if (Q.rc_in_govt) h += row('Republic treasury', Q.treasury);
+    if (Q.rc_in_govt) h += row('Republic treasury', SW.round1(Q.treasury) + ' · debt ' + SW.round1(Q.debt || 0));
     var chairs = [];
     for (var i = 0; i < SW.COMMITTEES.length; i++) if (Q['chair_' + SW.COMMITTEES[i]] === 'rc') chairs.push(SW.COMMITTEE_NAMES[SW.COMMITTEES[i]]);
     if (chairs.length) h += row('Our chairs', chairs.join(', '));
@@ -209,6 +210,25 @@
     h += row('Senate Guard', Q.senate_guard_reformed ? '<span class="good">loyal to the Senate</span>' : 'answers to the Chancellor');
     h += row('Balance, if it came to it', SW.label('ratio', Q.force_ratio));
     h += '<p class="sb-note">A rough estimate of loyal forces against everyone who might obey the Chancellor alone.</p>';
+    return h;
+  }
+
+  function economyTab(Q) {
+    var h = head('The Republic\'s purse');
+    h += row('Treasury', SW.round1(Q.treasury));
+    h += row('Debt to the Banking Clan', SW.round1(Q.debt || 0) + ' · ' + SW.debtLabel(Q.debt || 0));
+    h += row('Interest a year', SW.interestDue(Q));
+    h += row('Hyperlane trade', SW.tradeLabel(Q.trade || 60)) + bar(Q.trade || 60, 100, 'good-fill');
+    if (Q.budgets) {
+      h += head('Last budget');
+      h += '<div class="sb-note">Raised through ' + Q.bd_rev_name + '; spent on ' + Q.bd_pri_name + '. ' + Q.bd_summary + '.</div>';
+    }
+    h += '<div class="sb-note">' + (SW.budgetWriter(Q) ? '<span class="good">The Caucus writes the next budget.</span>' : 'The government writes the next budget; the Caucus can support it, oppose it, or (in government) amend it.') + '</div>';
+    h += head('Markets');
+    h += row('Bacta (Thyferra)', SW.marketLabel(Q.bacta || 0)) + bar(Q.bacta || 0, 100, 'bad-fill');
+    h += row('Tibanna gas (Bespin)', SW.marketLabel(Q.tibanna || 0)) + bar(Q.tibanna || 0, 100, 'bad-fill');
+    h += row('Spice (Kessel)', SW.marketLabel(Q.spice || 0) + (Q.spice_legal ? ' · legal' : '')) + bar(Q.spice || 0, 100, 'bad-fill');
+    h += '<p class="sb-note">The war drives up bacta and Tibanna; hardship and corruption drive the spice trade. A market in crisis forces a decision. Heavy debt gives the Banking Clan a say in the Republic\'s affairs.</p>';
     return h;
   }
 

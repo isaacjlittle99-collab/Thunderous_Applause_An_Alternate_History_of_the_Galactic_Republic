@@ -9,13 +9,16 @@ new-page: true
 
 = Finance & Commerce Committee
 
-The Caucus chairs the Finance & Commerce Committee. The Republic treasury stands at [+ treasury +].
+The Caucus chairs the Finance & Commerce Committee. The treasury holds [+ treasury_txt +]; the Republic owes the Banking Clan [+ debt_txt +] ([+ debt_label +]). Trade along the hyperlanes is [+ trade_label +]. As chair, the Caucus also writes the yearly budget.
 
 - @regulate: Regulate the trade guilds.
 - @breakup: Break up the Trade Federation.
 - @audit: Audit the InterGalactic Banking Clan.
 - @independent: Guarantee the Banking Clan's independence from the Chancellery.
 - @books: Balance the Republic's books.
+- @patrols: Fund patrols on the hyperlanes.
+- @stockpile: Stockpile bacta against the next shortage.
+- @refinance: Refinance the Republic's debts.
 - @easy_discard
 
 @regulate
@@ -73,3 +76,30 @@ subtitle: +2 treasury; the Rim feels the cuts.
 on-arrival: treasury += 2; rim_hardship += 1.5; mod_relation += 2; rimward_dissent += 3
 
 Spending is trimmed across the board. The Rim, as always, feels it first.
+
+@patrols
+view-if: trade < 70
+subtitle: −1 treasury. Trade recovers; piracy and hardship ease on the Rim.
+choose-if: treasury >= 1
+unavailable-subtitle: The treasury cannot afford it.
+on-arrival: treasury -= 1; trade += 8; rim_hardship -= 1; sec_relation += 2
+
+Judicial cruisers ride the Hydian Way and the Corellian Run. Freight rates fall, and the pirates move further out.
+
+@stockpile
+view-if: bacta >= 30
+subtitle: −1 treasury. Bacta pressure eases before it becomes a crisis.
+choose-if: treasury >= 1
+unavailable-subtitle: The treasury cannot afford it.
+on-arrival: treasury -= 1; bacta -= 25; guild_relation -= 2
+
+The committee buys bacta from Thyferra ahead of need. The Xucphra and Zaltin cartels grumble about lost margins.
+
+@refinance
+view-if: debt >= 12 and not debt_refinanced
+subtitle: −1 political capital. Interest falls for good, but the guilds expect favours.
+choose-if: capital >= 1
+unavailable-subtitle: Needs 1 political capital.
+on-arrival: capital -= 1; debt_refinanced = 1; debt -= 2; guild_relation += 3; corruption += 0.5
+
+The committee rolls the Republic's loans into long, cheap bonds, sold to Core banks that are not the Banking Clan. The Muuns take note.
