@@ -24,7 +24,7 @@ The Caucus chairs the Finance & Commerce Committee. The treasury holds [+ treasu
 @regulate
 view-if: corruption > 25 and guild_relation > 5
 subtitle: Less corruption; the guilds retaliate.
-on-arrival: guild_relation -= 8; corruption -= 1.5; guild_embargo += 1; corporate_sep += 2; rim_hardship -= 1; guild_regulations += 1
+on-arrival: {! Q.guild_relation -= 8; Q.corruption -= 1.5; Q.guild_embargo += 1; Q.corporate_sep += 2; Q.rim_hardship -= 1; Q.guild_regulations += 1; SW.guildPatience(Q, -8, 'guild regulation'); !}
 
 New disclosure rules for guild lobbying pass in committee. The guilds call it persecution.
 
@@ -38,7 +38,7 @@ Q.capital -= 2;
 var st = SW.stance(Q, {mod: 0.55, guild: 0, rim: 0.85, sec: 0.45, ind: 0.55, pal: 0.35, cis: 0}, true);
 Q.tfb_vote = SW.vote(Q, st, 1, 'regulate');
 Q.vote_html = SW.voteBanner('Trade Federation Dissolution Act', Q.tfb_vote);
-if (Q.tfb_vote >= 50) { Q.tf_broken_up = 1; Q.corporate_guild -= 12; Q.guild_embargo += 3; Q.corporate_sep += 6; Q.corruption -= 3; Q.rim_relation += 6; this.achieve('trust_buster'); }
+if (Q.tfb_vote >= 50) { SW.guildPatience(Q, -25, 'the break-up of the Trade Federation'); Q.tf_broken_up = 1; Q.corporate_guild -= 12; Q.guild_embargo += 3; Q.corporate_sep += 6; Q.corruption -= 3; Q.rim_relation += 6; this.achieve('trust_buster'); }
 else { Q.guild_relation -= 6; }
 !}
 
@@ -49,7 +49,7 @@ else { Q.guild_relation -= 6; }
 @audit
 view-if: not banking_audit
 subtitle: A chance to find where the Republic's dark money flows.
-on-arrival: banking_audit = 1; evidence += 0.8; guild_relation -= 4; banking_reformed += 0.5
+on-arrival: {! Q.banking_audit = 1; Q.evidence += 0.8; Q.guild_relation -= 4; Q.banking_reformed += 0.5; SW.guildPatience(Q, -6, 'the audit of the Banking Clan'); !}
 
 The audit of the Banking Clan's Coruscant branch turns up loans to the Trade Federation guaranteed by Damask Holdings. Its founder, a Muun named Hego Damask, died in 32 BBY. His holding company kept spending money for years afterwards.
 

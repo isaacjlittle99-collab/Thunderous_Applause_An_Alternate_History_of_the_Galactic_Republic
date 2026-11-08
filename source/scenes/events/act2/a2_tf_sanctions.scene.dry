@@ -22,7 +22,7 @@ The Caucus fights the motion. The sanctions are softened, not lifted.
 
 @accept
 subtitle: The guilds are grateful; it looks like a sell-out.
-on-arrival: guild_relation += 6; corruption += 1; guild_embargo -= 1; rimward_dissent += 4; sanctions_lifted = 1
+on-arrival: guild_relation += 6; corruption += 1; guild_embargo -= 1; rimward_dissent += 4; sanctions_lifted = 1; guild_patience += 10
 
 The sanctions end. Within months, the Federation's battleships are back on the trade lanes.
 

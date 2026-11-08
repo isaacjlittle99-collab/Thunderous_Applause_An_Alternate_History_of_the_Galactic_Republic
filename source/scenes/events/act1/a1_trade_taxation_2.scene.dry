@@ -12,7 +12,7 @@ Q.tax_vote = SW.vote(Q, st, Q.tax_stance >= 1 ? 1 : 0, 'regulate');
 Q.tax_passed = Q.tax_vote >= 50 ? 1 : 0;
 Q.vote_html = SW.voteBanner('Taxation of the trade routes', Q.tax_vote);
 if (Q.tax_passed) {
-    Q.trade_tax = 1; Q.guild_embargo += 2; Q.corporate_sep += 6; Q.treasury += 2;
+    Q.trade_tax = 1; SW.guildPatience(Q, -10, 'Valorum\'s trade-route tax'); Q.guild_embargo += 2; Q.corporate_sep += 6; Q.treasury += 2;
     if (Q.tax_stance == 2) { Q.rim_relief += 1; Q.rim_hardship -= 3; }
 } else {
     Q.core_mod -= 2; Q.colonies_mod -= 2; Q.corruption += 2; Q.rim_hardship += 2;

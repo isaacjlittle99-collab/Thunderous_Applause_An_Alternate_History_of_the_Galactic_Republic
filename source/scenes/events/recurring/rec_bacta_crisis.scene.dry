@@ -26,7 +26,7 @@ The Republic pays the cartels' prices so the hospitals do not have to.
 
 @requisition
 subtitle: The shortage ends at once; the guilds are furious.
-on-arrival: guild_relation -= 8; bacta -= 40; corruption -= 0.5; guild_embargo += 1
+on-arrival: {! Q.guild_relation -= 8; Q.bacta -= 40; Q.corruption -= 0.5; Q.guild_embargo += 1; SW.guildPatience(Q, -10, 'the requisition of bacta'); !}
 
 Judicial officers seal the cartels' warehouses on Thyferra. The bacta flows; so do the lawsuits.
 

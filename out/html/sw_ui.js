@@ -219,6 +219,18 @@
     h += row('Debt to the Banking Clan', SW.round1(Q.debt || 0) + ' · ' + SW.debtLabel(Q.debt || 0));
     h += row('Interest a year', SW.interestDue(Q));
     h += row('Hyperlane trade', SW.tradeLabel(Q.trade || 60)) + bar(Q.trade || 60, 100, 'good-fill');
+    if ((Q.inflation || 0) >= 5) h += row('Inflation', SW.inflationLabel(Q.inflation)) + bar(Q.inflation, 100, 'bad-fill');
+    h += head('Who pays, and who pays back');
+    var gp = Q.guild_patience === undefined ? 60 : Q.guild_patience;
+    h += row('The guilds\' patience', SW.guildPatienceLabel(gp)) + bar(gp, 100, gp < 35 ? 'bad-fill' : 'good-fill');
+    if (gp < 60 && Q.guild_patience_why) h += '<div class="sb-note' + (gp < 35 ? ' bad' : ' warn') + '">Angered by ' + Q.guild_patience_why + '. ' + SW.guildNextStep(Q) + (Q.guild_lobby ? ' Guild lobbyists are working against our bills.' : '') + '</div>';
+    var pg = Q.patrons_goodwill === undefined ? 60 : Q.patrons_goodwill;
+    h += row('Our Core patrons', SW.patronsLabel(pg) + (Q.patron_adj ? ' · ' + (Q.patron_adj > 0 ? '+' : '') + Q.patron_adj + ' capital a year' : ''));
+    if ((Q.rim_donors || 0) >= 1) h += row('Rim grassroots donors', '+' + Math.floor(Q.rim_donors) + ' capital a year');
+    var tired = [];
+    for (var src in SW.REVENUE) if (src !== 'none' && (Q['rev_streak_' + src] || 0) >= 2) tired.push(SW.REVENUE[src].name + ' (' + Q['rev_streak_' + src] + ' years running)');
+    if (tired.length) h += '<div class="sb-note warn">Tax fatigue: ' + tired.join(', ') + '. Each further year bites harder.</div>';
+    if (Q.budget_defeats) h += '<div class="sb-note bad">Our last budget was defeated. Another defeat ' + (Q.rc_chancellor && !Q.constructive_vonc ? 'would bring the government down.' : 'would shake the coalition again.') + '</div>';
     if (Q.budgets) {
       h += head('Last budget');
       h += '<div class="sb-note">Raised through ' + Q.bd_rev_name + '; spent on ' + Q.bd_pri_name + '. ' + Q.bd_summary + '.</div>';
@@ -228,7 +240,7 @@
     h += row('Bacta (Thyferra)', SW.marketLabel(Q.bacta || 0)) + bar(Q.bacta || 0, 100, 'bad-fill');
     h += row('Tibanna gas (Bespin)', SW.marketLabel(Q.tibanna || 0)) + bar(Q.tibanna || 0, 100, 'bad-fill');
     h += row('Spice (Kessel)', SW.marketLabel(Q.spice || 0) + (Q.spice_legal ? ' · legal' : '')) + bar(Q.spice || 0, 100, 'bad-fill');
-    h += '<p class="sb-note">The war drives up bacta and Tibanna; hardship and corruption drive the spice trade. A market in crisis forces a decision. Heavy debt gives the Banking Clan a say in the Republic\'s affairs.</p>';
+    h += '<p class="sb-note">The war drives up bacta and Tibanna; hardship and corruption drive the spice trade. A market in crisis forces a decision. Heavy debt gives the Banking Clan a say in the Republic\'s affairs, and in our elections: angry guilds and creditors bankroll our rivals.</p>';
     return h;
   }
 

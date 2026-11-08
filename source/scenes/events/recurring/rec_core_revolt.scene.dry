@@ -1,0 +1,38 @@
+title: The Core Revolts Against the Levy
+subtitle: Our own worlds are tired of paying.
+tags: event
+view-if: patrons_goodwill < 25 and (rc_in_govt or rc_chancellor or chair_finance = "rc") and core_revolt_timer <= 0 and not finale and not game_ending
+priority: 2
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: core_revolt_timer = 8; core_revolts += 1
+
+= The Core Revolts Against the Levy
+
+The Core worlds that built the Caucus (Alderaan, Chandrila, Corellia and their neighbours) have paid the levy year after year. Their great houses, banks and merchant families say they are done. Delegations that have voted with the Caucus for a generation threaten to sit with the opposition, and the patrons who fund our campaigns have stopped returning our calls.
+
+*Our Core patrons fund the Caucus. When they are angry, our yearly political capital falls and our support in the Core erodes.*
+
+- @repeal: Repeal the levy, and promise no new one for two years.
+- @hold: Hold firm. The Core can afford it.
+- @compensate: Soften the blow with subsidies for Core industry.
+
+@repeal
+subtitle: The patrons are mollified; the treasury loses its most reliable tax.
+on-arrival: {! Q.levy_ban_until = Q.date + 24; Q.patrons_goodwill += 20; Q.inst_dissent -= 3; !}
+
+The levy goes. The Core's great houses send polite notes of thanks, and, eventually, donations.
+
+@hold
+subtitle: The Institutionalists are furious, and our Core support erodes.
+on-arrival: {! Q.inst_dissent += 6; Q.core_rc -= 2; Q.colonies_rc -= 1; Q.mod_relation -= 6; !}
+
+The Caucus stands by the levy. Several Core senators stop attending Caucus meetings.
+
+@compensate
+subtitle: −2 treasury. The patrons calm down a little; the Rimward wing grumbles.
+choose-if: treasury >= 2
+unavailable-subtitle: The treasury cannot afford it.
+on-arrival: {! Q.treasury -= 2; Q.patrons_goodwill += 10; Q.rimward_dissent += 3; !}
+
+Contracts for Corellian shipyards and Alderaanian firms soften the blow, at the treasury's expense.

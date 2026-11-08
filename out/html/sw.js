@@ -48,7 +48,7 @@
   SW.TIMERS = [
     'advisor_action', 'shuffle', 'contributions', 'campaign', 'media', 'relations', 'platform',
     'enemy', 'confront', 'pact', 'investigate', 'jedi', 'rim_outreach', 'peace', 'disunity',
-    'civil', 'routine', 'leader_moment', 'bacta_crisis', 'tibanna_crisis', 'spice_crisis', 'banking_clan', 'debt_crisis',
+    'civil', 'routine', 'leader_moment', 'bacta_crisis', 'tibanna_crisis', 'spice_crisis', 'banking_clan', 'debt_crisis', 'core_revolt', 'credits',
     'finance', 'judiciary', 'security', 'rimaffairs', 'constitution', 'diplomacy', 'clone_oversight',
     'coalition', 'shuffle_committees', 'emergency_measures',
     'corruption_scandal', 'piracy', 'famine', 'embargo', 'secession', 'profiteering', 'protest',
@@ -186,6 +186,13 @@
       D[lg + '_favour'] = 0; D[lg + '_grudge'] = 0; D[lg + '_asked'] = -99; D['vote_boost_' + lg] = 0;
     }
     D.treasury_txt = 4; D.debt_txt = 8; D.debt_label = ''; D.trade_label = '';
+    D.guild_patience = 60; D.guild_hurt_turn = -99; D.guild_patience_why = ''; D.guild_lobby = 0; D.guild_lobby_halved = 0; D.guild_step_ready = 0;
+    D.guild_step_1 = 0; D.guild_step_2 = 0; D.guild_step_3 = 0; D.guild_step_4 = 0; D.guild_step_5 = 0; D.gs_step = 0; D.gs_heading = ''; D.gs_world = 'Rodia'; D.gs_leader = ''; D.gs_why = ''; D.gs_open = 0; D.gs_senate_ok = 0; D.gs_vote = 0;
+    D.guild_steps_total = 0; D.guild_blockades = 0; D.guild_defections = 0; D.patrons_goodwill = 60; D.patron_adj = 0; D.rim_donors = 0; D.inflation = 0;
+    D.rev_streak_tariffs = 0; D.rev_streak_levy = 0; D.rev_streak_loan = 0; D.rev_streak_bonds = 0; D.rev_streak_spice = 0; D.rev_streak_print = 0; D.rev_streak_none = 0;
+    D.budget_defeats = 0; D.budget_defeats_total = 0; D.budget_falls = 0; D.bd_reactions = ''; D.bd_stances = ''; D.bd_outlook = 0; D.el_warchest_text = ''; D.el_warchest = 0; D.levy_ban_until = -99;
+    D.core_revolt_timer = 0; D.credits_timer = 0; D.core_revolts = 0; D.credit_refusals = 0;
+    D.gp_label = ''; D.pg_label = ''; D.bd_gov_outlook = 0; D.bd_out_relief = 0; D.bd_out_defence = 0; D.bd_out_subsidies = 0; D.bd_out_repay = 0; D.bd_out_none = 0;
     D.budget_due = 0; D.budget_rev = ''; D.budget_pri = ''; D.budgets = 0; D.spice_legal = 0; D.bacta_crises = 0; D.tibanna_crises = 0; D.spice_crises = 0; D.lost_finance = 0; D.debt_refinanced = 0; D.debt_premium_until = -99;
     D.bd_write = 0; D.bd_gov_rev = ''; D.bd_gov_pri = ''; D.bd_gov_text = ''; D.bd_rev = ''; D.bd_pri = ''; D.bd_income_base = 0; D.bd_upkeep = 0; D.bd_interest = 0; D.bd_tariff_yield = 0; D.bd_bond_yield = 0; D.bd_defence_cost = 3;
     D.bd_borrowed = 0; D.bd_income = 0; D.bd_cost = 0; D.bd_net = 0; D.bd_summary = ''; D.bd_rev_name = ''; D.bd_pri_name = ''; D.bd_failed = 0; D.bd_vote = 0;
@@ -343,7 +350,10 @@
     // a seat on the Loyalist Committee lets documents cross the table
     if (Q.loyalist_member && Q.pal_chancellor) Q.evidence += 0.4;
     // half-year turns cover two turns per year; quarters four; income is per year either way
-    Q.capital += Math.max(0, Q.base_contrib + bonus);
+    // our patrons pay according to how we treat them; Rim grassroots donors follow relief
+    Q.patron_adj = Math.round(((Q.patrons_goodwill === undefined ? 60 : Q.patrons_goodwill) - 50) / 25);
+    Q.capital += Math.max(0, Q.base_contrib + bonus + Q.patron_adj + Math.floor(Q.rim_donors || 0));
+    if (Q.budget_pri !== 'relief') Q.rim_donors = Math.max(0, (Q.rim_donors || 0) - 0.5);
     // the treasury is set by the yearly budget (rec_budget); the old trade tax still pays in
     if (Q.trade_tax) Q.treasury += 1;
     Q.budget_due = 1;
@@ -709,7 +719,7 @@
   SW.LEADER_DEMANDS = {
     guild: {ask: function (Q) { return tariffsOn(Q) ? 'Drop the trade-route tariffs, or the guilds\' credit lines close.' : 'Stop regulating the guilds, or the credit lines close.'; },
       label: 'Give the guilds what they want.', cost: 0, acceptSub: 'The guilds ease off and the embargo lifts a little; the Rimward wing is furious.',
-      accept: function (Q) { Q.trade_tax = 0; Q.tariff_ban_until = Q.date + 24; Q.guild_regulations = 0; Q.guild_embargo = Math.max(0, Q.guild_embargo - 2); Q.corruption += 1; Q.rimward_dissent += 5; },
+      accept: function (Q) { Q.trade_tax = 0; Q.tariff_ban_until = Q.date + 24; Q.guild_regulations = 0; SW.guildPatience(Q, 15); Q.guild_embargo = Math.max(0, Q.guild_embargo - 2); Q.corruption += 1; Q.rimward_dissent += 5; },
       refuseSub: 'The guild embargo tightens.', refuse: function (Q) { Q.guild_embargo += 1; }},
     rim: {ask: function () { return 'Relief for the Rim, now, or our votes go to whoever will feed our worlds.'; },
       label: 'Send relief convoys.', cost: 2, acceptSub: '−2 treasury. Less hardship on the Rim.',
@@ -1682,6 +1692,7 @@
       if (bought >= 0.08) SW._notes.push('bought votes');
     }
     var palLine = stance.pal !== undefined ? stance.pal : (topics.indexOf('powers') >= 0 ? 1 : 0);
+    var lobbied = 0;
     for (var i = 0; i < Q.parties.length; i++) {
       var b = Q.parties[i];
       var s = Q[b + '_r'] || 0;
@@ -1699,6 +1710,7 @@
           p += sign * ((L.views && L.views[tp]) || 0);
         }
         p = 0.5 + (p - 0.5) * (0.7 + 0.6 * SW.firm(Q, b));
+        if (Q.guild_lobby && reformVote && SW.GUILD_LOBBY_LEAN[b]) { p -= SW.GUILD_LOBBY_LEAN[b] * Q.guild_lobby; lobbied = 1; }
         if (Q['vote_boost_' + b] && reformVote) { p += Q['vote_boost_' + b]; Q['vote_boost_' + b] = 0; SW._notes.push(SW.name(Q, b) + ' kept their word'); }
         if (bought > 0 && b !== 'pal' && b !== 'cis') p = p * (1 - bought) + palLine * bought;
       }
@@ -1706,6 +1718,7 @@
       yes += s * p;
       total += s;
     }
+    if (lobbied) SW._notes.push('guild lobbying');
     if (total <= 0) total = 1;
     var share = SW.round1(100 * yes / total);
     // cold bureaucrats lose Caucus bills in committee
@@ -1856,7 +1869,8 @@
       Q.slavery_abolished * 0.2 - Math.min(Q.rim_relief, 3) * 0.1 - Q.anti_corruption * 0.2 - Q.federal_compact +
       SW.leaderSum(Q, 'rimGriev', ['rim', 'rfc']), 0, 1.6);
     Q.guild_grievance = SW.clamp(Q.guild_embargo * 0.12 + (Q.tf_broken_up ? 0.5 : 0) + (Q.trade_tax ? 0.2 : 0) +
-      (40 - Q.guild_relation) / 50 + (Q.corruption - 50) / 80 + SW.leaderSum(Q, 'guildGriev', ['guild']), 0, 1.6);
+      (40 - Q.guild_relation) / 50 + (Q.corruption - 50) / 80 + SW.leaderSum(Q, 'guildGriev', ['guild']) +
+      Math.max(0, 60 - (Q.guild_patience === undefined ? 60 : Q.guild_patience)) / 120, 0, 1.6);
   };
 
   // Secession: regions with strong separatism lose delegations.
@@ -2167,30 +2181,217 @@
   // A yearly budget raises money one way and spends it on one priority. Shortfalls are lent by the
   // InterGalactic Banking Clan, whose debts buy it influence. Trade along the hyperlanes feeds the
   // budget; bacta, Tibanna gas and spice markets can each tip into crisis.
+  // Every source of money has a constituency that pushes back, harder each year it is used in a row.
+  SW.fatigue = function (Q, src) { return 1 + 0.5 * Math.max(0, (Q['rev_streak_' + src] || 0) - 1); };
+  SW.react = function (Q, line) { (Q._reactions = Q._reactions || []).push(line); };
+  var times = function (n) { return n <= 1 ? '' : (n === 2 ? ' (second year running)' : ' (' + n + ' years running)'); };
   SW.REVENUE = {
     tariffs: {name: 'trade-route tariffs', yield: function (Q) { return 1 + (Q.trade || 60) / 25; },
-      apply: function (Q) { Q.guild_relation -= 6; Q.guild_embargo += 1; Q.rim_hardship -= 1; }},
+      apply: function (Q, fat, n) {
+        SW.guildPatience(Q, -12 * fat * (Q._owns ? 1 : 0.35), 'tariffs' + times(n));
+        Q.guild_relation -= 4; Q.rim_hardship += 1 * fat; Q.trade = (Q.trade || 60) - 3 * fat; Q.patrons_goodwill -= 3;
+        SW.react(Q, 'The guilds\' patience wears thinner: tariffs' + times(n) + '.');
+        SW.react(Q, 'Shippers pass the cost on to the Rim: hardship up, trade down.');
+      }},
     levy: {name: 'a levy on the Core worlds', yield: function () { return 3; },
-      apply: function (Q) { Q.core_rc *= 0.97; Q.colonies_rc *= 0.98; Q.mod_relation -= 4; Q.ind_relation -= 2; }},
+      apply: function (Q, fat, n) {
+        Q.patrons_goodwill -= (Q._owns ? 15 : 5) * fat; Q.core_rc *= 1 - (Q._owns ? 0.03 : 0.01) * fat; Q.colonies_rc *= 1 - 0.02 * fat; Q.mod_relation -= 4 * fat; Q.ind_relation -= 2;
+        SW.react(Q, Q._owns ? 'Our own Core patrons pay the levy' + times(n) + ': their goodwill, and their donations to the Caucus, fall.' : 'The Core pays the government\'s levy' + times(n) + '; our patrons mostly blame the Chancellery.');
+        SW.react(Q, 'The Core Moderates resent it; our support in the Core dips.');
+      }},
     loan: {name: 'a loan from the Banking Clan', yield: function () { return 3; },
-      apply: function (Q) { Q.debt += 3; }},
-    bonds: {name: 'war bonds', yield: function (Q) { return 1 + Q.faith / 25; },
-      apply: function (Q) { Q.war_weariness -= 1; }},
+      apply: function (Q) { Q.debt += 3; SW.guildPatience(Q, 3); SW.react(Q, 'The Banking Clan is delighted to lend: the debt grows by 3.'); }},
+    bonds: {name: 'war bonds', yield: function (Q) { var y = 1 + Q.faith / 25; return Q.faith >= 45 ? y : y / 2; },
+      apply: function (Q, fat, n) {
+        if (Q.faith < 45) { Q.faith -= 1; SW.react(Q, 'The bond drive is undersubscribed: faith in the Republic is too low. The failure is public.'); }
+        else { Q.war_weariness -= 1; SW.react(Q, 'Citizens buy war bonds' + times(n) + '.'); }
+        if (n >= 3) { Q.war_weariness += 1; SW.react(Q, 'Bond fatigue: every year the drives feel more like a tax.'); }
+      }},
     spice: {name: 'the spice duty', yield: function () { return 2; },
-      apply: function (Q) { Q.corruption += 0.75; }},
+      apply: function (Q, fat) {
+        Q.corruption += 0.75 * fat;
+        if (Q.corruption > 65) { Q.grand_plan += 0.5; SW.react(Q, 'Pyke Syndicate money flows through the spice duty, and some of it into accounts nobody can trace.'); }
+        else SW.react(Q, 'The spice trade pays its duty, and buys a few officials along the way.');
+      }},
+    print: {name: 'debasing the Republic credit', yield: function () { return 4; },
+      apply: function (Q, fat, n) {
+        Q.inflation = (Q.inflation || 0) + 15 * fat; Q.patrons_goodwill -= 10;
+        SW.react(Q, 'The Treasury prints credits' + times(n) + ': prices rise across the Republic, and Core savers are furious.');
+      }},
     none: {name: 'existing taxes only', yield: function () { return 0; }, apply: function () {}}
   };
   SW.PRIORITY = {
     relief: {name: 'Rim relief and hyperlane patrols', cost: function () { return 3; },
-      apply: function (Q) { Q.rim_hardship -= 4; Q.trade = (Q.trade || 60) + 6; Q.rim_relation += 3; }},
-    defence: {name: 'defence', cost: function (Q) { return 3 + ((Q.tibanna || 0) >= 60 ? 1 : 0); },
-      apply: function (Q) { Q.judicial_forces += 0.7; Q.tibanna += 6; if (Q.war) SW.pushFront(Q, SW.weakestFront(Q), 1); Q.sec_relation += 2; }},
+      apply: function (Q) {
+        Q.rim_hardship -= 4; Q.trade = (Q.trade || 60) + 6; Q.rim_relation += 3; Q.mod_relation -= 2; Q.rim_donors = Math.min(2, (Q.rim_donors || 0) + 1);
+        SW.react(Q, 'The Rim is grateful, and Rim worlds start sending small donations to the Caucus. The Core Moderates grumble about paying for the Rim.');
+      }},
+    defence: {name: 'defence', cost: function (Q) { return 3 + ((Q.tibanna || 0) >= 55 ? 1 : 0); },
+      apply: function (Q) {
+        Q.judicial_forces += 0.7; Q.tibanna += 6; if (Q.war) SW.pushFront(Q, SW.weakestFront(Q), 1); Q.sec_relation += 2; Q.pacifist_dissent += 2;
+        SW.react(Q, 'The Security Bloc approves; the Pacifists do not. Tibanna gas grows dearer.');
+      }},
     subsidies: {name: 'subsidies for the Core and the guilds', cost: function () { return 2; },
-      apply: function (Q) { Q.mod_relation += 4; Q.guild_relation += 4; Q.corruption += 0.5; }},
+      apply: function (Q) {
+        Q.mod_relation += 4; Q.guild_relation += 4; Q.corruption += 0.5; Q.rimward_dissent += 2; Q.patrons_goodwill += 6;
+        SW.guildPatience(Q, 10);
+        SW.react(Q, 'The guilds and the Core\'s patrons are pleased; the Rimward wing calls it a handout to the rich.');
+      }},
     repay: {name: 'repaying the Banking Clan', cost: function () { return 3; },
-      apply: function (Q) { Q.debt -= 3; }},
+      apply: function (Q) { Q.debt -= 3; Q.patrons_goodwill += 3; SW.react(Q, 'The debt shrinks by 3, and the Core\'s bankers approve.'); }},
     none: {name: 'nothing in particular', cost: function () { return 0; },
       apply: function () {}}
+  };
+
+  // ---------------------------------------------------- the guilds' patience: the Trade Federation's playbook
+  SW.GUILD_STEPS = [50, 35, 20, 10, 5];
+  SW.GUILD_LOBBY_LEAN = {guild: 0.1, ind: 0.05, mod: 0.03};
+  SW.GUILD_STEP_NAMES = ['lobbying against our bills', 'a shipping slowdown', 'a credit strike', 'a blockade', 'defection to the Separatists'];
+  SW.guildPatience = function (Q, delta, why) {
+    var p = Q.guild_patience === undefined ? 60 : Q.guild_patience;
+    Q.guild_patience = SW.clamp(p + delta, 0, 100);
+    if (delta < 0) { Q.guild_hurt_turn = Q.time; if (why) Q.guild_patience_why = why; }
+  };
+  SW.guildTick = function (Q, f) {
+    var p = Q.guild_patience;
+    // patience returns when the pressure stops; a pleased guild slowly forgets its gratitude
+    if (Q.guild_hurt_turn !== Q.time) {
+      if (p < 60) Q.guild_patience = Math.min(60, p + 2.5 * f);
+      else if (p > 60) Q.guild_patience = Math.max(60, p - 1 * f);
+    }
+    p = Q.guild_patience;
+    for (var i = 0; i < SW.GUILD_STEPS.length; i++) if (p > SW.GUILD_STEPS[i] + 15) Q['guild_step_' + (i + 1)] = 0;
+    if (p > 65) Q.guild_lobby_halved = 0;
+    Q.guild_lobby = p < 50 ? (Q.guild_lobby_halved ? 0.5 : 1) : 0;
+    if (!Q.guild_step_ready) {
+      for (var j = 0; j < SW.GUILD_STEPS.length; j++) {
+        if (p < SW.GUILD_STEPS[j] && !Q['guild_step_' + (j + 1)]) { Q.guild_step_ready = j + 1; break; }
+      }
+    }
+    // guild-funded HoloNet campaigns against the Caucus
+    if (p < 35) {
+      for (var k = 0; k < SW.REGIONS.length; k++) {
+        var r = SW.REGIONS[k];
+        Q[r + '_rc'] -= 0.15 * f * ((r === 'core' || r === 'corporate') ? 2 : 1);
+      }
+    }
+  };
+  SW.guildStepOpen = function (Q) {
+    var s = Q.guild_step_ready;
+    Q.guild_step_ready = 0; Q['guild_step_' + s] = 1; Q.gs_step = s;
+    Q.guild_steps_total = (Q.guild_steps_total || 0) + 1;
+    Q['guild_step_count_' + s] = (Q['guild_step_count_' + s] || 0) + 1;
+    Q.gs_leader = Q.guild_leader || 'the guilds';
+    Q.gs_why = Q.guild_patience_why || 'the Caucus\'s policies';
+    Q.gs_world = 'Rodia';
+    Q.gs_heading = ['The Lobbyists Arrive', 'The Freighters Stop', 'A Credit Strike', 'The Blockade of Rodia', 'The Guilds Go Over'][s - 1];
+    if (s === 2) { Q.trade -= 10; Q.rim_hardship += 2; }
+    if (s === 3) { Q.guild_embargo += 3; Q.embargo_timer = 0; }
+    if (s === 4) { Q.fear += 3; Q.trade -= 8; Q.rim_hardship += 3; Q.midrim_rc -= 1.5; Q.guild_blockades = (Q.guild_blockades || 0) + 1; }
+    if (s === 5) {
+      Q.guild_defections = (Q.guild_defections || 0) + 1;
+      if (Q.dooku_movement) { Q.corporate_sep += 15; if (Q.war || Q.dooku_movement) Q.droid_armies += 1; Q.gs_open = 1; }
+      else { Q.grand_plan += 2; Q.corporate_sep += 10; Q.gs_open = 0; }
+    }
+  };
+  SW.guildPatienceLabel = function (p) {
+    return p >= 75 ? '<span class="good">generous</span>' : (p >= 50 ? 'patient' : (p >= 35 ? '<span class="warn">wearing thin</span>' : (p >= 20 ? '<b class="bad">exhausted</b>' : (p >= 10 ? '<b class="bad">hostile</b>' : '<b class="bad">at war with us</b>'))));
+  };
+  SW.guildNextStep = function (Q) {
+    for (var i = 0; i < SW.GUILD_STEPS.length; i++) if (Q.guild_patience >= SW.GUILD_STEPS[i]) return 'Next, below ' + SW.GUILD_STEPS[i] + ': ' + SW.GUILD_STEP_NAMES[i] + '.';
+    return 'They have nothing left to try but the Separatists.';
+  };
+
+  // ---------------------------------------------------- the budget must pass the Senate
+  SW.BUDGET_LEANS = {
+    rev: {tariffs: {guild: -0.5, ind: -0.1, rim: 0.1, rfc: 0.1}, levy: {mod: -0.45, ind: -0.1}, loan: {guild: 0.1, pal: 0.1},
+      print: {mod: -0.2, guild: -0.15}, bonds: {sec: 0.1}, spice: {ind: -0.05}},
+    pri: {relief: {rim: 0.3, rfc: 0.3, mod: -0.1}, defence: {sec: 0.3, ind: -0.05}, subsidies: {mod: 0.15, guild: 0.25, rim: -0.15, rfc: -0.15},
+      repay: {mod: 0.1, guild: 0.1}, none: {rim: -0.1, sec: -0.1}}
+  };
+  SW.budgetStance = function (Q, rev, pri) {
+    var st = {}, why = {};
+    for (var i = 0; i < Q.parties.length; i++) {
+      var b = Q.parties[i];
+      if (b === 'rc') continue;
+      var p = 0.5 + ((Q.govt_blocs || []).indexOf(b) >= 0 ? 0.25 : -0.1);
+      var lr = (SW.BUDGET_LEANS.rev[rev] || {})[b] || 0, lp = (SW.BUDGET_LEANS.pri[pri] || {})[b] || 0;
+      p += lr + lp;
+      if (SW.CONTEST_BLOCS.indexOf(b) >= 0 && Q[b + '_leader_id']) p += 0.03 * SW.leaderMood(Q, b).score;
+      if (b === 'cis') p = 0;
+      st[b] = SW.clamp(p, 0, 1);
+      why[b] = lr < -0.15 ? SW.REVENUE[rev].name : (lp < -0.05 ? SW.PRIORITY[pri].name : '');
+    }
+    Q._budget_why = why;
+    return st;
+  };
+  // put a budget to the Senate; a defeated budget becomes a stopgap
+  SW.budgetPropose = function (Q, rev, pri, rcYes, writer) {
+    Q._reactions = [];
+    Q._owns = (writer || rcYes) ? 1 : 0;
+    var st = SW.budgetStance(Q, rev, pri), why = Q._budget_why;
+    Q.bd_vote = SW.vote(Q, st, rcYes);
+    Q.vote_html = SW.voteBanner('The budget: ' + SW.REVENUE[rev || 'none'].name + ', spending on ' + SW.PRIORITY[pri || 'none'].name, Q.bd_vote);
+    // how the blocs lined up, and coalition partners' red lines
+    var lines = [];
+    for (var b in st) {
+      if (b === 'cis') continue;
+      var word = st[b] >= 0.65 ? 'for' : (st[b] <= 0.35 ? 'against' : 'split');
+      lines.push(SW.name(Q, b) + ' ' + word + (word === 'against' && why[b] ? ' (' + why[b] + ')' : ''));
+      if (Q.rc_in_govt && (Q.govt_blocs || []).indexOf(b) >= 0 && st[b] < 0.35 && rcYes) {
+        Q.coalition_dissent += 0.5;
+        SW.react(Q, 'The ' + SW.name(Q, b) + ' object to ' + (why[b] || 'the budget') + ', and the coalition strains.');
+      }
+    }
+    Q.bd_stances = lines.join(' · ');
+    Q.bd_failed = Q.bd_vote >= 50 ? 0 : 1;
+    if (!Q.bd_failed) {
+      SW.budgetApply(Q, rev, pri);
+      if (writer) Q.budget_defeats = 0;
+    } else {
+      SW.budgetApply(Q, 'none', 'none');
+      if (writer) {
+        Q.budget_defeats = (Q.budget_defeats || 0) + 1; Q.budget_defeats_total = (Q.budget_defeats_total || 0) + 1;
+        Q.faith -= 0.5;
+        if (Q.rc_in_govt) Q.coalition_dissent += 1.5;
+        SW.react(Q, 'Our budget is defeated. A stopgap keeps the Republic running, and the Senate wonders whether the Caucus can govern.');
+        if (Q.budget_defeats >= 2 && Q.rc_chancellor && !Q.constructive_vonc && !Q.election_due) {
+          Q.election_due = 1; Q.govt_fell_now = 1; Q.fall_reason = 'budget'; Q.budget_falls = (Q.budget_falls || 0) + 1;
+          SW.walkout(Q, 24);
+          SW.react(Q, 'A second defeated budget in a row: the government of Chancellor ' + Q.chancellor + ' falls.');
+        } else if (Q.budget_defeats >= 2 && Q.rc_chancellor && Q.constructive_vonc) {
+          SW.react(Q, 'A second defeat in a row, but the constructive no-confidence rule keeps our Chancellor in office.');
+        }
+      } else SW.react(Q, 'The government\'s budget is defeated, and a stopgap keeps the Republic running.');
+    }
+    Q.bd_reactions = Q._reactions.length ? '<ul class="reactions"><li>' + Q._reactions.join('</li><li>') + '</li></ul>' : '';
+    Q._reactions = [];
+  };
+  SW.budgetOutlook = function (Q, rev, pri) {
+    var st = SW.budgetStance(Q, rev, pri), yes = 0, tot = 0;
+    for (var b in st) { var s = SW.seats(Q, [b]); yes += s * st[b]; tot += s; }
+    var rcs = SW.seats(Q, ['rc']);
+    return SW.round1(100 * (yes + rcs) / (tot + rcs));
+  };
+
+  // ---------------------------------------------------- money is politics
+  SW.patronsLabel = function (g) { return g >= 70 ? '<span class="good">generous</span>' : (g >= 45 ? 'steady' : (g >= 25 ? '<span class="warn">resentful</span>' : '<b class="bad">in revolt</b>')); };
+  SW.inflationLabel = function (v) { return v < 15 ? 'stable' : (v < 30 ? 'rising' : (v < 50 ? '<span class="warn">high</span>' : '<b class="bad">ruinous</b>')); };
+  // the guilds and the Banking Clan bankroll the candidates they like
+  SW.warChest = function (Q) {
+    var notes = [];
+    var add = function (a, c, v) { Q['bonus_' + a + '_for_' + c] = (Q['bonus_' + a + '_for_' + c] || 0) + v; };
+    if (Q.guild_patience < 35) {
+      add('guild', 'rc', -10); add('ind', 'rc', -6); add('mod', 'rc', -4); add('guild', 'pal', 4); add('ind', 'pal', 4);
+      notes.push('The guilds, whose patience with the Caucus is exhausted, are bankrolling our rivals.');
+    } else if (Q.guild_patience >= 75) {
+      add('guild', 'rc', 6); Q.capital += 1; Q.corruption += 0.5;
+      notes.push('The guilds, pleased with the Caucus, quietly fund our campaign.');
+    }
+    if ((Q.debt || 0) >= 25) { add('guild', 'pal', 4); add('mod', 'pal', 2); notes.push('The Banking Clan, owed a fortune, backs the Chancellery\'s candidate.'); }
+    if ((Q.patrons_goodwill || 60) < 30) { add('mod', 'rc', -4); notes.push('Our own Core patrons, angry at the levy, keep their purses shut.'); }
+    Q.el_warchest_text = notes.join(' ');
+    Q.el_warchest = notes.length ? 1 : 0;
   };
   SW.interestRate = function (Q) {
     return (0.05 + (Q.debt || 0) / 600) * (Q.banking_independent ? 0.5 : 1) * (Q.debt_refinanced ? 0.8 : 1) * (Q.debt_premium_until > Q.date ? 1.3 : 1);
@@ -2212,29 +2413,40 @@
     // governments only raise new money when the treasury runs low
     if (Q.treasury >= 6) gov = ['none', gov[1]];
     if (gov[0] === 'tariffs' && Q.date < Q.tariff_ban_until) gov = ['loan', gov[1]];
+    if (gov[0] === 'levy' && Q.date < Q.levy_ban_until) gov = ['loan', gov[1]];
     Q.bd_gov_rev = gov[0]; Q.bd_gov_pri = gov[1];
     Q.bd_gov_text = 'raise money through ' + SW.REVENUE[gov[0]].name + ', and spend on ' + SW.PRIORITY[gov[1]].name;
     Q.bd_rev = ''; Q.bd_pri = '';
     Q.bd_income_base = SW.baseIncome(Q); Q.bd_interest = SW.interestDue(Q); Q.bd_upkeep = SW.upkeep(Q);
     Q.bd_tariff_yield = SW.round1(SW.REVENUE.tariffs.yield(Q)); Q.bd_bond_yield = SW.round1(SW.REVENUE.bonds.yield(Q));
     Q.bd_defence_cost = SW.PRIORITY.defence.cost(Q);
+    Q.bd_gov_outlook = SW.budgetOutlook(Q, gov[0], gov[1]);
+    Q.gp_label = SW.guildPatienceLabel(Q.guild_patience); Q.pg_label = SW.patronsLabel(Q.patrons_goodwill === undefined ? 60 : Q.patrons_goodwill);
     SW.econStrings(Q);
+  };
+  SW.budgetPriorityOutlook = function (Q) {
+    for (var p in SW.PRIORITY) Q['bd_out_' + p] = SW.budgetOutlook(Q, Q.bd_rev || 'none', p);
   };
   // apply a budget: one revenue line, one priority, interest; the Banking Clan lends any shortfall
   SW.budgetApply = function (Q, rev, pri) {
-    var R = SW.REVENUE[rev], P = SW.PRIORITY[pri || 'none'];
-    var income = SW.baseIncome(Q) + (R ? R.yield(Q) : 0);
+    rev = rev || 'none'; pri = pri || 'none';
+    var R = SW.REVENUE[rev] || SW.REVENUE.none, P = SW.PRIORITY[pri] || SW.PRIORITY.none;
+    // tax fatigue: count consecutive years for the source used, reset the rest
+    for (var src in SW.REVENUE) Q['rev_streak_' + src] = (src === rev && rev !== 'none') ? (Q['rev_streak_' + src] || 0) + 1 : 0;
+    var n = Q['rev_streak_' + rev] || 0, fat = SW.fatigue(Q, rev);
+    var income = SW.baseIncome(Q) + R.yield(Q);
     var interest = SW.interestDue(Q), cost = P.cost(Q) + SW.upkeep(Q);
-    if (R) R.apply(Q);
+    R.apply(Q, fat, n);
+    if (Q.budget_pri === 'relief' && pri !== 'relief') { Q.rim_hardship += 2; Q.rim_relation -= 4; SW.react(Q, 'Relief for the Rim is cut after a year of help: hardship rises and the Rim feels betrayed.'); }
     P.apply(Q);
     var net = SW.round1(income - cost - interest);
     Q.treasury += net;
     Q.bd_borrowed = 0;
-    if (Q.treasury < 0) { Q.bd_borrowed = SW.round1(-Q.treasury); Q.debt += -Q.treasury; Q.treasury = 0; }
-    Q.budget_rev = rev || ''; Q.budget_pri = pri || 'none';
+    if (Q.treasury < 0) { Q.bd_borrowed = SW.round1(-Q.treasury); Q.debt += -Q.treasury; Q.treasury = 0; SW.react(Q, 'The Banking Clan lends the shortfall of ' + Q.bd_borrowed + '.'); }
+    Q.budget_rev = rev; Q.budget_pri = pri;
     Q.bd_income = SW.round1(income); Q.bd_cost = cost; Q.bd_interest = interest; Q.bd_net = net;
     Q.bd_summary = 'Income ' + SW.round1(income) + ' · spending ' + SW.round1(cost) + ' (upkeep ' + SW.upkeep(Q) + ') · interest ' + interest + ' · ' + (net >= 0 ? 'surplus ' + net : 'deficit ' + (-net));
-    Q.bd_rev_name = R ? R.name : 'no new revenue';
+    Q.bd_rev_name = R.name;
     Q.bd_pri_name = P.name;
     Q.budgets = (Q.budgets || 0) + 1;
     SW.econStrings(Q);
@@ -2257,6 +2469,14 @@
     Q.spice += f * ((Q.rim_hardship - 38) / 14 + (Q.corruption - 62) / 30 - (Q.spice_legal ? 1.5 : 0));
     if (Q.debt > 28) { Q.faith -= 0.06 * f; Q.corporate_sep += 0.1 * f; }
     if (Q.treasury < 0) { Q.debt += -Q.treasury; Q.treasury = 0; }
+    SW.guildTick(Q, f);
+    // a debased credit: prices rise, the Rim suffers first, Core savers lose faith
+    Q.inflation = Math.max(0, (Q.inflation || 0) - 2 * f);
+    if (Q.inflation > 25) { var inf = Q.inflation - 25; Q.rim_hardship += f * inf / 40; Q.faith -= f * inf / 300; Q.patrons_goodwill -= f * inf / 50; }
+    // Core patrons drift back toward their usual generosity
+    var pg = Q.patrons_goodwill === undefined ? 60 : Q.patrons_goodwill;
+    Q.patrons_goodwill = pg + (pg < 60 ? Math.min(0.5 * f, 60 - pg) : -Math.min(0.5 * f, pg - 60));
+    if (Q.patrons_goodwill < 30) Q.core_rc -= 0.1 * f;
   };
 
   SW.clampAll = function (Q) {
@@ -2267,7 +2487,7 @@
       war_balance: [-10, 10], war_weariness: [0, 100], anakin_fall: [0, 10], dooku_doubt: [0, 10],
       jedi_strength: [0, 10], jedi_standing: [0, 100], jedi_relation: [0, 100], judicial_forces: [0, 10],
       member_forces: [0, 10], clones: [0, 10], navy_loyalty: [0, 100], droid_armies: [0, 12],
-      coalition_dissent: [0, 10], capital: [-5, 40], treasury: [-10, 30], leverage: [0, 60], bureau_relation: [0, 100], bureau_dossier: [0, 6], trade: [0, 100], bacta: [0, 100], tibanna: [0, 100], spice: [0, 100], debt: [0, 80]
+      coalition_dissent: [0, 10], capital: [-5, 40], treasury: [-10, 30], leverage: [0, 60], bureau_relation: [0, 100], bureau_dossier: [0, 6], guild_patience: [0, 100], patrons_goodwill: [0, 100], inflation: [0, 100], trade: [0, 100], bacta: [0, 100], tibanna: [0, 100], spice: [0, 100], debt: [0, 80]
     };
     for (var k in bounded) Q[k] = SW.clamp(Q[k], bounded[k][0], bounded[k][1]);
     var rels = SW.BLOCS;

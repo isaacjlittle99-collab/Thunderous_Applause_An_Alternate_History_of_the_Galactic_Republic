@@ -1,0 +1,132 @@
+title: The Guilds Push Back
+subtitle: The trade guilds have run out of patience with the Caucus.
+tags: event
+view-if: guild_step_ready and not finale and not game_ending
+priority: 3
+new-page: true
+face-image: img/ev_trade.svg
+on-arrival: {! SW.guildStepOpen(Q); !}
+
+= [+ gs_heading +]
+
+[? if gs_step = 1 : The Commerce Guild, the Trade Federation and the Techno Union have hired every lobbyist on Coruscant. Over dinners and in committee corridors, delegations that depend on guild shipping are reminded where their interests lie. Until the guilds' patience recovers, **guild-linked senators will lean against the Caucus's reform bills**. ?][? if gs_step = 2 : Trade Federation freighters sit idle in orbit over Neimoidia "for maintenance". Shipping slows across the Mid and Outer Rim, prices climb, and Rim worlds feel it first. ?][? if gs_step = 3 : The guilds have declared a **credit strike**. The Banking Clan calls in loans to worlds that back the Caucus, the Trade Federation refuses cargo, and the Commerce Guild freezes contracts. ?][? if gs_step = 4 : It is Naboo all over again. Trade Federation battleships have surrounded **Rodia**, Onaconda Farr's homeworld, "to protect Federation property from piracy". No shipments go in or out. The Federation's lawyers say it is perfectly legal. ?][? if gs_step = 5 and gs_open : The guilds are finished with the Republic. The Techno Union and the Corporate Sector Authority sign with the Confederacy of Independent Systems, and their foundries begin building droids for Count Dooku. ?][? if gs_step = 5 and not gs_open : Caucus investigators find that the Banking Clan and the Techno Union have opened secret accounts for a former Jedi called Dooku. Someone is building an army against the day the Republic breaks. ?]
+
+*What angered them most: [+ gs_why +]. The guilds' patience returns when the pressure stops; tariffs, regulation and seizures wear it down, and concessions, subsidies and lifted sanctions rebuild it. Each time it falls further, they go a step further.*
+
+- @counter_lobby: Hire our own lobbyists.
+- @expose_lobby: Expose the lobbying campaign.
+- @accept_lobby: Let them lobby.
+- @concede_slow: Promise no new tariffs for a year.
+- @subsidise_ship: Subsidise independent shippers.
+- @ride_out: Ride it out.
+- @negotiate_strike: Negotiate with the guilds.
+- @stand_firm: Stand firm.
+- @seize: Seize guild assets on Republic worlds.
+- @give_in: Give the Federation what it wants.
+- @break_blockade: Break the blockade with the Judicial Forces.
+- @senate_blockade: Ask the Senate to condemn the blockade.
+- @step5_ok: Continue.
+
+@counter_lobby
+view-if: gs_step = 1
+subtitle: −1 political capital. The lobbying's effect on our bills is halved.
+choose-if: capital >= 1
+unavailable-subtitle: Needs 1 political capital.
+on-arrival: capital -= 1; guild_lobby_halved = 1
+
+Caucus friends in the Core's law firms take the guilds on, dinner for dinner.
+
+@expose_lobby
+view-if: gs_step = 1 and (chair_judiciary = "rc" or evidence >= 3)
+subtitle: Faith rises and corruption falls; the guilds will not forgive it.
+on-arrival: {! Q.faith += 1; Q.corruption -= 1; SW.guildPatience(Q, -5, 'our exposure of their lobbying'); !}
+
+The Caucus publishes the guilds' lobbying ledgers. Several senators suddenly discover urgent business on their home worlds.
+
+@accept_lobby
+view-if: gs_step = 1
+
+The Caucus carries on. Its bills will have to win without the guilds' friends.
+
+@concede_slow
+view-if: gs_step = 2
+subtitle: The freighters move again; the Rimward wing is disappointed.
+on-arrival: {! Q.tariff_ban_until = Math.max(Q.tariff_ban_until, Q.date + 12); SW.guildPatience(Q, 15); Q.rimward_dissent += 3; Q.trade += 6; !}
+
+The Caucus lets it be known that no new tariffs are coming this year. Neimoidian freighters discover their maintenance is complete.
+
+@subsidise_ship
+view-if: gs_step = 2
+subtitle: −2 treasury. Independent haulers fill the gap.
+choose-if: treasury >= 2
+unavailable-subtitle: The treasury cannot afford it.
+on-arrival: treasury -= 2; trade += 6; rim_relation += 2
+
+Corellian and Rodian independent haulers take on the Federation's routes, with Republic money.
+
+@ride_out
+view-if: gs_step = 2
+subtitle: The slowdown runs its course; the Rim pays.
+on-arrival: rim_hardship += 1
+
+The Caucus waits. Prices on the Rim keep climbing.
+
+@negotiate_strike
+view-if: gs_step = 3
+subtitle: The strike ends: the trade tax goes and no tariffs for two years. The Rimward wing is furious.
+on-arrival: {! Q.trade_tax = 0; Q.tariff_ban_until = Math.max(Q.tariff_ban_until, Q.date + 24); SW.guildPatience(Q, 20); Q.rimward_dissent += 6; Q.guild_embargo = Math.max(0, Q.guild_embargo - 2); !}
+
+The guilds get their concessions in writing. Credit flows again.
+
+@stand_firm
+view-if: gs_step = 3
+subtitle: The public admires it; the strike deepens.
+on-arrival: faith += 1; guild_embargo += 1
+
+The Caucus will not be blackmailed. The HoloNet loves it. The Rim's markets do not.
+
+@seize
+view-if: gs_step = 3 and chair_finance = "rc"
+subtitle: +3 treasury. The guilds will remember, and the corporate worlds look toward the exits.
+on-arrival: {! Q.treasury += 3; SW.guildPatience(Q, -15, 'the seizure of their assets'); Q.corporate_sep += 5; Q.guild_relation -= 10; !}
+
+The Finance & Commerce Committee freezes guild accounts on Republic worlds. It is lawful. It is also a declaration of war.
+
+@give_in
+view-if: gs_step = 4
+subtitle: The blockade lifts: no tariffs for three years and the trade tax goes. The Caucus looks weak.
+on-arrival: {! SW.guildPatience(Q, 30); Q.tariff_ban_until = Math.max(Q.tariff_ban_until, Q.date + 36); Q.trade_tax = 0; Q.faith -= 2; for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_rc'] -= 0.5; Q.trade += 6; !}
+
+The Caucus agrees to the Federation's terms. The battleships leave Rodia. Everyone saw who blinked.
+
+@break_blockade
+view-if: gs_step = 4
+subtitle: The blockade is broken; the guilds are humiliated and the corporate worlds talk of leaving.
+choose-if: judicial_forces >= 4 or pact_formed
+unavailable-subtitle: Needs Judicial Forces of 4 or more, or the Defence Pact.
+on-arrival: {! Q.guild_relation -= 20; SW.guildPatience(Q, 10); Q.corporate_sep += 8; Q.fear += 2; Q.sec_relation += 4; Q.judicial_forces -= 0.3; Q.faith += 1; Q.trade += 6; !}
+
+Judicial cruisers and Rodian patrol ships run the blockade. The Federation's captains, ordered not to fire, withdraw. The guilds' lawyers file suit; the guilds' bankers start talking to the Separatists.
+
+@senate_blockade
+view-if: gs_step = 4
+subtitle: If the Senate condemns it, the blockade lifts and sanctions follow. If not, the Caucus is humiliated.
+on-arrival: {!
+var st = SW.stance(Q, {mod: 0.55, rim: 0.75, rfc: 0.75, ind: 0.5, sec: 0.5, pal: 0.35, guild: 0.05, cis: 0}, true);
+Q.gs_vote = SW.vote(Q, st, 1, 'regulate');
+Q.vote_html = SW.voteBanner('Condemn the blockade of Rodia', Q.gs_vote);
+if (Q.gs_vote >= 50) { Q.gs_senate_ok = 1; Q.guild_relation -= 10; SW.guildPatience(Q, 15); Q.faith += 1; Q.trade += 6; }
+else { Q.gs_senate_ok = 0; SW.guildPatience(Q, 30); Q.tariff_ban_until = Math.max(Q.tariff_ban_until, Q.date + 36); Q.trade_tax = 0; Q.faith -= 3; for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_rc'] -= 0.8; }
+!}
+go-to: senate_result
+
+@senate_result
+
+[+ vote_html +]
+
+[? if gs_senate_ok : The Senate condemns the blockade and imposes sanctions. The Federation withdraws, sullen and humiliated. ?][? if not gs_senate_ok : The Senate will not act. The Caucus has to accept the Federation's terms anyway, in public. ?]
+
+@step5_ok
+view-if: gs_step = 5
+
+The Caucus can only watch. Whatever the guilds were, they are now someone else's.

@@ -79,8 +79,12 @@ function smartWeight(id, Q) {
     [/^a4_war_aims\.rim$/, Q.rim_enfranchised ? 6 : 2], [/^a4_war_aims\.peace$/, 4], [/^a4_war_aims\.victory$/, 2],
     [/^war_dilemma\.opt_[ab]$/, (SMART_DILEMMA[Q.wd_id] === id.slice(-1)) ? 6 : 1],
     // the budget
-    [/^rec_budget\.rev_none$/, Q.treasury >= 4 ? 6 : 0.5], [/^rec_budget\.rev_levy$/, Q.treasury < 4 ? 5 : 1], [/^rec_budget\.rev_loan$/, Q.treasury < 1 ? 3 : 0.3],
-    [/^rec_budget\.rev_tariffs$/, 1.5], [/^rec_budget\.rev_bonds$/, Q.faith > 55 ? 4 : 1], [/^rec_budget\.rev_spice$/, 0.5],
+    // vary the revenue to avoid tax fatigue; never let the guilds' patience or our patrons collapse; avoid debasing the credit
+    [/^rec_budget\.rev_none$/, Q.treasury >= 4 ? 6 : 0.5],
+    [/^rec_budget\.rev_levy$/, (Q.treasury < 4 && !Q.rev_streak_levy && Q.patrons_goodwill >= 40) ? 5 : 0.5],
+    [/^rec_budget\.rev_loan$/, (Q.treasury < 2 && Q.debt < 18) ? 4 : 0.3],
+    [/^rec_budget\.rev_print$/, Q.treasury < 0.5 && Q.debt >= 25 ? 1 : 0.05],
+    [/^rec_budget\.rev_tariffs$/, (!Q.rev_streak_tariffs && Q.guild_patience >= 55 && Q.treasury < 4) ? 4 : 0.5], [/^rec_budget\.rev_bonds$/, Q.faith > 55 ? 4 : 1], [/^rec_budget\.rev_spice$/, 0.5],
     [/^rec_budget\.pri_repay$/, Q.debt > 18 ? 7 : 0.5], [/^rec_budget\.pri_relief$/, Q.rim_hardship > 38 ? 6 : 2], [/^rec_budget\.pri_defence$/, Q.war ? 4 : 1],
     [/^rec_budget\.pri_subsidies$/, 0.5], [/^rec_budget\.pri_none$/, Q.treasury < 2 ? 4 : 0.5],
     [/^rec_budget\.support$/, 4], [/^rec_budget\.oppose$/, 0.5], [/^rec_budget\.amend$/, Q.capital >= 2 ? 3 : 0.2],
@@ -90,7 +94,11 @@ function smartWeight(id, Q) {
     [/^rec_debt_crisis\.austerity$/, 3], [/^rec_debt_crisis\.bailout$/, 1],
     [/^rec_bacta_crisis\.subsidise$/, 5], [/^rec_bacta_crisis\.requisition$/, 3], [/^rec_tibanna_crisis\.contracts$/, 3], [/^rec_tibanna_crisis\.nationalise$/, 3],
     [/^rec_spice_crisis\.crackdown$/, 5], [/^rec_spice_crisis\.legalise$/, 1], [/^rec_spice_crisis\.look_away$/, 0.2],
-    [/^sa_finance\.(patrols|stockpile|refinance)$/, 4]
+    [/^sa_finance\.(patrols|stockpile|refinance)$/, 4],
+    // when the guilds push back, concede before it gets to a credit strike; break a blockade if we can
+    [/^rec_guild_pressure\.counter_lobby$/, Q.capital >= 2 ? 4 : 1], [/^rec_guild_pressure\.concede_slow$/, 5], [/^rec_guild_pressure\.negotiate_strike$/, 5],
+    [/^rec_guild_pressure\.break_blockade$/, 5], [/^rec_guild_pressure\.senate_blockade$/, 2], [/^rec_guild_pressure\.give_in$/, 2],
+    [/^rec_core_revolt\.repeal$/, 5], [/^rec_core_revolt\.compensate$/, Q.treasury >= 3 ? 3 : 0.5], [/^rec_credits_refused\.back$/, 5]
   ];
   for (const [re, w] of W) if (re.test(id)) return w;
   return null;
@@ -135,6 +143,7 @@ const PREMISES = [
   [/^a2_hutt_report$/, Q => !Q.slavery_abolished, 'slavery report after abolition'],
   [/^a4_farr_(famine|murder)$/, Q => !Q.farr_dead || Q.farr_murder_seen, 'Farr event after Farr died'],
   [/^(a3_padme_attack|a3_wedding)$/, Q => Q.padme_alive, 'Padme event after her death'],
+  [/^rec_guild_pressure$/, Q => Q.guild_patience < SW.GUILD_STEPS[Math.max(0, (Q.gs_step || 1) - 1)] + 15, 'guild pressure step above its threshold'],
   [/^(a4_delegation|a4_elections_suspended|a4_hostage_crisis|a4_security_act|a4_sector_governance|a4_indefinite_term|a4_banking_seizure|a4_loyalist_committee|a3_term_limit|rec_early_empire|rec_empire_looming|rec_arrests_warning|rec_senatorial_arrests)$/,
     PAL_OFFICE, 'Chancellery event without Palpatine in office'],
   [/^(rec_war_council|rec_front_event|a4_war_aims|rec_profiteering|rec_protest|a4_banking|a4_bonteri_dead)$/, Q => Q.war, 'war event without a war'],
@@ -269,6 +278,8 @@ function playOne(gameIndex) {
       audit.econ.debtEnd.push(Q.debt || 0); if ((Q.debt || 0) >= 20) audit.econ.debt20++; if ((Q.debt || 0) >= 30) audit.econ.debt30++;
       audit.econ.bacta += Q.bacta_crises || 0; audit.econ.tibanna += Q.tibanna_crises || 0; audit.econ.spice += Q.spice_crises || 0;
       audit.econ.met += Q.ultimatums_met || 0; audit.econ.refused += Q.ultimatums_refused || 0; audit.econ.dilemmas += Q.dilemmas_decided || 0;
+      audit.econ.gsteps = audit.econ.gsteps || {}; for (let k = 1; k <= 5; k++) if (Q['guild_step_count_' + k]) audit.econ.gsteps[k] = (audit.econ.gsteps[k] || 0) + Q['guild_step_count_' + k];
+      audit.econ.bdef = (audit.econ.bdef || 0) + (Q.budget_defeats_total || 0); audit.econ.bfall = (audit.econ.bfall || 0) + (Q.budget_falls || 0); audit.econ.revolts = (audit.econ.revolts || 0) + (Q.core_revolts || 0); audit.econ.credits = (audit.econ.credits || 0) + (Q.credit_refusals || 0);
       if (Q.war_aim) audit.econ.aims[Q.war_aim] = (audit.econ.aims[Q.war_aim] || 0) + 1;
       for (const fr of ['outer', 'mid', 'core']) if ((Q['front_ev_' + fr] || -99) > 0) audit.econ.collapses++;
       audit.gavels += Q.gavels || 0;
@@ -316,6 +327,7 @@ function playOne(gameIndex) {
   if (audit.rb) origLog('audit: restored games failing each best-ending test ' + JSON.stringify(audit.rb));
   if (audit.econ) { const e = audit.econ; const avg = a => a.length ? Math.round(10 * a.reduce((x, y) => x + y, 0) / a.length) / 10 : 0;
     origLog('audit: economy debt at end avg ' + avg(e.debtEnd) + ', games ending with debt>=20: ' + e.debt20 + ', >=30: ' + e.debt30 + '; market crises bacta ' + e.bacta + ' tibanna ' + e.tibanna + ' spice ' + e.spice);
+    origLog('audit: guild pressure steps reached ' + JSON.stringify(e.gsteps || {}) + ' (1 lobbying, 2 slowdown, 3 credit strike, 4 blockade, 5 defection); our budgets defeated ' + (e.bdef || 0) + ', governments brought down by budgets ' + (e.bfall || 0) + '; Core revolts ' + (e.revolts || 0) + '; credits refused ' + (e.credits || 0));
     origLog('audit: leaders ultimatums met ' + e.met + ' refused ' + e.refused + '; war aims ' + JSON.stringify(e.aims) + ', war dilemmas decided ' + e.dilemmas + ', front breakpoints ' + e.collapses); }
   origLog('audit: bureaucrat purges ' + audit.purges + ' (in ' + audit.purgeGames + ' games), Vice Chair gavels ' + audit.gavels);
   origLog('audit: leaders at the end: ' + Object.entries(audit.endLeaders).sort().map(([k, v]) => k + '=' + v).join(' '));
