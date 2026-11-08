@@ -48,6 +48,8 @@ const REFORM_PREFS = [
   ['discipline', 2], ['concede', 2], ['convention', 1], ['advisors', 2], ['oppose', 2], ['amend', 2], ['networks', 2], ['holonet', 2],
   ['offer', 3], ['let_decide', 3]
 ];
+// the careful player's choice in each war dilemma
+const SMART_DILEMMA = {umbara: 'b', ryloth: 'a', blockade: 'b', mandalore: 'a', levy: 'a', clone_surge: 'b', refugees: 'a', zygerria: 'a', jedi_stretch: 'a', citadel: 'b', bacta: 'a', hydian: 'a'};
 // "smart": a careful player who reads the state of the game (used to tune difficulty)
 function smartWeight(id, Q) {
   const has = (k) => id === k || id.endsWith('.' + k);
@@ -57,7 +59,7 @@ function smartWeight(id, Q) {
     [/tame$/, 8], [/\.rally$/, Q.capital >= 2 ? 7 : 2], [/\.sunset$/, 9], [/\.purge$/, 7], [/reassure$/, 5],
     // keep the bureaucrats on side
     [/bureau_reform$/, Q.bureau_relation < 45 ? 9 : 1], [/valorum_bureaucracy$|organa_bureau$|antilles_bureau$/, Q.bureau_relation < 35 ? 9 : 0.5],
-    [/soothe$/, Q.capital >= 2 ? 5 : 1], [/truce$/, Q.bureau_relation < 8 ? 6 : 1], [/valorum_way$/, Q.capital >= 3 ? 4 : 0.5],
+    [/soothe$/, Q.capital >= 2 ? 5 : 1], [/truce$/, (Q.bureau_relation < 8 || Q.bureau_dossier >= 3) ? 6 : 1], [/valorum_way$/, Q.capital >= 3 ? 4 : 0.5],
     // the arrest plan
     [/\.expose$/, 10], [/\.warrant$/, 9], [/emergency_warrant$/, 6], [/fin_arrest_plan\.jedi$/, 0.3],
     // build the case
@@ -70,7 +72,25 @@ function smartWeight(id, Q) {
     [/let_decide$/, 4], [/\.offer$/, 3], [/^shuffle_leadership$/, (Q.n_advisors || 0) < 3 ? 6 : 0.3],
     // the lore events
     [/labyrinth\.judicials$/, Q.judicial_forces >= 4 ? 6 : 1], [/labyrinth\.council$/, 4], [/hostage_crisis\.measured$/, Q.capital >= 2 ? 5 : 1],
-    [/loyalist_committee\.join$/, 4], [/\.scatter$/, 6]
+    [/loyalist_committee\.join$/, 4], [/\.scatter$/, 6],
+    // the War Council: push the weakest front; sensible war aims and dilemmas
+    [/^rec_war_council\.(outer|mid|core)$/, id.endsWith('.' + SW.weakestFront(Q)) ? (Q.wc_command || Q.capital >= 2 ? 7 : 1) : 0.5],
+    [/^rec_war_council\.hold$/, 0.5], [/^rec_war_council\.accept$/, 2],
+    [/^a4_war_aims\.rim$/, Q.rim_enfranchised ? 6 : 2], [/^a4_war_aims\.peace$/, 4], [/^a4_war_aims\.victory$/, 2],
+    [/^war_dilemma\.opt_[ab]$/, (SMART_DILEMMA[Q.wd_id] === id.slice(-1)) ? 6 : 1],
+    // the budget
+    [/^rec_budget\.rev_none$/, Q.treasury >= 4 ? 6 : 0.5], [/^rec_budget\.rev_levy$/, Q.treasury < 4 ? 5 : 1], [/^rec_budget\.rev_loan$/, Q.treasury < 1 ? 3 : 0.3],
+    [/^rec_budget\.rev_tariffs$/, 1.5], [/^rec_budget\.rev_bonds$/, Q.faith > 55 ? 4 : 1], [/^rec_budget\.rev_spice$/, 0.5],
+    [/^rec_budget\.pri_repay$/, Q.debt > 18 ? 7 : 0.5], [/^rec_budget\.pri_relief$/, Q.rim_hardship > 38 ? 6 : 2], [/^rec_budget\.pri_defence$/, Q.war ? 4 : 1],
+    [/^rec_budget\.pri_subsidies$/, 0.5], [/^rec_budget\.pri_none$/, Q.treasury < 2 ? 4 : 0.5],
+    [/^rec_budget\.support$/, 4], [/^rec_budget\.oppose$/, 0.5], [/^rec_budget\.amend$/, Q.capital >= 2 ? 3 : 0.2],
+    // leaders, debt and markets
+    [/^rec_leader_moment\.accept$/, Q.treasury >= (Q.lm_cost || 0) + 1 ? 5 : 1], [/^rec_leader_moment\.refuse$/, 2], [/^rec_leader_moment\.vote$/, 5],
+    [/^rec_banking_clan\.refuse$/, Q.debt < 26 ? 4 : 1], [/^rec_banking_clan\.deregulate$/, 1], [/^rec_banking_clan\.seat$/, Q.chair_finance === 'rc' ? 0.3 : 3],
+    [/^rec_debt_crisis\.austerity$/, 3], [/^rec_debt_crisis\.bailout$/, 1],
+    [/^rec_bacta_crisis\.subsidise$/, 5], [/^rec_bacta_crisis\.requisition$/, 3], [/^rec_tibanna_crisis\.contracts$/, 3], [/^rec_tibanna_crisis\.nationalise$/, 3],
+    [/^rec_spice_crisis\.crackdown$/, 5], [/^rec_spice_crisis\.legalise$/, 1], [/^rec_spice_crisis\.look_away$/, 0.2],
+    [/^sa_finance\.(patrols|stockpile|refinance)$/, 4]
   ];
   for (const [re, w] of W) if (re.test(id)) return w;
   return null;
@@ -245,6 +265,12 @@ function playOne(gameIndex) {
       }
       audit.schemes.push(Q.schemes_total || 0); audit.foiled += Q.schemes_foiled || 0;
       audit.purges += Q.bureau_purges || 0; if (Q.bureau_purges) audit.purgeGames++;
+      audit.econ = audit.econ || {debtEnd: [], debt20: 0, debt30: 0, bacta: 0, tibanna: 0, spice: 0, ultimatums: 0, offers: 0, met: 0, refused: 0, aims: {}, collapses: 0, liberations: 0, dilemmas: 0};
+      audit.econ.debtEnd.push(Q.debt || 0); if ((Q.debt || 0) >= 20) audit.econ.debt20++; if ((Q.debt || 0) >= 30) audit.econ.debt30++;
+      audit.econ.bacta += Q.bacta_crises || 0; audit.econ.tibanna += Q.tibanna_crises || 0; audit.econ.spice += Q.spice_crises || 0;
+      audit.econ.met += Q.ultimatums_met || 0; audit.econ.refused += Q.ultimatums_refused || 0; audit.econ.dilemmas += Q.dilemmas_decided || 0;
+      if (Q.war_aim) audit.econ.aims[Q.war_aim] = (audit.econ.aims[Q.war_aim] || 0) + 1;
+      for (const fr of ['outer', 'mid', 'core']) if ((Q['front_ev_' + fr] || -99) > 0) audit.econ.collapses++;
       audit.gavels += Q.gavels || 0;
       for (const k of ['hawks_split', 'rimward_split', 'pacifists_resigned', 'inst_crisis']) if (Q[k]) audit.splits[k] = (audit.splits[k] || 0) + 1;
       audit.rcEnd.push(Q.rc_r || 0); audit.faithEnd.push(Q.faith); audit.fearEnd.push(Q.fear); audit.corrEnd.push(Q.corruption);
@@ -288,6 +314,9 @@ function playOne(gameIndex) {
   origLog('audit: splits ' + JSON.stringify(audit.splits) + '; Caucus seats at end avg ' + avg(audit.rcEnd) + '; turns with chairs/government avg ' + avg(audit.accessTurns));
   origLog('audit: at the end: faith avg ' + avg(audit.faithEnd) + ' (when Sidious beaten ' + avg(audit.faithBeaten) + '), fear avg ' + avg(audit.fearEnd) + ', corruption avg ' + avg(audit.corrEnd));
   if (audit.rb) origLog('audit: restored games failing each best-ending test ' + JSON.stringify(audit.rb));
+  if (audit.econ) { const e = audit.econ; const avg = a => a.length ? Math.round(10 * a.reduce((x, y) => x + y, 0) / a.length) / 10 : 0;
+    origLog('audit: economy debt at end avg ' + avg(e.debtEnd) + ', games ending with debt>=20: ' + e.debt20 + ', >=30: ' + e.debt30 + '; market crises bacta ' + e.bacta + ' tibanna ' + e.tibanna + ' spice ' + e.spice);
+    origLog('audit: leaders ultimatums met ' + e.met + ' refused ' + e.refused + '; war aims ' + JSON.stringify(e.aims) + ', war dilemmas decided ' + e.dilemmas + ', front breakpoints ' + e.collapses); }
   origLog('audit: bureaucrat purges ' + audit.purges + ' (in ' + audit.purgeGames + ' games), Vice Chair gavels ' + audit.gavels);
   origLog('audit: leaders at the end: ' + Object.entries(audit.endLeaders).sort().map(([k, v]) => k + '=' + v).join(' '));
   origLog('audit: avg peak faction dissent ' + avg(audit.maxDissent) + '; cards played 6+ times (games): ' + JSON.stringify(audit.repeatCards));

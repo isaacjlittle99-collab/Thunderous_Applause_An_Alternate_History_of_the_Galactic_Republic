@@ -2177,7 +2177,7 @@
     bonds: {name: 'war bonds', yield: function (Q) { return 1 + Q.faith / 25; },
       apply: function (Q) { Q.war_weariness -= 1; }},
     spice: {name: 'the spice duty', yield: function () { return 2; },
-      apply: function (Q) { Q.corruption += 1.5; }},
+      apply: function (Q) { Q.corruption += 0.75; }},
     none: {name: 'existing taxes only', yield: function () { return 0; }, apply: function () {}}
   };
   SW.PRIORITY = {
@@ -2186,7 +2186,7 @@
     defence: {name: 'defence', cost: function (Q) { return 3 + ((Q.tibanna || 0) >= 60 ? 1 : 0); },
       apply: function (Q) { Q.judicial_forces += 0.7; Q.tibanna += 6; if (Q.war) SW.pushFront(Q, SW.weakestFront(Q), 1); Q.sec_relation += 2; }},
     subsidies: {name: 'subsidies for the Core and the guilds', cost: function () { return 2; },
-      apply: function (Q) { Q.mod_relation += 4; Q.guild_relation += 4; Q.corruption += 1; }},
+      apply: function (Q) { Q.mod_relation += 4; Q.guild_relation += 4; Q.corruption += 0.5; }},
     repay: {name: 'repaying the Banking Clan', cost: function () { return 3; },
       apply: function (Q) { Q.debt -= 3; }},
     none: {name: 'nothing in particular', cost: function () { return 0; },
@@ -2255,7 +2255,7 @@
     Q.bacta += f * (Q.war ? 4.5 + Math.max(0, -Q.war_balance) * 0.5 : -2);
     Q.tibanna += f * ((Q.war ? 4.5 : 0) + (Q.judicial_forces > 5 ? 1 : 0) - 1);
     Q.spice += f * ((Q.rim_hardship - 38) / 14 + (Q.corruption - 62) / 30 - (Q.spice_legal ? 1.5 : 0));
-    if (Q.debt > 25) { Q.faith -= 0.1 * f; Q.corporate_sep += 0.1 * f; }
+    if (Q.debt > 28) { Q.faith -= 0.06 * f; Q.corporate_sep += 0.1 * f; }
     if (Q.treasury < 0) { Q.debt += -Q.treasury; Q.treasury = 0; }
   };
 
