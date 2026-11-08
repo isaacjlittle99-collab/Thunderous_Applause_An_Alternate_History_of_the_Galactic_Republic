@@ -1,0 +1,59 @@
+title: A Word from a Bloc Leader
+subtitle: A Senate leader wants something from the Caucus.
+tags: event
+view-if: lm_ready and not finale and not game_ending
+priority: 2
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {! SW.leaderMomentOpen(Q); !}
+
+= [+ lm_title +]
+
+**[+ lm_leader +]** of the [+ lm_group_name +] is [+ lm_reason +]. *[+ lm_motive +]*
+
+[? if lm_ultimatum : "[+ lm_ask +]" ?][? if not lm_ultimatum : [+ lm_offer +] [+ lm_leader +] asks what the Caucus needs. ?]
+
+*Leaders' moods follow what they care about and what they remember of the Caucus. An angry leader holds their bloc's line harder, in votes and in coalitions; a pleased one bends.*
+
+- @accept: [+ lm_label +]
+- @refuse: Refuse.
+- @vote: Ask them to back our next reform bill.
+- @capital: Ask for their help in the corridors.
+- @thank: Thank them, and ask for nothing.
+
+@accept
+view-if: lm_ultimatum
+subtitle: [+ lm_accept_sub +] [+ lm_leader +] will remember it.
+choose-if: treasury >= lm_cost
+unavailable-subtitle: The treasury cannot afford it.
+on-arrival: {! SW.leaderMomentResolve(Q, 'accept'); !}
+
+The [+ lm_group_name +] get what they asked for. [+ lm_leader +] makes sure the Senate knows who delivered it.
+
+@refuse
+view-if: lm_ultimatum
+subtitle: [+ lm_refuse_sub +] [+ lm_leader +] will hold it against us.
+on-arrival: {! SW.leaderMomentResolve(Q, 'refuse'); !}
+
+The Caucus will not be dictated to. [+ lm_leader +] leaves without a word, and the [+ lm_group_name +] close ranks.
+
+@vote
+view-if: not lm_ultimatum
+subtitle: The [+ lm_group_name +] lean our way on our next reform vote.
+on-arrival: {! SW.leaderMomentResolve(Q, 'vote'); !}
+
+[+ lm_leader +] promises the [+ lm_group_name +]'s support when our next reform reaches the floor.
+
+@capital
+view-if: not lm_ultimatum
+subtitle: +1 political capital.
+on-arrival: {! SW.leaderMomentResolve(Q, 'capital'); !}
+
+A few doors open, a few favours are called in, and the Caucus finds its work a little easier.
+
+@thank
+view-if: not lm_ultimatum
+subtitle: Better relations, and a little goodwill banked.
+on-arrival: {! SW.leaderMomentResolve(Q, 'thank'); !}
+
+The Caucus asks for nothing, and [+ lm_leader +] remembers that too.

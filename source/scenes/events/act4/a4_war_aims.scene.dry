@@ -1,0 +1,42 @@
+title: What Are We Fighting For?
+subtitle: The Senate must set the Republic's war aims.
+tags: event
+view-if: war and war_begins_seen and war_aim = "" and not finale and not game_ending
+max-visits: 1
+priority: 4
+new-page: true
+face-image: img/ev_war.svg
+on-arrival: {! Q.wc_command = SW.warCommand(Q); !}
+
+= What Are We Fighting For?
+
+The war has begun, and the Senate must decide what it is for. The answer will shape every season of fighting: where the fleets go, whether anyone talks to the enemy, and which of the Caucus's factions can stomach it.
+
+[? if wc_command : The Caucus [? if rc_chancellor : holds the Chancellery?][? if not rc_chancellor : chairs the Security & Defence Committee?], so our view will carry. ?][? if not wc_command and chancellor_bloc != "rim" : The Chancellor's allies want **total victory**. If we propose something else, the Senate will vote on it. ?][? if not wc_command and chancellor_bloc = "rim" : The Chancellor's allies want **the liberation of the Rim**. If we propose something else, the Senate will vote on it. ?]
+
+- @victory: Total victory: the Confederacy must surrender.
+- @peace: A negotiated peace, as soon as one can be had.
+- @rim: The liberation of the Rim: win back the worlds that left, and fix why they left.
+
+@victory
+subtitle: The war goes a little faster; fear runs higher and the peace talks wither. The Hawks are pleased, the Pacifists are not.
+on-arrival: {! Q.wc_command = SW.warCommand(Q); SW.setWarAim(Q, 'victory'); !}
+go-to: aims_result
+
+@peace
+subtitle: The war goes slower; the talks grow. The Pacifists are pleased, the Hawks are not.
+on-arrival: {! Q.wc_command = SW.warCommand(Q); SW.setWarAim(Q, 'peace'); !}
+go-to: aims_result
+
+@rim
+subtitle: The Outer Rim front gets priority, and Rim reforms win seceded worlds back. The Rimward wing is pleased.
+on-arrival: {! Q.wc_command = SW.warCommand(Q); SW.setWarAim(Q, 'rim'); !}
+go-to: aims_result
+
+@aims_result
+
+[+ vote_html +]
+
+[? if wa_overruled : The Senate rejects our proposal. The Republic will fight for **[+ war_aim_text +]**. ?][? if not wa_overruled : The Republic will fight for **[+ war_aim_text +]**. ?]
+
+*The war aim is shown on the Forces tab. Every second turn, the War Council decides where the Republic commits its strength.*

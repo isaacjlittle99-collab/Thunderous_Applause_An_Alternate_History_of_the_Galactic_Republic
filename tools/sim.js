@@ -117,7 +117,7 @@ const PREMISES = [
   [/^(a3_padme_attack|a3_wedding)$/, Q => Q.padme_alive, 'Padme event after her death'],
   [/^(a4_delegation|a4_elections_suspended|a4_hostage_crisis|a4_security_act|a4_sector_governance|a4_indefinite_term|a4_banking_seizure|a4_loyalist_committee|a3_term_limit|rec_early_empire|rec_empire_looming|rec_arrests_warning|rec_senatorial_arrests)$/,
     PAL_OFFICE, 'Chancellery event without Palpatine in office'],
-  [/^(a4_battle|rec_profiteering|rec_protest|a4_banking|a4_bonteri_dead)$/, Q => Q.war, 'war event without a war'],
+  [/^(rec_war_council|rec_front_event|a4_war_aims|rec_profiteering|rec_protest|a4_banking|a4_bonteri_dead)$/, Q => Q.war, 'war event without a war'],
 ];
 const PREMISE_HITS = {};
 function checkPremises(id, Q, game, out) {

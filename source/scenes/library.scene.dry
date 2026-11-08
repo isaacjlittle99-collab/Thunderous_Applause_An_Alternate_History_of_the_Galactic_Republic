@@ -97,6 +97,7 @@ Each faction has a **strength**, a **dissent** level and a **leader**. Overall d
 @lib_leaders
 is-special: true
 go-to: menu
+on-arrival: {! Q.leaders_html = (typeof SW.leadersHTML === 'function') ? SW.leadersHTML(Q) : ''; !}
 
 = Leaders and their views
 
@@ -113,6 +114,20 @@ Every Senate bloc and every faction of the Caucus has a leader, and leaders chan
 • *Demands.* Each Caucus faction leader has their own demands, shown in the Status panel when they are not met.
 
 • *The galaxy.* Radical Rim leaders feed separatism, and a Banking Clan hardliner pushes the guilds toward the Confederacy. Pragmatists cool both.
+
+**Moods and memory**
+
+• *What they care about.* Every leader has a motive and a list of things that please or anger them: tariffs, Rim relief, the war, emergency powers, who sits in government. The sidebar shows each leader's current stance and the main reason for it.
+
+• *Anger hardens, goodwill softens.* An angry leader holds their bloc's line harder: in votes, in coalition talks and in how long they bear a grudge. A pleased leader bends. Inside the Caucus, an angry faction leader makes the faction restless sooner.
+
+• *Memory.* Leaders remember whether we backed them or their rival in a leadership fight, whether we met or refused their demands, and whether their bloc walked out of our government. Memories fade over a few years.
+
+• *Ultimatums and offers.* A leader who is angry and on poor terms with the Caucus will make a demand: the guilds want tariffs or regulation dropped, the Rim wants relief, the Security Bloc wants the fleet funded, the Moderates want reform slowed, the unaligned worlds want exemptions. Meeting it earns their favour; refusing it earns a grudge and a cost. A pleased leader on good terms offers help instead.
+
+**The leaders today**
+
+[+ leaders_html +]
 
 **Who rises, and when**
 

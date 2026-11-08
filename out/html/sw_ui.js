@@ -22,6 +22,27 @@
     dissent: [[5, '<span class="good">united</span>'], [12, 'murmuring'], [22, 'restless'], [35, '<span class="warn">quarrelsome</span>'], [50, '<b class="bad">fractious</b>'], [1e9, '<b class="bad">on the verge of schism</b>']],
     cdissent: [[0.99, 'harmonious'], [1.99, 'grumbling'], [2.99, 'strained'], [3.99, '<span class="warn">fraying</span>'], [1e9, '<b class="bad">collapsing</b>']]
   };
+  // Holocron: today's leaders, what drives them and what moves them
+  SW.leadersHTML = function (Q) {
+    var groups = (SW.CONTEST_BLOCS || []).filter(function (g) { return Q.parties.indexOf(g) >= 0; }).concat(SW.FACTIONS || []);
+    var h = '';
+    for (var i = 0; i < groups.length; i++) {
+      var g = groups[i], id = Q[g + '_leader_id'], L = SW.LEADERS[id], mind = SW.LEADER_MINDS && SW.LEADER_MINDS[id];
+      if (!L) continue;
+      var gname = SW.FACTION_NAMES[g] ? 'the ' + SW.FACTION_NAMES[g] : 'the ' + SW.name(Q, g);
+      h += '<p><b>' + L.name + '</b>, ' + gname + ' (' + SW.firmLabel(Q, g) + '; now ' + SW.leaderLine(Q, g).replace(' · ', ', ') + '). ';
+      if (mind) {
+        h += mind.motive;
+        var plus = [], minus = [];
+        for (var k = 0; k < mind.cares.length; k++) (mind.cares[k][1] > 0 ? plus : minus).push(mind.cares[k][2]);
+        if (plus.length) h += ' <i>Pleased by:</i> ' + plus.join(', ') + '.';
+        if (minus.length) h += ' <i>Angered by:</i> ' + minus.join(', ') + '.';
+      }
+      h += '</p>';
+    }
+    return h;
+  };
+
   SW.label = function (type, v) {
     var t = LABELS[type];
     v = +v || 0;
@@ -84,7 +105,7 @@
     for (var j = 0; j < SW.FACTIONS.length; j++) {
       var f = SW.FACTIONS[j];
       h += row(SW.FACTION_NAMES[f], Math.round(Q[f + '_strength']) + '% · ' + SW.label('dissent', Q[f + '_dissent']));
-      var led = (Q[f + '_leader'] && SW.firmLabel) ? 'Led by ' + Q[f + '_leader'] + ' (' + SW.firmLabel(Q, f) + ').' : '';
+      var led = (Q[f + '_leader'] && SW.firmLabel) ? 'Led by ' + Q[f + '_leader'] + ' (' + SW.firmLabel(Q, f) + '): ' + (SW.leaderLine ? SW.leaderLine(Q, f).replace(' · ', ', ') : '') + '.' : '';
       if (Q[f + '_unmet']) h += '<div class="sb-note warn">' + led + ' Restless: they want ' + Q[f + '_demand'] + '.</div>';
       else if (led) h += '<div class="sb-note">' + led + '</div>';
     }
@@ -161,9 +182,18 @@
   }
 
   function forcesTab(Q) {
-    var h = head(Q.war ? 'The Clone Wars' : 'Peace and its enemies');
+    var h = head(Q.war ? 'The ' + (Q.war_name || 'Clone Wars') : 'Peace and its enemies');
     if (Q.war) {
-      h += row('The front', SW.label('war', Q.war_balance));
+      h += row('The war as a whole', SW.label('war', Q.war_balance));
+      if (SW.FRONTS) {
+        for (var fi = 0; fi < SW.FRONTS.length; fi++) {
+          var fr = SW.FRONTS[fi];
+          h += row(SW.FRONT_SHORT[fr], SW.label('war', SW.front(Q, fr)) + (Q.war_priority === fr ? ' ★' : ''));
+        }
+        h += '<p class="sb-note">The Outer Rim Sieges feed Rim hardship and separatism; the Hydian Way, the Republic\'s trade; the Core approaches, fear on Coruscant. ★ marks this season\'s priority.</p>';
+      }
+      if (Q.war_aim_text) h += row('War aim', Q.war_aim_text);
+      h += row('Strategy set by', SW.warCommand && SW.warCommand(Q) ? '<span class="good">the Caucus</span>' : 'the Chancellor\'s War Council');
       h += row('War-weariness', SW.label('level', Q.war_weariness)) + bar(Q.war_weariness, 100, 'bad-fill');
     }
     h += row('Outer Rim separatism', SW.label('sep', Q.outer_sep));
@@ -210,8 +240,12 @@
       var b = Q.parties[i];
       var tag = (SW.CONTEST_BLOCS && SW.CONTEST_BLOCS.indexOf(b) >= 0 && SW.firmLabel) ? ' <span class="sb-tag">' + SW.firmLabel(Q, b) + '</span>' : '';
       h += row(bloc(Q, b), (Q[b + '_leader'] || '—') + tag);
+      if (SW.CONTEST_BLOCS && SW.CONTEST_BLOCS.indexOf(b) >= 0 && SW.leaderLine) {
+        var mood = SW.leaderMood(Q, b).score;
+        h += '<div class="sb-note' + (mood <= -3 ? ' bad' : (mood <= -1 ? ' warn' : '')) + '">' + SW.leaderLine(Q, b) + '</div>';
+      }
     }
-    h += '<p class="sb-note">Leaders change with the times. Hardliners vote as a block and hold grudges; pragmatists bargain. See the Holocron.</p>';
+    h += '<p class="sb-note">A leader\'s mood follows what they care about and how the Caucus has treated them. Angry leaders dig in, in votes and coalitions; pleased ones bend. See the Holocron.</p>';
     h += head('Our advisors');
     var any = false;
     for (var a in SW.ADVISOR_NAMES) {

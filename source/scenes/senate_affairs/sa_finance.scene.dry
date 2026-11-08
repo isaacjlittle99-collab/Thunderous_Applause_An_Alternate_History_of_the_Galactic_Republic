@@ -21,7 +21,7 @@ The Caucus chairs the Finance & Commerce Committee. The Republic treasury stands
 @regulate
 view-if: corruption > 25 and guild_relation > 5
 subtitle: Less corruption; the guilds retaliate.
-on-arrival: guild_relation -= 8; corruption -= 1.5; guild_embargo += 1; corporate_sep += 2; rim_hardship -= 1
+on-arrival: guild_relation -= 8; corruption -= 1.5; guild_embargo += 1; corporate_sep += 2; rim_hardship -= 1; guild_regulations += 1
 
 New disclosure rules for guild lobbying pass in committee. The guilds call it persecution.
 
