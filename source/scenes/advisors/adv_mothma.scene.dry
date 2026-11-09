@@ -10,7 +10,7 @@ new-page: true
 
 Young, eloquent and principled, Chandrila’s senator believes the Republic’s strength lies in its laws, not its armies.
 
-[? if advisor_action_timer > 0 : *Our advisors can act again in [+ advisor_action_timer +] turn(s).* ?]
+[? if advisor_action_timer > 0 : Our advisors can act again in [+ advisor_action_timer +] turn(s). ?]
 
 - @mothma_speech: Speak for the Republic.
 - @mothma_peace: Rally the peace wing.

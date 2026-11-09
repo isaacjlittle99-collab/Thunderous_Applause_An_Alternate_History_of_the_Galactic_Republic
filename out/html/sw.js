@@ -53,7 +53,8 @@
     'coalition', 'shuffle_committees', 'emergency_measures',
     'corruption_scandal', 'piracy', 'famine', 'embargo', 'secession', 'profiteering', 'protest',
     'assassination', 'leak', 'unease', 'sunset', 'battle', 'gunray', 'pal_media', 'faction_crisis',
-    'last_days', 'coalition_strain', 'leadership', 'faction_leader', 'bureau_reform', 'scheme'
+    'last_days', 'coalition_strain', 'leadership', 'faction_leader', 'bureau_reform', 'scheme',
+    'trail', 'world_election', 'referendum', 'recall'
   ];
 
   // Initial pairwise affinity of each bloc for each potential partner/candidate bloc (0-100).
@@ -186,6 +187,41 @@
       D[lg + '_favour'] = 0; D[lg + '_grudge'] = 0; D[lg + '_asked'] = -99; D['vote_boost_' + lg] = 0;
     }
     D.treasury_txt = 4; D.debt_txt = 8; D.debt_label = ''; D.trade_label = '';
+    D.cm_region = 'core'; D.cm_effect = 0; D.cm_backfired = 0; D.cm_word = ''; D.cm_msg_name = ''; D.cm_region_name = ''; D.scandal_ours_until = -99; D.campaigns_run = 0;
+    D.cm_word_clean = ''; D.cm_word_relief = ''; D.cm_word_security = ''; D.cm_word_peace = ''; D.cm_word_republic = '';
+    D.cm_msg = ''; D.cm_disrupted = 0; D.cm_protect_won = 0; D.cm_disruptor = ''; D.cm_threat = 0; D.cm_local = 0; D.cm_force_note = 0; D.jf_txt = 0; D.el_mom_note = 0; D.el_mom_text = ''; D.force_uses = 0; D.disruptions = 0; D.protects_won = 0; D.protects_lost = 0;
+    D.momentum_why = ''; D.momentum_why_sign = 0; D.momentum_reforms_seen = 0; D.election_season = 0;
+    // the Chancellor race
+    D.el_nominee = ''; D.el_nominees = 0; D.el_nominee_default = ''; D.el_bought_amt = 0; D.el_exposed = 0; D.el_pledges_made = 0; D.el_deal = ''; D.el_deal_chair = ''; D.el_deal_chair_name = '';
+    D.el_deal_won = 0; D.el_done = 0; D.el_whip = ''; D.el_backing_name = ''; D.el_proj_share = 0; D.el_act_share = 0; D.el_proj_exact = 0; D.el_res1 = []; D.el_top = [];
+    D.el_switch_note = ''; D.el_whip_note = ''; D.el_join_pledge = ''; D.el_join_price = ''; D.el_text = ''; D.el_cands = [];
+    D.eb_a = ''; D.eb_b = ''; D.eb_a_name = ''; D.eb_b_name = ''; D.eb_ours_in = 0; D.eb_ours_out = 0; D.eb_backing_name = ''; D.eb_out = []; D.eb_out_main = ''; D.eb_out_name = ''; D.eb_out_cand = '';
+    D.eb_has_out = 0; D.eb_pledge = ''; D.eb_pledge_ok = 0; D.eb_pledge_name = ''; D.eb_a_chair = ''; D.eb_b_chair = ''; D.eb_a_chair_name = ''; D.eb_b_chair_name = ''; D.eb_a_rc = 0; D.eb_b_rc = 0; D.eb_rc_seats = 0;
+    D.whip_seed = 0; D.whip_for = 0; D.el_proj_for = ''; D.second_ballots = 0; D.kingmaker_deals = 0; D.debates_won = 0; D.endorsements = 0; D.mothma_out_until = -99; D.bel_iblis_out_until = -99;
+    for (var nm in SW.NOMINEES) { D['nom_ok_' + nm] = 0; D['nom_sub_' + nm] = ''; D['nominated_' + nm] = 0; }
+    for (var ec = 0; ec < SW.BLOCS.length; ec++) D['el_trait_' + SW.BLOCS[ec]] = '';
+    for (var pl in SW.PLEDGES) { D['pledge_' + pl] = ''; D['pl_' + pl] = 0; D['plo_' + pl] = 0; D['pledge_' + pl + '_name'] = ''; }
+    D.pledge_count = 0; D.pledge_text = ''; D.pledges_made = 0; D.pledges_broken = 0; D.ep_seen = 0; D.ret_seen = 0; D.powers_rc_yes = 0;
+    D.pb_ready = 0; D.pb_bloc = ''; D.pb_name = ''; D.pb_what = ''; D.pb_how = ''; D.pb_leader = ''; D.pb_partner = 0;
+    D.bdw_tariffs = 0; D.bdw_levy = 0; D.bdw_relief = 0; D.bdw_defence = 0; D.bd_gov_breaks = ''; D.bd_gov_breaks_n = 0;
+    for (var rvd in SW.REVENUE) { D['bd_brk_rev_' + rvd] = ''; D['bd_brkn_rev_' + rvd] = 0; }
+    for (var prd in SW.PRIORITY) { D['bd_brk_' + prd] = ''; D['bd_brkn_' + prd] = 0; }
+    for (var chd = 0; chd < SW.COMMITTEES.length; chd++) { D['chair_res_' + SW.COMMITTEES[chd]] = 0; D['chair_res_' + SW.COMMITTEES[chd] + '_name'] = ''; }
+    // the campaign trail
+    D.trail_ready = 0; D.trail_kind = ''; D.trail_timer = 0; D.tr_title = ''; D.tr_speaker = ''; D.tr_rival = ''; D.tr_rival_name = ''; D.tr_rival_bloc = ''; D.tr_rival_pal = 0; D.tr_has_rival = 0;
+    D.tr_result = ''; D.tr_won = 0; D.tr_endorser = ''; D.tr_endorser_name = ''; D.tr_pitch = ''; D.tr_price = ''; D.tr_jedi = 0;
+    D.tr_gaffe_region = 'core'; D.tr_gaffe_text = ''; D.tr_gaffe_bloc = 'mod'; D.tr_gaffe_bloc_name = ''; D.tr_gaffe_region_name = '';
+    // world elections, referendums, recalls, confidence votes
+    D.wv_ready = 0; D.wv_id = ''; D.wv_name = ''; D.wv_world = ''; D.wv_region = 'core'; D.wv_region_name = ''; D.wv_ours = ''; D.wv_theirs = ''; D.wv_stakes = ''; D.wv_lost_adv = '';
+    D.wv_chance = 0.5; D.wv_boost = 0; D.wv_adv = ''; D.wv_adv_name = ''; D.wv_has_adv = 0; D.wv_poll = 50; D.wv_heading = ''; D.wv_won = 0; D.wv_ours_pct = 50; D.world_election_timer = 4; D.world_wins = 0; D.world_losses = 0;
+    for (var we in SW.WORLD_ELECTIONS) D['we_done_' + we] = 0;
+    D.ref_ready = 0; D.ref_id = ''; D.ref_world = ''; D.ref_region = 'outer'; D.ref_region_name = ''; D.ref_chance = 0.5; D.ref_poll = 50; D.ref_poll_word = ''; D.ref_boost = 0; D.referendum_timer = 0;
+    D.ref_bonteri = 0; D.ref_fig = ''; D.ref_fig_name = ''; D.ref_heading = ''; D.ref_campaign_ok = 0; D.ref_stayed = 0; D.ref_stay_pct = 50; D.ref_leave_pct = 50; D.we_rally = 0; D.referendums_won = 0; D.referendums_lost = 0;
+    for (var rf in SW.REFERENDUMS) D['ref_done_' + rf] = 0;
+    for (var gd = 0; gd < SW.REGIONS.length; gd++) D['grievance_' + SW.REGIONS[gd]] = 0;
+    D.recall_ready = 0; D.recall_region = 'core'; D.recall_region_name = ''; D.recall_why = ''; D.recall_lost = 0; D.recall_timer = 0; D.recalls = 0;
+    D.cv_outlook = 0; D.cv_vote = 0; D.cv_won = 0; D.mandate_term = -1; D.mandates_won = 0; D.mandates_lost = 0; D.mandate_ok = 0;
+    D.trail_debate_for = -1; D.trail_endorse_for = -1; D.trail_research_for = -1; D.trail_gaffe_for = -1; D.trail_smear_for = -1;
     D.guild_patience = 60; D.guild_hurt_turn = -99; D.guild_patience_why = ''; D.guild_lobby = 0; D.guild_lobby_halved = 0; D.guild_step_ready = 0;
     D.guild_step_1 = 0; D.guild_step_2 = 0; D.guild_step_3 = 0; D.guild_step_4 = 0; D.guild_step_5 = 0; D.gs_step = 0; D.gs_heading = ''; D.gs_world = 'Rodia'; D.gs_leader = ''; D.gs_why = ''; D.gs_open = 0; D.gs_senate_ok = 0; D.gs_vote = 0;
     D.guild_steps_total = 0; D.guild_blockades = 0; D.guild_defections = 0; D.patrons_goodwill = 60; D.patron_adj = 0; D.rim_donors = 0; D.inflation = 0;
@@ -1170,29 +1206,36 @@
   };
 
   // Chancellor election: each bloc backs the candidate it likes most.
-  SW.runElection = function (Q, candidates) {
-    var tally = {};
+  // opts.exact: no noise (a reliable whip count); opts.fog: the fixed errors of a rough count; opts.seatKey: '_r' or '_votes'
+  SW.runElection = function (Q, candidates, opts) {
+    opts = opts || {};
+    var sk = opts.seatKey || '_r';
+    var tally = {}, votes = {};
     for (var c = 0; c < candidates.length; c++) tally[candidates[c]] = 0;
     for (var i = 0; i < Q.parties.length; i++) {
       var bloc = Q.parties[i];
-      var seats = Q[bloc + '_r'] || 0;
+      var seats = Q[bloc + sk] || 0;
       // a bloc with a candidate votes for itself
-      if (candidates.indexOf(bloc) >= 0) { tally[bloc] += seats; continue; }
+      if (candidates.indexOf(bloc) >= 0) { tally[bloc] += seats; votes[bloc] = {to: bloc, own: 1}; continue; }
       // the Caucus follows its endorsement
-      if (bloc === 'rc' && Q.el_backing && candidates.indexOf(Q.el_backing) >= 0) { tally[Q.el_backing] += seats; continue; }
+      if (bloc === 'rc' && Q.el_backing && candidates.indexOf(Q.el_backing) >= 0) { tally[Q.el_backing] += seats; votes[bloc] = {to: Q.el_backing, own: 1}; continue; }
       var best = null, bestV = -999, second = null, secondV = -999;
       for (var k = 0; k < candidates.length; k++) {
-        var v = SW.affinity(Q, bloc, candidates[k]) + ((Q[candidates[k] + '_r'] || 0) - 12) * 0.8 + (SW.rnd() * 10 - 5);
+        var noise = opts.exact ? 0 : (opts.fog ? SW.whipFog(Q, bloc, candidates[k]) : SW.rnd() * 10 - 5);
+        var v = SW.affinity(Q, bloc, candidates[k]) + ((Q[candidates[k] + sk] || 0) - 12) * 0.8 + noise;
         if (v > bestV) { second = best; secondV = bestV; best = candidates[k]; bestV = v; }
         else if (v > secondV) { second = candidates[k]; secondV = v; }
       }
       // close preferences split the bloc
       if (second && bestV - secondV < 8) {
         tally[best] += seats * 0.6; tally[second] += seats * 0.4;
+        votes[bloc] = {to: best, alt: second};
       } else {
         tally[best] += seats;
+        votes[bloc] = {to: best};
       }
     }
+    SW._lastVotes = votes;
     var result = [];
     for (var cand in tally) result.push({bloc: cand, share: SW.round1(tally[cand])});
     result.sort(function (x, y) { return y.share - x.share; });
@@ -1245,6 +1288,8 @@
     for (var i = 0; i < SW.COMMITTEES.length; i++) {
       var c = SW.COMMITTEES[i];
       if (Q['chair_' + c] === 'rc' && Q.rc_in_govt) continue;
+      // a chair promised to a partner in coalition talks stays with it
+      if (Q['chair_res_' + c] && Q['chair_' + c] && Q['chair_' + c] !== 'rc' && partners.indexOf(Q['chair_' + c]) >= 0) continue;
       var pick = partners[0];
       var pl = prefs[c];
       for (var k = 0; k < pl.length; k++) if (partners.indexOf(pl[k]) >= 0) { pick = pl[k]; break; }
@@ -1260,16 +1305,6 @@
     return Q[b + '_leader'] || SW.name(Q, b);
   };
 
-  SW.electionIntro = function (Q) {
-    var h = '<div class="panel"><b>Candidates</b><br>';
-    for (var i = 0; i < Q.el_cands.length; i++) {
-      var b = Q.el_cands[i];
-      h += SW.span(Q, b, SW.candidateName(Q, b)) + ' (' + SW.name(Q, b) + ', ' + (Q[b + '_r'] || 0).toFixed(1) + '% of the Senate)<br>';
-    }
-    h += '</div>';
-    return h;
-  };
-
   SW.resultText = function (Q, res, label) {
     var h = '<div class="vote"><b>' + label + '</b><br>';
     for (var i = 0; i < res.length; i++) {
@@ -1278,24 +1313,11 @@
     return h + '</div>';
   };
 
+  // both ballots at once, with no choices between them
   SW.holdElection = function (Q) {
-    Q.el_active = 1;
-    var res = SW.runElection(Q, Q.el_cands);
-    var text = SW.resultText(Q, res, 'First ballot');
-    var winner = res[0].bloc;
-    if (res[0].share < 50 && res.length > 1) {
-      var r2 = SW.runElection(Q, [res[0].bloc, res[1].bloc]);
-      text += SW.resultText(Q, r2, 'Second ballot');
-      winner = r2[0].bloc;
-    }
-    Q.el_active = 0;
-    Q.el_result = text;
-    Q.el_winner = winner;
-    Q.el_winner_name = SW.candidateName(Q, winner);
-    SW.installChancellor(Q, winner);
-    // clear courting bonuses
-    for (var k in Q) if (k.indexOf('bonus_') === 0) delete Q[k];
-    return winner;
+    SW.electionFirst(Q);
+    if (!Q.el_done) SW.electionSecond(Q);
+    return Q.el_winner;
   };
 
   // A Caucus Chancellor who has served two terms must step aside for a new candidate.
@@ -1341,7 +1363,7 @@
       Q['el_opt' + i] = o ? 1 : 0;
       Q['el_opt' + i + '_ok'] = (o && o.seats >= 50 && !o.cold && !o.block) ? 1 : 0;
       if (o && o.seats >= 50 && o.block) Q.coal_refused = (Q.coal_refused || 0) + 1;
-      Q['el_opt' + i + '_bureau'] = o ? SW.bureauReaction(SW.bureauComfort(Q, o.blocs)) : '';
+      Q['el_opt' + i + '_bureau'] = o ? SW.bureauReaction(SW.bureauComfort(Q, o.blocs)) + ' ' + SW.priceText(Q, o.blocs) : '';
       Q['el_opt' + i + '_label'] = o ? (o.name + ': ' + o.blocs.filter(function (b) { return b !== 'rc'; }).map(function (b) { return SW.name(Q, b); }).join(', ') + ' (' + o.seats.toFixed(1) + '%)') : '';
       Q['el_opt' + i + '_why'] = o ? (o.seats < 50 ? 'Not enough seats.' : (o.block ? o.block :
         (o.cold ? 'The ' + SW.name(Q, o.cold) + ' under ' + Q[o.cold + '_leader'] + ' will not work with us yet.' : ''))) : '';
@@ -1354,6 +1376,8 @@
     SW.setGovt(Q, blocs);
     SW.bureauJoin(Q, blocs);
     SW.openChairs(Q, Math.round(Q.rc_r) + 15);
+    SW.acceptPrices(Q, blocs);
+    SW.assignChairs(Q);
   };
 
   SW.joinGovernment = function (Q) {
@@ -1362,18 +1386,418 @@
     SW.setGovt(Q, blocs, Q.coalition_name);
     SW.bureauJoin(Q, blocs);
     SW.openChairs(Q, Math.round(Q.rc_r * 0.8));
+    if (Q.el_join_pledge) SW.makePledge(Q, Q.el_join_pledge, Q.chancellor_bloc);
+    Q.el_join_pledge = '';
+    // a kingmaker's reward: the chair the new Chancellor promised between the ballots
+    if (Q.el_deal_won && Q.el_deal_chair) { Q['chair_' + Q.el_deal_chair] = 'rc'; Q.el_deal_won = 0; SW.recomputeGovt(Q); }
   };
 
   // Every new government renegotiates the committee chairs from scratch: the Caucus gives up the
   // chairs it held and buys back what it can. Each partner insists on at least one chair.
-  SW.openChairs = function (Q, leverage) {
-    for (var i = 0; i < SW.COMMITTEES.length; i++) if (Q['chair_' + SW.COMMITTEES[i]] === 'rc') Q['chair_' + SW.COMMITTEES[i]] = '';
+  SW.openChairs = function (Q, leverage, keepPromised) {
+    for (var i = 0; i < SW.COMMITTEES.length; i++) {
+      if (Q['chair_' + SW.COMMITTEES[i]] === 'rc') Q['chair_' + SW.COMMITTEES[i]] = '';
+      if (!keepPromised) { Q['chair_res_' + SW.COMMITTEES[i]] = 0; Q['chair_res_' + SW.COMMITTEES[i] + '_name'] = ''; }
+    }
     SW.assignChairs(Q);
     var partners = (Q.govt_blocs || []).filter(function (b) { return b !== 'rc'; }).length || 1;
     Q.chair_partners = partners;
     Q.chair_cap = Math.max(1, SW.COMMITTEES.length - partners);
     Q.rc_chairs = 0;
     Q.leverage = leverage;
+  };
+
+  // ------------------------------------------------------------------ the Chancellor race
+  SW.electionCandidates = function (Q, seatKey) {
+    var s = function (b) { return Q.parties.indexOf(b) >= 0 ? (Q[b + (seatKey || '_r')] || 0) : 0; };
+    var c = [];
+    if (s('rc') >= 7) c.push('rc');
+    if (s('mod') >= 5) c.push('mod');
+    if (!Q.sidious_defeated && !Q.pal_disgraced && s('pal') >= 3) c.push('pal');
+    if (s('rim') >= 10) c.push('rim');
+    if (Q.date >= 108 && s('sec') >= 14) c.push('sec');
+    if (c.length < 2) c.push('ind');
+    return c;
+  };
+
+  // The Caucus's possible nominees, and who each appeals to (bonuses with each bloc).
+  SW.NOMINEES = {
+    antilles: {name: 'Bail Antilles', appeal: {mod: 6, ind: 3, rim: -6}, note: 'A steady Core statesman: strong with the Moderates and Independents, cool with the Rim.',
+      ok: function (Q) { return !Q.antilles_gone; }},
+    organa: {name: 'Bail Organa', appeal: {mod: 3, ind: 3, rim: 2, sec: -2}, note: 'Trusted across the aisle, with friends in the Jedi Temple: a broad, modest appeal everywhere.',
+      ok: function (Q) { return Q.antilles_gone; }},
+    mothma: {name: 'Mon Mothma', appeal: {mod: 3, ind: 5, sec: -9, guild: -4}, note: 'The Senate\'s finest speaker: the Core and the peace-minded admire her; the Security Bloc does not.',
+      ok: function (Q) { return (Q.mothma_joined || Q.date >= 36) && !(Q.mothma_out_until > Q.date); }},
+    amidala: {name: 'Padmé Amidala', appeal: {rim: 5, ind: 2, guild: -4, sec: -2}, sympathy: 1, note: 'A former Queen of Naboo: popular in the Mid Rim, and she takes the sympathy vote away from Palpatine.',
+      ok: function (Q) { return Q.padme_senator && Q.padme_alive; }},
+    bel_iblis: {name: 'Garm Bel Iblis', appeal: {sec: 9, mod: 1, guild: -9, ind: -2}, note: 'A Corellian hawk: the Security Bloc respects him; the guilds loathe him.',
+      ok: function (Q) { return Q.date >= 24 && !(Q.bel_iblis_out_until > Q.date); }}
+  };
+  SW.nomineesOpen = function (Q) {
+    var n = 0, termed = Q.chancellor_bloc === 'rc' && Q.rc_terms >= 2 ? Q.chancellor : '';
+    for (var id in SW.NOMINEES) {
+      var N = SW.NOMINEES[id], ok = N.ok(Q) && N.name !== termed ? 1 : 0;
+      Q['nom_ok_' + id] = ok; if (ok) n++;
+      var parts = [];
+      for (var b in N.appeal) if (Q.parties.indexOf(b) >= 0) parts.push((N.appeal[b] > 0 ? '+' : '−') + SW.name(Q, b));
+      Q['nom_sub_' + id] = N.note + (N.name === Q.chancellor ? ' The incumbent.' : '');
+    }
+    Q.el_nominees = n;
+    // the sitting leader is the default nominee
+    var def = '';
+    for (var k in SW.NOMINEES) if (Q['nom_ok_' + k] && SW.NOMINEES[k].name === Q.rc_leader) def = k;
+    if (!def) for (var k2 in SW.NOMINEES) if (Q['nom_ok_' + k2]) { def = k2; break; }
+    Q.el_nominee_default = def;
+  };
+  SW.nominate = function (Q, id) {
+    var N = SW.NOMINEES[id];
+    if (!N) return;
+    Q.rc_leader = N.name; Q.el_nominee = id; Q['nominated_' + id] = (Q['nominated_' + id] || 0) + 1;
+    for (var b in N.appeal) Q['bonus_' + b + '_for_rc'] = (Q['bonus_' + b + '_for_rc'] || 0) + N.appeal[b];
+    if (N.sympathy && Q.naboo_sympathy) for (var i = 0; i < Q.parties.length; i++) Q['bonus_' + Q.parties[i] + '_for_pal'] = (Q['bonus_' + Q.parties[i] + '_for_pal'] || 0) - 8;
+    SW.electionIntro(Q);
+  };
+
+  // Rival candidates' strengths and weaknesses, applied as bonuses and described in the intro.
+  SW.rivalTraits = function (Q) {
+    var add = function (a, c, v) { Q['bonus_' + a + '_for_' + c] = (Q['bonus_' + a + '_for_' + c] || 0) + v; };
+    Q.el_bought_amt = 0;
+    for (var i = 0; i < Q.el_cands.length; i++) {
+      var c = Q.el_cands[i], t = '';
+      if (c === 'pal') {
+        var bits = [];
+        if (Q.naboo_sympathy) bits.push('the sympathy vote for invaded Naboo');
+        if (Q.corruption > 60) {
+          Q.el_bought_amt = SW.round1((Q.corruption - 60) / 2.5);
+          add('guild', 'pal', Q.el_bought_amt); add('ind', 'pal', Q.el_bought_amt); add('mod', 'pal', Q.el_bought_amt * 0.6);
+          bits.push('quiet money from backers no one can name');
+        }
+        if (Q.pal_can_run === 0) bits.push('the Chancellery\'s machine');
+        t = bits.length ? bits.join('; ') : 'a reputation for moderation';
+      } else if (c === 'mod') {
+        if (Q.valorum_scandal && Q.mod_leader === 'Finis Valorum') t = 'the establishment, tarred by the Valorum scandals';
+        else { t = 'the establishment: the Core trusts them'; add('guild', 'mod', 3); }
+      } else if (c === 'rim') {
+        t = 'a Rim populist: the Outer Rim\'s champion, distrusted in the Core';
+        add('mod', 'rim', -5); add('guild', 'rim', -5); add('rfc', 'rim', 6);
+      } else if (c === 'sec') {
+        var fv = SW.round1((Q.fear - 40) / 4);
+        t = 'law and order: ' + (fv > 0 ? 'the frightened Senate listens' : 'a hard sell in calm times');
+        for (var j = 0; j < Q.parties.length; j++) if (Q.parties[j] !== 'sec') add(Q.parties[j], 'sec', fv);
+      } else if (c === 'ind') t = 'a compromise figure';
+      Q['el_trait_' + c] = t;
+    }
+  };
+  SW.electionIntro = function (Q) {
+    var h = '<div class="panel"><b>Candidates</b><br>';
+    for (var i = 0; i < Q.el_cands.length; i++) {
+      var b = Q.el_cands[i];
+      var trait = b === 'rc' ? (Q.el_nominee && SW.NOMINEES[Q.el_nominee] ? SW.NOMINEES[Q.el_nominee].note : '') : (Q['el_trait_' + b] || '');
+      h += SW.span(Q, b, SW.candidateName(Q, b)) + ' (' + SW.name(Q, b) + ', ' + (Q[b + '_r'] || 0).toFixed(1) + '% of the Senate)' + (trait ? ' <i>' + trait + '</i>' : '') + '<br>';
+    }
+    h += '</div>';
+    Q.el_text = h;
+    return h;
+  };
+
+  SW.electionOpen = function (Q) {
+    Q.el_cands = SW.electionCandidates(Q);
+    SW.dropPartnerCandidates(Q);
+    var c = Q.el_cands;
+    Q.el_has_rc = c.indexOf('rc') >= 0 ? 1 : 0;
+    Q.el_has_mod = c.indexOf('mod') >= 0 ? 1 : 0;
+    Q.el_has_rim = c.indexOf('rim') >= 0 ? 1 : 0;
+    Q.el_has_pal = c.indexOf('pal') >= 0 ? 1 : 0;
+    Q.el_has_sec = c.indexOf('sec') >= 0 ? 1 : 0;
+    Q.el_backing = ''; Q.el_nominee = ''; Q.el_exposed = 0; Q.el_pledges_made = 0; Q.el_deal = ''; Q.el_deal_chair = ''; Q.el_done = 0;
+    Q.el_courted_mod = 0; Q.el_courted_rim = 0; Q.el_courted_ind = 0; Q.el_courted_guild = 0; Q.el_courted_sec = 0; Q.el_attacked = 0;
+    // last term's pledges lapse with the old government
+    for (var p in SW.PLEDGES) { Q['pledge_' + p] = ''; Q['pl_' + p] = 0; }
+    if (!Q.whip_seed || Q.whip_for !== Q.next_election_date) Q.whip_seed = 1 + Math.floor(SW.rnd() * 9999);
+    SW.rivalTraits(Q);
+    SW.nomineesOpen(Q);
+    SW.electionIntro(Q);
+    SW.warChest(Q);
+    Q.el_incumbent = Q.chancellor;
+    Q.el_sec_leader = Q.sec_leader;
+    SW.pledgeOptions(Q);
+  };
+  // the Caucus picks whom to back; what the trail earned for the Caucus partly carries over to an ally
+  SW.elBack = function (Q, b) {
+    Q.el_backing = b;
+    if (b !== 'rc') for (var i = 0; i < Q.parties.length; i++) {
+      var k = 'bonus_' + Q.parties[i] + '_for_rc';
+      if (Q[k] > 0) Q['bonus_' + Q.parties[i] + '_for_' + b] = (Q['bonus_' + Q.parties[i] + '_for_' + b] || 0) + Q[k] * 0.5;
+    }
+    SW.pledgeOptions(Q);
+  };
+
+  // ---- the whip count: how each bloc is leaning, as far as our whips can tell
+  SW.whipExact = function (Q) { return (Q.chair_judiciary === 'rc' || Q.evidence >= 4 || Q.adv_organa || Q.adv_valorum) ? 1 : 0; };
+  SW.whipFog = function (Q, b, c) {
+    var s = (Q.whip_seed || 1) + '|' + b + '|' + c, h = 7;
+    for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 10007;
+    return (h % 13) - 6;
+  };
+  SW.whipCount = function (Q, cands, backing, seatKey) {
+    var exact = SW.whipExact(Q), saveA = Q.el_active, saveB = Q.el_backing;
+    Q.el_active = 1; if (backing !== undefined) Q.el_backing = backing;
+    var res = SW.runElection(Q, cands, {fog: !exact, exact: exact, seatKey: seatKey || '_r'});
+    var votes = SW._lastVotes;
+    Q.el_active = saveA; Q.el_backing = saveB;
+    return {res: res, votes: votes, exact: exact};
+  };
+  SW.leanWhy = function (Q, b, c) {
+    var bonus = Q['bonus_' + b + '_for_' + c] || 0;
+    for (var p in SW.PLEDGES) if (Q['pledge_' + p] === b && c === Q.el_backing) return 'our pledge';
+    if (bonus >= 10) return c === Q.el_backing ? 'courted by us' : 'favours and money';
+    if (c === 'pal' && Q.naboo_sympathy) return 'sympathy for Naboo';
+    if (c === 'pal' && Q.el_bought_amt > 0 && !Q.el_exposed) return 'Chancellery money';
+    if (c === Q.chancellor_bloc && Q.elections_held > 0) return 'the incumbent';
+    var L = SW.leader(Q, b);
+    if (L.likes && L.likes[c] >= 5) return 'their leader\'s ties';
+    if (c === 'sec' && Q.fear > 50) return 'fear';
+    if (c === 'rc' && (Q[b + '_relation'] || 0) >= 50) return 'good relations with us';
+    if (c === 'rc' && (Q[b + '_relation'] || 0) < 25) return '';
+    return '';
+  };
+  SW.whipText = function (Q, cands, backing, seatKey) {
+    if (!cands) { cands = SW.electionCandidates(Q, '_votes'); backing = cands.indexOf('rc') >= 0 ? 'rc' : ''; seatKey = '_votes'; }
+    var w = SW.whipCount(Q, cands, backing, seatKey);
+    var h = '<div class="panel whip"><b>Our whip count</b> <span class="sb-tag">' + (w.exact ? 'reliable' : 'rough: could be several points out') + '</span><br>';
+    for (var i = 0; i < w.res.length; i++) h += SW.span(Q, w.res[i].bloc, SW.candidateName(Q, w.res[i].bloc)) + ': about ' + Math.round(w.res[i].share) + '%<br>';
+    var leans = [];
+    for (var b in w.votes) {
+      var v = w.votes[b];
+      if (v.own || b === 'cis') continue;
+      var why = SW.leanWhy(Q, b, v.to);
+      leans.push(SW.name(Q, b) + ' → ' + SW.candidateName(Q, v.to) + (v.alt ? ' (wavering: ' + SW.candidateName(Q, v.alt) + ')' : '') + (why ? ', ' + why : ''));
+    }
+    if (leans.length) h += '<span class="sb-note">' + leans.join(' · ') + '</span>';
+    if (w.res[0] && w.res[0].share < 50 && w.res.length > 1) h += '<br><i>No one has a majority yet: a second ballot looks likely.</i>';
+    if (!w.exact) h += '<br><i>For a reliable count: the Judiciary chair, strong evidence (4 or more), or Bail Organa or Finis Valorum as an advisor.</i>';
+    return h + '</div>';
+  };
+
+  // ---- pledges: promises made for votes, which bind us until the next Chancellor election
+  SW.PLEDGES = {
+    no_tariffs: {bloc: 'guild', name: 'no trade-route tariffs', label: 'Promise the guilds no trade-route tariffs'},
+    no_levy: {bloc: 'mod', name: 'no levy on the Core', label: 'Promise the Moderates no levy on the Core'},
+    rim_relief: {bloc: 'rim', name: 'Rim relief in every budget', label: 'Promise the Rim relief in every budget'},
+    defence: {bloc: 'sec', name: 'defence spending in every budget', label: 'Promise the Security Bloc defence spending in every budget'},
+    no_powers: {bloc: 'ind', name: 'no new emergency powers', label: 'Promise the Independents no new emergency powers'},
+    no_probe: {bloc: 'pal', name: 'no investigations of the Chancellery', label: ''}
+  };
+  SW.PLEDGE_CLASH = {rim_relief: 'defence', defence: 'rim_relief'};
+  SW.pledgeBloc = function (Q, id) {
+    var b = SW.PLEDGES[id].bloc;
+    if (id === 'rim_relief' && Q.parties.indexOf('rim') < 0 && Q.parties.indexOf('rfc') >= 0) b = 'rfc';
+    return b;
+  };
+  SW.pledgeOptions = function (Q) {
+    for (var id in SW.PLEDGES) {
+      var b = SW.pledgeBloc(Q, id);
+      Q['plo_' + id] = (SW.PLEDGES[id].label && Q.parties.indexOf(b) >= 0 && b !== Q.el_backing && !Q['pl_' + id] && !(SW.PLEDGE_CLASH[id] && Q['pl_' + SW.PLEDGE_CLASH[id]])) ? 1 : 0;
+    }
+  };
+  SW.makePledge = function (Q, id, bloc, bonus) {
+    if (!SW.PLEDGES[id]) return;
+    bloc = bloc || SW.pledgeBloc(Q, id);
+    Q['pledge_' + id] = bloc; Q['pl_' + id] = 1;
+    if (id === 'no_powers') { Q.ep_seen = Q.emergency_powers; Q.ret_seen = Q.rc_emergency_taken || 0; }
+    if (bonus && Q.el_backing) Q['bonus_' + bloc + '_for_' + Q.el_backing] = (Q['bonus_' + bloc + '_for_' + Q.el_backing] || 0) + bonus;
+    Q['pledge_' + id + '_name'] = SW.name(Q, bloc);
+    Q.pledges_made = (Q.pledges_made || 0) + 1;
+    var pls = SW.pledgeList(Q); Q.pledge_count = pls.length; Q.pledge_text = pls.join('; ');
+    SW.pledgeOptions(Q);
+  };
+  SW.pledgeList = function (Q) {
+    var out = [];
+    for (var id in SW.PLEDGES) if (Q['pl_' + id]) out.push(SW.PLEDGES[id].name + ' (to the ' + SW.name(Q, Q['pledge_' + id]) + ')');
+    return out;
+  };
+  SW.breakPledge = function (Q, id, how) {
+    if (!Q['pl_' + id]) return;
+    var b = Q['pledge_' + id];
+    Q['pledge_' + id] = ''; Q['pl_' + id] = 0;
+    if (!b || Q.parties.indexOf(b) < 0) return;
+    Q[b + '_relation'] = (Q[b + '_relation'] || 0) - 8;
+    Q[b + '_grudge'] = (Q[b + '_grudge'] || 0) + 3;
+    if (Q.rc_in_govt && (Q.govt_blocs || []).indexOf(b) >= 0) Q.coalition_dissent += 2;
+    SW.momentum(Q, -0.4, 'a broken promise to the ' + SW.name(Q, b));
+    Q.pledges_broken = (Q.pledges_broken || 0) + 1;
+    Q.pb_ready = 1; Q.pb_bloc = b; Q.pb_name = SW.name(Q, b); Q.pb_what = SW.PLEDGES[id].name; Q.pb_how = how || 'the Caucus did otherwise';
+    Q.pb_leader = Q[b + '_leader'] || ('the leader of the ' + SW.name(Q, b));
+    Q.pb_partner = (Q.rc_in_govt && (Q.govt_blocs || []).indexOf(b) >= 0) ? 1 : 0;
+    if (Q._reactions) SW.react(Q, 'This breaks our pledge of ' + SW.PLEDGES[id].name + ' to the ' + SW.name(Q, b) + '.');
+  };
+  SW.checkBudgetPledges = function (Q, rev, pri) {
+    if (rev === 'tariffs') SW.breakPledge(Q, 'no_tariffs', 'the Caucus backed trade-route tariffs');
+    if (rev === 'levy') SW.breakPledge(Q, 'no_levy', 'the Caucus backed a levy on the Core');
+    if (pri !== 'relief') SW.breakPledge(Q, 'rim_relief', 'the Caucus backed a budget without Rim relief');
+    if (pri !== 'defence') SW.breakPledge(Q, 'defence', 'the Caucus backed a budget without defence spending');
+  };
+  // the pledges a budget would break, as a warning line ('' if none); pri null checks the revenue alone
+  SW.pledgesBrokenBy = function (Q, rev, pri) {
+    var out = [];
+    if (rev === 'tariffs' && Q.pl_no_tariffs) out.push('no trade-route tariffs');
+    if (rev === 'levy' && Q.pl_no_levy) out.push('no levy on the Core');
+    if (pri !== null && pri !== 'relief' && Q.pl_rim_relief) out.push('Rim relief in every budget');
+    if (pri !== null && pri !== 'defence' && Q.pl_defence) out.push('defence spending in every budget');
+    return out.length ? 'Breaks our pledge of ' + out.join(' and ') + '.' : '';
+  };
+  SW.pledgeTick = function (Q) {
+    if (Q.pl_no_powers) {
+      if (Q.emergency_powers > (Q.ep_seen || 0) && (Q.powers_rc_yes || (Q.rc_emergency_taken || 0) > (Q.ret_seen || 0)))
+        SW.breakPledge(Q, 'no_powers', 'the Caucus supported new emergency powers');
+      Q.ep_seen = Q.emergency_powers; Q.ret_seen = Q.rc_emergency_taken || 0;
+    }
+    Q.powers_rc_yes = 0;
+    var pls = SW.pledgeList(Q);
+    Q.pledge_count = pls.length; Q.pledge_text = pls.join('; ');
+    // budget warnings
+    Q.bdw_tariffs = Q.pl_no_tariffs; Q.bdw_levy = Q.pl_no_levy; Q.bdw_relief = Q.pl_rim_relief; Q.bdw_defence = Q.pl_defence;
+  };
+
+  // ---- the ballots
+  SW.electionFirst = function (Q) {
+    Q.el_active = 1;
+    var proj = SW.whipCount(Q, Q.el_cands, Q.el_backing, '_r');
+    Q.el_proj_share = 0;
+    for (var i = 0; i < proj.res.length; i++) if (proj.res[i].bloc === Q.el_backing) Q.el_proj_share = proj.res[i].share;
+    Q.el_proj_exact = proj.exact; Q.el_proj_for = Q.el_backing;
+    var projVotes = proj.votes;
+    Q.el_active = 1;
+    var res = SW.runElection(Q, Q.el_cands);
+    var votes = SW._lastVotes;
+    Q.el_res1 = res.map(function (r) { return r.bloc; });
+    Q.el_result = SW.resultText(Q, res, 'First ballot');
+    Q.el_act_share = 0;
+    for (var j = 0; j < res.length; j++) if (res[j].bloc === Q.el_backing) Q.el_act_share = res[j].share;
+    // who did not vote the way our whips expected
+    var sw = [];
+    for (var b in votes) if (projVotes[b] && !votes[b].own && projVotes[b].to !== votes[b].to && b !== 'cis') sw.push('the ' + SW.name(Q, b) + ' broke for ' + SW.candidateName(Q, votes[b].to));
+    Q.el_switch_note = sw.length ? sw.slice(0, 3).join('; ') : '';
+    if (res[0].share >= 50 || res.length < 2) { Q.el_done = 1; SW.electionFinish(Q, res[0].bloc); return; }
+    Q.el_done = 0; Q.second_ballots = (Q.second_ballots || 0) + 1;
+    Q.el_top = [res[0].bloc, res[1].bloc];
+    Q.eb_a = res[0].bloc; Q.eb_b = res[1].bloc;
+    Q.eb_a_name = SW.candidateName(Q, Q.eb_a); Q.eb_b_name = SW.candidateName(Q, Q.eb_b);
+    Q.eb_ours_in = (Q.el_backing && Q.el_top.indexOf(Q.el_backing) >= 0) ? 1 : 0;
+    Q.eb_ours_out = Q.el_backing && !Q.eb_ours_in ? 1 : 0;
+    Q.eb_backing_name = Q.el_backing ? SW.candidateName(Q, Q.el_backing) : '';
+    var out = res.slice(2).map(function (r) { return r.bloc; });
+    Q.eb_out = out;
+    Q.eb_out_main = out[0] || '';
+    Q.eb_out_name = out[0] ? SW.name(Q, out[0]) : '';
+    Q.eb_out_cand = out[0] ? SW.candidateName(Q, out[0]) : '';
+    Q.eb_has_out = out.length && out[0] !== 'rc' && out[0] !== Q.el_backing ? 1 : 0;
+    // a pledge the eliminated bloc would value
+    Q.eb_pledge = '';
+    if (Q.eb_has_out) for (var id in SW.PLEDGES) if (SW.pledgeBloc(Q, id) === Q.eb_out_main && SW.PLEDGES[id].label && !Q['pl_' + id] && !(SW.PLEDGE_CLASH[id] && Q['pl_' + SW.PLEDGE_CLASH[id]])) Q.eb_pledge = id;
+    Q.eb_pledge_ok = Q.eb_pledge ? 1 : 0;
+    Q.eb_pledge_name = Q.eb_pledge ? SW.PLEDGES[Q.eb_pledge].name : '';
+    // what each finalist would give the Caucus for its votes
+    Q.eb_a_chair = SW.dealChair(Q, Q.eb_a); Q.eb_b_chair = SW.dealChair(Q, Q.eb_b);
+    Q.eb_a_chair_name = SW.COMMITTEE_NAMES[Q.eb_a_chair]; Q.eb_b_chair_name = SW.COMMITTEE_NAMES[Q.eb_b_chair];
+    Q.eb_a_rc = Q.eb_a === 'rc' ? 1 : 0; Q.eb_b_rc = Q.eb_b === 'rc' ? 1 : 0;
+    Q.eb_rc_seats = SW.round1(Q.rc_r);
+  };
+  // a finalist will give up a chair it can spare, but never the one it most needs
+  SW.dealChair = function (Q, cand) {
+    var keep = {pal: 'judiciary', guild: 'finance', sec: 'security', rim: 'rimaffairs', mod: 'finance'}[cand];
+    var want = ['judiciary', 'security', 'finance', 'rimaffairs'];
+    for (var i = 0; i < want.length; i++) if (want[i] !== keep) return want[i];
+    return 'rimaffairs';
+  };
+  SW.kingmaker = function (Q, which) {
+    var c = which === 'a' ? Q.eb_a : Q.eb_b;
+    Q.el_deal = c; Q.el_deal_chair = which === 'a' ? Q.eb_a_chair : Q.eb_b_chair; Q.el_deal_chair_name = SW.COMMITTEE_NAMES[Q.el_deal_chair];
+    Q.el_backing = c;
+    // blocs that trust the Caucus follow its lead
+    for (var i = 0; i < Q.parties.length; i++) {
+      var b = Q.parties[i];
+      if (b !== 'rc' && (Q[b + '_relation'] || 0) >= 50) Q['bonus_' + b + '_for_' + c] = (Q['bonus_' + b + '_for_' + c] || 0) + 6;
+    }
+    Q.kingmaker_deals = (Q.kingmaker_deals || 0) + 1;
+  };
+  SW.courtEliminated = function (Q) {
+    var c = Q.el_backing;
+    for (var i = 0; i < Q.eb_out.length; i++) {
+      var b = Q.eb_out[i];
+      if (b === 'rc') continue;
+      Q['bonus_' + b + '_for_' + c] = (Q['bonus_' + b + '_for_' + c] || 0) + 12 + (Q[b + '_relation'] || 0) / 10;
+    }
+  };
+  SW.electionSecond = function (Q) {
+    Q.el_active = 1;
+    var r2 = SW.runElection(Q, Q.el_top);
+    Q.el_result += SW.resultText(Q, r2, 'Second ballot');
+    SW.electionFinish(Q, r2[0].bloc);
+  };
+  SW.electionFinish = function (Q, winner) {
+    Q.el_active = 0;
+    var notes = [];
+    if (Q.el_proj_for) {
+      var err = Math.round(Math.abs(Q.el_act_share - Q.el_proj_share));
+      notes.push('Our whips counted about ' + Math.round(Q.el_proj_share) + '% for ' + SW.candidateName(Q, Q.el_proj_for) + ' on the first ballot; the Senate gave ' + Math.round(Q.el_act_share) + '%' +
+        (err <= 2 ? ': the count held.' : ': off by ' + err + ' points.'));
+    }
+    if (Q.el_switch_note) notes.push('On the floor, ' + Q.el_switch_note + '.');
+    Q.el_whip_note = notes.join(' ');
+    Q.el_result += Q.el_whip_note ? '<p class="sb-note">' + Q.el_whip_note + '</p>' : '';
+    Q.el_winner = winner;
+    Q.el_winner_name = SW.candidateName(Q, winner);
+    Q.el_deal_won = (Q.el_deal && Q.el_deal === winner) ? 1 : 0;
+    SW.installChancellor(Q, winner);
+    for (var k in Q) if (k.indexOf('bonus_') === 0) delete Q[k];
+    if (winner === Q.el_backing && winner === 'rc') SW.momentum(Q, 1, 'winning the Chancellery');
+    else if (Q.el_backing === 'rc') SW.momentum(Q, -0.6, 'losing the Chancellor election');
+  };
+
+  // ---- coalition talks: every partner names its price
+  SW.PRICE_CHAIR = {guild: 'finance', mod: 'judiciary', rim: 'rimaffairs', sec: 'security', pal: 'judiciary', rfc: 'rimaffairs'};
+  SW.PRICE_PLEDGE = {guild: 'no_tariffs', mod: 'no_levy', rim: 'rim_relief', sec: 'defence', ind: 'no_powers', rfc: 'rim_relief', pal: 'no_probe'};
+  SW.partnerPrice = function (Q, b) {
+    var f = SW.firm(Q, b), chair = SW.PRICE_CHAIR[b] || '', pledge = SW.PRICE_PLEDGE[b] || '';
+    if (f >= 0.62) return {chair: chair, pledge: pledge};
+    if (f >= 0.45) return chair ? {chair: chair, pledge: ''} : {chair: '', pledge: pledge};
+    return pledge ? {chair: '', pledge: pledge} : {chair: chair, pledge: ''};
+  };
+  SW.coalitionPrices = function (Q, blocs) {
+    var chairs = {}, pledges = {};
+    for (var i = 0; i < blocs.length; i++) {
+      var b = blocs[i];
+      if (b === 'rc') continue;
+      var p = SW.partnerPrice(Q, b);
+      if (p.chair && chairs[p.chair]) { if (!p.pledge) p.pledge = SW.PRICE_PLEDGE[b] || ''; p.chair = ''; }
+      // a budget has one priority: no partner may ask for relief and defence both
+      if (p.pledge && SW.PLEDGE_CLASH[p.pledge] && (pledges[SW.PLEDGE_CLASH[p.pledge]] || Q['pl_' + SW.PLEDGE_CLASH[p.pledge]])) {
+        p.pledge = '';
+        if (!p.chair && SW.PRICE_CHAIR[b] && !chairs[SW.PRICE_CHAIR[b]]) p.chair = SW.PRICE_CHAIR[b];
+      }
+      if (p.chair) chairs[p.chair] = b;
+      if (p.pledge && !pledges[p.pledge] && !Q['pl_' + p.pledge]) pledges[p.pledge] = b;
+    }
+    return {chairs: chairs, pledges: pledges};
+  };
+  SW.priceText = function (Q, blocs) {
+    var pr = SW.coalitionPrices(Q, blocs), bits = [];
+    for (var c in pr.chairs) bits.push('the ' + SW.COMMITTEE_NAMES[c] + ' chair for the ' + SW.name(Q, pr.chairs[c]));
+    for (var p in pr.pledges) bits.push(SW.PLEDGES[p].name + ' (for the ' + SW.name(Q, pr.pledges[p]) + ')');
+    return bits.length ? 'Their price: ' + bits.join('; ') + '.' : 'No price beyond a fair share.';
+  };
+  SW.acceptPrices = function (Q, blocs) {
+    var pr = SW.coalitionPrices(Q, blocs);
+    for (var c in pr.chairs) { Q['chair_' + c] = pr.chairs[c]; Q['chair_res_' + c] = 1; Q['chair_res_' + c + '_name'] = SW.name(Q, pr.chairs[c]); }
+    for (var p in pr.pledges) SW.makePledge(Q, p, pr.pledges[p]);
+  };
+  // joining someone else's government: the Chancellor's bloc names its own price
+  SW.juniorPrice = function (Q) {
+    var b = Q.el_winner || Q.chancellor_bloc, p = SW.PRICE_PLEDGE[b] || '';
+    if (p && (Q['pl_' + p] || (SW.PLEDGE_CLASH[p] && Q['pl_' + SW.PLEDGE_CLASH[p]]))) p = '';
+    Q.el_join_pledge = p;
+    Q.el_join_price = p ? 'In return, the ' + SW.name(Q, b) + ' ask for ' + SW.PLEDGES[p].name + '.' : '';
   };
 
   // ------------------------------------------------------------------ faction splits
@@ -1457,7 +1881,7 @@
       counter: 'Get ahead of the story',
       foiled: 'The Caucus publishes its own accounts first. The smear story runs, and no one cares.',
       apply: function (Q) {
-        Q.faith -= 1; Q.inst_dissent += 6; Q.mod_relation -= 4;
+        Q.faith -= 1; Q.inst_dissent += 6; Q.mod_relation -= 4; Q.scandal_ours_until = Q.date + 12; SW.momentum(Q, -0.8, 'a smear against the Caucus');
         for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_rc'] *= 0.95;
         return 'The HoloNet runs a story about Caucus senators taking money from shipping cartels. Most of it is false. All of it is repeated.';
       }
@@ -1692,6 +2116,7 @@
       if (bought >= 0.08) SW._notes.push('bought votes');
     }
     var palLine = stance.pal !== undefined ? stance.pal : (topics.indexOf('powers') >= 0 ? 1 : 0);
+    if (topics.indexOf('powers') >= 0 && rcYes >= 0.75) Q.powers_rc_yes = 1;
     var lobbied = 0;
     for (var i = 0; i < Q.parties.length; i++) {
       var b = Q.parties[i];
@@ -1811,7 +2236,7 @@
 
     // regional support drifts toward targets set by the state of the galaxy
     var mult = {
-      rc: Math.max(0.3, 1 + (Q.faith - 50) / 40 - (Q.dissent - 0.15) * 1.2 + (Q.rc_in_govt ? 0.05 : 0)),
+      rc: Math.max(0.3, 1 + (Q.faith - 50) / 40 - (Q.dissent - 0.15) * 1.2 + (Q.rc_in_govt ? 0.05 : 0) + 0.04 * SW.clamp(Q.rc_momentum || 0, -5, 5)),
       mod: Math.max(0.2, 1 + (50 - Q.corruption) / 40 - (Q.valorum_scandal && Q.mod_leader === 'Finis Valorum' ? 0.3 : 0)),
       // Sidious's agents work the Senate every year, in office or not; a clean Senate only slows them
       pal: Math.max(0.3, 1 + Math.max(-0.2, (Q.corruption - 55) / 25) + Math.max(-0.2, (Q.fear - 25) / 20) + Q.grand_plan / (palInPower ? 40 : 70) +
@@ -1860,6 +2285,8 @@
       SW.frontsTick(Q, f);
     }
     SW.economyTick(Q, f);
+    Q.rc_momentum = (Q.rc_momentum || 0) * Math.pow(0.8, f);
+    for (var gr = 0; gr < SW.REGIONS.length; gr++) Q['grievance_' + SW.REGIONS[gr]] = (Q['grievance_' + SW.REGIONS[gr]] || 0) * Math.pow(0.9, f);
     SW.clampAll(Q);
   };
 
@@ -1884,6 +2311,7 @@
       var s = Q[r + '_sep'];
       if (s > 50 && Q[r + '_seceded'] < 0.65) {
         var frac = Math.min(0.65 - Q[r + '_seceded'], (s - 50) / 100 * 0.5 * m);
+        if (Q.ref_ready && Q.ref_region === r) frac *= 0.5;
         Q[r + '_seceded'] += frac;
         lost += frac * SW.BASE_WEIGHTS[r];
         Q[r] = SW.BASE_WEIGHTS[r] * (1 - Q[r + '_seceded']);
@@ -2347,7 +2775,9 @@
     Q.bd_stances = lines.join(' · ');
     Q.bd_failed = Q.bd_vote >= 50 ? 0 : 1;
     if (!Q.bd_failed) {
+      var prevPri = Q.budget_pri;
       SW.budgetApply(Q, rev, pri);
+      if (Q._owns) { SW.checkBudgetPledges(Q, rev, pri); SW.budgetGrievances(Q, rev, pri, prevPri); }
       if (writer) Q.budget_defeats = 0;
     } else {
       SW.budgetApply(Q, 'none', 'none');
@@ -2379,9 +2809,424 @@
   SW.patronsLabel = function (g) { return g >= 70 ? '<span class="good">generous</span>' : (g >= 45 ? 'steady' : (g >= 25 ? '<span class="warn">resentful</span>' : '<b class="bad">in revolt</b>')); };
   SW.inflationLabel = function (v) { return v < 15 ? 'stable' : (v < 30 ? 'rising' : (v < 50 ? '<span class="warn">high</span>' : '<b class="bad">ruinous</b>')); };
   // the guilds and the Banking Clan bankroll the candidates they like
+  // ---------------------------------------------------- campaigning: a message, in a region, at a moment
+  SW.CAMPAIGN_MESSAGES = {
+    clean: {name: 'clean government', mult: function (Q, r) {
+      var m = SW.clamp(1 + (Q.corruption - 55) / 30, 0.4, 1.8) * ((r === 'core' || r === 'colonies') ? 1.2 : 0.8);
+      if (Q.scandal_ours_until > Q.date) m *= 0.4;
+      return m; }},
+    relief: {name: 'Rim relief', mult: function (Q, r) {
+      if (r !== 'midrim' && r !== 'outer') return 0.5;
+      var m = SW.clamp(0.6 + (Q.rim_hardship - 30) / 25, 0.4, 2);
+      if (!(Q.rim_relief >= 1 || Q.budget_pri === 'relief' || Q.rim_enfranchised)) m *= 0.6;
+      return m; }},
+    security: {name: 'security', mult: function (Q, r) {
+      return SW.clamp(0.6 + (Q.fear - 25) / 30, 0.4, 1.8) * (r === 'colonies' ? 1.2 : (r === 'outer' ? 0.7 : 1)); }},
+    peace: {name: 'peace', mult: function (Q) {
+      if (Q.fear > 55) return -(Q.fear - 55) / 10;
+      return SW.clamp(0.6 + (Q.war_weariness || 0) / 50 + (Q.peace_talks || 0) * 0.1, 0.4, 1.8); }},
+    republic: {name: 'the Republic', mult: function () { return 0.9; }}
+  };
+  SW.campaignWord = function (m) { return m < 0 ? 'may backfire' : (m >= 1.4 ? 'strong' : (m >= 0.9 ? 'solid' : (m >= 0.55 ? 'weak' : 'poor'))); };
+  SW.campaignPreview = function (Q) {
+    for (var k in SW.CAMPAIGN_MESSAGES) Q['cm_word_' + k] = SW.campaignWord(SW.CAMPAIGN_MESSAGES[k].mult(Q, Q.cm_region));
+  };
+  SW.campaignRun = function (Q, msg) {
+    var M = SW.CAMPAIGN_MESSAGES[msg], r = Q.cm_region;
+    var m = M.mult(Q, r), eff = 4 * SW.unity(Q) * m;
+    Q[r + '_rc'] += eff;
+    if (msg === 'security') Q.pacifist_dissent += 2;
+    if (msg === 'peace') Q.hawk_dissent += 2;
+    if (msg === 'relief' && (r === 'core' || r === 'colonies')) Q.mod_relation -= 1;
+    Q.cm_effect = SW.round1(eff); Q.cm_backfired = eff < 0 ? 1 : 0; Q.cm_word = SW.campaignWord(m); Q.cm_msg_name = M.name;
+    Q.cm_region_name = SW.REGION_NAMES[r];
+    if (m >= 1.4) SW.momentum(Q, 0.3, 'a strong campaign in the ' + Q.cm_region_name);
+    if (eff < 0) SW.momentum(Q, -0.5, 'a campaign that backfired');
+    Q.campaigns_run = (Q.campaigns_run || 0) + 1;
+  };
+
+  // ---------------------------------------------------- campaign violence, and who protects the Caucus
+  SW.disruptorName = function (Q, r) {
+    if (Q.war && r === 'outer' && (Q.mandalore_pressed || Q.date >= 150) && SW.rnd() < 0.3) return 'Death Watch commandos';
+    if (Q.guild_patience < 35) return 'thugs hired by the guilds';
+    if (Q.war) return 'bounty hunters';
+    if (Q.dooku_movement) return 'Separatist agitators';
+    return 'Nebula Front militants';
+  };
+  // will this rally be attacked? (sets the disruptor, their strength, and our local security in that region)
+  SW.rallyRisk = function (Q, region, extra) {
+    Q.cm_disrupted = 0; Q.cm_protect_won = 0; Q.cm_force_note = 0;
+    var risk = 0.06 + Q.fear * 0.002 + (Q.dooku_movement ? 0.08 : 0) + (Q.guild_patience < 35 ? 0.1 : 0) + (Q.war ? 0.06 : 0) + (Q.date < 30 ? 0.05 : 0) + (extra || 0);
+    if (SW.rnd() >= SW.clamp(risk, 0, 0.5)) return 0;
+    Q.cm_disrupted = 1; Q.disruptions = (Q.disruptions || 0) + 1;
+    Q.cm_region = region; Q.cm_region_name = SW.REGION_NAMES[region];
+    Q.cm_disruptor = SW.disruptorName(Q, region);
+    Q.cm_threat = SW.round1(1.5 + Q.fear / 30 + (Q.dooku_movement ? 0.5 : 0) + (Q.war ? 1 : 0) + SW.rnd() * 1.5);
+    Q.cm_local = SW.round1((Q[region + '_rc_share'] || 10) / 6 + ((region === 'core' || region === 'colonies') ? 1 : 0));
+    Q.jf_txt = SW.round1(Q.judicial_forces || 0);
+    return 1;
+  };
+  SW.rallyProtect = function (Q, how) {
+    var str = 0;
+    if (how === 'judicials') str = (Q.judicial_forces || 0);
+    if (how === 'guard') str = 5;
+    if (how === 'local') str = Q.cm_local;
+    str *= 0.8 + SW.rnd() * 0.4;
+    Q.cm_protect_won = (how !== 'cancel' && str >= Q.cm_threat) ? 1 : 0;
+    if (how === 'judicials' || how === 'guard') {
+      Q.force_uses = (Q.force_uses || 0) + 1;
+      if (Q.force_uses >= 3) { Q.pacifist_dissent += 3; Q.force_uses = 0; Q.cm_force_note = 1; } else Q.cm_force_note = 0;
+    }
+    if (how === 'cancel') { SW.momentum(Q, -0.2, 'a cancelled rally'); return 0; }
+    if (Q.cm_protect_won) { Q.faith += 0.3; Q.fear -= 1; Q.protects_won = (Q.protects_won || 0) + 1; }
+    else { Q[Q.cm_region + '_rc'] -= 1; Q.fear += 2; SW.momentum(Q, -0.5, 'a rally broken up by ' + Q.cm_disruptor); Q.protects_lost = (Q.protects_lost || 0) + 1; }
+    return Q.cm_protect_won;
+  };
+  SW.campaignStart = function (Q, msg) {
+    Q.cm_msg = msg;
+    if (!SW.rallyRisk(Q, Q.cm_region)) SW.campaignRun(Q, msg);
+  };
+  SW.campaignProtect = function (Q, how) {
+    if (SW.rallyProtect(Q, how)) SW.campaignRun(Q, Q.cm_msg);
+  };
+
+  // ---------------------------------------------------- world and sector elections
+  // dates are months since the start (33 BBY); each contest is held once, if its premise still holds
+  SW.WORLD_ELECTIONS = {
+    malastare: {name: 'the Malastare sector elections', world: 'Malastare', region: 'midrim', from: 84, to: 104, adv: 'chuchi',
+      ours: 'Caucus-backed reformers', theirs: function (Q) { return Q.dooku_movement ? 'Separatist radicals' : 'Ainlee Teem\'s populists'; },
+      stakes: 'The Mid Rim\'s mood, and how loudly it talks of leaving.', ok: function () { return 1; },
+      win: function (Q) { Q.midrim_rc += 1.5; Q.midrim_sep -= 5; }, lose: function (Q) { Q.midrim_sep += 5; Q.midrim_rim = (Q.midrim_rim || 0) + 1; }},
+    chandrila: {name: 'Chandrila\'s senatorial mandate', world: 'Chandrila', region: 'core', from: 72, to: 92, adv: 'mothma',
+      ours: 'Mon Mothma', theirs: function () { return 'a Core Moderate backed by the shipping lines'; },
+      stakes: 'Mon Mothma\'s seat. If she loses it, she is out of Caucus life for a year.', ok: function (Q) { return Q.mothma_joined || Q.date >= 36; },
+      win: function (Q) { Q.core_rc += 2; Q.pacifist_dissent -= 3; }, lose: function (Q) { Q.mothma_out_until = Q.date + 12; if (Q.adv_mothma) { Q.adv_mothma = 0; Q.wv_lost_adv = 'Mon Mothma'; } Q.core_rc -= 1; }},
+    naboo: {name: 'Naboo\'s royal election', world: 'Naboo', region: 'midrim', from: 96, to: 112, adv: 'amidala',
+      ours: 'Queen Jamillia', theirs: function () { return 'a loyalist of Senator Palpatine'; },
+      stakes: 'Palpatine\'s home world, and its delegations across the Chommell sector.', ok: function (Q) { return !Q.sidious_defeated && !Q.pal_disgraced; },
+      win: function (Q) { Q.midrim_rc += 2; Q.midrim_pal *= 0.9; Q.pal_relation -= 5; }, lose: function (Q) { Q.midrim_pal += 1.5; Q.grand_plan += 1; }},
+    corellia: {name: 'the Corellian Diet', world: 'Corellia', region: 'core', from: 100, to: 120, adv: 'bel_iblis',
+      ours: 'Garm Bel Iblis\'s allies', theirs: function () { return 'Security Bloc hardliners'; },
+      stakes: 'The Corellian fleet, which a friendly Diet would lend to the Republic\'s member forces.', ok: function (Q) { return Q.date >= 24; },
+      win: function (Q) { Q.member_forces += 1; Q.core_rc += 1; }, lose: function (Q) { Q.bel_iblis_out_until = Q.date + 12; if (Q.adv_bel_iblis) { Q.adv_bel_iblis = 0; Q.wv_lost_adv = 'Garm Bel Iblis'; } Q.core_sec += 1; }},
+    rodia: {name: 'Rodia\'s senatorial election', world: 'Rodia', region: 'midrim', from: 118, to: 140, adv: 'farr',
+      ours: 'Onaconda Farr', theirs: function () { return 'a guild-backed challenger'; },
+      stakes: 'Farr\'s mandate, and the Rim\'s trust in the Caucus.', ok: function (Q) { return !Q.farr_dead; },
+      win: function (Q) { Q.midrim_rc += 1.5; Q.rim_relation += 4; Q.rimward_dissent -= 3; }, lose: function (Q) { Q.midrim_guild = (Q.midrim_guild || 0) + 1; Q.rimward_dissent += 4; }},
+    kuat: {name: 'the Kuat succession', world: 'Kuat', region: 'core', from: 132, to: 152, adv: '',
+      ours: 'the reform-minded heirs of Kuat of Kuat', theirs: function () { return 'an ally of Wilhuff Tarkin'; },
+      stakes: 'The greatest shipyards in the Republic, and who the Security Bloc listens to.', ok: function () { return 1; },
+      win: function (Q) { Q.member_forces += 1; Q.sec_relation += 4; Q.core_rc += 1; }, lose: function (Q) { Q.grand_plan += 2; Q.core_sec += 1.5; }},
+    ryloth: {name: 'the Ryloth assembly', world: 'Ryloth', region: 'outer', from: 130, to: 165, adv: 'chuchi',
+      ours: 'Cham Syndulla\'s movement', theirs: function () { return 'Senator Orn Free Taa\'s machine'; },
+      stakes: 'Whether the Twi\'leks trust the Republic enough to fight for it.', ok: function (Q) { return Q.war; },
+      win: function (Q) { Q.outer_rc += 1.5; Q.free_ryloth = 1; Q.outer_sep -= 3; }, lose: function (Q) { Q.outer_sep += 3; Q.corruption += 1; }},
+    mandalore: {name: 'the Mandalorian elections', world: 'Mandalore', region: 'outer', from: 140, to: 170, adv: '',
+      ours: 'Duchess Satine\'s New Mandalorians', theirs: function () { return 'Death Watch sympathisers'; },
+      stakes: 'Mandalore\'s neutrality, and the Council of Neutral Systems behind it.', ok: function (Q) { return Q.war; },
+      win: function (Q) { Q.outer_sep -= 3; Q.satine_friend = 1; Q.war_weariness -= 2; }, lose: function (Q) { Q.mandalore_pressed = 1; Q.war_balance -= 0.5; Q.fear += 2; }}
+  };
+  SW.worldElectionCheck = function (Q) {
+    if (Q.wv_ready || Q.world_election_timer > 0 || Q.finale || Q.game_ending || Q.time < 3 || Q.sidious_defeated) return;
+    for (var id in SW.WORLD_ELECTIONS) {
+      var W = SW.WORLD_ELECTIONS[id];
+      if (Q['we_done_' + id] || Q.date < W.from || Q.date > W.to || !W.ok(Q)) continue;
+      Q.wv_ready = 1; Q.wv_id = id; Q['we_done_' + id] = 1;
+      return;
+    }
+  };
+  SW.worldPoll = function (Q, region) {
+    return SW.clamp(0.42 + ((Q[region + '_rc_share'] || 0) - 18) / 60 + SW.clamp(Q.rc_momentum || 0, -5, 5) * 0.04 + (Q.faith - 50) / 300, 0.15, 0.85);
+  };
+  SW.worldElectionOpen = function (Q) {
+    var W = SW.WORLD_ELECTIONS[Q.wv_id];
+    Q.wv_ready = 0; Q.world_election_timer = 3;
+    Q.wv_name = W.name; Q.wv_world = W.world; Q.wv_region = W.region; Q.wv_region_name = SW.REGION_NAMES[W.region];
+    Q.wv_ours = W.ours; Q.wv_theirs = W.theirs(Q); Q.wv_stakes = W.stakes; Q.wv_lost_adv = '';
+    Q.wv_chance = SW.worldPoll(Q, W.region); Q.wv_boost = 0;
+    Q.wv_adv = W.adv && Q['adv_' + W.adv] ? W.adv : ''; Q.wv_adv_name = Q.wv_adv ? SW.ADVISOR_NAMES[Q.wv_adv] : '';
+    Q.wv_has_adv = Q.wv_adv ? 1 : 0;
+    Q.wv_poll = Math.round(50 + (Q.wv_chance - 0.5) * 30);
+    Q.wv_heading = W.world + ' Goes to the Polls';
+  };
+  // how: 'hard' (2 capital), 'advisor', 'money', 'none'; 'hard' may be disrupted first
+  SW.worldCampaign = function (Q, how) {
+    if (how === 'hard') { Q.capital -= 2; Q.wv_boost += 0.15; }
+    if (how === 'advisor') { Q.advisor_action_timer = 5; Q.wv_boost += Q.wv_has_adv ? 0.2 : 0.1; }
+    if (how === 'money') { Q.wv_boost += 0.12; Q.corruption += 1; Q.rimward_dissent += 4; Q.guild_relation += 2; }
+  };
+  SW.worldResolve = function (Q) {
+    var W = SW.WORLD_ELECTIONS[Q.wv_id];
+    var p = SW.clamp(Q.wv_chance + Q.wv_boost, 0.05, 0.95);
+    Q.wv_won = SW.rnd() < p ? 1 : 0;
+    Q.wv_ours_pct = Math.round(SW.clamp(50 + (p - 0.5) * 30 + (SW.rnd() * 10 - 5) + (Q.wv_won ? 3 : -3), 20, 80));
+    if ((Q.wv_won && Q.wv_ours_pct <= 50) || (!Q.wv_won && Q.wv_ours_pct >= 50)) Q.wv_ours_pct = Q.wv_won ? 51 + Math.floor(SW.rnd() * 4) : 46 + Math.floor(SW.rnd() * 4);
+    if (Q.wv_won) { W.win(Q); SW.momentum(Q, Q.wv_boost > 0 ? 0.8 : 0.4, 'winning ' + W.name); Q.world_wins = (Q.world_wins || 0) + 1; }
+    else { W.lose(Q); SW.momentum(Q, Q.wv_boost > 0 ? -0.8 : -0.3, 'losing ' + W.name); Q.world_losses = (Q.world_losses || 0) + 1; }
+    SW.countAdvisors(Q);
+  };
+
+  // ---------------------------------------------------- secession referendums
+  SW.REFERENDUMS = {
+    malastare: {world: 'Malastare', region: 'midrim', ok: function () { return 1; }},
+    ordmantell: {world: 'Ord Mantell', region: 'midrim', ok: function () { return 1; }},
+    bothawui: {world: 'Bothawui', region: 'midrim', ok: function () { return 1; }},
+    onderon: {world: 'Onderon', region: 'outer', ok: function (Q) { return Q.war; }},
+    moncala: {world: 'Mon Cala', region: 'outer', ok: function () { return 1; }},
+    tion: {world: 'the Tion Cluster', region: 'outer', ok: function () { return 1; }},
+    corporate: {world: 'the Corporate Sector', region: 'corporate', ok: function () { return 1; }}
+  };
+  SW.referendumCheck = function (Q) {
+    if (Q.ref_ready || Q.referendum_timer > 0 || !Q.dooku_movement || Q.finale || Q.game_ending || Q.sidious_defeated) return;
+    var best = '', bestS = 44;
+    for (var id in SW.REFERENDUMS) {
+      var R = SW.REFERENDUMS[id];
+      if (Q['ref_done_' + id] || !R.ok(Q)) continue;
+      var sep = Q[R.region + '_sep'] || 0;
+      if (Q[R.region + '_seceded'] >= 0.6) continue;
+      if (sep > bestS) { best = id; bestS = sep; }
+    }
+    if (!best) return;
+    Q.ref_ready = 1; Q.ref_id = best; Q['ref_done_' + best] = 1;
+    var Rb = SW.REFERENDUMS[best];
+    Q.ref_world = Rb.world; Q.ref_region = Rb.region; Q.ref_region_name = SW.REGION_NAMES[Rb.region];
+    SW.referendumPoll(Q);
+  };
+  SW.referendumPoll = function (Q) {
+    var r = Q.ref_region, sep = Q[r + '_sep'] || 0;
+    Q.ref_chance = SW.clamp(0.66 - (sep - 45) / 60 - Q.rim_hardship / 220 + (Q.rim_enfranchised ? 0.12 : 0) + Math.min(Q.rim_relief || 0, 3) * 0.03 +
+      (Q.federal_compact ? 0.1 : 0) + ((Q[r + '_rc_share'] || 0) - 15) / 150, 0.1, 0.9);
+    Q.ref_poll = Math.round(50 + (Q.ref_chance - 0.5) * 30);
+    Q.ref_poll_word = Q.ref_poll >= 55 ? 'Stay ahead' : (Q.ref_poll > 45 ? 'too close to call' : 'Leave ahead');
+  };
+  SW.referendumOpen = function (Q) {
+    SW.referendumPoll(Q);
+    Q.ref_boost = 0; Q.referendum_timer = 4;
+    Q.ref_region_name = SW.REGION_NAMES[Q.ref_region]; Q.ref_world = Q.ref_world || SW.REFERENDUMS[Q.ref_id].world;
+    Q.ref_bonteri = (Q.ref_id === 'onderon' && Q.bonteri_contact && !Q.bonteri_dead) ? 1 : 0;
+    var figs = ['farr', 'chuchi', 'amidala', 'organa'];
+    Q.ref_fig = ''; for (var i = 0; i < figs.length; i++) if (!Q.ref_fig && Q['adv_' + figs[i]]) Q.ref_fig = figs[i];
+    Q.ref_fig_name = Q.ref_bonteri ? 'Lux Bonteri' : (Q.ref_fig ? SW.ADVISOR_NAMES[Q.ref_fig] : 'one of our advisors');
+    Q.ref_heading = Q.ref_world + ' Votes on Secession';
+    Q.ref_campaign_ok = Q.capital >= 1 ? 1 : 0;
+  };
+  SW.referendumCampaign = function (Q, how) {
+    if (how === 'relief') { Q.treasury -= 2; Q.rim_hardship -= 1; Q.ref_boost += 0.12; }
+    if (how === 'figure') { Q.advisor_action_timer = 5; Q.ref_boost += Q.ref_bonteri ? 0.22 : (Q.ref_fig ? 0.15 : 0.08); }
+    if (how === 'expose') { Q.ref_boost += 0.15; Q.dooku_doubt = (Q.dooku_doubt || 0) + 0.3; }
+    if (how === 'autonomy') { Q.ref_boost += 0.15; Q.peace_talks = (Q.peace_talks || 0) + 0.3; Q.inst_dissent += 3; Q.mod_relation -= 3; }
+    if (how === 'campaign') { Q.capital -= 1; Q.ref_boost += 0.1; }
+  };
+  SW.referendumResolve = function (Q) {
+    var r = Q.ref_region, p = SW.clamp(Q.ref_chance + Q.ref_boost, 0.05, 0.95);
+    Q.ref_stayed = SW.rnd() < p ? 1 : 0;
+    Q.ref_stay_pct = Math.round(SW.clamp(50 + (p - 0.5) * 30 + (SW.rnd() * 8 - 4), 25, 75));
+    if ((Q.ref_stayed && Q.ref_stay_pct <= 50) || (!Q.ref_stayed && Q.ref_stay_pct >= 50)) Q.ref_stay_pct = Q.ref_stayed ? 51 + Math.floor(SW.rnd() * 4) : 46 + Math.floor(SW.rnd() * 4);
+    Q.ref_leave_pct = 100 - Q.ref_stay_pct;
+    if (Q.ref_stayed) { Q[r + '_sep'] -= 6; SW.momentum(Q, 1, Q.ref_world + ' voting to stay'); Q.rim_relation += 3; Q.referendums_won = (Q.referendums_won || 0) + 1; }
+    else {
+      var frac = Math.min(0.05, 0.65 - (Q[r + '_seceded'] || 0));
+      if (frac > 0) { Q[r + '_seceded'] += frac; Q[r] = SW.BASE_WEIGHTS[r] * (1 - Q[r + '_seceded']); Q.secession_recent = SW.round1(frac * SW.BASE_WEIGHTS[r]); }
+      Q[r + '_sep'] += 3; Q.grand_plan += 1; Q.droid_armies += 0.3;
+      SW.momentum(Q, -1, Q.ref_world + ' voting to leave'); Q.referendums_lost = (Q.referendums_lost || 0) + 1;
+    }
+    Q.ref_ready = 0;
+  };
+
+  // ---------------------------------------------------- grievances and recalls
+  // a region builds a grievance when the Caucus backs measures that hurt it; at 6, its worlds recall Caucus senators
+  SW.grieve = function (Q, r, v) { Q['grievance_' + r] = (Q['grievance_' + r] || 0) + v; };
+  SW.budgetGrievances = function (Q, rev, pri, prevPri) {
+    if (rev === 'levy') SW.grieve(Q, 'core', 3);
+    if (rev === 'print') { SW.grieve(Q, 'core', 2.5); SW.grieve(Q, 'outer', 2); }
+    if (rev === 'tariffs') SW.grieve(Q, 'corporate', 2.5);
+    if (prevPri === 'relief' && pri !== 'relief') { SW.grieve(Q, 'midrim', 2.5); SW.grieve(Q, 'outer', 2.5); }
+    if (Q.war && pri !== 'defence') SW.grieve(Q, 'colonies', 1.5);
+  };
+  SW.recallCheck = function (Q) {
+    Q.recall_ready = 0;
+    if (Q.recall_timer > 0 || Q.finale || Q.game_ending) return;
+    var best = '', bv = 5.99;
+    for (var i = 0; i < SW.REGIONS.length; i++) { var r = SW.REGIONS[i]; if ((Q['grievance_' + r] || 0) > bv) { best = r; bv = Q['grievance_' + r]; } }
+    if (!best) return;
+    Q.recall_ready = 1; Q.recall_region = best; Q.recall_region_name = SW.REGION_NAMES[best];
+    Q.recall_why = {core: 'levies and a debased credit that fall on the Core', outer: 'a debased credit and cuts to Rim relief', midrim: 'cuts to Rim relief',
+      corporate: 'the tariffs that fall on the corporate worlds', colonies: 'budgets that starve the war effort'}[best];
+  };
+  SW.recallResolve = function (Q, how) {
+    var r = Q.recall_region, loss = 0.15;
+    if (how === 'apologise') { Q.capital -= 1; loss = 0.07; Q['grievance_' + r] = 1; }
+    if (how === 'campaign') { Q.capital -= 1; loss = 0.1; Q['grievance_' + r] = 2; if (r === 'core' || r === 'colonies') Q.mod_relation += 2; else Q.rim_relation += 2; }
+    if (how === 'accept') { Q['grievance_' + r] = 2; }
+    Q.recall_lost = SW.round1((Q[r + '_rc'] || 0) * loss);
+    Q[r + '_rc'] -= Q.recall_lost;
+    var gain = {core: 'mod', colonies: 'mod', midrim: 'rim', outer: 'rim', corporate: 'guild'}[r];
+    if (Q.parties.indexOf(gain) < 0) gain = 'ind';
+    Q[r + '_' + gain] = (Q[r + '_' + gain] || 0) + Q.recall_lost * 0.7;
+    SW.momentum(Q, -0.6, 'recalls in the ' + SW.REGION_NAMES[r]);
+    Q.recalls = (Q.recalls || 0) + 1; Q.recall_timer = 4; Q.recall_ready = 0;
+  };
+
+  // ---------------------------------------------------- a fresh mandate: the Caucus Chancellor calls a confidence vote
+  SW.confidenceStance = function (Q) {
+    var base = {};
+    for (var i = 0; i < Q.parties.length; i++) {
+      var b = Q.parties[i];
+      if (b === 'rc') continue;
+      base[b] = (Q.govt_blocs || []).indexOf(b) >= 0 ? 0.75 - Q.coalition_dissent * 0.04 : (b === 'pal' || b === 'cis' ? 0.05 : 0.3);
+    }
+    var st = SW.stance(Q, base, false);
+    var lift = SW.clamp(Q.rc_momentum || 0, -5, 5) * 0.03 + (Q.faith - 50) / 250;
+    for (var k in st) if (k !== 'pal' && k !== 'cis') st[k] = SW.clamp(st[k] + lift, 0, 1);
+    return st;
+  };
+  SW.confidenceOutlook = function (Q) {
+    var st = SW.confidenceStance(Q), yes = 0, tot = 0;
+    for (var b in st) { var s2 = SW.seats(Q, [b]); yes += s2 * st[b]; tot += s2; }
+    var rcs = SW.seats(Q, ['rc']);
+    Q.cv_outlook = SW.round1(100 * (yes + rcs) / (tot + rcs || 1));
+    return Q.cv_outlook;
+  };
+  SW.confidenceVote = function (Q) {
+    Q.mandate_term = Q.elections_held;
+    Q.cv_vote = SW.vote(Q, SW.confidenceStance(Q), 1, 'confidence');
+    Q.vote_html = SW.voteBanner('Confidence in Chancellor ' + Q.chancellor + '\'s government', Q.cv_vote);
+    Q.cv_won = Q.cv_vote >= 50 ? 1 : 0;
+    if (Q.cv_won) {
+      Q.next_election_date = Q.date + 48; Q.coalition_dissent = 0; Q.budget_defeats = 0; Q.rc_terms = (Q.rc_terms || 0) + 1; Q.bureau_dossier = Math.max(0, (Q.bureau_dossier || 0) - 1);
+      SW.momentum(Q, 1, 'a fresh mandate'); Q.mandates_won = (Q.mandates_won || 0) + 1;
+    } else {
+      Q.election_due = 1; Q.govt_fell_now = 1; Q.fall_reason = 'confidence';
+      SW.momentum(Q, -1, 'losing a confidence vote'); Q.mandates_lost = (Q.mandates_lost || 0) + 1;
+    }
+  };
+
+  // ---------------------------------------------------- the campaign trail: in election season, a moment every other turn
+  SW.trailRival = function (Q) {
+    var c = SW.electionCandidates(Q, '_votes').filter(function (b) { return b !== 'rc'; });
+    c.sort(function (a, b) { return (Q[b + '_votes'] || 0) - (Q[a + '_votes'] || 0); });
+    return c[0] || '';
+  };
+  SW.ENDORSERS = {
+    satine: {name: 'Duchess Satine Kryze of Mandalore', ok: function (Q) { return Q.date >= 48 && !Q.satine_dead; },
+      pitch: 'The pacifist ruler of Mandalore will speak for the Caucus as the party of peace.', price: 'The Hawks will grumble at a pacifist\'s blessing.'},
+    moncal: {name: 'the Mon Calamari', ok: function (Q) { return Q.parties.indexOf('rim') >= 0 || Q.parties.indexOf('rfc') >= 0; },
+      pitch: 'The shipbuilders of Dac, proud and independent, will back the Caucus if our leaders come to them.', price: '−1 political capital for the visit.'},
+    kdy: {name: 'Kuat Drive Yards', ok: function (Q) { return Q.date >= 60 || Q.war; },
+      pitch: 'The Republic\'s greatest shipyard will lend its name, and its money, to the Caucus.', price: 'They expect contracts: the Pacifists object, and corruption creeps up.'},
+    jedi: {name: 'the Jedi Order', ok: function (Q) { return Q.jedi_relation >= 45 && !Q.order66_seen; },
+      pitch: 'Friends in the Temple suggest a word from Master Yoda would carry weight with the Senate.', price: 'The Order does not take sides in elections. Asking would embarrass our friends.'}
+  };
+  SW.trailAvail = function (Q) {
+    var out = [], f = Q.next_election_date;
+    var ok = {debate: 1, endorse: 0, research: SW.trailRival(Q) ? 1 : 0, gaffe: 1, smear: (!Q.sidious_defeated && Q.grand_plan >= 15) ? 1 : 0};
+    for (var e in SW.ENDORSERS) if (SW.ENDORSERS[e].ok(Q)) ok.endorse = 1;
+    for (var k in ok) if (ok[k] && Q['trail_' + k + '_for'] !== f) out.push(k);
+    return out;
+  };
+  SW.trailCheck = function (Q) {
+    Q.trail_ready = (Q.election_season && Q.elections_held >= 1 && !(Q.trail_timer > 0) && !Q.finale && !Q.game_ending && !Q.election_due && Q.time >= 3 && SW.trailAvail(Q).length) ? 1 : 0;
+  };
+  SW.trailOpen = function (Q) {
+    var avail = SW.trailAvail(Q), W = {debate: 3, endorse: 2.5, research: 2, gaffe: 1 + 2 * (Q.dissent || 0), smear: 1 + Q.grand_plan / 40};
+    var tot = 0, i;
+    for (i = 0; i < avail.length; i++) tot += W[avail[i]];
+    var r = SW.rnd() * tot, kind = avail[0];
+    for (i = 0; i < avail.length; i++) { r -= W[avail[i]]; if (r <= 0) { kind = avail[i]; break; } }
+    Q.trail_kind = kind; Q['trail_' + kind + '_for'] = Q.next_election_date; Q.trail_timer = 2; Q.trail_ready = 0;
+    Q.tr_speaker = Q.rc_leader;
+    var rv = SW.trailRival(Q);
+    Q.tr_rival = rv; Q.tr_rival_name = rv ? SW.candidateName(Q, rv) : ''; Q.tr_rival_bloc = rv ? SW.name(Q, rv) : '';
+    Q.tr_rival_pal = rv === 'pal' ? 1 : 0; Q.tr_has_rival = rv ? 1 : 0;
+    Q.tr_title = {debate: 'The HoloNet Debate', endorse: 'An Endorsement', research: 'Opposition Research', gaffe: 'A Gaffe', smear: 'A Smear'}[kind];
+    Q.tr_result = '';
+    if (kind === 'endorse') {
+      var es = [];
+      for (var e in SW.ENDORSERS) if (SW.ENDORSERS[e].ok(Q)) es.push(e);
+      var pick = es[Math.floor(SW.rnd() * es.length)];
+      var E = SW.ENDORSERS[pick];
+      Q.tr_endorser = pick; Q.tr_endorser_name = E.name; Q.tr_pitch = E.pitch; Q.tr_price = E.price; Q.tr_jedi = pick === 'jedi' ? 1 : 0;
+    }
+    if (kind === 'gaffe') {
+      var G = [['core', 'joked that the Core "could stand to lose a few banks"', 'mod'], ['outer', 'called the Outer Rim "the back end of the galaxy"', 'rim'],
+        ['colonies', 'said the Judicial Forces "could not guard a cantina"', 'sec'], ['corporate', 'called the guilds "licensed pirates"', 'guild']];
+      var g = G[Math.floor(SW.rnd() * G.length)];
+      Q.tr_gaffe_region = g[0]; Q.tr_gaffe_text = g[1]; Q.tr_gaffe_bloc = g[2]; Q.tr_gaffe_bloc_name = SW.name(Q, g[2]);
+      Q.tr_gaffe_region_name = SW.REGION_NAMES[g[0]];
+    }
+  };
+  var bonusRc = function (Q, b, v) { if (Q.parties.indexOf(b) >= 0) Q['bonus_' + b + '_for_rc'] = (Q['bonus_' + b + '_for_rc'] || 0) + v; };
+  SW.trailResolve = function (Q, choice) {
+    var k = Q.trail_kind, u = SW.unity(Q), t = '';
+    if (k === 'debate') {
+      var fit = {reform: Q.corruption > 60, rim: Q.rim_hardship > 40, security: Q.fear > 45, attack: Q.tr_rival !== 'pal' || Q.evidence >= 3}[choice] ? 0.15 : 0;
+      var p = 0.25 + 0.3 * u + fit + (Q.rc_leader === 'Mon Mothma' || Q.rc_leader === 'Padmé Amidala' ? 0.1 : 0);
+      var won = SW.rnd() < p;
+      Q.tr_won = won ? 1 : 0;
+      if (choice === 'reform') { if (won) { bonusRc(Q, 'mod', 4); bonusRc(Q, 'ind', 4); Q.core_rc += 0.6; } else bonusRc(Q, 'mod', -2); }
+      if (choice === 'rim') { if (won) { bonusRc(Q, 'rim', 5); bonusRc(Q, 'rfc', 5); Q.midrim_rc += 0.6; Q.outer_rc += 0.6; } bonusRc(Q, 'mod', -3); }
+      if (choice === 'security') { if (won) { bonusRc(Q, 'sec', 5); Q.colonies_rc += 0.6; } Q.pacifist_dissent += 3; }
+      if (choice === 'attack') {
+        if (won) { for (var i = 0; i < Q.parties.length; i++) if (Q.parties[i] !== Q.tr_rival) Q['bonus_' + Q.parties[i] + '_for_' + Q.tr_rival] = (Q['bonus_' + Q.parties[i] + '_for_' + Q.tr_rival] || 0) - 5; }
+        else { Q.faith -= 0.5; if (Q.tr_rival === 'pal') Q.premature_accusations += 0.5; }
+      }
+      SW.momentum(Q, won ? (choice === 'attack' ? 0.4 : 0.6) : (choice === 'attack' ? -0.7 : -0.4), won ? 'a strong debate' : 'a poor debate');
+      Q.debates_won = (Q.debates_won || 0) + (won ? 1 : 0);
+    }
+    if (k === 'endorse') {
+      var e = Q.tr_endorser;
+      if (choice === 'accept') {
+        if (e === 'satine') { bonusRc(Q, 'ind', 6); Q.pacifist_dissent -= 3; Q.hawk_dissent += 3; Q.outer_rc += 0.5; SW.momentum(Q, 0.5, 'Duchess Satine\'s endorsement'); }
+        if (e === 'moncal') { Q.capital -= 1; bonusRc(Q, 'rim', 5); bonusRc(Q, 'rfc', 5); Q.outer_rc += 1.5; SW.momentum(Q, 0.5, 'the Mon Calamari endorsement'); }
+        if (e === 'kdy') { bonusRc(Q, 'sec', 8); Q.core_rc += 1; Q.pacifist_dissent += 4; Q.corruption += 1; SW.momentum(Q, 0.4, 'Kuat Drive Yards\' endorsement'); }
+        if (e === 'jedi') { Q.jedi_relation -= 6; Q.jedi_standing -= 2; SW.momentum(Q, -0.2, 'an embarrassing approach to the Jedi'); }
+        Q.endorsements = (Q.endorsements || 0) + (e === 'jedi' ? 0 : 1);
+      } else if (e === 'jedi') { Q.jedi_relation += 3; Q.faith += 0.3; }
+    }
+    if (k === 'research') {
+      var credible = Q.tr_rival !== 'pal' || Q.evidence >= 3;
+      if (choice === 'publish') {
+        if (credible) { for (var j = 0; j < Q.parties.length; j++) if (Q.parties[j] !== Q.tr_rival) Q['bonus_' + Q.parties[j] + '_for_' + Q.tr_rival] = (Q['bonus_' + Q.parties[j] + '_for_' + Q.tr_rival] || 0) - 6; Q.faith -= 0.5; Q.inst_dissent += 3; Q[Q.tr_rival + '_relation'] -= 8; Q.tr_won = 1; }
+        else { Q.premature_accusations += 0.5; SW.momentum(Q, -0.6, 'a smear that backfired'); Q.tr_won = 0; }
+      }
+      if (choice === 'hold') { Q['bonus_' + Q.tr_rival + '_for_rc'] = (Q['bonus_' + Q.tr_rival + '_for_rc'] || 0) + 4; }
+      if (choice === 'burn') { Q.faith += 0.3; Q.inst_dissent -= 2; SW.momentum(Q, 0.2, 'a clean campaign'); }
+    }
+    if (k === 'gaffe') {
+      var reg = Q.tr_gaffe_region, gb = Q.tr_gaffe_bloc;
+      if (choice === 'apologise') { SW.momentum(Q, -0.3, 'a gaffe on the trail'); Q[reg + '_rc'] -= 0.3; }
+      if (choice === 'double') {
+        if (SW.rnd() < 0.4) { SW.momentum(Q, 0.4, 'standing by a blunt remark'); Q.tr_won = 1; }
+        else { SW.momentum(Q, -1, 'a gaffe made worse'); Q[reg + '_rc'] -= 1; bonusRc(Q, gb, -6); Q.tr_won = 0; }
+      }
+      if (choice === 'ignore') { SW.momentum(Q, -0.7, 'a gaffe left to fester'); Q[reg + '_rc'] -= 0.6; bonusRc(Q, gb, -3); }
+    }
+    if (k === 'smear') {
+      if (choice === 'rebut') { Q.capital -= 1; if (Q.evidence >= 2) { Q.evidence += 0.3; SW.momentum(Q, 0.2, 'a smear rebutted'); Q.tr_won = 1; } else { SW.momentum(Q, -0.3, 'a smear that stuck'); Q.tr_won = 0; } }
+      if (choice === 'counter') {
+        if (Q.evidence >= 4) { SW.momentum(Q, 0.4, 'turning a smear on its authors'); bonusRc(Q, 'ind', 3); for (var m = 0; m < Q.parties.length; m++) if (Q.parties[m] !== 'pal') Q['bonus_' + Q.parties[m] + '_for_pal'] = (Q['bonus_' + Q.parties[m] + '_for_pal'] || 0) - 4; Q.tr_won = 1; }
+        else { Q.premature_accusations += 0.5; Q.faith -= 0.5; SW.momentum(Q, -0.6, 'an accusation without proof'); Q.tr_won = 0; }
+      }
+      if (choice === 'ignore') { SW.momentum(Q, -0.8, 'a smear left unanswered'); Q.scandal_ours_until = Q.date + 6; }
+    }
+  };
+
+  // momentum: what the galaxy thinks of the Caucus's direction; it fades unless renewed
+  SW.momentum = function (Q, delta, why) {
+    Q.rc_momentum = SW.clamp((Q.rc_momentum || 0) + delta, -5, 5);
+    if (why) { Q.momentum_why = why; Q.momentum_why_sign = delta >= 0 ? 1 : -1; }
+  };
+  SW.momentumLabel = function (m) { return m >= 1.5 ? '<span class="good">surging</span>' : (m >= 0.4 ? '<span class="good">rising</span>' : (m > -0.4 ? 'steady' : (m > -1.5 ? '<span class="warn">falling</span>' : '<b class="bad">collapsing</b>'))); };
   SW.warChest = function (Q) {
     var notes = [];
     var add = function (a, c, v) { Q['bonus_' + a + '_for_' + c] = (Q['bonus_' + a + '_for_' + c] || 0) + v; };
+    var mo = SW.clamp(Q.rc_momentum || 0, -5, 5);
+    Q.el_mom_note = 0;
+    if (Math.abs(mo) >= 0.5) {
+      for (var mi = 0; mi < Q.parties.length; mi++) if (Q.parties[mi] !== 'rc') add(Q.parties[mi], 'rc', 2 * mo);
+      Q.el_mom_note = 1;
+      Q.el_mom_text = mo > 0 ? 'The Caucus has momentum (' + SW.momentumLabel(mo).replace(/<[^>]+>/g, '') + '), and the blocs warm to a party on the rise.' : 'The Caucus is on the back foot (momentum ' + SW.momentumLabel(mo).replace(/<[^>]+>/g, '') + '), and the blocs keep their distance.';
+    }
     if (Q.guild_patience < 35) {
       add('guild', 'rc', -10); add('ind', 'rc', -6); add('mod', 'rc', -4); add('guild', 'pal', 4); add('ind', 'pal', 4);
       notes.push('The guilds, whose patience with the Caucus is exhausted, are bankrolling our rivals.');
@@ -2422,11 +3267,16 @@
     Q.bd_tariff_yield = SW.round1(SW.REVENUE.tariffs.yield(Q)); Q.bd_bond_yield = SW.round1(SW.REVENUE.bonds.yield(Q));
     Q.bd_defence_cost = SW.PRIORITY.defence.cost(Q);
     Q.bd_gov_outlook = SW.budgetOutlook(Q, gov[0], gov[1]);
+    Q.bd_gov_breaks = SW.pledgesBrokenBy(Q, gov[0], gov[1]); Q.bd_gov_breaks_n = Q.bd_gov_breaks ? 1 : 0;
+    for (var rv in SW.REVENUE) { Q['bd_brk_rev_' + rv] = SW.pledgesBrokenBy(Q, rv, null); Q['bd_brkn_rev_' + rv] = Q['bd_brk_rev_' + rv] ? 1 : 0; }
     Q.gp_label = SW.guildPatienceLabel(Q.guild_patience); Q.pg_label = SW.patronsLabel(Q.patrons_goodwill === undefined ? 60 : Q.patrons_goodwill);
     SW.econStrings(Q);
   };
   SW.budgetPriorityOutlook = function (Q) {
-    for (var p in SW.PRIORITY) Q['bd_out_' + p] = SW.budgetOutlook(Q, Q.bd_rev || 'none', p);
+    for (var p in SW.PRIORITY) {
+      Q['bd_out_' + p] = SW.budgetOutlook(Q, Q.bd_rev || 'none', p);
+      Q['bd_brk_' + p] = SW.pledgesBrokenBy(Q, Q.bd_rev || 'none', p); Q['bd_brkn_' + p] = Q['bd_brk_' + p] ? 1 : 0;
+    }
   };
   // apply a budget: one revenue line, one priority, interest; the Banking Clan lends any shortfall
   SW.budgetApply = function (Q, rev, pri) {
@@ -2491,6 +3341,7 @@
       coalition_dissent: [0, 10], capital: [-5, 40], treasury: [-10, 30], leverage: [0, 60], bureau_relation: [0, 100], bureau_dossier: [0, 6], guild_patience: [0, 100], patrons_goodwill: [0, 100], inflation: [0, 100], trade: [0, 100], bacta: [0, 100], tibanna: [0, 100], spice: [0, 100], debt: [0, 80]
     };
     for (var k in bounded) Q[k] = SW.clamp(Q[k], bounded[k][0], bounded[k][1]);
+    for (var gi = 0; gi < SW.REGIONS.length; gi++) Q['grievance_' + SW.REGIONS[gi]] = SW.clamp(Q['grievance_' + SW.REGIONS[gi]] || 0, 0, 12);
     var rels = SW.BLOCS;
     for (var i = 0; i < rels.length; i++) {
       if (rels[i] === 'rc') continue;
@@ -2595,6 +3446,16 @@
     SW.palStrings(Q);
     SW.econStrings(Q);
     SW.leaderMomentCheck(Q);
+    var rcn = SW.reformCount(Q);
+    if (rcn > (Q.momentum_reforms_seen || 0)) SW.momentum(Q, 0.3 * (rcn - (Q.momentum_reforms_seen || 0)), 'a reform passed');
+    Q.momentum_reforms_seen = rcn;
+    SW.pledgeTick(Q);
+    Q.election_season = (!Q.finale && !Q.election_suspended && Q.next_election_date > Q.date && Q.next_election_date - Q.date <= 12) ? 1 : 0;
+    SW.trailCheck(Q);
+    SW.worldElectionCheck(Q);
+    SW.referendumCheck(Q);
+    SW.recallCheck(Q);
+    Q.mandate_ok = (Q.rc_chancellor && Q.mandate_term !== Q.elections_held && !Q.election_due && !Q.election_suspended && Q.next_election_date - Q.date > 12) ? 1 : 0;
     SW.factionAgendas(Q);
     SW.cardAvailability(Q);
     SW.grievances(Q);

@@ -10,7 +10,7 @@ new-page: true
 
 The former Queen of Naboo is young, fearless and already one of the most respected voices in the Senate. She also knows Palpatine better than almost anyone.
 
-[? if advisor_action_timer > 0 : *Our advisors can act again in [+ advisor_action_timer +] turn(s).* ?]
+[? if advisor_action_timer > 0 : Our advisors can act again in [+ advisor_action_timer +] turn(s). ?]
 
 - @amidala_naboo: Naboo’s voice.
 - @amidala_anakin: Speak with Anakin Skywalker.

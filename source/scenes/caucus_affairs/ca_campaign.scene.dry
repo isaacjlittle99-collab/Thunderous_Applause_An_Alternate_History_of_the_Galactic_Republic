@@ -4,12 +4,12 @@ is-card: true
 tags: caucus_affairs
 card-image: img/card_campaign.svg
 view-if: campaign_timer <= 0
-on-arrival: turn_actions += 1; campaign_timer = 3; last_card_timer = "campaign"
+on-arrival: turn_actions += 1; campaign_timer = 3; campaign_timer = 1 if election_season; last_card_timer = "campaign"
 new-page: true
 
 = Campaign
 
-Senators answer to their home worlds, and home worlds can be persuaded. Where should the Caucus spend its effort?
+Senators answer to their home worlds, and home worlds can be persuaded. Where should the Caucus spend its effort? [? if election_season : It is election season, so the Caucus can campaign again next turn. ?]
 
 - @core: The Core Worlds.
 - @colonies: The Colonies and Inner Rim.
@@ -20,47 +20,120 @@ Senators answer to their home worlds, and home worlds can be persuaded. Where sh
 - @easy_discard
 
 @core
-subtitle: −1 political capital. More support in the Core.
+subtitle: −1 political capital.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
-on-arrival: {! Q.capital -= 1; Q.core_rc += 4 * SW.unity(Q); Q.inst_dissent -= 2; !}
-
-The Caucus's message of clean government plays well in the Core's great cities.
+on-arrival: capital -= 1; cm_region = "core"
+go-to: message
 
 @colonies
-subtitle: −1 political capital. More support in the Colonies.
+subtitle: −1 political capital.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
-on-arrival: {! Q.capital -= 1; Q.colonies_rc += 4 * SW.unity(Q); Q.hawk_dissent -= 2; !}
-
-In the prosperous Colonies, the Caucus promises security and honest government.
+on-arrival: capital -= 1; cm_region = "colonies"
+go-to: message
 
 @midrim
-subtitle: −1 political capital. More support in the Mid Rim.
+subtitle: −1 political capital.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
-on-arrival: {! Q.capital -= 1; Q.midrim_rc += 4 * SW.unity(Q); Q.midrim_sep -= 1; !}
-
-The Mid Rim feels squeezed between the Core and the frontier. The Caucus listens.
+on-arrival: capital -= 1; cm_region = "midrim"
+go-to: message
 
 @outer
-subtitle: −1 political capital. More support in the Outer Rim; calms separatism a little.
+subtitle: −1 political capital.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
-on-arrival: {! Q.capital -= 1; Q.outer_rc += 4 * SW.unity(Q); Q.outer_sep -= 1.5; Q.rimward_dissent -= 3; Q.inst_dissent += 1; !}
-
-Caucus senators tour the Outer Rim. For many worlds it is the first time a Core senator has visited in living memory.
+on-arrival: capital -= 1; cm_region = "outer"
+go-to: message
 
 @corporate
-subtitle: −2 political capital. Hard ground for the Caucus.
-choose-if: capital >= 2
+subtitle: −1 political capital.
+choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
-on-arrival: {! Q.capital -= 2; Q.corporate_rc += 3 * SW.unity(Q); Q.guild_relation += 2; Q.rimward_dissent += 3; !}
-
-Even on guild-owned worlds, workers and small traders are tired of being owned.
+on-arrival: capital -= 1; cm_region = "corporate"
+go-to: message
 
 @shoestring
 subtitle: Free. A small boost in a random region.
 on-arrival: {! var r = SW.REGIONS[Math.floor(Math.random() * SW.REGIONS.length)]; Q[r + '_rc'] += 1.2 * SW.unity(Q); Q.shoestring_region = SW.REGION_NAMES[r]; !}
 
 Volunteers and borrowed shuttles carry the Caucus's message to the [+ shoestring_region +].
+
+@message
+on-arrival: {! SW.campaignPreview(Q); !}
+
+What will the Caucus campaign on? A message lands differently depending on the region and the moment: clean government needs a corrupt Senate and clean hands, Rim relief needs hardship and a record of delivering it, security needs fear, and peace can backfire when people are afraid.
+
+- @msg_clean: Clean government.
+- @msg_relief: Relief for the Rim.
+- @msg_security: Security and order.
+- @msg_peace: Peace.
+- @msg_republic: The Republic and its laws.
+
+@msg_clean
+subtitle: Expected: [+ cm_word_clean +].
+on-arrival: {! SW.campaignStart(Q, 'clean'); !}
+go-to: result if not cm_disrupted; disrupted if cm_disrupted
+
+@msg_relief
+subtitle: Expected: [+ cm_word_relief +].
+on-arrival: {! SW.campaignStart(Q, 'relief'); !}
+go-to: result if not cm_disrupted; disrupted if cm_disrupted
+
+@msg_security
+subtitle: Expected: [+ cm_word_security +]. The Pacifists dislike it.
+on-arrival: {! SW.campaignStart(Q, 'security'); !}
+go-to: result if not cm_disrupted; disrupted if cm_disrupted
+
+@msg_peace
+subtitle: Expected: [+ cm_word_peace +]. The Hawks dislike it.
+on-arrival: {! SW.campaignStart(Q, 'peace'); !}
+go-to: result if not cm_disrupted; disrupted if cm_disrupted
+
+@msg_republic
+subtitle: Expected: [+ cm_word_republic +].
+on-arrival: {! SW.campaignStart(Q, 'republic'); !}
+go-to: result if not cm_disrupted; disrupted if cm_disrupted
+
+@disrupted
+
+The Caucus's rally in the [+ cm_region_name +] is stormed by [+ cm_disruptor +]. Speakers are shouted down, delegates are threatened, and the HoloNet cameras are rolling. How will the Caucus protect its people?
+
+*Their strength is about [+ cm_threat +]. The Judicial Forces bring about [+ jf_txt +]; local security, where we are popular, about [+ cm_local +][? if senate_guard_reformed : ; the reformed Senate Guard, 5?].*
+
+- @protect_judicials: Call in the Judicial Forces.
+- @protect_guard: Ask the Senate Guard to protect us.
+- @protect_local: Rely on local security.
+- @cancel: Cancel the rally.
+
+@protect_judicials
+subtitle: The Pacifists dislike the Caucus relying on armed force.
+on-arrival: {! SW.campaignProtect(Q, 'judicials'); !}
+go-to: protected
+
+@protect_guard
+view-if: senate_guard_reformed
+subtitle: The reformed Senate Guard answers to the Senate, and is formidable.
+on-arrival: {! SW.campaignProtect(Q, 'guard'); !}
+go-to: protected
+
+@protect_local
+on-arrival: {! SW.campaignProtect(Q, 'local'); !}
+go-to: protected
+
+@cancel
+subtitle: No harm done, except to our pride.
+on-arrival: {! SW.momentum(Q, -0.2, 'a cancelled rally'); !}
+
+The Caucus calls off the rally. The HoloNet calls it a retreat.
+
+@protected
+
+[? if cm_protect_won : The rally is protected and goes ahead. Order kept, and seen to be kept, wins the Caucus a little respect. ?][? if not cm_protect_won : The protection fails. The rally breaks up in chaos, and the [+ cm_disruptor +] claim a victory. ?][? if cm_force_note : The Pacifists warn that the Caucus is starting to look like a party with a private army. ?]
+
+[? if cm_protect_won : Our campaign on [+ cm_msg_name +] in the [+ cm_region_name +] was [+ cm_word +]. ?]
+
+@result
+
+[? if cm_backfired : The Caucus campaigns on [+ cm_msg_name +] in the [+ cm_region_name +], and it backfires: frightened voters hear weakness. ?][? if not cm_backfired : The Caucus campaigns on [+ cm_msg_name +] in the [+ cm_region_name +]. The message lands [+ cm_word +]. ?]

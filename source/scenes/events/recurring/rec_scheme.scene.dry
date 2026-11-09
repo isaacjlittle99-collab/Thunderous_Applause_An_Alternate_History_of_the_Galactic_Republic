@@ -11,4 +11,4 @@ on-arrival: {! SW.resolveScheme(Q); !}
 
 [+ scheme_text +]
 
-[? if scheme_was_foiled : Whoever arranged it covered their tracks, but not perfectly. Our evidence grows a little. ?][? if not scheme_was_foiled : Nothing ties it to anyone. It never does. *(The Shadow tab keeps a list of recent misfortunes. The more we threaten whoever is behind them, the more often they come. Jedi suspicion, strong evidence or a recent Shadow Investigation would have warned us in time.)* ?]
+[? if scheme_was_foiled : Whoever arranged it covered their tracks, but not perfectly. Our evidence grows a little. ?][? if not scheme_was_foiled : Nothing ties it to anyone. It never does. (The Shadow tab keeps a list of recent misfortunes. The more we threaten whoever is behind them, the more often they come. Jedi suspicion, strong evidence or a recent Shadow Investigation would have warned us in time.) ?]

@@ -14,6 +14,8 @@ A bomb has torn through the Senate Office Building, killing hundreds, among them
 
 [? if evidence >= 6 or jedi_suspicion >= 6 : Something about the attack is wrong. Our investigators have seen this pattern before: the Rim Liberation Front's weapons were bought with Damask money. ?]
 
+[? if pl_no_powers : **We pledged the [+ pledge_no_powers_name +] no new emergency powers. Supporting them will break that pledge.** ?]
+
 - @expose: Expose the attack as a provocation.
 - @oppose: Oppose emergency powers. We will not be stampeded.
 - @support: Support emergency powers. The Republic must be protected.

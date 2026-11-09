@@ -37,7 +37,7 @@ Q.free_republic = 1; Q.civil_war_pending = 1;
 
 [+ vote_html +]
 
-[? if empire_declared : *So this is how liberty dies,* Padmé had once whispered, *with thunderous applause.* But this time not everyone applauds. The Ruusan Caucus and its allies rise from their pods and leave the chamber together. By nightfall, Alderaan, Chandrila, Corellia and a dozen other worlds have declared that the Republic still lives, and that it does not live on Coruscant. ?][? if not empire_declared : The Senate refuses. The Chancellor stares at the rotunda in silence, then orders the Senate dissolved. The Caucus is already gone, to the worlds of the Defence Pact, to keep the Republic alive. ?]
+[? if empire_declared : "So this is how liberty dies," Padmé had once whispered, "with thunderous applause." But this time not everyone applauds. The Ruusan Caucus and its allies rise from their pods and leave the chamber together. By nightfall, Alderaan, Chandrila, Corellia and a dozen other worlds have declared that the Republic still lives, and that it does not live on Coruscant. ?][? if not empire_declared : The Senate refuses. The Chancellor stares at the rotunda in silence, then orders the Senate dissolved. The Caucus is already gone, to the worlds of the Defence Pact, to keep the Republic alive. ?]
 
 @no
 on-arrival: {!
@@ -48,7 +48,7 @@ if (Q.no_vote >= 50) { Q.empire_declared = 1; Q.game_ending = 1; } else { Q.civi
 
 [+ vote_html +]
 
-[? if empire_declared : *So this is how liberty dies,* Padmé whispers, *with thunderous applause.* ?][? if not empire_declared : Against every expectation, the Senate votes the Empire down. The Chancellor orders the chamber sealed and the Senate dissolved. Those loyal to the Republic flee to their home worlds. It is civil war. ?]
+[? if empire_declared : "So this is how liberty dies," Padmé whispers, "with thunderous applause." ?][? if not empire_declared : Against every expectation, the Senate votes the Empire down. The Chancellor orders the chamber sealed and the Senate dissolved. Those loyal to the Republic flee to their home worlds. It is civil war. ?]
 
 @yes
 on-arrival: {!

@@ -13,6 +13,8 @@ Citing Separatist spies and propaganda, the Chancellery asks for authority over 
 
 [? if free_press >= 1 : The independent HoloNet foundation the Caucus helped to fund is broadcasting live from the gallery. ?]
 
+[? if pl_no_powers : **We pledged the [+ pledge_no_powers_name +] no new emergency powers. Supporting them will break that pledge.** ?]
+
 - @oppose: Oppose the Act.
 - @amend: Try to amend it: no censorship, intelligence still shared with the Senate.
 - @support: Support it. Spies are real.

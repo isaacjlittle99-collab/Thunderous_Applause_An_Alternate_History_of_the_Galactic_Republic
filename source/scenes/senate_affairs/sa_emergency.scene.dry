@@ -11,6 +11,8 @@ new-page: true
 
 The Chancellor currently holds [+ emergency_powers : powers +] emergency powers. Our advisors are divided: some say only a strong executive can win this crisis, others that this is exactly how republics die.
 
+[? if pl_no_powers : **We pledged the [+ pledge_no_powers_name +] no new emergency powers. Supporting them will break that pledge.** ?]
+
 - @request: Ask the Senate for emergency powers.
 - @return: Return emergency powers to the Senate.
 - @martial: Impose martial law in seceding sectors.

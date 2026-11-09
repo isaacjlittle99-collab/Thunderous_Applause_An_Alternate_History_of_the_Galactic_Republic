@@ -10,7 +10,7 @@ new-page: true
 
 Brought down by the Naboo crisis, Valorum has had time to think about who arranged his fall. He is disgraced, but not a fool.
 
-[? if advisor_action_timer > 0 : *Our advisors can act again in [+ advisor_action_timer +] turn(s).* ?]
+[? if advisor_action_timer > 0 : Our advisors can act again in [+ advisor_action_timer +] turn(s). ?]
 
 - @valorum_networks: Old Chancellery networks.
 - @valorum_elder: Elder statesman.

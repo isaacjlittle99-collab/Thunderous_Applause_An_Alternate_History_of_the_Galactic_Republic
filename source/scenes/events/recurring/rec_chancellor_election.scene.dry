@@ -8,40 +8,24 @@ face-image: img/ev_senate.svg
 on-arrival: {!
 SW.rotateRcLeader(Q);
 SW.senateSession(Q);
-var c = [];
-if (Q.rc_r >= 7) c.push('rc');
-if (Q.parties.indexOf('mod') >= 0 && Q.mod_r >= 5) c.push('mod');
-if (!Q.sidious_defeated && !Q.pal_disgraced && Q.pal_r >= 3) c.push('pal');
-if (Q.parties.indexOf('rim') >= 0 && Q.rim_r >= 10) c.push('rim');
-if (Q.date >= 108 && Q.sec_r >= 14) c.push('sec');
-if (c.length < 2) c.push('ind');
-Q.el_cands = c;
-SW.dropPartnerCandidates(Q);
-c = Q.el_cands;
-Q.el_has_rc = c.indexOf('rc') >= 0 ? 1 : 0;
-Q.el_has_mod = c.indexOf('mod') >= 0 ? 1 : 0;
-Q.el_has_rim = c.indexOf('rim') >= 0 ? 1 : 0;
-Q.el_has_pal = c.indexOf('pal') >= 0 ? 1 : 0;
-Q.el_has_sec = c.indexOf('sec') >= 0 ? 1 : 0;
-Q.el_backing = '';
-Q.el_courted_mod = 0; Q.el_courted_rim = 0; Q.el_courted_ind = 0; Q.el_courted_guild = 0; Q.el_courted_sec = 0; Q.el_attacked = 0;
-Q.el_text = SW.electionIntro(Q);
-SW.warChest(Q);
-Q.el_incumbent = Q.chancellor;
-Q.el_sec_leader = Q.sec_leader;
+SW.electionOpen(Q);
 !}
 
 = Election of the Supreme Chancellor
 
-[? if valorum_fallen and elections_held = 0 : With Valorum brought down, the Senate must choose a new Supreme Chancellor. ?][? if govt_fell_now : The government of Chancellor [+ el_incumbent +] has fallen. [? if fall_reason = "collapse" : The [+ walkout_name +] walked out of the coalition and brought it down. ?][? if fall_reason = "bureaucrats" : A crisis manufactured by the Senate bureaucracy brought it down. ?][? if fall_reason = "vonc" : The Senate withdrew its confidence. ?][? if fall_reason = "budget" : The Senate rejected its budget twice in a row. ?][? if fall_reason = "withdrew" : The Caucus withdrew its support. ?] The Senate must choose who will lead the Republic for the next four years. ?][? if not govt_fell_now and (elections_held > 0 or not valorum_fallen) : Supreme Chancellor [+ el_incumbent +]'s term has run its course, and the Senate must choose who will lead the Republic for the next four years. ?] Each bloc will back the candidate it trusts most. If no one wins a majority on the first ballot, the two leading candidates go to a second.
+[? if valorum_fallen and elections_held = 0 : With Valorum brought down, the Senate must choose a new Supreme Chancellor. ?][? if govt_fell_now : The government of Chancellor [+ el_incumbent +] has fallen. [? if fall_reason = "collapse" : The [+ walkout_name +] walked out of the coalition and brought it down. ?][? if fall_reason = "bureaucrats" : A crisis manufactured by the Senate bureaucracy brought it down. ?][? if fall_reason = "vonc" : The Senate withdrew its confidence. ?][? if fall_reason = "budget" : The Senate rejected its budget twice in a row. ?][? if fall_reason = "withdrew" : The Caucus withdrew its support. ?][? if fall_reason = "confidence" : The Senate voted down the Chancellor's call for a fresh mandate. ?] The Senate must choose who will lead the Republic for the next four years. ?][? if not govt_fell_now and (elections_held > 0 or not valorum_fallen) : Supreme Chancellor [+ el_incumbent +]'s term has run its course, and the Senate must choose who will lead the Republic for the next four years. ?] Each bloc will back the candidate it trusts most. If no one wins a majority on the first ballot, the two leading candidates go to a second.
 
 [+ el_text +]
 
-[? if el_warchest : *Money in the race:* [+ el_warchest_text +] ?]
+[? if el_warchest : **Money in the race.** [+ el_warchest_text +] ?]
+
+[? if el_mom_note : [+ el_mom_text +] ?]
 
 [? if naboo_sympathy and el_has_pal : The Senate is moved by the plight of Naboo, and Senator Palpatine is widely seen as the sympathetic candidate. ?]
 
-- @el_run: Run [+ rc_leader +] for Supreme Chancellor.
+*Each candidate has strengths with some blocs and weaknesses with others, and the Caucus's momentum sways every bloc.*
+
+- @el_run: Run a Caucus candidate for Supreme Chancellor.
 - @el_back_mod: Endorse [+ mod_leader +] of the Core Moderates.
 - @el_back_rim: Endorse [+ rim_leader +] of the Rimward Coalition.
 - @el_back_sec: Endorse [+ el_sec_leader +] of the Security Bloc.
@@ -50,47 +34,160 @@ Q.el_sec_leader = Q.sec_leader;
 @el_run
 view-if: el_has_rc
 subtitle: Our own candidate. We will need allies from other blocs to win.
-on-arrival: el_backing = "rc"
+on-arrival: {! SW.elBack(Q, 'rc'); if (Q.el_nominees < 2) SW.nominate(Q, Q.el_nominee_default); !}
+go-to: el_nominate if el_nominees >= 2; el_campaign if el_nominees < 2
+
+@el_nominate
+new-page: true
+
+= Our Nominee
+
+Who will carry the Caucus's banner? Each of our leading figures appeals to different blocs. Whoever we choose will lead the Caucus whether they win or lose.
+
+- @nom_antilles: Bail Antilles of Alderaan.
+- @nom_organa: Bail Organa of Alderaan.
+- @nom_mothma: Mon Mothma of Chandrila.
+- @nom_amidala: Padmé Amidala of Naboo.
+- @nom_bel_iblis: Garm Bel Iblis of Corellia.
+
+@nom_antilles
+view-if: nom_ok_antilles
+subtitle: [+ nom_sub_antilles +]
+on-arrival: {! SW.nominate(Q, 'antilles'); !}
+go-to: el_campaign
+
+@nom_organa
+view-if: nom_ok_organa
+subtitle: [+ nom_sub_organa +]
+on-arrival: {! SW.nominate(Q, 'organa'); !}
+go-to: el_campaign
+
+@nom_mothma
+view-if: nom_ok_mothma
+subtitle: [+ nom_sub_mothma +]
+on-arrival: {! SW.nominate(Q, 'mothma'); !}
+go-to: el_campaign
+
+@nom_amidala
+view-if: nom_ok_amidala
+subtitle: [+ nom_sub_amidala +]
+on-arrival: {! SW.nominate(Q, 'amidala'); !}
+go-to: el_campaign
+
+@nom_bel_iblis
+view-if: nom_ok_bel_iblis
+subtitle: [+ nom_sub_bel_iblis +]
+on-arrival: {! SW.nominate(Q, 'bel_iblis'); !}
 go-to: el_campaign
 
 @el_back_mod
 view-if: el_has_mod
 subtitle: Keep the Core establishment in power, and earn its gratitude.
-on-arrival: el_backing = "mod"; mod_relation += 5
+on-arrival: {! SW.elBack(Q, 'mod'); Q.mod_relation += 5; !}
 go-to: el_campaign
 
 @el_back_rim
 view-if: el_has_rim
 subtitle: A Rim Chancellor would be a revolution. The Core will not like it.
-on-arrival: el_backing = "rim"; rim_relation += 6; rimward_dissent -= 5; inst_dissent += 4
+on-arrival: {! SW.elBack(Q, 'rim'); Q.rim_relation += 6; Q.rimward_dissent -= 5; Q.inst_dissent += 4; !}
 go-to: el_campaign
 
 @el_back_sec
 view-if: el_has_sec
 subtitle: The Hawks will approve; the Pacifists will not.
-on-arrival: el_backing = "sec"; sec_relation += 6; hawk_dissent -= 5; pacifist_dissent += 8
+on-arrival: {! SW.elBack(Q, 'sec'); Q.sec_relation += 6; Q.hawk_dissent -= 5; Q.pacifist_dissent += 8; !}
 go-to: el_campaign
 
 @el_back_pal
 view-if: el_has_pal
 subtitle: [? if evidence < 3 : He seems a decent, sensible man. ?][? if evidence >= 3 : We have heard things about Palpatine that make this very hard to justify. ?]
-on-arrival: el_backing = "pal"; pal_relation += 8; faith -= 1; inst_dissent += 2 if evidence >= 3; pacifist_dissent += 4 if evidence >= 3
+on-arrival: {! SW.elBack(Q, 'pal'); Q.pal_relation += 8; Q.faith -= 1; if (Q.evidence >= 3) { Q.inst_dissent += 2; Q.pacifist_dissent += 4; } !}
 go-to: el_campaign
 
 @el_campaign
 new-page: true
+on-arrival: {! Q.el_whip = SW.whipText(Q, Q.el_cands, Q.el_backing, '_r'); Q.el_backing_name = SW.candidateName(Q, Q.el_backing); !}
 
 = The Campaign
 
-The Caucus is backing **[? if el_backing = "rc" : [+ rc_leader +] ?][? if el_backing = "mod" : [+ mod_leader +] ?][? if el_backing = "rim" : [+ rim_leader +] ?][? if el_backing = "sec" : [+ el_sec_leader +] ?][? if el_backing = "pal" : Palpatine ?]**. Before the Senate votes, we can spend political capital to court other blocs. We have [+ capital +].
+The Caucus is backing **[+ el_backing_name +]**. Before the Senate votes, we can court other blocs with political capital, or win them with promises. We have [+ capital +] political capital.
+
+[+ el_whip +]
+
+*A pledge wins a bloc's votes outright, but it binds the Caucus until the next Chancellor election. Break it and that bloc's leader will remember.*
 
 - @el_court_mod: Court the Core Moderates.
 - @el_court_ind: Court the Independents.
 - @el_court_rim: Court the Rimward Coalition.
 - @el_court_sec: Court the Security Bloc.
 - @el_court_guild: Court the Commerce Guilds.
+- @el_pledge: Make a policy pledge.
+- @el_expose: Expose the money behind Palpatine.
 - @el_attack_pal: Attack Palpatine's record.
 - @el_tally: Call the vote.
+
+@el_pledge
+view-if: el_pledges_made < 2
+subtitle: [? if el_pledges_made = 0 : Up to two pledges per election. ?][? if el_pledges_made = 1 : One more pledge at most. ?]
+
+= A Policy Pledge
+
+Which promise will the Caucus make? Each one wins over a bloc, and each one ties our hands for the next four years.
+
+- @pl_no_tariffs: Promise the guilds no trade-route tariffs.
+- @pl_no_levy: Promise the Moderates no levy on the Core.
+- @pl_rim_relief: Promise the Rim relief in every budget.
+- @pl_defence: Promise the Security Bloc defence spending in every budget.
+- @pl_no_powers: Promise the Independents no new emergency powers.
+- @el_campaign: Make no promise.
+
+@pl_no_tariffs
+view-if: plo_no_tariffs
+subtitle: The guilds will back us. Tariffs will be off the table at every budget.
+on-arrival: {! SW.makePledge(Q, 'no_tariffs', '', 12); Q.el_pledges_made += 1; !}
+go-to: el_campaign
+
+@pl_no_levy
+view-if: plo_no_levy
+subtitle: The Moderates will back us. The Core levy will be off the table at every budget.
+on-arrival: {! SW.makePledge(Q, 'no_levy', '', 12); Q.el_pledges_made += 1; !}
+go-to: el_campaign
+
+@pl_rim_relief
+view-if: plo_rim_relief
+subtitle: The Rim will back us. Every budget we support must fund relief, which is not cheap.
+on-arrival: {! SW.makePledge(Q, 'rim_relief', '', 12); Q.el_pledges_made += 1; !}
+go-to: el_campaign
+
+@pl_defence
+view-if: plo_defence
+subtitle: The Security Bloc will back us. Every budget we support must fund the fleet. The Pacifists will grumble.
+on-arrival: {! SW.makePledge(Q, 'defence', '', 12); Q.el_pledges_made += 1; Q.pacifist_dissent += 2; !}
+go-to: el_campaign
+
+@pl_no_powers
+view-if: plo_no_powers
+subtitle: The Independents will back us. The Caucus must vote against every new grant of emergency powers.
+on-arrival: {! SW.makePledge(Q, 'no_powers', '', 12); Q.el_pledges_made += 1; !}
+go-to: el_campaign
+
+@el_expose
+view-if: el_has_pal and el_backing != "pal" and el_bought_amt > 0 and not el_exposed
+choose-if: evidence >= 4
+unavailable-subtitle: We need stronger evidence (4 or more) to name the money.
+subtitle: Name the backers buying votes for Palpatine. The purchased votes melt away.
+on-arrival: {!
+Q.el_exposed = 1;
+var a = Q.el_bought_amt;
+Q.bonus_guild_for_pal = (Q.bonus_guild_for_pal || 0) - a * 1.3; Q.bonus_ind_for_pal = (Q.bonus_ind_for_pal || 0) - a * 1.3; Q.bonus_mod_for_pal = (Q.bonus_mod_for_pal || 0) - a;
+if (Q.naboo_sympathy) for (var i = 0; i < Q.parties.length; i++) Q['bonus_' + Q.parties[i] + '_for_pal'] = (Q['bonus_' + Q.parties[i] + '_for_pal'] || 0) - 6;
+Q.corruption -= 1; Q.faith += 0.5; Q.pal_relation -= 12; Q.grand_plan += 2;
+SW.momentum(Q, 0.5, 'exposing the money behind Palpatine');
+!}
+
+The Caucus lays out the money trail: shell companies on Muunilinst, donations routed through shipping cartels, a holding company no one can explain. The senators who had quietly been promised favours suddenly find they have not made up their minds after all. [? if naboo_sympathy : The sympathy for Naboo cools when the Senate sees who paid for it. ?]
+
+- @el_campaign: Continue the campaign.
 
 @el_court_mod
 view-if: el_backing != "mod" and not el_courted_mod
@@ -161,7 +258,59 @@ go-to: el_attack_result
 
 @el_tally
 new-page: true
-on-arrival: {! SW.holdElection(Q); !}
+on-arrival: {! SW.electionFirst(Q); !}
+go-to: el_result_rc if el_done and el_winner = "rc"; el_result_other if el_done and el_winner != "rc"; el_between if not el_done
+
+@el_between
+new-page: true
+
+= Between the Ballots
+
+[+ el_result +]
+
+No candidate has a majority. **[+ eb_a_name +]** and **[+ eb_b_name +]** go to a second ballot; everyone else is out. For an hour the corridors of the Senate Building become a marketplace.
+
+[? if eb_ours_in : [+ eb_backing_name +] is still in the race. [? if eb_has_out : The [+ eb_out_name +], whose candidate [+ eb_out_cand +] is out, are now free to vote for whomever they like. ?] ?][? if eb_ours_out : [+ eb_backing_name +] is out. The Caucus's [+ eb_rc_seats +]% of the Senate could decide the second ballot, and both finalists know it. ?]
+
+- @eb_court: Court the [+ eb_out_name +] for [+ eb_backing_name +].
+- @eb_pledge: Promise the [+ eb_out_name +] [+ eb_pledge_name +].
+- @eb_deal_a: Endorse [+ eb_a_name +], for a price.
+- @eb_deal_b: Endorse [+ eb_b_name +], for a price.
+- @eb_firm: [? if eb_ours_in : Stand firm. ?][? if eb_ours_out : Stay neutral and let our senators vote their consciences. ?]
+
+@eb_court
+view-if: eb_ours_in and eb_has_out
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+subtitle: −1 political capital.
+on-arrival: {! Q.capital -= 1; SW.courtEliminated(Q); !}
+go-to: el_second
+
+@eb_pledge
+view-if: eb_ours_in and eb_has_out and eb_pledge_ok and el_pledges_made < 2
+subtitle: Their votes for our pledge. It will bind us for four years.
+on-arrival: {! SW.makePledge(Q, Q.eb_pledge, Q.eb_out_main, 12); Q.el_pledges_made += 1; !}
+go-to: el_second
+
+@eb_deal_a
+view-if: eb_ours_out and not eb_a_rc
+subtitle: In return: the [+ eb_a_chair_name +] chair and a place in the government. [? if eb_a = "pal" : The Pacifists will be appalled. ?]
+on-arrival: {! SW.kingmaker(Q, 'a'); if (Q.eb_a === 'pal') { Q.pacifist_dissent += 6; Q.inst_dissent += 3; } !}
+go-to: el_second
+
+@eb_deal_b
+view-if: eb_ours_out and not eb_b_rc
+subtitle: In return: the [+ eb_b_chair_name +] chair and a place in the government. [? if eb_b = "pal" : The Pacifists will be appalled. ?]
+on-arrival: {! SW.kingmaker(Q, 'b'); if (Q.eb_b === 'pal') { Q.pacifist_dissent += 6; Q.inst_dissent += 3; } !}
+go-to: el_second
+
+@eb_firm
+on-arrival: {! if (Q.eb_ours_out) Q.el_backing = ''; !}
+go-to: el_second
+
+@el_second
+new-page: true
+on-arrival: {! SW.electionSecond(Q); !}
 go-to: el_result_rc if el_winner = "rc"; el_result_other if el_winner != "rc"
 
 @el_result_rc
@@ -254,6 +403,8 @@ Q.el_walkout_blocks = (Q.walkout_bloc && Q.date < Q.walkout_until && (Q.govt_blo
 if (Q.el_walkout_blocks) Q.el_invited = 0;
 Q.el_pal_won = Q.el_winner === 'pal' ? 1 : 0;
 Q.el_join_bureau = SW.bureauReaction(SW.bureauComfort(Q, (Q.govt_blocs || []).concat(['rc'])));
+if (Q.el_deal_won) { Q.el_invited = 1; Q.el_walkout_blocks = 0; }
+SW.juniorPrice(Q);
 SW.assignChairs(Q);
 !}
 
@@ -263,14 +414,14 @@ SW.assignChairs(Q);
 
 [? if el_pal_won : Senator Palpatine of Naboo accepts the office with quiet humility, promising to "end the corruption and paralysis of the Senate". The galleries applaud. ?][? if not el_pal_won : [+ el_winner_name +] forms a government: the [+ coalition_name +]. ?]
 
-[? if el_invited : The new Chancellor's office has invited the Caucus to join the governing coalition, with a share of the committee chairs. ?][? if not el_invited and el_walkout_blocks : The [+ walkout_name +], who walked out on the Caucus, sit in the new government and will not have us. ?][? if not el_invited and not el_walkout_blocks : The new government does not need the Caucus, and has not asked for it. ?]
+[? if el_invited and el_deal_won : [+ el_winner_name +] keeps the bargain struck between the ballots: the Caucus is invited into the government, and the [+ el_deal_chair_name +] chair is ours if we join. ?][? if el_invited and not el_deal_won : The new Chancellor's office has invited the Caucus to join the governing coalition, with a share of the committee chairs. ?] [? if el_invited : [+ el_join_price +] ?][? if not el_invited and el_walkout_blocks : The [+ walkout_name +], who walked out on the Caucus, sit in the new government and will not have us. ?][? if not el_invited and not el_walkout_blocks : The new government does not need the Caucus, and has not asked for it. ?]
 
 - @el_join: Join the government.
 - @el_oppose: Remain in opposition.
 
 @el_join
 view-if: el_invited
-subtitle: [? if el_pal_won : Palpatine's coalition gives us chairs and access, but ties our name to his. ?][? if not el_pal_won : Committee chairs, and a share of responsibility. ?] [+ el_join_bureau +]
+subtitle: [? if el_pal_won : Palpatine's coalition gives us chairs and access, but ties our name to his. ?][? if not el_pal_won : Committee chairs, and a share of responsibility. ?] [+ el_join_bureau +] [+ el_join_price +]
 on-arrival: {! SW.joinGovernment(Q); if (Q.el_pal_won) { Q.pacifist_dissent += 4; Q.pal_relation += 5; } !}
 go-to: el_chairs
 
@@ -285,7 +436,9 @@ new-page: true
 
 = Committee Chairs
 
-Every new government shares out the committee chairs afresh. The Caucus has [+ leverage +] leverage to spend, and holds [+ rc_chairs +] of the [+ chair_cap +] chairs our partners will let us have: each partner insists on at least one for itself. Each chair unlocks new Senate Affairs cards.
+Every new government shares out the committee chairs afresh. The Caucus has [+ leverage +] leverage to spend, and holds [+ rc_chairs +] of the [+ chair_cap +] chairs our partners will let us have: each partner insists on at least one for itself, and chairs promised in the coalition talks are theirs. Each chair unlocks new Senate Affairs cards.
+
+[? if pledge_count > 0 : Our pledges this term: [+ pledge_text +]. ?]
 
 - @el_chair_rimaffairs: Outer Rim Affairs (5 leverage).
 - @el_chair_finance: Finance & Commerce (10 leverage).
@@ -295,32 +448,32 @@ Every new government shares out the committee chairs afresh. The Caucus has [+ l
 
 @el_chair_rimaffairs
 view-if: chair_rimaffairs != "rc"
-choose-if: leverage >= 5 and rc_chairs < chair_cap
-unavailable-subtitle: [? if rc_chairs >= chair_cap : Our partners will not give up another chair. ?][? if rc_chairs < chair_cap : Not enough leverage. ?]
+choose-if: leverage >= 5 and rc_chairs < chair_cap and not chair_res_rimaffairs
+unavailable-subtitle: [? if chair_res_rimaffairs : Promised to the [+ chair_res_rimaffairs_name +] in the coalition talks. ?][? if not chair_res_rimaffairs and rc_chairs >= chair_cap : Our partners will not give up another chair. ?][? if not chair_res_rimaffairs and rc_chairs < chair_cap : Not enough leverage. ?]
 subtitle: Relief, piracy, slavery and Rim representation.
 on-arrival: chair_rimaffairs = "rc"; leverage -= 5; rc_chairs += 1
 go-to: el_chairs
 
 @el_chair_finance
 view-if: chair_finance != "rc"
-choose-if: leverage >= 10 and rc_chairs < chair_cap
-unavailable-subtitle: [? if rc_chairs >= chair_cap : Our partners will not give up another chair. ?][? if rc_chairs < chair_cap : Not enough leverage. ?]
+choose-if: leverage >= 10 and rc_chairs < chair_cap and not chair_res_finance
+unavailable-subtitle: [? if chair_res_finance : Promised to the [+ chair_res_finance_name +] in the coalition talks. ?][? if not chair_res_finance and rc_chairs >= chair_cap : Our partners will not give up another chair. ?][? if not chair_res_finance and rc_chairs < chair_cap : Not enough leverage. ?]
 subtitle: Trade policy, the Banking Clan, and the treasury.
 on-arrival: chair_finance = "rc"; leverage -= 10; rc_chairs += 1
 go-to: el_chairs
 
 @el_chair_judiciary
 view-if: chair_judiciary != "rc"
-choose-if: leverage >= 10 and rc_chairs < chair_cap
-unavailable-subtitle: [? if rc_chairs >= chair_cap : Our partners will not give up another chair. ?][? if rc_chairs < chair_cap : Not enough leverage. ?]
+choose-if: leverage >= 10 and rc_chairs < chair_cap and not chair_res_judiciary
+unavailable-subtitle: [? if chair_res_judiciary : Promised to the [+ chair_res_judiciary_name +] in the coalition talks. ?][? if not chair_res_judiciary and rc_chairs >= chair_cap : Our partners will not give up another chair. ?][? if not chair_res_judiciary and rc_chairs < chair_cap : Not enough leverage. ?]
 subtitle: Courts, investigations and intelligence. Vital for unmasking the Sith.
 on-arrival: chair_judiciary = "rc"; leverage -= 10; rc_chairs += 1
 go-to: el_chairs
 
 @el_chair_security
 view-if: chair_security != "rc"
-choose-if: leverage >= 12 and rc_chairs < chair_cap
-unavailable-subtitle: [? if rc_chairs >= chair_cap : Our partners will not give up another chair. ?][? if rc_chairs < chair_cap : Not enough leverage. ?]
+choose-if: leverage >= 12 and rc_chairs < chair_cap and not chair_res_security
+unavailable-subtitle: [? if chair_res_security : Promised to the [+ chair_res_security_name +] in the coalition talks. ?][? if not chair_res_security and rc_chairs >= chair_cap : Our partners will not give up another chair. ?][? if not chair_res_security and rc_chairs < chair_cap : Not enough leverage. ?]
 subtitle: The Judicial Forces, defence policy and, one day, the army.
 on-arrival: chair_security = "rc"; leverage -= 12; rc_chairs += 1
 go-to: el_chairs

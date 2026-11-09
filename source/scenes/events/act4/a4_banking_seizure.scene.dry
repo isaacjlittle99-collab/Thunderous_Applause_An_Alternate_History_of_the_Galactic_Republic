@@ -13,6 +13,8 @@ After a scandal involving the Muun banker Rush Clovis, the InterGalactic Banking
 
 [? if banking_independent : The Banking Independence Act forbids exactly this. The Chancellor's proposal is dead on arrival. ?]
 
+[? if pl_no_powers : **We pledged the [+ pledge_no_powers_name +] no new emergency powers. Supporting them will break that pledge.** ?]
+
 - @oppose: Oppose the takeover.
 - @support: Support it: someone must restore order.
 - @blocked: The law forbids it.

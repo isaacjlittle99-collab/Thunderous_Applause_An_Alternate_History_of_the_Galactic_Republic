@@ -10,7 +10,7 @@ new-page: true
 
 Viceroy, senator and husband to Alderaan’s queen, Bail Organa is a consensus-builder with friends in every bloc and, unusually, in the Jedi Temple.
 
-[? if advisor_action_timer > 0 : *Our advisors can act again in [+ advisor_action_timer +] turn(s).* ?]
+[? if advisor_action_timer > 0 : Our advisors can act again in [+ advisor_action_timer +] turn(s). ?]
 
 - @organa_diplomacy: Alderaanian diplomacy.
 - @organa_inquiries: Quiet inquiries among his Jedi friends.

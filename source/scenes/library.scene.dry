@@ -22,6 +22,7 @@ is-special: true
 - @lib_endings: How the game ends
 - @lib_war: The War Council
 - @lib_purse: The Republic's purse
+- @lib_elections: Elections and campaigns
 - @lib_reforms: Safeguards and how to win them
 - @lib_charts: The Senate in charts
 - @lib_timeline: Timeline of the Republic to 33 BBY
@@ -300,6 +301,41 @@ The Economy tab shows the treasury, the Republic's debt to the InterGalactic Ban
 
 **Markets.** *Bacta* from Thyferra runs short when the war fills the field hospitals. *Tibanna gas* from Bespin, which powers blasters and hyperdrives, grows dear as the Republic arms. *Spice* from Kessel flourishes when the Rim suffers and the Senate is corrupt, and the Pyke Syndicate and the Hutts fight over it. When a market reaches crisis, the Senate must choose who pays: the treasury, the guilds, the front, or the poor. The Finance & Commerce Committee can act early: patrols, bacta stockpiles, and refinancing the debt.
 
+@lib_elections
+is-special: true
+new-page: true
+go-to: menu
+
+= Elections and campaigns
+
+Senators answer to their home worlds, and the Caucus's fortunes rise and fall with the galaxy's mood.
+
+**Momentum.** The Polls tab shows whether the Caucus is surging, rising, steady, falling or collapsing, and why. Momentum lifts our support in every region and sways every bloc at a Chancellor election. Reforms, strong campaigns, debates, endorsements and won contests build it; scandals, gaffes, broken promises, lost contests and broken-up rallies drain it. It fades each quarter unless renewed.
+
+**Campaigning.** A campaign picks a region and then a message. *Clean government* lands when the Senate is corrupt, best in the Core and Colonies, and falls flat right after a Caucus scandal. *Relief for the Rim* lands in the Mid and Outer Rim when hardship is high, and is only believed if the Caucus has funded relief. *Security* lands when the galaxy is afraid, best in the Colonies; the Pacifists dislike it. *Peace* lands with a war-weary galaxy but **backfires** when fear runs high; the Hawks dislike it. *The Republic and its laws* is steady everywhere. Each option shows how well it is expected to land.
+
+**Election season.** In the last year before a scheduled Chancellor election, the Caucus can campaign every turn, and (from the second election on) the campaign trail brings HoloNet debates, endorsements (Duchess Satine, the Mon Calamari, Kuat Drive Yards; the Jedi Order stays out of politics), opposition research, gaffes and smears. The Polls tab shows our whip count.
+
+**The Chancellor race.** If the Caucus has the seats to stand, it chooses its **nominee**: each of our leading figures appeals to different blocs, and Padmé Amidala takes Naboo's sympathy vote away from Palpatine. Rival candidates have strengths and weaknesses of their own: the Rim's populists are distrusted in the Core, the Security Bloc gains when the galaxy is afraid, and when the Senate is corrupt, Palpatine's backers quietly buy votes. With strong evidence (4 or more) the Caucus can **expose the money**.
+
+**The whip count** shows how each bloc is leaning, and why. It is reliable with the Judiciary chair, strong evidence, or Bail Organa or Finis Valorum as an advisor; otherwise it may be several points out. After the vote, the Caucus learns how far off it was, and which blocs broke away.
+
+**Pledges.** A pledge wins a bloc outright: no trade-route tariffs (the guilds), no levy on the Core (the Moderates), Rim relief in every budget (the Rim), defence spending in every budget (the Security Bloc), no new emergency powers (the Independents). Pledges bind the Caucus until the next Chancellor election, in government or not. Budgets and votes warn before we break one. A broken pledge costs that bloc's goodwill, strains a coalition, drains momentum, and its leader remembers.
+
+**Between the ballots.** If no one wins a majority, the two leaders go to a second ballot and the corridors become a marketplace. If our candidate is still in, we can court the eliminated bloc or promise it a pledge. If our candidate is out, our votes may decide the race: either finalist will trade a committee chair and a place in government for them.
+
+**Coalition talks.** Every partner names its price, set by its leader: a committee chair it keeps for itself, a pledge, or both if the leader is a hardliner. Promised chairs cannot be bought. A Caucus that joins someone else's government pays the Chancellor's price; Palpatine's is that the Caucus stops investigating the Chancellery.
+
+**A fresh mandate.** A Caucus Chancellor whose coalition is restless, or whose budget has been defeated, can call a confidence vote once a term. Win, and the term starts afresh with a calm coalition (it counts as a new term); lose, and the government falls.
+
+**World and sector elections.** Elections across the galaxy matter on Coruscant: the Malastare sector, Mon Mothma's mandate on Chandrila, Naboo's royal election, the Corellian Diet, Onaconda Farr's Rodia, the Kuat succession, and in wartime Ryloth and Mandalore. Each moves delegations and momentum and has its own stakes: Corellia's fleet, Palpatine's home base, Mandalore's neutrality. An advisor campaigning on home ground is the strongest help. A lost seat sends Mothma or Bel Iblis home for a year.
+
+**Referendums.** Once Dooku's movement is under way, a world in a region where separatism runs high may vote on leaving. The Caucus can promise relief, send a figure (Lux Bonteri, on Onderon), expose the Separatist money, offer autonomy, or campaign. A world that leaves takes its delegations with it; one that stays calms its whole region.
+
+**Rallies under attack.** Any campaign can be stormed: by Nebula Front militants early on, Separatist agitators, thugs hired by angry guilds, bounty hunters in wartime, and Death Watch on the Outer Rim. The Caucus can call the Judicial Forces, ask a reformed Senate Guard, rely on local security (strong where we are popular), or cancel. If protection fails, the rally breaks up, fear rises, and we lose ground. Leaning on armed force too often troubles the Pacifists.
+
+**Recalls.** A region builds a grievance when the Caucus backs measures that hurt it: a levy on the Core, a debased credit, cuts to Rim relief, tariffs on the corporate worlds, or budgets that starve a war. Grievances fade with time; the Polls tab marks aggrieved regions. When one boils over, its worlds recall Caucus senators.
+
 @lib_endings
 is-special: true
 new-page: true
@@ -402,7 +438,7 @@ go-to: lib_sys_menu
 
 Every bloc's support in every region drifts toward a natural level. Faith grows the Caucus, and your own dissent shrinks it. Low corruption grows the Core Moderates. Palpatine's bloc grows a little every year whatever happens, and corruption, fear, the Sith's plan and holding office make it grow faster. Fear and the war grow the Security Bloc, and Rim hardship grows the Rimward Coalition. Campaigns push support away from these levels for a while.
 
-**Chancellor elections.** Each bloc backs the candidate it likes most: its own leader, an endorsed ally, or the candidate it leans toward, weighed by how strong that candidate's bloc really is. Without a majority, the top two go to a second ballot. Capital spent courting a bloc buys a large lean toward your candidate. In 32 BBY only, Naboo's plight gives Palpatine a sympathy vote.
+**Chancellor elections.** Each bloc backs the candidate it likes most: its own leader, an endorsed ally, or the candidate it leans toward, weighed by how strong that candidate's bloc really is. Without a majority, the top two go to a second ballot, and the Caucus can bargain between the ballots. Capital spent courting a bloc buys a large lean toward your candidate; a pledge buys a larger one, at a price later. The nominee, the rivals' strengths, momentum and money all count. In 32 BBY only, Naboo's plight gives Palpatine a sympathy vote. See *Elections and campaigns*.
 
 **Incumbency.** Partners in a stable coalition back the sitting Chancellor instead of running against them. The Chancellor's record moves every bloc: faith, corruption, coalition harmony, and whether the war is going badly. **Coalition mood** worsens every turn the Caucus governs, faster with hardline partners and when we hold firm in a strain. When it reaches *collapsing*, the unhappiest partner walks out and the government falls. With constructive no-confidence, the Chancellor survives and the partner simply leaves, or, if the Caucus is the junior partner, the Caucus is dropped instead. A partner that walks out will not serve with the Caucus for two years.
 

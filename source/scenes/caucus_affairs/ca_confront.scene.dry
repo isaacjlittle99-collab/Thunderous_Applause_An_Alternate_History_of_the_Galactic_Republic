@@ -11,7 +11,7 @@ new-page: true
 
 [? if pal_chancellor : Chancellor Palpatine is popular, patient and always reasonable. ?][? if not pal_chancellor : Chancellor [+ chancellor +] leads the government, but power keeps flowing to the Chancellor's office. ?] Each new crisis seems to leave a little more authority in the Chancellor's hands, and a little less in the Senate's. Senate resolve is currently **[+ senate_resolve : resolve +]**.
 
-[? if senate_resolve >= 3 and not pact_formed : *With resolve this high, member worlds would now consider a mutual Defence Pact (Caucus Affairs).* ?]
+[? if senate_resolve >= 3 and not pact_formed : With resolve this high, member worlds would now consider a mutual Defence Pact (Caucus Affairs). ?]
 
 - @alarm: Raise the alarm within the Caucus.
 - @crossbloc: Build a cross-bloc group of senators to defend the constitution.

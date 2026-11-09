@@ -1,0 +1,97 @@
+title: A Vote on Secession
+subtitle: A world decides whether to leave the Republic.
+tags: event
+view-if: ref_ready and not finale and not game_ending
+priority: 3
+new-page: true
+face-image: img/ev_separatist.svg
+on-arrival: {! SW.referendumOpen(Q); Q.we_rally = 0; !}
+
+= [+ ref_heading +]
+
+Count Dooku's movement has forced a referendum on [+ ref_world +]: should it leave the Republic for the Confederacy of Independent Systems? The polls say **[+ ref_poll_word +]**, with Stay at about [+ ref_poll +]%. Separatist feeling in the [+ ref_region_name +], hardship on the Rim, and what the Republic has done for the Rim (enfranchisement, relief, a Federal Compact) all move the vote.
+
+*If [+ ref_world +] leaves, its delegations walk out of the Senate and Dooku grows stronger. If it stays, separatism in the [+ ref_region_name +] falls back and the Caucus gains momentum. While the vote is pending, the region's other worlds wait to see the result before leaving.*
+
+- @relief: Promise [+ ref_world +] relief.
+- @figure: Send [+ ref_fig_name +] to make the case.
+- @expose: Expose the Separatist money behind the Leave campaign.
+- @autonomy: Offer [+ ref_world +] autonomy within the Republic.
+- @campaign: Campaign for Stay ourselves.
+- @out: Stay out of it.
+
+@relief
+subtitle: −2 from the treasury. Hardship eases a little.
+choose-if: treasury >= 2
+unavailable-subtitle: The treasury cannot afford it.
+on-arrival: {! SW.referendumCampaign(Q, 'relief'); SW.referendumResolve(Q); !}
+go-to: result
+
+@figure
+subtitle: Uses the advisors' action. [? if ref_bonteri : Lux Bonteri, son of a Separatist senator turned against Dooku, is the perfect messenger. ?][? if not ref_bonteri : A good boost. ?]
+choose-if: advisor_action_timer <= 0 and (n_advisors >= 1 or ref_bonteri)
+unavailable-subtitle: [? if n_advisors < 1 : We have no one to send. ?][? if n_advisors >= 1 : The advisors' action is not ready yet. ?]
+on-arrival: {! SW.referendumCampaign(Q, 'figure'); SW.referendumResolve(Q); !}
+go-to: result
+
+@expose
+subtitle: Show the voters who is paying for Leave.
+choose-if: evidence >= 3
+unavailable-subtitle: We need more evidence (3 or more).
+on-arrival: {! SW.referendumCampaign(Q, 'expose'); SW.referendumResolve(Q); !}
+go-to: result
+
+@autonomy
+subtitle: Strong with Leave voters. The Institutionalists and Moderates fear for the Republic's unity.
+on-arrival: {! SW.referendumCampaign(Q, 'autonomy'); SW.referendumResolve(Q); !}
+go-to: result
+
+@campaign
+subtitle: −1 political capital. Rallies can be attacked.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! SW.referendumCampaign(Q, 'campaign'); Q.we_rally = SW.rallyRisk(Q, Q.ref_region, 0.08); if (!Q.we_rally) SW.referendumResolve(Q); !}
+go-to: result if not we_rally; disrupted if we_rally
+
+@out
+subtitle: The poll decides.
+on-arrival: {! SW.referendumResolve(Q); !}
+go-to: result
+
+@disrupted
+
+The Caucus's rally in the [+ cm_region_name +] is stormed by [+ cm_disruptor +]. Speakers are shouted down, delegates are threatened, and the HoloNet cameras are rolling. How will the Caucus protect its people?
+
+*Their strength is about [+ cm_threat +]. The Judicial Forces bring about [+ jf_txt +]; local security, where we are popular, about [+ cm_local +][? if senate_guard_reformed : ; the reformed Senate Guard, 5?]. Each time the Caucus leans on armed force, the Pacifists like it less.*
+
+- @protect_judicials: Call in the Judicial Forces.
+- @protect_guard: Ask the Senate Guard to protect us.
+- @protect_local: Rely on local security.
+- @protect_cancel: Cancel the rally.
+
+@protect_judicials
+subtitle: The Pacifists dislike the Caucus relying on armed force.
+on-arrival: {! if (!SW.rallyProtect(Q, 'judicials')) Q.ref_boost -= 0.15; SW.referendumResolve(Q); !}
+go-to: result
+
+@protect_guard
+view-if: senate_guard_reformed
+subtitle: The reformed Senate Guard answers to the Senate, and is formidable.
+on-arrival: {! if (!SW.rallyProtect(Q, 'guard')) Q.ref_boost -= 0.15; SW.referendumResolve(Q); !}
+go-to: result
+
+@protect_local
+on-arrival: {! if (!SW.rallyProtect(Q, 'local')) Q.ref_boost -= 0.15; SW.referendumResolve(Q); !}
+go-to: result
+
+@protect_cancel
+subtitle: No one is hurt. The campaign loses its edge.
+on-arrival: {! SW.rallyProtect(Q, 'cancel'); Q.ref_boost -= 0.1; SW.referendumResolve(Q); !}
+go-to: result
+
+
+@result
+
+[? if we_rally and cm_protect_won : The rally was attacked, but the Caucus's protection held, and the campaign went ahead. ?][? if we_rally and not cm_protect_won : The attack on our rally broke up the campaign's best day. ?][? if cm_force_note : The Pacifists warn that the Caucus is starting to look like a party with a private army. ?]
+
+[? if ref_stayed : **[+ ref_world +] votes to stay in the Republic, [+ ref_stay_pct +]% to [+ ref_leave_pct +]%.** Separatist feeling across the [+ ref_region_name +] ebbs, and the HoloNet credits the Caucus. ?][? if not ref_stayed : **[+ ref_world +] votes to leave, [+ ref_leave_pct +]% to [+ ref_stay_pct +]%.** Its delegations walk out of the Senate, and Count Dooku welcomes another world to the Confederacy. ?]

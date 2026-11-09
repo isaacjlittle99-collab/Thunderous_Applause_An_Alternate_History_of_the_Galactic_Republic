@@ -35,6 +35,10 @@ artwork, music or footage is included; all images are original abstract art.*
   which of three fronts to push and faces a lore dilemma whose consequences reach far beyond the battlefield.
 - **The Republic's purse.** A yearly budget, debt to the Banking Clan, hyperlane trade, and bacta, Tibanna and spice
   markets that can tip into crisis.
+- **Elections and campaigns.** Momentum, campaign messages that fit (or backfire on) the moment, election-season
+  debates and endorsements, a Chancellor race with nominees, a whip count, pledges and bargaining between ballots,
+  coalition partners who name their price, world elections from Naboo to Corellia, secession referendums,
+  rallies that need protecting, recalls, and confidence votes.
 - **The threat** is mostly hidden. Corruption, fear and emergency powers feed the Sith Lord's plan.
   Evidence, Senate resolve and structural safeguards work against it.
 

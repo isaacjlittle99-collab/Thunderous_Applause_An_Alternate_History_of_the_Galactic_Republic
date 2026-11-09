@@ -26,7 +26,7 @@ Queen Amidala has returned to Naboo with the two Jedi and allied herself with th
 
 But the victory has a dark edge. The Jedi were attacked by a tattooed warrior with a red lightsaber: a **Sith**, the first seen in a thousand years. He was killed in the fight.
 
-[? if quigon_alive : Against the odds, Master **Qui-Gon Jinn** survived the duel, gravely wounded. He has insisted on training the boy Skywalker himself, and is already asking a question the Council would rather ignore: *if this was the apprentice, where is the master?* ?][? if not quigon_alive : Master **Qui-Gon Jinn** fell in the duel. His apprentice, Obi-Wan Kenobi, has promised to train the boy Skywalker. The Council is uneasy about it. ?]
+[? if quigon_alive : Against the odds, Master **Qui-Gon Jinn** survived the duel, gravely wounded. He has insisted on training the boy Skywalker himself, and is already asking a question the Council would rather ignore: if this was the apprentice, where is the master? ?][? if not quigon_alive : Master **Qui-Gon Jinn** fell in the duel. His apprentice, Obi-Wan Kenobi, has promised to train the boy Skywalker. The Council is uneasy about it. ?]
 
 Anakin's mother, Shmi, remains a slave on Tatooine.
 

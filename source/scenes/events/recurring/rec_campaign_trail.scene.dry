@@ -1,0 +1,154 @@
+title: On the Campaign Trail
+subtitle: A Chancellor election is coming, and every moment counts.
+tags: event
+view-if: trail_ready and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_holonet.svg
+on-arrival: {! SW.trailOpen(Q); !}
+
+= [+ tr_title +]
+
+[? if trail_kind = "debate" : The HoloNet hosts a debate ahead of the Chancellor election. [+ tr_speaker +] will speak for the Caucus[? if tr_has_rival : , facing [+ tr_rival_name +] of the [+ tr_rival_bloc +]?]. A good night lifts our momentum and wins over particular blocs; a bad one costs us. A message that fits the moment (reform when corruption is high, the Rim when it is suffering, security when the galaxy is afraid) is more likely to land, and so is a united Caucus. ?]
+
+[? if trail_kind = "endorse" : [+ tr_pitch +] An endorsement from [+ tr_endorser_name +] would carry weight. [+ tr_price +] ?]
+
+[? if trail_kind = "research" : Our researchers have found a sealed file on the campaign finances of [+ tr_rival_name +] of the [+ tr_rival_bloc +]. [? if tr_rival_pal and evidence < 3 : Without more evidence of our own, a leak against Palpatine will look like a smear. ?] ?]
+
+[? if trail_kind = "gaffe" : A Caucus senator, caught on an open microphone, [+ tr_gaffe_text +]. The clip is everywhere by morning, and the [+ tr_gaffe_region_name +] is not amused. ?]
+
+[? if trail_kind = "smear" : A HoloNet feed carries documents purporting to show a Caucus senator taking money from Separatist sympathisers. The documents are very good, almost too good. Someone with resources wants the Caucus on the back foot before the election. ?]
+
+*Momentum lifts the Caucus's support in every region and sways the blocs on election day. It fades each quarter unless renewed.*
+
+- @db_reform: Make it about clean government and reform.
+- @db_rim: Speak for the Rim.
+- @db_security: Promise order and security.
+- @db_attack: Go after [+ tr_rival_name +]'s record.
+- @en_accept: Accept the endorsement.
+- @en_ask: Ask the Jedi anyway.
+- @en_decline: [? if tr_jedi : Respect the Order's neutrality. ?][? if not tr_jedi : Politely decline. ?]
+- @rs_publish: Leak it.
+- @rs_hold: Keep it, and let them know we have it.
+- @rs_burn: Burn it. The Caucus does not fight that way.
+- @gf_apologise: Apologise at once.
+- @gf_double: Double down.
+- @gf_ignore: Say nothing and wait for it to pass.
+- @sm_rebut: Rebut it with the facts.
+- @sm_counter: Accuse Palpatine's people of planting it.
+- @sm_ignore: Ignore it.
+
+@db_reform
+view-if: trail_kind = "debate"
+subtitle: [? if corruption > 60 : The Senate's corruption makes this a strong message. ?][? if corruption <= 60 : A worthy message, but not the galaxy's main worry. ?] Wins the Moderates and Independents.
+on-arrival: {! SW.trailResolve(Q, 'reform'); !}
+go-to: debate_result
+
+@db_rim
+view-if: trail_kind = "debate"
+subtitle: [? if rim_hardship > 40 : The Rim is suffering: this will resonate. ?][? if rim_hardship <= 40 : The Rim is not in crisis, so this may fall flat. ?] Wins the Rim; the Moderates bristle.
+on-arrival: {! SW.trailResolve(Q, 'rim'); !}
+go-to: debate_result
+
+@db_security
+view-if: trail_kind = "debate"
+subtitle: [? if fear > 45 : A frightened galaxy wants to hear this. ?][? if fear <= 45 : In calm times this sounds like fearmongering. ?] Wins the Security Bloc; the Pacifists dislike it.
+on-arrival: {! SW.trailResolve(Q, 'security'); !}
+go-to: debate_result
+
+@db_attack
+view-if: trail_kind = "debate" and tr_has_rival
+subtitle: [? if tr_rival_pal and evidence < 3 : Risky without evidence: Palpatine is very good at playing the victim. ?][? if not tr_rival_pal or evidence >= 3 : Hurts their standing with every bloc if it lands. ?]
+on-arrival: {! SW.trailResolve(Q, 'attack'); !}
+go-to: debate_result
+
+@debate_result
+
+[? if tr_won : [+ tr_speaker +] is superb: sharp, warm and in command of the facts. The HoloNet's pundits call the debate for the Caucus. ?][? if not tr_won : [+ tr_speaker +] has a poor night: halting answers, a fumbled statistic, a rival who seemed to know every question in advance. ?]
+
+@en_accept
+view-if: trail_kind = "endorse" and not tr_jedi
+subtitle: [+ tr_price +]
+choose-if: capital >= 1 or tr_endorser != "moncal"
+unavailable-subtitle: Not enough political capital for the visit.
+on-arrival: {! SW.trailResolve(Q, 'accept'); !}
+
+[+ tr_endorser_name +] endorses the Caucus before the cameras. It is the lead story on the HoloNet for a day, and the Caucus's momentum rises.
+
+@en_ask
+view-if: trail_kind = "endorse" and tr_jedi
+subtitle: The Order will refuse, and our friends in the Temple will be embarrassed.
+on-arrival: {! SW.trailResolve(Q, 'accept'); !}
+
+Master Yoda receives our envoy kindly and sends them away with nothing. "Serve the Republic, the Jedi do. Serve a party, we do not." Word of the request gets out.
+
+@en_decline
+view-if: trail_kind = "endorse"
+on-arrival: {! SW.trailResolve(Q, 'decline'); !}
+
+[? if tr_jedi : The Caucus leaves the Jedi out of politics. Our friends in the Temple notice, and are grateful. ?][? if not tr_jedi : The Caucus thanks [+ tr_endorser_name +] and keeps its distance. ?]
+
+@rs_publish
+view-if: trail_kind = "research"
+subtitle: Hurts their standing with every bloc. The Institutionalists dislike dirty campaigns.
+on-arrival: {! SW.trailResolve(Q, 'publish'); !}
+
+[? if tr_won : The file reaches the HoloNet through a friendly journalist. [+ tr_rival_name +]'s campaign spends a week explaining itself. ?][? if not tr_won : The leak is traced back to the Caucus within hours. Palpatine's dignified reply makes us look like bullies. ?]
+
+@rs_hold
+view-if: trail_kind = "research"
+subtitle: The [+ tr_rival_bloc +] will be quietly more accommodating.
+on-arrival: {! SW.trailResolve(Q, 'hold'); !}
+
+A discreet word is passed to the [+ tr_rival_bloc +]. Nothing is said aloud. Nothing needs to be.
+
+@rs_burn
+view-if: trail_kind = "research"
+subtitle: A little faith in politics, and calmer Institutionalists.
+on-arrival: {! SW.trailResolve(Q, 'burn'); !}
+
+The file goes into the incinerator. Word gets around that the Caucus had it and chose not to use it.
+
+@gf_apologise
+subtitle: A small loss of momentum.
+view-if: trail_kind = "gaffe"
+on-arrival: {! SW.trailResolve(Q, 'apologise'); !}
+
+The senator apologises before the cameras, and the story dies within a day.
+
+@gf_double
+subtitle: Some voters like bluntness. Most do not.
+view-if: trail_kind = "gaffe"
+on-arrival: {! SW.trailResolve(Q, 'double'); !}
+
+[? if tr_won : The senator refuses to apologise, and a surprising number of voters admire the candour. ?][? if not tr_won : The senator refuses to apologise and makes it worse. The [+ tr_gaffe_bloc_name +] demand the Caucus disown the remark. ?]
+
+@gf_ignore
+subtitle: The story may run for a week.
+view-if: trail_kind = "gaffe"
+on-arrival: {! SW.trailResolve(Q, 'ignore'); !}
+
+The Caucus says nothing. The HoloNet replays the clip for a week.
+
+@sm_rebut
+view-if: trail_kind = "smear"
+subtitle: −1 political capital. [? if evidence >= 2 : Our investigators can show the documents are forged, and trace where they came from. ?][? if evidence < 2 : Without investigators of our own, a rebuttal may not convince. ?]
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! SW.trailResolve(Q, 'rebut'); !}
+
+[? if tr_won : Our investigators take the forgery apart, line by line, and find the trail behind it leads somewhere interesting. ?][? if not tr_won : Our rebuttal is drowned out. The documents look real, and the denial sounds like every other denial. ?]
+
+@sm_counter
+view-if: trail_kind = "smear"
+subtitle: [? if evidence >= 4 : We have enough to make it stick. ?][? if evidence < 4 : Without hard evidence this will look like paranoia. ?]
+on-arrival: {! SW.trailResolve(Q, 'counter'); !}
+
+[? if tr_won : The Caucus names the shell company that paid for the forgery, and its links to the Chancellery's friends. The story turns. ?][? if not tr_won : The accusation lands badly: the Caucus looks rattled, and Palpatine looks wounded. ?]
+
+@sm_ignore
+view-if: trail_kind = "smear"
+subtitle: The smear will hang over the Caucus for months.
+on-arrival: {! SW.trailResolve(Q, 'ignore'); !}
+
+The Caucus refuses to dignify the story. The story does not need its dignity.
