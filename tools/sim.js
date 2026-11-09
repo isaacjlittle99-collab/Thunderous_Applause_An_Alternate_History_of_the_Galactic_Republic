@@ -98,15 +98,54 @@ function smartWeight(id, Q) {
     // when the guilds push back, concede before it gets to a credit strike; break a blockade if we can
     [/^rec_guild_pressure\.counter_lobby$/, Q.capital >= 2 ? 4 : 1], [/^rec_guild_pressure\.concede_slow$/, 5], [/^rec_guild_pressure\.negotiate_strike$/, 5],
     [/^rec_guild_pressure\.break_blockade$/, 5], [/^rec_guild_pressure\.senate_blockade$/, 2], [/^rec_guild_pressure\.give_in$/, 2],
-    [/^rec_core_revolt\.repeal$/, 5], [/^rec_core_revolt\.compensate$/, Q.treasury >= 3 ? 3 : 0.5], [/^rec_credits_refused\.back$/, 5]
+    [/^rec_core_revolt\.repeal$/, 5], [/^rec_core_revolt\.compensate$/, Q.treasury >= 3 ? 3 : 0.5], [/^rec_credits_refused\.back$/, 5],
+    // campaigning: the message that fits the moment; protect a rally only with enough strength
+    [/^ca_campaign\.msg_\w+$/, ({strong: 6, solid: 4, weak: 1.5, poor: 0.5, 'may backfire': 0.05})[Q['cm_word_' + id.split('_').pop()]] || 1],
+    [/\.protect_judicials$/, (Q.judicial_forces || 0) * 0.9 >= Q.cm_threat ? 6 : 1], [/\.protect_guard$/, 4.5 >= Q.cm_threat ? 7 : 1],
+    [/\.protect_local$/, Q.cm_local * 0.9 >= Q.cm_threat ? 5 : 1], [/\.(protect_cancel|cancel)$/, 1.5],
+    // the Chancellor race: the nominee who appeals to the biggest blocs; pledges we can keep; expose the money; deal with the non-Palpatine finalist
+    [/^rec_chancellor_election\.nom_\w+$/, nomineeWeight(id.replace(/^.*\.nom_/, ''), Q)],
+    [/^rec_chancellor_election\.el_pledge$/, 3], [/\.pl_no_powers$/, 5], [/\.pl_no_tariffs$/, (Q.guild_r || 0) >= 8 ? 3 : 1], [/\.pl_no_levy$/, 3],
+    [/\.pl_rim_relief$/, Q.rim_hardship > 40 ? 3 : 1], [/\.pl_defence$/, Q.war ? 3 : 0.5], [/\.el_expose$/, 9],
+    [/\.eb_court$/, Q.capital >= 1 ? 5 : 0.5], [/\.eb_pledge$/, 4], [/\.eb_deal_a$/, Q.eb_a === 'pal' ? 0.2 : 6], [/\.eb_deal_b$/, Q.eb_b === 'pal' ? 0.2 : 6], [/\.eb_firm$/, 1],
+    [/^rec_pledge_broken\.amends$/, Q.capital >= 2 ? 4 : 1],
+    // the campaign trail
+    [/\.db_reform$/, Q.corruption > 60 ? 5 : 2], [/\.db_rim$/, Q.rim_hardship > 40 ? 5 : 1], [/\.db_security$/, Q.fear > 45 ? 4 : 1], [/\.db_attack$/, Q.tr_rival_pal && Q.evidence < 3 ? 0.3 : 2],
+    [/\.en_accept$/, 4], [/\.en_ask$/, 0.2], [/\.en_decline$/, Q.tr_jedi ? 6 : 1],
+    [/\.rs_publish$/, (!Q.tr_rival_pal || Q.evidence >= 3) ? 3 : 0.2], [/\.rs_hold$/, 3], [/\.rs_burn$/, 2],
+    [/\.gf_apologise$/, 5], [/\.gf_double$/, 1], [/\.gf_ignore$/, 1],
+    [/\.sm_rebut$/, Q.evidence >= 2 ? 6 : 1], [/\.sm_counter$/, Q.evidence >= 4 ? 7 : 0.3], [/\.sm_ignore$/, 1],
+    // world elections, referendums, recalls, confidence votes
+    [/^rec_world_election\.hard$/, Q.capital >= 3 ? 5 : 1], [/^rec_world_election\.advisor$/, 6], [/^rec_world_election\.money$/, 1], [/^rec_world_election\.out$/, 2],
+    [/^rec_referendum\.relief$/, Q.treasury >= 4 ? 5 : 1], [/^rec_referendum\.figure$/, 6], [/^rec_referendum\.expose$/, 7], [/^rec_referendum\.autonomy$/, 3],
+    [/^rec_referendum\.campaign$/, 3], [/^rec_referendum\.out$/, 0.5],
+    [/^rec_recall\.apologise$/, Q.capital >= 2 ? 4 : 1], [/^rec_recall\.campaign$/, 3], [/^rec_recall\.accept$/, 1],
+    [/^sa_coalition\.mandate$/, (Q.cv_outlook || 0) >= 58 ? 6 : 0.1]
   ];
-  for (const [re, w] of W) if (re.test(id)) return w;
+  for (const [re, w] of W) if (re.test(id)) {
+    // a careful player does not break a pledge in the budget
+    const m = /^rec_budget\.(rev|pri)_(\w+)$/.exec(id);
+    if (m && (m[1] === 'rev' ? Q['bd_brkn_rev_' + m[2]] : Q['bd_brkn_' + m[2]])) return w * 0.05;
+    if (/^rec_budget\.support$/.test(id) && Q.bd_gov_breaks_n) return w * 0.05;
+    if (/^ca_investigate\.(money|slicer)$/.test(id) && Q.pl_no_probe) return w * 0.3;
+    if (Q.pl_no_powers && /(powers_yes|^sa_emergency\.(request|martial))$/.test(id)) return w * 0.05;
+    return w;
+  }
   return null;
+}
+// a nominee's appeal, weighted by the size of each bloc
+function nomineeWeight(nid, Q) {
+  const N = SW.NOMINEES[nid];
+  if (!N) return 1;
+  let score = 0;
+  for (const b in N.appeal) score += N.appeal[b] * (Q[b + '_r'] || 0);
+  return Math.max(0.3, 2 + score / 25);
 }
 function weightFor(id) {
   if (POLICY === 'smart' && curEngine) {
     const sw = smartWeight(id, curEngine.state.qualities);
     if (sw !== null) return sw;
+    if (curEngine.state.qualities.pl_no_powers && /(powers_yes|^sa_emergency\.(request|martial))$/.test(id)) return 0.05;
     let w = 1;
     for (const [k, v] of REFORM_PREFS) if (id.indexOf(k) >= 0) w = Math.max(w, v);
     if (id.indexOf('easy_discard') >= 0 || id.indexOf('go_back') >= 0) w = 0.05;
@@ -121,7 +160,7 @@ function weightFor(id) {
 function pick(list, idf) {
   if (POLICY === 'passive') {
     // passive: never court, campaign or spend; otherwise random
-    const cheap = list.filter(x => !/court|attack|_run$|el_run|campaign/.test(idf(x)));
+    const cheap = list.filter(x => !/court|attack|_run$|el_run|campaign|\.hard$|\.pl_|el_pledge|eb_pledge|mandate|apologise|amends/.test(idf(x)));
     const tally = list.find(x => idf(x).indexOf('el_tally') >= 0);
     if (tally) return tally;
     const pool = cheap.length ? cheap : list;
@@ -147,6 +186,10 @@ const PREMISES = [
   [/^(a4_delegation|a4_elections_suspended|a4_hostage_crisis|a4_security_act|a4_sector_governance|a4_indefinite_term|a4_banking_seizure|a4_loyalist_committee|a3_term_limit|rec_early_empire|rec_empire_looming|rec_arrests_warning|rec_senatorial_arrests)$/,
     PAL_OFFICE, 'Chancellery event without Palpatine in office'],
   [/^(rec_war_council|rec_front_event|a4_war_aims|rec_profiteering|rec_protest|a4_banking|a4_bonteri_dead)$/, Q => Q.war, 'war event without a war'],
+  [/^rec_referendum$/, Q => Q.dooku_movement && !Q.sidious_defeated, 'referendum without the Separatist movement'],
+  [/^rec_campaign_trail$/, Q => Q.election_season && !Q.election_suspended, 'campaign trail outside election season'],
+  [/^rec_world_election$/, Q => !(Q.wv_id === 'mandalore' || Q.wv_id === 'ryloth') || Q.war, 'wartime world election without a war'],
+  [/^rec_world_election$/, Q => !(Q.wv_id === 'rodia') || !Q.farr_dead, 'Rodia election after Farr died'],
 ];
 const PREMISE_HITS = {};
 function checkPremises(id, Q, game, out) {
@@ -283,6 +326,13 @@ function playOne(gameIndex) {
       if (Q.war_aim) audit.econ.aims[Q.war_aim] = (audit.econ.aims[Q.war_aim] || 0) + 1;
       for (const fr of ['outer', 'mid', 'core']) if ((Q['front_ev_' + fr] || -99) > 0) audit.econ.collapses++;
       audit.gavels += Q.gavels || 0;
+      audit.el = audit.el || {noms: {}, second: 0, deals: 0, pledges: 0, broken: 0, wins: 0, losses: 0, refWon: 0, refLost: 0, disrupt: 0, protWon: 0, protLost: 0, recalls: 0, mandWon: 0, mandLost: 0, campaigns: 0, debates: 0, endorse: 0, momEnd: []};
+      for (const n in SW.NOMINEES) if (Q['nominated_' + n]) audit.el.noms[n] = (audit.el.noms[n] || 0) + Q['nominated_' + n];
+      audit.el.second += Q.second_ballots || 0; audit.el.deals += Q.kingmaker_deals || 0; audit.el.pledges += Q.pledges_made || 0; audit.el.broken += Q.pledges_broken || 0;
+      audit.el.wins += Q.world_wins || 0; audit.el.losses += Q.world_losses || 0; audit.el.refWon += Q.referendums_won || 0; audit.el.refLost += Q.referendums_lost || 0;
+      audit.el.disrupt += Q.disruptions || 0; audit.el.protWon += Q.protects_won || 0; audit.el.protLost += Q.protects_lost || 0; audit.el.recalls += Q.recalls || 0;
+      audit.el.mandWon += Q.mandates_won || 0; audit.el.mandLost += Q.mandates_lost || 0; audit.el.campaigns += Q.campaigns_run || 0; audit.el.debates += Q.debates_won || 0; audit.el.endorse += Q.endorsements || 0;
+      audit.el.momEnd.push(Q.rc_momentum || 0);
       for (const k of ['hawks_split', 'rimward_split', 'pacifists_resigned', 'inst_crisis']) if (Q[k]) audit.splits[k] = (audit.splits[k] || 0) + 1;
       audit.rcEnd.push(Q.rc_r || 0); audit.faithEnd.push(Q.faith); audit.fearEnd.push(Q.fear); audit.corrEnd.push(Q.corruption);
       if (Q.sidious_defeated) audit.faithBeaten.push(Q.faith);
@@ -329,6 +379,9 @@ function playOne(gameIndex) {
     origLog('audit: economy debt at end avg ' + avg(e.debtEnd) + ', games ending with debt>=20: ' + e.debt20 + ', >=30: ' + e.debt30 + '; market crises bacta ' + e.bacta + ' tibanna ' + e.tibanna + ' spice ' + e.spice);
     origLog('audit: guild pressure steps reached ' + JSON.stringify(e.gsteps || {}) + ' (1 lobbying, 2 slowdown, 3 credit strike, 4 blockade, 5 defection); our budgets defeated ' + (e.bdef || 0) + ', governments brought down by budgets ' + (e.bfall || 0) + '; Core revolts ' + (e.revolts || 0) + '; credits refused ' + (e.credits || 0));
     origLog('audit: leaders ultimatums met ' + e.met + ' refused ' + e.refused + '; war aims ' + JSON.stringify(e.aims) + ', war dilemmas decided ' + e.dilemmas + ', front breakpoints ' + e.collapses); }
+  if (audit.el) { const e = audit.el;
+    origLog('audit: elections nominees ' + JSON.stringify(e.noms) + ', second ballots ' + e.second + ', kingmaker deals ' + e.deals + ', pledges made ' + e.pledges + ' broken ' + e.broken + ', confidence votes won ' + e.mandWon + ' lost ' + e.mandLost);
+    origLog('audit: campaigns run ' + e.campaigns + ', debates won ' + e.debates + ', endorsements ' + e.endorse + ', rallies disrupted ' + e.disrupt + ' (protected ' + e.protWon + ', broken up ' + e.protLost + '); world elections won ' + e.wins + ' lost ' + e.losses + '; referendums stayed ' + e.refWon + ' left ' + e.refLost + '; recalls ' + e.recalls + '; momentum at end avg ' + avg(e.momEnd)); }
   origLog('audit: bureaucrat purges ' + audit.purges + ' (in ' + audit.purgeGames + ' games), Vice Chair gavels ' + audit.gavels);
   origLog('audit: leaders at the end: ' + Object.entries(audit.endLeaders).sort().map(([k, v]) => k + '=' + v).join(' '));
   origLog('audit: avg peak faction dissent ' + avg(audit.maxDissent) + '; cards played 6+ times (games): ' + JSON.stringify(audit.repeatCards));

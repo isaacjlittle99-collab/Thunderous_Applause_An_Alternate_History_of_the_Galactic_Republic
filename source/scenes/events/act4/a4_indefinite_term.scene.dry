@@ -11,6 +11,8 @@ on-arrival: indefinite_seen = 1
 
 A motion is tabled: "That the Supreme Chancellor's mandate and emergency authority shall continue for the duration of the present conflict." No more elections, no more renewals: just the war, and the Chancellor, until the war is over.
 
+[? if pl_no_powers : **We pledged the [+ pledge_no_powers_name +] no new emergency powers. Supporting them will break that pledge.** ?]
+
 - @oppose: Oppose the motion.
 - @support: Support the motion.
 

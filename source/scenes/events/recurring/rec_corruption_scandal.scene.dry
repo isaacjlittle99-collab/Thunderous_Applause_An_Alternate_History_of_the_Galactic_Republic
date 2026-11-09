@@ -11,6 +11,7 @@ if (Q.guild_money >= 2) pool.push('rc');
 Q.scandal_bloc = pool[Math.floor(Math.random() * pool.length)];
 Q.scandal_name = SW.name(Q, Q.scandal_bloc);
 Q.scandal_ours = Q.scandal_bloc === 'rc' ? 1 : 0;
+if (Q.scandal_ours) { Q.scandal_ours_until = Q.date + 12; SW.momentum(Q, -0.6, 'a Caucus scandal'); }
 Q.faith -= 1.5;
 !}
 

@@ -14,6 +14,8 @@ Chancellor Palpatine has served the two terms the constitution allows. But with 
 
 [? if term_limits_protected : Thanks to the Term Limits Amendment, the extension is unconstitutional. It cannot even be put to a vote. ?]
 
+[? if pl_no_powers : **We pledged the [+ pledge_no_powers_name +] no new emergency powers. Supporting them will break that pledge.** ?]
+
 - @blocked: Then the Chancellor must step down.
 - @oppose: Oppose the extension.
 - @support: Support the extension. Stability matters in a crisis.

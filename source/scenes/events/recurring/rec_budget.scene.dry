@@ -30,7 +30,7 @@ The guilds' patience is [+ gp_label +]; our Core patrons are [+ pg_label +].
 
 @rev_tariffs
 view-if: bd_write
-subtitle: The guilds' patience wears thinner[? if rev_streak_tariffs >= 1 : , faster than last year?]; shippers pass the cost on to the Rim. The guilds will vote against it.
+subtitle: The guilds' patience wears thinner[? if rev_streak_tariffs >= 1 : , faster than last year?]; shippers pass the cost on to the Rim. The guilds will vote against it. [? if bd_brkn_rev_tariffs : **[+ bd_brk_rev_tariffs +]** ?]
 choose-if: date >= tariff_ban_until
 unavailable-subtitle: We promised the guilds no new tariffs for now.
 on-arrival: bd_rev = "tariffs"
@@ -38,7 +38,7 @@ go-to: priority
 
 @rev_levy
 view-if: bd_write
-subtitle: Our own Core patrons pay it[? if rev_streak_levy >= 1 : , for another year?]: their goodwill and donations fall, and the Moderates vote against.
+subtitle: Our own Core patrons pay it[? if rev_streak_levy >= 1 : , for another year?]: their goodwill and donations fall, and the Moderates vote against. [? if bd_brkn_rev_levy : **[+ bd_brk_rev_levy +]** ?]
 choose-if: date >= levy_ban_until
 unavailable-subtitle: We promised the Core no new levy for now.
 on-arrival: bd_rev = "levy"
@@ -46,37 +46,37 @@ go-to: priority
 
 @rev_loan
 view-if: bd_write
-subtitle: Painless now, and the guilds approve. The debt grows, and so does the Banking Clan's leverage.
+subtitle: Painless now, and the guilds approve. The debt grows, and so does the Banking Clan's leverage. [? if bd_brkn_rev_loan : **[+ bd_brk_rev_loan +]** ?]
 on-arrival: bd_rev = "loan"
 go-to: priority
 
 @rev_bonds
 view-if: bd_write and war
-subtitle: [? if faith >= 45 : Faith in the Republic is high enough to sell them. ?][? if faith < 45 : Faith in the Republic is low: the drive may fail, in public. ?]
+subtitle: [? if faith >= 45 : Faith in the Republic is high enough to sell them. ?][? if faith < 45 : Faith in the Republic is low: the drive may fail, in public. ?] [? if bd_brkn_rev_bonds : **[+ bd_brk_rev_bonds +]** ?]
 on-arrival: bd_rev = "bonds"
 go-to: priority
 
 @rev_spice
 view-if: bd_write and spice_legal
-subtitle: Easy money from the Kessel trade. Corruption grows, and the syndicates' money goes where it likes.
+subtitle: Easy money from the Kessel trade. Corruption grows, and the syndicates' money goes where it likes. [? if bd_brkn_rev_spice : **[+ bd_brk_rev_spice +]** ?]
 on-arrival: bd_rev = "spice"
 go-to: priority
 
 @rev_print
 view-if: bd_write
-subtitle: The most money, for now. Prices rise, the Rim suffers first, Core savers turn on us, and if it goes too far the Rim stops using Republic credits.
+subtitle: The most money, for now. Prices rise, the Rim suffers first, Core savers turn on us, and if it goes too far the Rim stops using Republic credits. [? if bd_brkn_rev_print : **[+ bd_brk_rev_print +]** ?]
 on-arrival: bd_rev = "print"
 go-to: priority
 
 @rev_none
 view-if: bd_write
-subtitle: No one is angered; the treasury will have to manage on trade and existing taxes.
+subtitle: No one is angered; the treasury will have to manage on trade and existing taxes. [? if bd_brkn_rev_none : **[+ bd_brk_rev_none +]** ?]
 on-arrival: bd_rev = "none"
 go-to: priority
 
 @support
 view-if: not bd_write
-subtitle: Our votes go to the government's budget. If it passes, the government is grateful[? if rc_in_govt : , and the coalition calmer?].
+subtitle: Our votes go to the government's budget. If it passes, the government is grateful[? if rc_in_govt : , and the coalition calmer?]. [? if bd_gov_breaks_n : **[+ bd_gov_breaks +]** ?]
 on-arrival: {! SW.budgetPropose(Q, Q.bd_gov_rev, Q.bd_gov_pri, 1, 0); if (!Q.bd_failed) { Q[Q.chancellor_bloc + '_relation'] += 2; if (Q.rc_in_govt) Q.coalition_dissent -= 0.5; } !}
 go-to: budget_result
 
@@ -109,27 +109,27 @@ Choose one priority for the year. The treasury has [+ treasury_txt +], with upke
 - @pri_none: Nothing new: balance the books.
 
 @pri_relief
-subtitle: Less hardship on the Rim, busier trade lanes, Rim donors for the Caucus; the Core grumbles. Expected support [+ bd_out_relief +]%.
+subtitle: Less hardship on the Rim, busier trade lanes, Rim donors for the Caucus; the Core grumbles. Expected support [+ bd_out_relief +]%. [? if bd_brkn_relief : **[+ bd_brk_relief +]** ?]
 on-arrival: {! SW.budgetPropose(Q, Q.bd_rev, 'relief', 1, Q.bd_write); !}
 go-to: budget_result
 
 @pri_defence
-subtitle: Stronger Judicial Forces[? if war : , with help for the weakest front?]; the Pacifists object and Tibanna grows dearer. Expected support [+ bd_out_defence +]%.
+subtitle: Stronger Judicial Forces[? if war : , with help for the weakest front?]; the Pacifists object and Tibanna grows dearer. Expected support [+ bd_out_defence +]%. [? if bd_brkn_defence : **[+ bd_brk_defence +]** ?]
 on-arrival: {! SW.budgetPropose(Q, Q.bd_rev, 'defence', 1, Q.bd_write); !}
 go-to: budget_result
 
 @pri_subsidies
-subtitle: The guilds' patience and our Core patrons recover; corruption grows and the Rimward wing objects. Expected support [+ bd_out_subsidies +]%.
+subtitle: The guilds' patience and our Core patrons recover; corruption grows and the Rimward wing objects. Expected support [+ bd_out_subsidies +]%. [? if bd_brkn_subsidies : **[+ bd_brk_subsidies +]** ?]
 on-arrival: {! SW.budgetPropose(Q, Q.bd_rev, 'subsidies', 1, Q.bd_write); !}
 go-to: budget_result
 
 @pri_repay
-subtitle: The debt shrinks, and with it the Banking Clan's grip. Expected support [+ bd_out_repay +]%.
+subtitle: The debt shrinks, and with it the Banking Clan's grip. Expected support [+ bd_out_repay +]%. [? if bd_brkn_repay : **[+ bd_brk_repay +]** ?]
 on-arrival: {! SW.budgetPropose(Q, Q.bd_rev, 'repay', 1, Q.bd_write); !}
 go-to: budget_result
 
 @pri_none
-subtitle: No new spending this year[? if budget_pri = "relief" : , and the Rim will feel its relief cut?]. Expected support [+ bd_out_none +]%.
+subtitle: No new spending this year[? if budget_pri = "relief" : , and the Rim will feel its relief cut?]. Expected support [+ bd_out_none +]%. [? if bd_brkn_none : **[+ bd_brk_none +]** ?]
 on-arrival: {! SW.budgetPropose(Q, Q.bd_rev, 'none', 1, Q.bd_write); !}
 go-to: budget_result
 

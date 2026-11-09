@@ -1,0 +1,33 @@
+title: A Promise Broken
+subtitle: A bloc accuses the Caucus of breaking its word.
+tags: event
+view-if: pb_ready and not finale and not game_ending
+priority: 3
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: pb_ready = 0
+
+= A Promise Broken
+
+[+ pb_leader +] of the [+ pb_name +] takes the floor with a recording of our own campaign promise: **[+ pb_what +]**. Then, [+ pb_how +]. "The Caucus asked for our votes on its word," [+ pb_leader +] says. "We will not make that mistake twice."
+
+*A broken pledge costs us that bloc's goodwill, and its leader's memory is long: they will hold their line harder against the Caucus for years.*
+
+[? if pb_partner : As partners in our government, they also add to the coalition's strain. ?]
+
+- @amends: Apologise in person and offer amends.
+- @shrug: Circumstances changed. Say so, and move on.
+
+@amends
+subtitle: −1 political capital. Softens the blow.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! Q.capital -= 1; Q[Q.pb_bloc + '_relation'] += 4; Q[Q.pb_bloc + '_grudge'] = Math.max(0, (Q[Q.pb_bloc + '_grudge'] || 0) - 1.5); if (Q.pb_partner) Q.coalition_dissent -= 1; !}
+
+The Caucus's leaders spend an evening in [+ pb_leader +]'s offices. Nothing is forgiven, but something is understood.
+
+@shrug
+subtitle: No cost now. They will remember.
+on-arrival: {! Q.inst_dissent += 1; !}
+
+The Caucus explains that governing is not campaigning. The HoloNet's commentators are unimpressed.

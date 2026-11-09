@@ -1,0 +1,39 @@
+title: Recalled
+subtitle: Member worlds turn on their Caucus senators.
+tags: event
+view-if: recall_ready and not finale and not game_ending
+priority: 3
+new-page: true
+face-image: img/ev_rim.svg
+
+= Recalled
+
+Member worlds across the [+ recall_region_name +] are recalling their Caucus senators, furious at [+ recall_why +]. The worlds' new delegations will sit with other blocs.
+
+*A region's grievance builds when the Caucus backs measures that hurt it, such as a levy on the Core, a debased credit, cuts to Rim relief, tariffs, or budgets that starve a war. It fades with time. The Polls tab shows which regions are aggrieved.*
+
+- @apologise: Apologise, and promise to make it right.
+- @campaign: Fight to hold the seats.
+- @accept: Accept the losses.
+
+@apologise
+subtitle: −1 political capital. Fewer seats lost, and the grievance is cleared. The Institutionalists wince.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! SW.recallResolve(Q, 'apologise'); Q.inst_dissent += 2; !}
+
+The Caucus's leaders tour the [+ recall_region_name +], listening more than talking. Some worlds keep their Caucus senators. We still lose about [+ recall_lost +] points of support there.
+
+@campaign
+subtitle: −1 political capital. Fewer seats lost, and local allies remember the fight.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! SW.recallResolve(Q, 'campaign'); !}
+
+The Caucus fights recall by recall. We lose about [+ recall_lost +] points of support in the [+ recall_region_name +], less than we feared.
+
+@accept
+subtitle: No cost now, and the heaviest losses.
+on-arrival: {! SW.recallResolve(Q, 'accept'); !}
+
+The recalls go through. The Caucus loses about [+ recall_lost +] points of support in the [+ recall_region_name +].

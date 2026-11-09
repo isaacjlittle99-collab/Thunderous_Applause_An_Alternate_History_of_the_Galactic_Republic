@@ -141,8 +141,13 @@
     h += head('Committee chairs');
     for (var c = 0; c < SW.COMMITTEES.length; c++) {
       var cm = SW.COMMITTEES[c];
-      h += row(SW.COMMITTEE_NAMES[cm], bloc(Q, Q['chair_' + cm]));
+      h += row(SW.COMMITTEE_NAMES[cm], bloc(Q, Q['chair_' + cm]) + (Q['chair_res_' + cm] ? ' <span class="sb-tag">promised</span>' : ''));
     }
+    var pls = SW.pledgeList ? SW.pledgeList(Q) : [];
+    h += head('Our pledges');
+    if (pls.length) for (var pi = 0; pi < pls.length; pi++) h += '<div class="sb-note">' + pls[pi] + '</div>';
+    else h += '<p class="sb-note">None. Pledges made in a Chancellor race or coalition talks bind us until the next Chancellor election.</p>';
+    if (pls.length) h += '<p class="sb-note">Breaking a pledge costs that bloc\'s goodwill and our momentum, and strains a coalition. Budgets and votes warn before we break one.</p>';
     return h;
   }
 
@@ -257,8 +262,25 @@
     h += head('Our support by region');
     for (var r = 0; r < SW.REGIONS.length; r++) {
       var rg = SW.REGIONS[r];
-      h += row(SW.REGION_NAMES[rg], (Q[rg + '_rc_share'] || 0) + '%');
+      var grv = Q['grievance_' + rg] || 0;
+      h += row(SW.REGION_NAMES[rg], (Q[rg + '_rc_share'] || 0) + '%' + (grv >= 3 ? ' <span class="' + (grv >= 5 ? 'bad' : 'warn') + '">aggrieved</span>' : ''));
     }
+    h += head('The campaign');
+    var recs = (Q.support_records || []).slice(-8);
+    if (recs.length > 1) {
+      var vals = recs.map(function (x) { return x.rc || 0; });
+      var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals), ticks = '▁▂▃▄▅▆▇█';
+      var spark = vals.map(function (v) { return ticks.charAt(hi - lo < 0.5 ? 3 : Math.round(7 * (v - lo) / (hi - lo))); }).join('');
+      h += row('Our trend (two years)', '<span class="spark">' + spark + '</span> ' + vals[0].toFixed(1) + '% → ' + vals[vals.length - 1].toFixed(1) + '%');
+    }
+    h += row('Momentum', SW.momentumLabel(Q.rc_momentum || 0));
+    if (Q.momentum_why) h += '<div class="sb-note' + (Q.momentum_why_sign < 0 ? ' warn' : '') + '">Last: ' + Q.momentum_why + '.</div>';
+    var nextE = Q.election_suspended ? 'suspended' : (Q.next_election_date > Q.date ? 'in ' + (Q.next_election_date - Q.date) + ' months' : 'due');
+    h += row('Next Chancellor election', nextE + (Q.election_season ? ' · <span class="good">election season</span>' : ''));
+    if (Q.election_season && SW.whipText) h += SW.whipText(Q);
+    if (Q.wv_ready && Q.wv_name) h += row('Coming vote', Q.wv_name);
+    if (Q.ref_ready && Q.ref_world) h += row('Referendum', Q.ref_world + ': ' + (Q.ref_poll_word || ''));
+    h += '<p class="sb-note">Momentum lifts our support everywhere and sways the blocs at a Chancellor election; it fades each quarter unless renewed by reforms, good campaigns and won contests. In election season (the last year before a vote) the Caucus can campaign every turn.</p>';
     return h;
   }
 

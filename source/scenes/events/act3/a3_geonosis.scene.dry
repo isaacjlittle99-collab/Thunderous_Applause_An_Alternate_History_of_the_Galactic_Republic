@@ -23,6 +23,8 @@ Q.ep_cost = 2 + (Q.mca_result === 'passed' ? 1 : 0);
 
 [? if not kamino_army : There is no army to deploy, so nobody moves to grant the Chancellor emergency powers. ?][? if kamino_army and not rc_chancellor : In an emergency session, a Gungan representative rises to move that the Senate grant the Chancellor **emergency powers** to deploy the army. ?][? if kamino_army and pal_chancellor : Palpatine accepts the suggestion with every appearance of reluctance. ?][? if kamino_army and rc_chancellor : In an emergency session, the Security Bloc moves that the Senate grant **our own Chancellor, [+ chancellor +],** emergency powers to deploy the army. Senator Palpatine, of all people, speaks warmly in favour. The decision is ours. ?]
 
+[? if pl_no_powers : **We pledged the [+ pledge_no_powers_name +] no new emergency powers. Supporting them will break that pledge.** ?]
+
 - @powers_no: [? if rc_chancellor : Our Chancellor declines emergency powers. ?][? if not rc_chancellor : Vote against emergency powers. ?]
 - @powers_yes: [? if rc_chancellor : Our Chancellor accepts emergency powers. ?][? if not rc_chancellor : Vote for emergency powers. ?]
 - @oversight: Move to deploy the clones under Senate command, without emergency powers.

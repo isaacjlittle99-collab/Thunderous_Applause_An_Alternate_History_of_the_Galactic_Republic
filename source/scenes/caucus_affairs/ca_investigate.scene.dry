@@ -11,7 +11,9 @@ new-page: true
 
 Too many of the Republic's crises seem to serve someone. Our evidence is **[+ evidence : evidence +]**. Investigations carry risks: the people behind these events do not like being looked at.
 
-[? if investigators_lost > 0 : *We have already lost [+ investigators_lost +] investigator(s).* ?]
+[? if investigators_lost > 0 : We have already lost [+ investigators_lost +] investigator(s). ?]
+
+[? if pl_no_probe : **We promised the [+ pledge_no_probe_name +] no investigations of the Chancellery when we joined the government. Following the money, hiring a slicer or laying charges will break that pledge.** ?]
 
 - @money: Follow the money.
 - @slicer: Hire a slicer to break into sealed records.
@@ -27,6 +29,7 @@ choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 on-arrival: {!
 Q.capital -= 1;
+SW.breakPledge(Q, 'no_probe', 'the Caucus followed the Chancellery\'s money');
 var gain = 0.35 + (Q.tf_probe ? 0.15 : 0) + (Q.chair_finance === 'rc' ? 0.25 : 0) + (Q.banking_audit ? 0.2 : 0);
 Q.evidence += gain;
 Q.inv_result = 'The trail leads through shell companies, a Muunilinst bank and a dead Muun financier\'s holding company, Damask Holdings.';
@@ -41,6 +44,7 @@ choose-if: capital >= 2
 unavailable-subtitle: Needs 2 political capital.
 on-arrival: {!
 Q.capital -= 2;
+SW.breakPledge(Q, 'no_probe', 'the Caucus hired a slicer to break into sealed records');
 Q.evidence += 0.8 + (Q.chair_judiciary === 'rc' ? 0.3 : 0);
 Q.inv_result = 'Our slicer cracks a sealed archive of ' + (Q.chancellor_bloc === 'pal' ? 'Chancellery correspondence' : 'correspondence from Senator Palpatine\'s office') + '. Most of it is dull. A little of it is chilling.';
 if (Math.random() < 0.2 + Q.grand_plan / 400) { Q.leak_pending = 1; Q.inv_result += ' Then the slicer stops answering her comlink.'; }
@@ -69,7 +73,7 @@ view-if: evidence >= 7 and not sidious_known and not finale
 subtitle: [? if evidence >= 10 : Our case is conclusive. This is the moment. ?][? if evidence < 10 : Our case is strong but not conclusive. If it fails, the Caucus may not survive. ?]
 choose-if: capital >= 2
 unavailable-subtitle: Needs 2 political capital.
-on-arrival: capital -= 2
+on-arrival: {! Q.capital -= 2; SW.breakPledge(Q, 'no_probe', 'the Caucus laid charges before the Senate'); !}
 go-to: fin_charges
 
 @records

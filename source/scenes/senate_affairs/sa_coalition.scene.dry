@@ -3,16 +3,17 @@ subtitle: Keep the governing coalition together.
 is-card: true
 tags: senate_affairs
 card-image: img/card_relations.svg
-view-if: coalition_timer <= 0 and rc_in_govt and coalition_dissent >= 1
-on-arrival: turn_actions += 1; coalition_timer = 2; last_card_timer = "coalition"
+view-if: coalition_timer <= 0 and rc_in_govt and (coalition_dissent >= 1 or (mandate_ok and (budget_defeats >= 1 or minority_govt)))
+on-arrival: {! Q.turn_actions += 1; Q.coalition_timer = 2; Q.last_card_timer = 'coalition'; SW.confidenceOutlook(Q); !}
 new-page: true
 
 = Coalition Affairs
 
-The [+ coalition_name +] is [+ coalition_dissent : coalition_dissent +]. [? if not constructive_vonc : If its mood reaches *collapsing*, our partners will walk out and bring the government down. ?][? if constructive_vonc : If its mood reaches *collapsing*, a partner will walk out. ?]
+The [+ coalition_name +] is [+ coalition_dissent : coalition_dissent +]. [? if not constructive_vonc : If its mood reaches collapsing, our partners will walk out and bring the government down. ?][? if constructive_vonc : If its mood reaches collapsing, a partner will walk out. ?]
 
 - @concede: Make concessions to our partners.
 - @chair: Give up a committee chair to a partner.
+- @mandate: Seek a fresh mandate from the Senate.
 - @collapse: Bring the government down ourselves.
 - @easy_discard
 
@@ -34,6 +35,15 @@ SW.recomputeGovt(Q);
 !}
 
 We hand the [+ lost_chair +] Committee to our partners. They are mollified.
+
+@mandate
+view-if: mandate_ok
+subtitle: A confidence vote; our whips expect about [+ cv_outlook +]%. Win, and the term starts afresh (it counts as a new term) with a calm coalition; lose, and the government falls.
+on-arrival: {! SW.confidenceVote(Q); !}
+
+[+ vote_html +]
+
+[? if cv_won : The Senate renews its confidence in Chancellor [+ chancellor +]. The coalition closes ranks, the next election is four years away, and the Caucus has momentum. ?][? if not cv_won : The gamble fails. The Senate withdraws its confidence, and a new Chancellor election will follow. ?]
 
 @collapse
 subtitle: The Senate will choose a new Chancellor.
