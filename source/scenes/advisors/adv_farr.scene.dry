@@ -10,7 +10,7 @@ new-page: true
 
 Rodia’s genial, wily senator has spent decades speaking for worlds the Core forgets. He is beloved in the Rim and is a mentor to a generation of young senators.
 
-[? if advisor_action_timer > 0 : *Our advisors can act again in [+ advisor_action_timer +] turn(s).* ?]
+[? if advisor_action_timer > 0 : Our advisors can act again in [+ advisor_action_timer +] turn(s). ?]
 
 - @farr_solidarity: Rim solidarity.
 - @farr_relief: Organise a relief convoy.

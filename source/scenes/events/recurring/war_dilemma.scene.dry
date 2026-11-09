@@ -8,7 +8,7 @@ face-image: img/ev_war.svg
 
 [? if wd_has : [+ wd_text +] ?]
 
-[? if wd_has and not wc_command : The Chancellor's people mean to *[+ wd_def_label +]*. If the Caucus wants otherwise, it will have to carry the Senate. ?]
+[? if wd_has and not wc_command : The Chancellor's people mean to [+ wd_def_label +]. If the Caucus wants otherwise, it will have to carry the Senate. ?]
 
 - @opt_a: [+ wd_a_label +]
 - @opt_b: [+ wd_b_label +]

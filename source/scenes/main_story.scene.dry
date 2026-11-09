@@ -7,7 +7,7 @@ SW.everyVisit(Q);
 Q.coalition_label = Q.coalition_name + (Q.minority_govt ? ' (minority)' : '');
 !}
 
-[? if time = 1 : {!<div class="tutorial">!}**How a turn works.** Click a *deck* below to draw a card into your hand (on Story it holds four). Then click a card in your hand to play it. Playing a card ends the turn, and the galaxy moves on to the next quarter. Your advisors, shown as pinned cards at the bottom, can act without ending the turn, but only once every few turns.{!</div>!} ?]
+[? if time = 1 : {!<div class="tutorial">!}**How a turn works.** Click a deck below to draw a card into your hand (on Story it holds four). Then click a card in your hand to play it. Playing a card ends the turn, and the galaxy moves on to the next quarter. Your advisors, shown as pinned cards at the bottom, can act without ending the turn, but only once every few turns.{!</div>!} ?]
 
 [? if finale : {!<div class="alert">!}**The Last Days.** Each card you play now takes a day. Events will move very fast.{!</div>!} ?]
 
@@ -15,7 +15,7 @@ Supreme Chancellor **[+ chancellor +]** leads the [+ coalition_label +][? if rc_
 
 [? if war : The [+ war_name +] grind[? if not kamino_army : s ?] on: the front is [+ war_balance : war +]. ?][? if not war and dooku_movement : The Separatist crisis deepens. [+ seceded_total +]% of the Senate's delegations have walked out. ?][? if emergency_powers > 0 : The Chancellor holds [+ emergency_powers : powers +] emergency powers. ?]
 
-[? if capital <= 0 : *The Caucus's coffers are empty. Patron Contributions or Routine Senate Business will help.* ?]
+[? if capital <= 0 : The Caucus's coffers are empty. Patron Contributions or Routine Senate Business will help. ?]
 
 - @caucus_deck
 - @senate_deck

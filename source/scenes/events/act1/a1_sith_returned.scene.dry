@@ -9,7 +9,7 @@ on-arrival: sith_told = 1 if jedi_relation >= 55 or adv_organa = 1; evidence += 
 
 = "There Is Always a Master"
 
-[? if sith_told : Master Yoda receives a small Caucus delegation in a quiet room of the Jedi Temple. He confirms what the rumours say: the warrior on Naboo was a Sith Lord. "Always two there are," he says. "A master and an apprentice. Destroyed, the apprentice was. The master, hidden he remains." ?][? if not sith_told : Rumours leak out of the Jedi Temple: the warrior killed on Naboo was a *Sith*. The Order neither confirms nor denies anything. Our contacts in the Temple say the Council is badly shaken. ?]
+[? if sith_told : Master Yoda receives a small Caucus delegation in a quiet room of the Jedi Temple. He confirms what the rumours say: the warrior on Naboo was a Sith Lord. "Always two there are," he says. "A master and an apprentice. Destroyed, the apprentice was. The master, hidden he remains." ?][? if not sith_told : Rumours leak out of the Jedi Temple: the warrior killed on Naboo was a Sith. The Order neither confirms nor denies anything. Our contacts in the Temple say the Council is badly shaken. ?]
 
 - @confide: Keep the Jedi's confidence and quietly offer our help.
 - @push: Press the Council to investigate where the Sith might be hiding, including the Senate.
