@@ -138,6 +138,25 @@
     if (Q.bureau_relation < 25 && (Q.rc_in_govt || Q.rc_chairs > 0)) h += '<div class="sb-note warn">Our bills are being lost in committee.</div>';
     var dos = Q.bureau_dossier || 0;
     if (dos >= 0.5 && (Q.rc_in_govt || Q.rc_chairs > 0)) h += '<div class="sb-note ' + (dos >= 3 ? 'bad' : 'warn') + '">Their case against us: ' + (dos >= 5 ? '<b>ready to strike</b>' : (dos >= 3 ? 'half built' : 'gathering files')) + '.</div>';
+    // relations between the other blocs: who will not sit together, and each bloc's closest ally
+    if (SW.rel) {
+      h += head('Between the blocs');
+      var others = Q.parties.filter(function (b) { return b !== 'rc' && SW.REL_BLOCS.indexOf(b) >= 0; });
+      var cold = [], warm = [];
+      for (var ia = 0; ia < others.length; ia++) {
+        var a = others[ia];
+        h += row(bloc(Q, a), SW.stanceWord(SW.firm(Q, a)) + ', needs ' + SW.joinWord(Q, a));
+        for (var ib = ia + 1; ib < others.length; ib++) {
+          var bb2 = others[ib], v = SW.rel(Q, a, bb2);
+          var pair = SW.name(Q, a) + ' and ' + SW.name(Q, bb2) + ' (' + SW.relWord(v) + ')';
+          if (!SW.relOk(Q, a, bb2)) cold.push(pair); else warm.push({t: pair, v: v});
+        }
+      }
+      warm.sort(function (x, y) { return y.v - x.v; });
+      if (warm.length) h += '<div class="sb-note"><b>Warmest ties:</b> ' + warm.slice(0, 3).map(function (x) { return x.t; }).join('; ') + '.</div>';
+      h += '<div class="sb-note' + (cold.length ? ' warn' : '') + '">' + (cold.length ? '<b>Will not govern together:</b> ' + cold.join('; ') + '.' : 'Every pair of blocs could, in principle, govern together.') + '</div>';
+      h += '<p class="sb-note">Each leader sets the bar: hardliners need cordial ties to share a government, firm leaders cool ones, flexible leaders will sit even with a bloc they are cold toward. Governing together warms a pair; rival campaigns cool it. A Senate that cannot form a majority, or a government that falls apart, drives voters toward Palpatine and the separatists.</p>';
+    }
     h += head('Committee chairs');
     for (var c = 0; c < SW.COMMITTEES.length; c++) {
       var cm = SW.COMMITTEES[c];

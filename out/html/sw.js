@@ -221,6 +221,12 @@
     for (var gd = 0; gd < SW.REGIONS.length; gd++) D['grievance_' + SW.REGIONS[gd]] = 0;
     D.recall_ready = 0; D.recall_region = 'core'; D.recall_region_name = ''; D.recall_why = ''; D.recall_lost = 0; D.recall_timer = 0; D.recalls = 0;
     D.cv_outlook = 0; D.cv_vote = 0; D.cv_won = 0; D.mandate_term = -1; D.mandates_won = 0; D.mandates_lost = 0; D.mandate_ok = 0;
+    for (var ra = 0; ra < SW.REL_BLOCS.length; ra++) for (var rb2 = ra + 1; rb2 < SW.REL_BLOCS.length; rb2++)
+      D['rel_' + SW.relKey(SW.REL_BLOCS[ra], SW.REL_BLOCS[rb2])] = SW.relBase(D, SW.REL_BLOCS[ra], SW.REL_BLOCS[rb2]);
+    D.govt_minority_formed = 0; D.govt_bad_pair = 0; D.broken_now = 0; D.broken_why = ''; D.broken_swings = 0; D.broken_minority = 0; D.broken_collapse = 0; D.broken_bureau = 0;
+    D.coal_all_blocked = 0; D.deliver_note = ''; D.delivered = 0; D.bk_ok = 0; D.bk_a = ''; D.bk_b = ''; D.bk_a_name = ''; D.bk_b_name = ''; D.bk_rel = '';
+    D.sm_ok = 0; D.sm_label = ''; D.sm_blocs = []; D.el_rc_needed = 0; D.pledges_kept = 0; D.coal_blocked_games = 0; D.el_broken = 0; D.gov_minority_swing = 0;
+    for (var jb = 0; jb < SW.REL_BLOCS.length; jb++) { D['jm_' + SW.REL_BLOCS[jb]] = ''; D['st_' + SW.REL_BLOCS[jb]] = ''; }
     D.pal_office_months = 0; D.pal_reach_low = 0; D.case_ready = 0; D.case_timer = 0; D.case_odds = 0; D.case_briefed = 0;
     D.trail_debate_for = -1; D.trail_endorse_for = -1; D.trail_research_for = -1; D.trail_gaffe_for = -1; D.trail_smear_for = -1;
     D.guild_patience = 60; D.guild_hurt_turn = -99; D.guild_patience_why = ''; D.guild_lobby = 0; D.guild_lobby_halved = 0; D.guild_step_ready = 0;
@@ -255,7 +261,7 @@
     D.bp_gov = 0; D.bp_walkout = 0; D.bp_chancellor = 0; D.bp_vote = 0; D.bp_fell = 0; D.bp_saved = 0; D.bp_survived = 0;
     D.bureau_relation = 45; D.bureau_reforms_seen = 0; D.bureau_captured = 0; D.bureau_warn_cold = 0; D.bureau_warn_hostile = 0; D.bureau_dossier = 0;
     D.bureau_purges = 0; D.bureau_purge_kind = ''; D.bureau_vote = 0; D.bureau_fell = 0; D.el_join_bureau = '';
-    for (var bo = 0; bo < 7; bo++) D['el_opt' + bo + '_bureau'] = '';
+    for (var bo = 0; bo < 8; bo++) { D['el_opt' + bo + '_bureau'] = ''; D['el_opt' + bo] = 0; D['el_opt' + bo + '_ok'] = 0; D['el_opt' + bo + '_label'] = ''; D['el_opt' + bo + '_why'] = ''; }
     D.pal_can_run = 1; D.naboo_jedi = 1; D.unease_next = 40; D.secession_next = 10; D.next_election_date = 21;
     // regions
     for (var i = 0; i < SW.REGIONS.length; i++) {
@@ -804,7 +810,7 @@
   };
   SW.leaderMomentResolve = function (Q, choice) {
     var g = Q.lm_group, d = SW.LEADER_DEMANDS[g] || SW.LEADER_DEMANDS.ind;
-    if (choice === 'accept') { d.accept(Q); Q[g + '_favour'] = (Q[g + '_favour'] || 0) + 2; Q[g + '_relation'] += 8; Q.ultimatums_met = (Q.ultimatums_met || 0) + 1; }
+    if (choice === 'accept') { d.accept(Q); SW.deliver(Q, g, 15, 'what its leader asked for'); Q.ultimatums_met = (Q.ultimatums_met || 0) + 1; }
     else if (choice === 'refuse') { d.refuse(Q); Q[g + '_grudge'] = (Q[g + '_grudge'] || 0) + 2; Q[g + '_relation'] -= 6; Q.ultimatums_refused = (Q.ultimatums_refused || 0) + 1; }
     else if (choice === 'vote') { Q['vote_boost_' + g] = 0.15; }
     else if (choice === 'capital') { Q.capital += 1; }
@@ -860,7 +866,130 @@
     }
     return '';
   };
-  SW.coalitionMin = function (Q, b) { return 25 + 20 * SW.firm(Q, b); };
+  // ------------------------------------------------------------------ relations between the blocs
+  // Every pair of blocs has a relation (0-100, the same scale as the Caucus's: hostile <10, cold <25, cool, cordial 40+, warm 55+, close 70+).
+  // The Caucus's own relations stay in <bloc>_relation; other pairs live in rel_<a>_<b>, ids in alphabetical order.
+  SW.REL_BLOCS = ['mod', 'pal', 'guild', 'rim', 'sec', 'ind', 'cis', 'rfc'];
+  SW.relKey = function (a, b) { return a < b ? a + '_' + b : b + '_' + a; };
+  // where a pair's relation settles: their natural affinity, and what their leaders think of each other
+  SW.relBase = function (Q, a, b) {
+    var pa = a, pb = b;
+    if (Q && Q.rfc_kind && Q.rfc_kind !== 'rimward') { if (a === 'rfc') pa = SW.RFC_PROXY[Q.rfc_kind]; if (b === 'rfc') pb = SW.RFC_PROXY[Q.rfc_kind]; }
+    var v;
+    if (pa === pb) v = 65;
+    else {
+      var ab = (SW.AFFINITY[pa] && SW.AFFINITY[pa][pb] !== undefined) ? SW.AFFINITY[pa][pb] : 20;
+      var ba = (SW.AFFINITY[pb] && SW.AFFINITY[pb][pa] !== undefined) ? SW.AFFINITY[pb][pa] : 20;
+      v = (ab + ba) / 2;
+    }
+    if (Q) {
+      var La = SW.leader(Q, a), Lb = SW.leader(Q, b);
+      v += (((La.likes && La.likes[b]) || 0) + ((Lb.likes && Lb.likes[a]) || 0)) / 2;
+      if (SW.leaderRefuses(Q, a, b) || SW.leaderRefuses(Q, b, a)) v -= 30;
+    }
+    return SW.clamp(v, 0, 100);
+  };
+  SW.rel = function (Q, a, b) {
+    if (a === b) return 100;
+    if (a === 'rc') return Q[b + '_relation'] || 0;
+    if (b === 'rc') return Q[a + '_relation'] || 0;
+    var k = 'rel_' + SW.relKey(a, b);
+    if (typeof Q[k] !== 'number' || isNaN(Q[k])) Q[k] = SW.relBase(Q, a, b);
+    return Q[k];
+  };
+  SW.relAdd = function (Q, a, b, v) {
+    if (a === b) return;
+    if (a === 'rc') { Q[b + '_relation'] = (Q[b + '_relation'] || 0) + v; return; }
+    if (b === 'rc') { Q[a + '_relation'] = (Q[a + '_relation'] || 0) + v; return; }
+    Q['rel_' + SW.relKey(a, b)] = SW.clamp(SW.rel(Q, a, b) + v, 0, 100);
+  };
+  // how warm a relationship a bloc's leader needs before governing with a partner:
+  // hardliners need cordial ties, firm leaders cool ones, flexible leaders will even sit with a bloc they are cold toward
+  SW.joinMin = function (Q, b) {
+    if (b === 'rc') return 0;
+    var f = SW.firm(Q, b);
+    return f >= 0.62 ? 40 : (f >= 0.45 ? 25 : 10);
+  };
+  SW.relWord = function (v) { return v < 10 ? 'hostile' : (v < 25 ? 'cold' : (v < 40 ? 'cool' : (v < 55 ? 'cordial' : (v < 70 ? 'warm' : 'close')))); };
+  SW.joinWord = function (Q, b) { var m = SW.joinMin(Q, b); return m >= 40 ? 'cordial' : (m >= 25 ? 'cool' : 'cold'); };
+  SW.relOk = function (Q, a, b) { return SW.rel(Q, a, b) >= Math.max(SW.joinMin(Q, a), SW.joinMin(Q, b)); };
+  SW.coalitionMin = function (Q, b) { return SW.joinMin(Q, b); };
+  // the first pair in a set of blocs that will not sit together, or null
+  SW.coldPair = function (Q, blocs) {
+    for (var i = 0; i < blocs.length; i++) for (var j = i + 1; j < blocs.length; j++) if (!SW.relOk(Q, blocs[i], blocs[j])) return [blocs[i], blocs[j]];
+    return null;
+  };
+  SW.coldPairText = function (Q, p) {
+    if (p[0] === 'rc' || p[1] === 'rc') {
+      var o = p[0] === 'rc' ? p[1] : p[0];
+      return 'The ' + SW.name(Q, o) + ' under ' + (Q[o + '_leader'] || 'their leader') + ' need ' + SW.joinWord(Q, o) + ' relations to govern with us.';
+    }
+    return 'The ' + SW.name(Q, p[0]) + ' and the ' + SW.name(Q, p[1]) + ' are too cold to sit together.';
+  };
+  // each quarter every pair drifts toward its natural level; governing together warms a pair
+  SW.relTick = function (Q, rf) {
+    var bl = SW.REL_BLOCS.filter(function (b) { return Q.parties.indexOf(b) >= 0; });
+    var gov = Q.govt_blocs || [];
+    for (var i = 0; i < bl.length; i++) for (var j = i + 1; j < bl.length; j++) {
+      var a = bl[i], b = bl[j], v = SW.rel(Q, a, b);
+      v += (SW.relBase(Q, a, b) - v) * 0.05 * rf;
+      if (gov.indexOf(a) >= 0 && gov.indexOf(b) >= 0) v += rf;
+      Q['rel_' + SW.relKey(a, b)] = SW.clamp(v, 0, 100);
+    }
+  };
+  // When the Senate cannot form a majority, or a government falls apart, voters lose faith in the system itself:
+  // Palpatine, who promises order, and the Separatists, who promise a way out, both gain. A one-off swing that fades with time.
+  SW.brokenSystem = function (Q, why) {
+    var pal = !Q.pal_disgraced && !Q.sidious_defeated, cis = Q.parties.indexOf('cis') >= 0;
+    for (var i = 0; i < SW.REGIONS.length; i++) {
+      var r = SW.REGIONS[i];
+      if (pal) Q[r + '_pal'] = (Q[r + '_pal'] || 0) * 1.12;
+      if (cis) Q[r + '_cis'] = (Q[r + '_cis'] || 0) * 1.15;
+    }
+    Q.outer_sep += 4; Q.midrim_sep += 4; Q.corporate_sep += 4;
+    Q.faith -= 1.5;
+    Q.broken_why = why; Q.broken_swings = (Q.broken_swings || 0) + 1;
+    Q['broken_' + why] = (Q['broken_' + why] || 0) + 1;
+    SW.computeSupport(Q);
+  };
+  // Delivering for a bloc: the Caucus gave it what it wanted, and it remembers
+  SW.deliver = function (Q, b, amount, why) {
+    if (!b || b === 'rc' || Q.parties.indexOf(b) < 0) return;
+    Q[b + '_relation'] = (Q[b + '_relation'] || 0) + amount;
+    Q[b + '_favour'] = (Q[b + '_favour'] || 0) + (amount >= 10 ? 2 : 1);
+    Q.delivered = (Q.delivered || 0) + 1;
+    Q.deliver_note = 'The ' + SW.name(Q, b) + ' will remember that the Caucus delivered ' + why + '.';
+    if (Q._reactions) SW.react(Q, Q.deliver_note);
+  };
+  // What the Inter-bloc Relations card can do: broker talks between two blocs, or host a summit for a whole coalition
+  SW.relationsOpen = function (Q) {
+    var opts = SW.rcCoalitionOptions(Q), best = null, sum = null;
+    for (var i = 0; i < opts.length; i++) {
+      var o = opts[i];
+      if (o.seats < 50 || o.block || !o.coldPair) continue;
+      var p = o.coldPair;
+      if (p[0] !== 'rc' && p[1] !== 'rc') {
+        var gap = Math.max(SW.joinMin(Q, p[0]), SW.joinMin(Q, p[1])) - SW.rel(Q, p[0], p[1]);
+        if (!best || gap < best.gap) best = {a: p[0], b: p[1], gap: gap};
+      }
+      if (!sum || o.seats > sum.seats) sum = o;
+    }
+    Q.bk_ok = best ? 1 : 0; Q.bk_a = best ? best.a : ''; Q.bk_b = best ? best.b : '';
+    Q.bk_a_name = best ? SW.name(Q, best.a) : ''; Q.bk_b_name = best ? SW.name(Q, best.b) : '';
+    Q.bk_rel = best ? SW.relWord(SW.rel(Q, best.a, best.b)) : '';
+    Q.sm_ok = sum ? 1 : 0; Q.sm_blocs = sum ? sum.blocs : [];
+    Q.sm_label = sum ? sum.name + ' (' + sum.blocs.filter(function (b) { return b !== 'rc'; }).map(function (b) { return SW.name(Q, b); }).join(', ') + ')' : '';
+    for (var k = 0; k < SW.REL_BLOCS.length; k++) {
+      var b = SW.REL_BLOCS[k];
+      Q['jm_' + b] = SW.joinWord(Q, b);
+      Q['st_' + b] = SW.stanceWord(SW.firm(Q, b));
+    }
+  };
+  SW.broker = function (Q) { if (Q.bk_a && Q.bk_b) SW.relAdd(Q, Q.bk_a, Q.bk_b, 15); };
+  SW.summit = function (Q) { var b = Q.sm_blocs || []; SW.relBond(Q, b, 8); };
+  SW.relBond = function (Q, blocs, v) {
+    for (var i = 0; i < blocs.length; i++) for (var j = i + 1; j < blocs.length; j++) SW.relAdd(Q, blocs[i], blocs[j], v);
+  };
   SW.splitAt = function (Q, f) { return (f === 'inst' ? 70 : 60) + (0.5 - SW.firm(Q, f)) * 16; };
   SW.leaderPull = function (Q, b) {
     var p = SW.leader(Q, b).pull;
@@ -1120,6 +1249,15 @@
 
   // ------------------------------------------------------------------ government
   SW.setGovt = function (Q, blocs, name) {
+    var prev = Q.govt_blocs || [];
+    // was every newly seated partner willing to sit with the others at the moment the government formed? (checked by the simulator)
+    var seated = blocs.filter(function (b) { return b !== 'rc' || Q.chancellor_bloc === 'rc'; });
+    Q.govt_bad_pair = (!Q.el_deal_won && prev.length && blocs.some(function (a) {
+      return prev.indexOf(a) < 0 && seated.indexOf(a) >= 0 && seated.some(function (m) { return m !== a && !SW.relOk(Q, a, m); });
+    })) ? 1 : 0;
+    // partners who newly govern together warm to one another
+    for (var gi = 0; gi < blocs.length; gi++) for (var gj = gi + 1; gj < blocs.length; gj++)
+      if (!(prev.indexOf(blocs[gi]) >= 0 && prev.indexOf(blocs[gj]) >= 0)) SW.relAdd(Q, blocs[gi], blocs[gj], 3);
     Q.govt_blocs = blocs.slice();
     for (var i = 0; i < SW.BLOCS.length; i++) Q[SW.BLOCS[i] + '_in_govt'] = blocs.indexOf(SW.BLOCS[i]) >= 0 ? 1 : 0;
     Q.rc_in_govt = Q.rc_in_govt_flag = blocs.indexOf('rc') >= 0 ? 1 : 0;
@@ -1244,15 +1382,17 @@
   };
 
   // Winner (not rc) assembles a coalition by affinity. Returns array of blocs.
-  SW.formCoalitionAuto = function (Q, leader, allowRc) {
+  // A Chancellor builds a coalition in order of their relationship with each party, until it holds a majority.
+  // No one joins who would sit with a bloc they are too cold toward (each leader sets the bar: SW.joinMin).
+  SW.formCoalitionAuto = function (Q, leader, allowRc, exclude) {
     var members = [leader];
     var seats = Q[leader + '_r'] || 0;
-    var others = Q.parties.filter(function (b) { return b !== leader && (allowRc || b !== 'rc') && b !== 'cis'; });
-    others.sort(function (a, b) { return SW.affinity(Q, leader, b) + SW.affinity(Q, b, leader) - SW.affinity(Q, leader, a) - SW.affinity(Q, a, leader); });
-    for (var i = 0; i < others.length && seats < 52; i++) {
-      var o = others[i];
-      if (SW.affinity(Q, o, leader) < 25) continue;
-      if (SW.coalitionBlock(Q, members.concat([o]))) continue;
+    var others = Q.parties.filter(function (b) { return b !== leader && (allowRc || b !== 'rc') && b !== 'cis' && (!exclude || exclude.indexOf(b) < 0); });
+    others.sort(function (a, b) { return SW.rel(Q, leader, b) - SW.rel(Q, leader, a); });
+    for (var i = 0; i < others.length && seats < 50; i++) {
+      var o = others[i], ok = true;
+      for (var m = 0; m < members.length; m++) if (!SW.relOk(Q, members[m], o)) { ok = false; break; }
+      if (!ok || SW.coalitionBlock(Q, members.concat([o]))) continue;
       members.push(o);
       seats += Q[o + '_r'] || 0;
     }
@@ -1270,13 +1410,16 @@
     for (var i = 0; i < combos.length; i++) {
       var bl = combos[i].filter(function (b) { return Q.parties.indexOf(b) >= 0; });
       if (bl.length < 2) continue;
-      var minRel = 100, cold = '';
-      for (var j = 1; j < bl.length; j++) {
-        minRel = Math.min(minRel, Q[bl[j] + '_relation'] || 0);
-        if ((Q[bl[j] + '_relation'] || 0) < SW.coalitionMin(Q, bl[j]) && !cold) cold = bl[j];
-      }
-      out.push({name: SW.coalitionName(Q, bl), blocs: bl, seats: SW.seats(Q, bl), minRel: minRel, cold: cold, block: SW.coalitionBlock(Q, bl)});
+      var minRel = 100;
+      for (var j = 1; j < bl.length; j++) minRel = Math.min(minRel, Q[bl[j] + '_relation'] || 0);
+      var cp = SW.coldPair(Q, bl);
+      out.push({name: SW.coalitionName(Q, bl), blocs: bl, seats: SW.seats(Q, bl), minRel: minRel, cold: cp ? SW.coldPairText(Q, cp) : '', coldPair: cp, block: SW.coalitionBlock(Q, bl)});
     }
+    // the coalition the Caucus would build in order of its own relations, if it is new and reaches a majority
+    var gen = SW.formCoalitionAuto(Q, 'rc', true);
+    var genKey = gen.slice().sort().join(',');
+    var dup = out.some(function (o) { return o.blocs.slice().sort().join(',') === genKey; });
+    if (gen.length >= 2 && !dup && SW.seats(Q, gen) >= 50) out.push({name: SW.coalitionName(Q, gen), blocs: gen, seats: SW.seats(Q, gen), minRel: 0, cold: '', coldPair: null, block: '', generated: 1});
     return out;
   };
 
@@ -1359,17 +1502,18 @@
   // coalition options for an rc-led government, exposed as flat qualities for the scene
   SW.prepareRcCoalitions = function (Q) {
     var opts = SW.rcCoalitionOptions(Q);
-    for (var i = 0; i < 7; i++) {
+    for (var i = 0; i < 8; i++) {
       var o = opts[i];
       Q['el_opt' + i] = o ? 1 : 0;
       Q['el_opt' + i + '_ok'] = (o && o.seats >= 50 && !o.cold && !o.block) ? 1 : 0;
       if (o && o.seats >= 50 && o.block) Q.coal_refused = (Q.coal_refused || 0) + 1;
       Q['el_opt' + i + '_bureau'] = o ? SW.bureauReaction(SW.bureauComfort(Q, o.blocs)) + ' ' + SW.priceText(Q, o.blocs) : '';
       Q['el_opt' + i + '_label'] = o ? (o.name + ': ' + o.blocs.filter(function (b) { return b !== 'rc'; }).map(function (b) { return SW.name(Q, b); }).join(', ') + ' (' + o.seats.toFixed(1) + '%)') : '';
-      Q['el_opt' + i + '_why'] = o ? (o.seats < 50 ? 'Not enough seats.' : (o.block ? o.block :
-        (o.cold ? 'The ' + SW.name(Q, o.cold) + ' under ' + Q[o.cold + '_leader'] + ' will not work with us yet.' : ''))) : '';
+      Q['el_opt' + i + '_why'] = o ? (o.seats < 50 ? 'Not enough seats.' : (o.block ? o.block : (o.cold || ''))) : '';
     }
     Q.el_opts = opts.map(function (o) { return o.blocs; });
+    Q.coal_all_blocked = opts.some(function (o) { return o.seats >= 50 && !o.cold && !o.block; }) ? 0 : 1;
+    if (Q.coal_all_blocked) Q.coal_blocked_games = (Q.coal_blocked_games || 0) + 1;
   };
 
   SW.chooseRcCoalition = function (Q, i) {
@@ -1512,8 +1656,11 @@
     Q.el_has_sec = c.indexOf('sec') >= 0 ? 1 : 0;
     Q.el_backing = ''; Q.el_nominee = ''; Q.el_exposed = 0; Q.el_pledges_made = 0; Q.el_deal = ''; Q.el_deal_chair = ''; Q.el_done = 0;
     Q.el_courted_mod = 0; Q.el_courted_rim = 0; Q.el_courted_ind = 0; Q.el_courted_guild = 0; Q.el_courted_sec = 0; Q.el_attacked = 0;
-    // last term's pledges lapse with the old government
-    for (var p in SW.PLEDGES) { Q['pledge_' + p] = ''; Q['pl_' + p] = 0; }
+    // last term's pledges lapse with the old government; a pledge kept for the whole term earns real gratitude
+    for (var p in SW.PLEDGES) {
+      if (Q['pl_' + p] && Q['pledge_' + p]) { SW.deliver(Q, Q['pledge_' + p], 10, 'on its promise of ' + SW.PLEDGES[p].name); Q.pledges_kept = (Q.pledges_kept || 0) + 1; }
+      Q['pledge_' + p] = ''; Q['pl_' + p] = 0;
+    }
     if (!Q.whip_seed || Q.whip_for !== Q.next_election_date) Q.whip_seed = 1 + Math.floor(SW.rnd() * 9999);
     SW.rivalTraits(Q);
     SW.nomineesOpen(Q);
@@ -1737,6 +1884,8 @@
     SW.electionFinish(Q, r2[0].bloc);
   };
   SW.electionFinish = function (Q, winner) {
+    var cands = (Q.el_cands || []).filter(function (b) { return b !== 'rc'; });
+    for (var ci = 0; ci < cands.length; ci++) for (var cj = ci + 1; cj < cands.length; cj++) SW.relAdd(Q, cands[ci], cands[cj], -4);
     Q.el_active = 0;
     var notes = [];
     if (Q.el_proj_for) {
@@ -2084,6 +2233,7 @@
       if (blocs.length) {
         SW.setGovt(Q, blocs, Q.coalition_name);
         if (SW.walkout(Q, 12, Q.chancellor_bloc)) Q.bp_walkout = 1;
+        if (Q.govt_seats < 50) SW.brokenSystem(Q, 'minority');
       }
       SW.assignChairs(Q);
       Q.inst_dissent += 5; Q.rc_momentum -= 0.5;
@@ -2778,7 +2928,17 @@
     if (!Q.bd_failed) {
       var prevPri = Q.budget_pri;
       SW.budgetApply(Q, rev, pri);
-      if (Q._owns) { SW.checkBudgetPledges(Q, rev, pri); SW.budgetGrievances(Q, rev, pri, prevPri); }
+      if (Q._owns) {
+        SW.checkBudgetPledges(Q, rev, pri); SW.budgetGrievances(Q, rev, pri, prevPri);
+        // a budget the Caucus wrote that funds what a bloc wants earns its gratitude (half as much for the same thing two years running)
+        if (writer) {
+          var dk = prevPri === pri ? 0.5 : 1;
+          if (pri === 'relief') SW.deliver(Q, Q.parties.indexOf('rim') >= 0 ? 'rim' : 'rfc', 10 * dk, 'relief for the Rim');
+          if (pri === 'defence') SW.deliver(Q, 'sec', 10 * dk, 'money for the fleet');
+          if (pri === 'subsidies') { SW.deliver(Q, 'guild', 8 * dk, 'subsidies for trade'); SW.deliver(Q, 'mod', 5 * dk, 'subsidies for the Core'); }
+          if (pri === 'repay') { SW.deliver(Q, 'mod', 6 * dk, 'a sound treasury'); SW.deliver(Q, 'ind', 4 * dk, 'a sound treasury'); }
+        }
+      }
       if (writer) Q.budget_defeats = 0;
     } else {
       SW.budgetApply(Q, 'none', 'none');
@@ -3520,6 +3680,7 @@
       var base = lb !== undefined ? lb : REL_BASE[rb];
       Q[rb + '_relation'] += (base - Q[rb + '_relation']) * 0.07 * rf;
     }
+    SW.relTick(Q, rf);
     SW.bureauTick(Q);
     SW.schemeTick(Q);
     Q.assassination_roll = Math.random();

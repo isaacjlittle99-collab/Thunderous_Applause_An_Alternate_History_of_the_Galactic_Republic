@@ -144,7 +144,9 @@ function smartWeight(id, Q) {
     [/^rec_recall\.apologise$/, Q.capital >= 2 ? 4 : 1], [/^rec_recall\.campaign$/, 3], [/^rec_recall\.accept$/, 1],
     [/^sa_coalition\.mandate$/, (Q.cv_outlook || 0) >= 58 ? 6 : 0.1],
     // lay charges only when the case should hold
-    [/^rec_case_ready\.charges$/, SW.chargesOdds(Q) >= 0.7 ? 8 : 0.3], [/^rec_case_ready\.wait$/, 2]
+    [/^rec_case_ready\.charges$/, SW.chargesOdds(Q) >= 0.7 ? 8 : 0.3], [/^rec_case_ready\.wait$/, 2],
+    // mend the ties that block a coalition we could lead
+    [/^ca_relations$/, (Q.bk_ok || Q.sm_ok || Q.coal_all_blocked) ? 6 : 2], [/^ca_relations\.broker$/, 8], [/^ca_relations\.summit$/, Q.capital >= 3 ? 7 : 1]
   ];
   for (const [re, w] of W) if (re.test(id)) {
     // a careful player does not break a pledge in the budget
@@ -220,7 +222,15 @@ const PREMISES = [
   [/^rec_case_ready$/, Q => Q.evidence >= 8.5 && !Q.sidious_known && !Q.finale, 'case offered without the evidence'],
 ];
 const PREMISE_HITS = {};
+let lastGovt = [];
 function checkPremises(id, Q, game, out) {
+  const g = (Q.govt_blocs || []).slice();
+  const added = g.filter(b => lastGovt.indexOf(b) < 0);
+  if (added.length || g.length !== lastGovt.length) {
+    // only a newly added member must clear the bar with everyone (a government that loses a member is not a new government)
+    if (Q.govt_bad_pair && added.length) out['government formed with a pair below the bar'] = (out['government formed with a pair below the bar'] || 0) + 1;
+    lastGovt = g;
+  }
   if (id.indexOf('.') < 0) {
     for (const [re, ok, label] of PREMISES) if (re.test(id) && !ok(Q)) out[label] = (out[label] || 0) + 1;
     const sc = game.scenes[id];
@@ -354,6 +364,10 @@ function playOne(gameIndex) {
       if (Q.war_aim) audit.econ.aims[Q.war_aim] = (audit.econ.aims[Q.war_aim] || 0) + 1;
       for (const fr of ['outer', 'mid', 'core']) if ((Q['front_ev_' + fr] || -99) > 0) audit.econ.collapses++;
       audit.gavels += Q.gavels || 0;
+      audit.rel = audit.rel || {swings: 0, minority: 0, collapse: 0, bureau: 0, blocked: 0, delivered: 0, kept: 0, size: [], modRim: [], guildMod: [], rimSec: [], palSec: []};
+      const ar = audit.rel; ar.swings += Q.broken_swings || 0; ar.minority += Q.broken_minority || 0; ar.collapse += Q.broken_collapse || 0; ar.bureau += Q.broken_bureau || 0;
+      ar.blocked += Q.coal_blocked_games || 0; ar.delivered += Q.delivered || 0; ar.kept += Q.pledges_kept || 0; ar.size.push((Q.govt_blocs || []).length);
+      ar.modRim.push(SW.rel(Q, 'mod', 'rim')); ar.guildMod.push(SW.rel(Q, 'guild', 'mod')); ar.rimSec.push(SW.rel(Q, 'rim', 'sec')); ar.palSec.push(SW.rel(Q, 'pal', 'sec'));
       // which way through the crisis did this game take, and did it work?
       const route = Q.gambit_kind === 'exposed' ? 'unmasked in the Senate' : (Q.gambit_kind === 'coup' ? 'coup from outside office' : (Q.gambit_kind === 'decree' ? (Q.peace_achieved ? 'decree after peace' : 'decree after victory') :
         (r.visits && r.visits.fin_coruscant ? 'Jedi arrest (' + (Q.known_by || 'none') + ')' : 'lost before the finale')));
@@ -424,6 +438,8 @@ function playOne(gameIndex) {
     origLog('audit: routes ' + Object.entries(audit.routes).sort((a, b) => b[1].n - a[1].n).map(([k, v]) => k + ' ' + pc(v.n, GAMES) + ' (Sidious beaten ' + pc(v.beaten, v.n) + ', good end ' + pc(v.good, v.n) + ')').join('; '));
     const rf = audit.routeFlags; origLog('audit: route steps: charges laid or premature accusations ' + rf.charges + ', charges that stuck ' + rf.chargesOk + ', Federal Compact votes ' + rf.compact + ', peace ' + rf.peace + ', Dooku turned ' + rf.dooku + ', Palpatine under 2 years in office ' + rf.palOut);
   }
+  if (audit.rel) { const r = audit.rel;
+    origLog('audit: relations: broken-system swings ' + r.swings + ' (minority governments ' + r.minority + ', collapses ' + r.collapse + ', bureaucrats ' + r.bureau + '); every Caucus coalition blocked ' + r.blocked + 'x; deliveries ' + r.delivered + ', pledges kept ' + r.kept + '; government size at end avg ' + avg(r.size) + '; end relations mod-rim ' + avg(r.modRim) + ', guild-mod ' + avg(r.guildMod) + ', rim-sec ' + avg(r.rimSec) + ', pal-sec ' + avg(r.palSec)); }
   origLog('audit: bureaucrat purges ' + audit.purges + ' (in ' + audit.purgeGames + ' games), Vice Chair gavels ' + audit.gavels);
   origLog('audit: leaders at the end: ' + Object.entries(audit.endLeaders).sort().map(([k, v]) => k + '=' + v).join(' '));
   origLog('audit: avg peak faction dissent ' + avg(audit.maxDissent) + '; cards played 6+ times (games): ' + JSON.stringify(audit.repeatCards));
