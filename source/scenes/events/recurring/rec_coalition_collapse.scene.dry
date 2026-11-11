@@ -41,4 +41,3 @@ if (!Q.constructive_vonc) {
 
 [? if not cc_dropped : The [+ walkout_name +] will not serve in a government with the Caucus for the next two years. ?][? if cc_dropped : The [+ walkout_name +] will not have us back for at least a year. ?]
 
-*The coalition's mood worsens every turn we govern, and faster with hardline partners. Concessions in a strain, the Coalition Affairs card and some advisors can calm it.*

@@ -63,7 +63,7 @@ Volunteers and borrowed shuttles carry the Caucus's message to the [+ shoestring
 @message
 on-arrival: {! SW.campaignPreview(Q); !}
 
-What will the Caucus campaign on? A message lands differently depending on the region and the moment: clean government needs a corrupt Senate and clean hands, Rim relief needs hardship and a record of delivering it, security needs fear, and peace can backfire when people are afraid.
+What will the Caucus campaign on?
 
 - @msg_clean: Clean government.
 - @msg_relief: Relief for the Rim.

@@ -11,7 +11,7 @@ on-arrival: {! SW.worldElectionOpen(Q); Q.we_rally = 0; !}
 
 [+ wv_world +] holds [+ wv_name +]: [+ wv_ours +] against [+ wv_theirs +]. *At stake:* [+ wv_stakes +]
 
-The polls give [+ wv_ours +] about **[+ wv_poll +]%**. Our support in the [+ wv_region_name +] and the Caucus's momentum shape the poll. Senators answer to their home worlds, so the result will move delegations in the Senate too. A win lifts our momentum; a loss costs it, more so if we campaigned. [? if wv_has_adv : [+ wv_adv_name +] is one of our advisors, and this is home ground. ?]
+The polls give [+ wv_ours +] about **[+ wv_poll +]%**. [? if wv_has_adv : [+ wv_adv_name +] is one of our advisors, and this is home ground. ?]
 
 - @hard: Campaign hard on [+ wv_world +].
 - @advisor: Send [? if wv_has_adv : [+ wv_adv_name +] ?][? if not wv_has_adv : one of our advisors ?]to campaign.
@@ -47,7 +47,7 @@ go-to: result
 
 The Caucus's rally in the [+ cm_region_name +] is stormed by [+ cm_disruptor +]. Speakers are shouted down, delegates are threatened, and the HoloNet cameras are rolling. How will the Caucus protect its people?
 
-*Their strength is about [+ cm_threat +]. The Judicial Forces bring about [+ jf_txt +]; local security, where we are popular, about [+ cm_local +][? if senate_guard_reformed : ; the reformed Senate Guard, 5?]. Each time the Caucus leans on armed force, the Pacifists like it less.*
+*Their strength is about [+ cm_threat +]. The Judicial Forces bring about [+ jf_txt +]; local security, where we are popular, about [+ cm_local +][? if senate_guard_reformed : ; the reformed Senate Guard, 5?].*
 
 - @protect_judicials: Call in the Judicial Forces.
 - @protect_guard: Ask the Senate Guard to protect us.
@@ -73,7 +73,6 @@ go-to: result
 subtitle: No one is hurt. The campaign loses its edge.
 on-arrival: {! SW.rallyProtect(Q, 'cancel'); Q.wv_boost -= 0.1; SW.worldResolve(Q); !}
 go-to: result
-
 
 @result
 

@@ -11,8 +11,6 @@ on-arrival: banking_clan_timer = 8
 
 The Republic owes the InterGalactic Banking Clan [+ debt_txt +], and the Clan's chairman, **San Hill**, has come to Coruscant to discuss it. He is very polite. He would like the Republic to be polite in return.
 
-*The more the Republic owes, the more the Banking Clan can ask. Paying the debt down in the yearly budget, or guaranteeing the Clan's independence, loosens its grip.*
-
 - @deregulate: Lift the rules on the Banking Clan's lending.
 - @seat: Give the Clan's friends the Finance chair.
 - @refuse: Refuse, and pay the higher rates.

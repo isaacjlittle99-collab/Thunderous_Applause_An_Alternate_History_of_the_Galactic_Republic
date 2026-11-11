@@ -1723,7 +1723,6 @@
     }
     if (leans.length) h += '<span class="sb-note">' + leans.join(' · ') + '</span>';
     if (w.res[0] && w.res[0].share < 50 && w.res.length > 1) h += '<br><i>No one has a majority yet: a second ballot looks likely.</i>';
-    if (!w.exact) h += '<br><i>For a reliable count: the Judiciary chair, strong evidence (4 or more), or Bail Organa or Finis Valorum as an advisor.</i>';
     return h + '</div>';
   };
 

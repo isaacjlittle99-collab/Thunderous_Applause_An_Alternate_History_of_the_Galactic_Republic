@@ -11,10 +11,6 @@ on-arrival: pb_ready = 0
 
 [+ pb_leader +] of the [+ pb_name +] takes the floor with a recording of our own campaign promise: **[+ pb_what +]**. Then, [+ pb_how +]. "The Caucus asked for our votes on its word," [+ pb_leader +] says. "We will not make that mistake twice."
 
-*A broken pledge costs us that bloc's goodwill, and its leader's memory is long: they will hold their line harder against the Caucus for years.*
-
-[? if pb_partner : As partners in our government, they also add to the coalition's strain. ?]
-
 - @amends: Apologise in person and offer amends.
 - @shrug: Circumstances changed. Say so, and move on.
 

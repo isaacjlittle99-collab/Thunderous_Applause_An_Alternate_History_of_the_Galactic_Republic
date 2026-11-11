@@ -28,8 +28,6 @@ SW.electionOpen(Q);
 
 [? if naboo_sympathy and el_has_pal : The Senate is moved by the plight of Naboo, and Senator Palpatine is widely seen as the sympathetic candidate. ?]
 
-*Each candidate has strengths with some blocs and weaknesses with others, and the Caucus's momentum sways every bloc.*
-
 - @el_run: Run a Caucus candidate for Supreme Chancellor.
 - @el_back_mod: Endorse [+ mod_leader +] of the Core Moderates.
 - @el_back_rim: Endorse [+ rim_leader +] of the Rimward Coalition.
@@ -118,8 +116,6 @@ on-arrival: {! Q.el_whip = SW.whipText(Q, Q.el_cands, Q.el_backing, '_r'); Q.el_
 The Caucus is backing **[+ el_backing_name +]**. Before the Senate votes, we can court other blocs with political capital, or win them with promises. We have [+ capital +] political capital.
 
 [+ el_whip +]
-
-*A pledge wins a bloc's votes outright, but it binds the Caucus until the next Chancellor election. Break it and that bloc's leader will remember.*
 
 - @el_court_mod: Court the Core Moderates.
 - @el_court_ind: Court the Independents.
@@ -327,8 +323,6 @@ achievement: caucus_chancellor
 [+ el_result +]
 
 The rotunda erupts. For the first time in a generation, a reformer holds the Republic's highest office. Now [+ el_winner_name +] must assemble a governing coalition.
-
-*No bloc will sit with a partner it is too cold toward. Each leader sets the bar: hardliners need cordial relations, firm leaders cool ones, and flexible leaders will even sit with a bloc they are cold toward. A minority government leaves voters disillusioned.*
 
 [? if coal_all_blocked : **No coalition the Caucus could lead has both the seats and partners willing to sit together.** Only a minority government is possible this time. ?]
 

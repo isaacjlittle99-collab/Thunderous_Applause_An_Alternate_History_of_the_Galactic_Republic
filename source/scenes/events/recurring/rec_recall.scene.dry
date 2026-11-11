@@ -10,8 +10,6 @@ face-image: img/ev_rim.svg
 
 Member worlds across the [+ recall_region_name +] are recalling their Caucus senators, furious at [+ recall_why +]. The worlds' new delegations will sit with other blocs.
 
-*A region's grievance builds when the Caucus backs measures that hurt it, such as a levy on the Core, a debased credit, cuts to Rim relief, tariffs, or budgets that starve a war. It fades with time. The Polls tab shows which regions are aggrieved.*
-
 - @apologise: Apologise, and promise to make it right.
 - @campaign: Fight to hold the seats.
 - @accept: Accept the losses.

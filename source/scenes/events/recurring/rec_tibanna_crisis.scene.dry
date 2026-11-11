@@ -11,8 +11,6 @@ on-arrival: tibanna_crisis_timer = 8; tibanna_crises += 1
 
 Tibanna gas, mined in the clouds of Bespin and refined into blaster gas and hyperdrive coolant, has tripled in price. The Bespin Mining Guild blames demand; the Security Bloc blames profiteers. Every warship and every Judicial cruiser costs more to run.
 
-*While Tibanna is scarce, defence costs more in the budget.*
-
 - @contracts: Sign long contracts with the Bespin Mining Guild.
 - @nationalise: Take over the refineries.
 - @cut: Cut military purchases.

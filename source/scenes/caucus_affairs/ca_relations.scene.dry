@@ -9,9 +9,7 @@ new-page: true
 
 = Inter-bloc Relations
 
-No bloc in the Senate can govern alone, and no bloc will govern beside a partner it is too cold toward. Each leader sets the bar: hardliners need cordial relations, firm leaders cool ones, flexible leaders will sit even with a bloc they are cold toward. Courting a bloc costs 1 political capital; brokering talks between two others costs 1, and a summit for a whole coalition costs 2.
-
-*Delivering what a bloc wants (meeting its leader's demands, funding its priorities in a budget, keeping a pledge for a full term) earns more goodwill than any courtesy.*
+No bloc in the Senate can govern alone, and none will govern beside a partner it cannot stand. Which relationship should the Caucus invest in?
 
 - @mod: The Core Moderates.
 - @ind: The Independents.
@@ -27,59 +25,59 @@ No bloc in the Senate can govern alone, and no bloc will govern beside a partner
 - @easy_discard
 
 @mod
-subtitle: +15 relations with the Core Moderates, now [+ mod_relation : relationships +]. [+ mod_leader +] is [+ st_mod +]: they need [+ jm_mod +] ties to sit in government with a partner.
+subtitle: −1 political capital. +15 relations with the Core Moderates, now [+ mod_relation : relationships +].
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 on-arrival: capital -= 1; mod_relation += 15; inst_dissent -= 2
 
 @ind
-subtitle: +15 relations with the Independents, now [+ ind_relation : relationships +]. [+ ind_leader +] is [+ st_ind +]: they need [+ jm_ind +] ties to sit in government with a partner.
+subtitle: −1 political capital. +15 relations with the Independents, now [+ ind_relation : relationships +].
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 on-arrival: capital -= 1; ind_relation += 15
 
 @rim
 view-if: parties_has_rim
-subtitle: +15 relations with the Rimward Coalition, now [+ rim_relation : relationships +]. [+ rim_leader +] is [+ st_rim +]: they need [+ jm_rim +] ties to sit in government with a partner.
+subtitle: −1 political capital. +15 relations with the Rimward Coalition, now [+ rim_relation : relationships +].
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 on-arrival: capital -= 1; rim_relation += 15; rimward_dissent -= 2; inst_dissent += 1
 
 @sec
-subtitle: +15 relations with the Security Bloc, now [+ sec_relation : relationships +]. [+ sec_leader +] is [+ st_sec +]: they need [+ jm_sec +] ties to sit in government with a partner. The Pacifists disapprove.
+subtitle: −1 political capital. +15 relations with the Security Bloc, now [+ sec_relation : relationships +]. The Pacifists disapprove.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 on-arrival: capital -= 1; sec_relation += 15; hawk_dissent -= 2; pacifist_dissent += 3
 
 @guild
-subtitle: +15 relations with the Commerce Guilds, now [+ guild_relation : relationships +]. [+ guild_leader +] is [+ st_guild +]: they need [+ jm_guild +] ties to sit in government with a partner. The Rimward wing disapproves.
+subtitle: −1 political capital. +15 relations with the Commerce Guilds, now [+ guild_relation : relationships +]. The Rimward wing disapproves.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 on-arrival: capital -= 1; guild_relation += 15; rimward_dissent += 5
 
 @pal
-subtitle: +15 relations with the [+ pal_name +], now [+ pal_relation : relationships +]. [? if evidence >= 4 : The Caucus is deeply uneasy about this. ?]
+subtitle: −1 political capital. +15 relations with the [+ pal_name +], now [+ pal_relation : relationships +]. [? if evidence >= 4 : The Caucus is deeply uneasy about this. ?]
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 on-arrival: capital -= 1; pal_relation += 15; inst_dissent += 4 if evidence >= 4; pacifist_dissent += 4 if evidence >= 4
 
 @cis
 view-if: cis_formed and parties_has_cis
-subtitle: +15 relations with the Separatist Caucus, now [+ cis_relation : relationships +]. The Hawks will be outraged.
+subtitle: −1 political capital. +15 relations with the Separatist Caucus, now [+ cis_relation : relationships +]. The Hawks will be outraged.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 on-arrival: capital -= 1; cis_relation += 15; hawk_dissent += 6; pacifist_dissent -= 3
 
 @rfc
 view-if: rfc_formed
-subtitle: +15 relations with the [+ rfc_name +], now [+ rfc_relation : relationships +]. [+ rfc_leader +] is [+ st_rfc +]: they need [+ jm_rfc +] ties to sit in government with a partner.
+subtitle: −1 political capital. +15 relations with the [+ rfc_name +], now [+ rfc_relation : relationships +].
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 on-arrival: capital -= 1; rfc_relation += 15
 
 @broker
 view-if: bk_ok
-subtitle: −1 political capital. +15 to their relations, now [+ bk_rel +]. Their coldness is blocking a coalition the Caucus could lead.
+subtitle: −1 political capital. +15 to their relations, now [+ bk_rel +].
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 on-arrival: {! Q.capital -= 1; SW.broker(Q); !}

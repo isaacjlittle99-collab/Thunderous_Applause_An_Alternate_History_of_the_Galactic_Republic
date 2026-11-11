@@ -53,7 +53,91 @@ The **Holocron** link at the top of the page explains the factions, blocs and sy
 
 *This is an unofficial, non-commercial fan work. It borrows from both canon and Legends, and wanders off into alternate history from the very first turn.*
 
+- @htp_senate: The Senate: coalitions and relations
+- @htp_elections: Elections and campaigns
+- @htp_purse: The Republic's purse
+- @htp_war: The war
+- @htp_dangers: Dangers and warnings
 - @start_menu: Back
+
+@htp_senate
+new-page: true
+
+= The Senate: coalitions and relations
+
+**Relations.** The Caucus has a relationship with every bloc, and every pair of blocs has one with each other: *hostile*, *cold*, *cool*, *cordial*, *warm* or *close*. The Senate tab shows them. Relations drift toward what the blocs stand for and what their leaders think of each other. Governing together warms a pair; running rival candidates for Chancellor cools it.
+
+**Who will govern with whom.** No bloc will sit in a government beside a partner it is too cold toward, and each leader sets the bar: a **hardliner** needs cordial ties, a **firm** leader cool ones, and a **pragmatic** leader will sit even with a bloc they are cold toward (never a hostile one). A leader's mood moves their firmness: anger digs them in, gratitude makes them bend. A new Chancellor builds a coalition in order of their relationship with each party, the Caucus included, until it holds a majority. Every partner in a coalition the Caucus leads must clear the bar with us and with each other, and each names a price: a committee chair, a pledge, or both.
+
+**Mending ties.** The Inter-bloc Relations card courts a bloc, brokers talks between two blocs whose coldness blocks a coalition we could lead, or hosts a summit for a whole coalition. **Delivering** counts for more: meeting a bloc leader's demand, writing a budget that funds what a bloc wants, or keeping a pledge for a full term.
+
+**A Senate that cannot govern.** When no coalition can reach a majority, or a government falls apart (a coalition collapse, or the bureaucrats bringing it down), voters lose faith in the system: Palpatine's bloc gains, separatism rises and faith falls.
+
+**Coalition mood.** A coalition the Caucus sits in grows restless every turn, faster with hardline partners. Concessions, the Coalition Affairs card and some advisors calm it. If its mood reaches *collapsing*, a partner walks out, brings the government down (unless the constructive no-confidence amendment protects the Chancellor), and will not serve with the Caucus for two years.
+
+**Pledges.** A pledge, made in a Chancellor race or in coalition talks, wins a bloc but binds the Caucus until the next Chancellor election. Budgets and votes warn before we break one. A broken pledge costs that bloc's goodwill and our momentum, strains a coalition, and its leader holds the line harder against us for years.
+
+**The bureaucrats.** Once the Caucus governs or chairs a committee, the Senate's permanent staff judge us by the partners we choose and the reforms we pass. Cold, they lose our bills in committee; hostile, they build a case against us and strike. Finis Valorum, Bail Organa or Bail Antilles can work with them as advisors, the Judiciary & Intelligence Committee can reform them, and a more establishment coalition reassures them.
+
+**Leaders.** Every bloc and every faction of the Caucus has a leader whose mood follows what they care about and what they remember of us. Now and then a leader makes a demand or an offer.
+
+- @how_to_play: Back to How to play
+
+@htp_elections
+new-page: true
+
+= Elections and campaigns
+
+**Momentum** lifts our support everywhere and sways every bloc on election day. Reforms, strong campaigns, debates, endorsements and won contests build it; scandals, gaffes, broken promises and lost contests drain it. It fades each quarter unless renewed.
+
+**Campaigning.** A campaign picks a region and a message. *Clean government* needs a corrupt Senate and clean hands; *Rim relief* needs hardship and a record of funding relief; *security* needs fear; *peace* lands with a war-weary galaxy but backfires when people are afraid; *the Republic* is steady everywhere. In the last year before a Chancellor election the Caucus can campaign every turn, and the campaign trail brings debates, endorsements, opposition research, gaffes and smears.
+
+**Rallies** can be stormed. The Judicial Forces, a reformed Senate Guard, or local security where we are popular can protect them; each use of armed force troubles the Pacifists.
+
+**The Chancellor race.** Our nominee appeals to some blocs more than others, and so do the rivals. The whip count is reliable with the Judiciary chair, strong evidence or Bail Organa or Finis Valorum as an advisor. If no one wins the first ballot, the corridors between the ballots become a marketplace.
+
+**Across the galaxy.** World elections move delegations and momentum. Once Dooku's movement is under way, worlds vote on leaving the Republic. Regions angered by measures we back (levies, a debased credit, relief cuts, tariffs, a starved war effort) may recall Caucus senators.
+
+- @how_to_play: Back to How to play
+
+@htp_purse
+new-page: true
+
+= The Republic's purse
+
+**The budget.** Once a year the Republic needs a budget, written by whoever holds the Chancellery or the Finance chair, and it must pass the Senate. Every source of money has people who pay for it, and they push back harder each year it is used in a row. Two of our own budgets defeated in a row bring down a Caucus Chancellor.
+
+**The guilds' patience** wears down with tariffs, regulation and seizures and recovers with concessions, subsidies and lifted sanctions. As it falls they escalate, step by step.
+
+**Our Core patrons** fund the Caucus. Angry, they cut our yearly political capital and our support in the Core erodes.
+
+**Debt and markets.** The more the Republic owes, the more the Banking Clan can ask; repaying it, or guaranteeing the Clan's independence, loosens its grip. While Tibanna is scarce, defence costs more.
+
+- @how_to_play: Back to How to play
+
+@htp_war
+new-page: true
+
+= The war
+
+The Senate sets the war aims, shown on the Forces tab. Every second turn the War Council decides where the Republic commits its strength. Each front feeds a different part of the galaxy: losing the Outer Rim Sieges brings hunger and separatism to the Rim, losing the Hydian Way strangles trade, and losing the Core approaches brings fear to Coruscant. When a front breaks, worlds change sides.
+
+- @how_to_play: Back to How to play
+
+@htp_dangers
+new-page: true
+
+= Dangers and warnings
+
+• **The New Order, early.** If the Chancellor holds 8 emergency powers while the Senate's resolve is below 5, the next crisis lets him proclaim the Empire.
+
+• **The Senatorial Arrests.** Senate resolve of 5, or a Navy at least 60% loyal to the Senate, makes him think twice.
+
+• **The admirals.** With fear at 60 or more, Tarkin leading the Security Bloc and the Navy's loyalty below 50%, the Security Bloc may seize power. A loyal Navy or a reformed Senate Guard stops them.
+
+• **Schemes.** If we are watching closely, we get a turn's warning before a scheme lands.
+
+- @how_to_play: Back to How to play
 
 @to_credits
 go-to: credits
