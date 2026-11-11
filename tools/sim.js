@@ -4,7 +4,10 @@ const path = require('path');
 const fs = require('fs');
 const repo = process.argv[2];
 const GAMES = +(process.argv[3] || 200);
-const POLICY = process.argv[4] || 'random';
+// a policy is random, reform, passive or smart; smart:<route> is a careful player committed to one way through the crisis
+const POLICY_ARG = process.argv[4] || 'random';
+const POLICY = POLICY_ARG.split(':')[0];
+const STRAT = POLICY_ARG.split(':')[1] || '';
 let SEED = +(process.argv[5] || 1);
 const VERBOSE = process.argv[6] === 'verbose';
 
@@ -48,6 +51,25 @@ const REFORM_PREFS = [
   ['discipline', 2], ['concede', 2], ['convention', 1], ['advisors', 2], ['oppose', 2], ['amend', 2], ['networks', 2], ['holonet', 2],
   ['offer', 3], ['let_decide', 3]
 ];
+// Route strategists: the careful player plus a strong preference for one way through the crisis.
+//   keep: keep Palpatine from power (win Chancellor races, move no confidence, never back him)
+//   unmask: build the case and lay charges before the Senate
+//   peace: end the war through peace channels and a Federal Compact, or turn Count Dooku
+const STRATEGIES = {
+  keep: [[/el_back_pal$/, () => 0.01], [/\.el_run$/, () => 12], [/\.el_court_\w+$/, () => 6], [/\.el_pledge$/, () => 5], [/\.el_expose$/, () => 12],
+    [/\.el_attack_pal$/, Q => Q.evidence >= 5 ? 9 : 0.1], [/\.eb_deal_[ab]$/, null], [/^ca_campaign$/, () => 8], [/^ca_contributions$/, Q => Q.capital <= 2 ? 8 : 1],
+    [/^ca_confront$/, () => 7], [/^ca_confront\.vonc$/, Q => Q.pal_chancellor ? 12 : 0.5], [/^ca_confront\.(alarm|crossbloc)$/, Q => Q.senate_resolve < 3 ? 9 : 1],
+    [/^sa_constitution$/, () => 9], [/^sa_constitution\.terms$/, () => 14], [/^a3_term_limit\.oppose$/, () => 12], [/^a4_indefinite_term\.oppose$/, () => 12], [/\.el_tally$/, Q => Q.capital >= 1 ? 0.3 : 5], [/\.el_join$/, Q => Q.el_pal_won ? 0.3 : null]],
+  unmask: [[/^rec_case_ready\.charges$/, Q => SW.chargesOdds(Q) >= 0.55 ? 30 : 0.5], [/^ca_investigate\.brief$/, () => 15], [/^ca_investigate$/, () => 10], [/^ca_investigate\.charges$/, Q => (Q.dooku_turned || Q.evidence >= 9) ? 60 : (Q.date >= 162 && Q.evidence >= 8 ? 15 : 0.01)],
+    [/^ca_investigate\.(money|slicer)$/, () => 6], [/^sa_judiciary$/, () => 9], [/^ca_jedi$/, () => 6]],
+  peace: [[/^sa_diplomacy$/, () => 14], [/^sa_diplomacy\.(talks|neutrals)$/, () => 8], [/\.compact$/, () => 20], [/^sa_diplomacy\.recognise$/, () => 0.01],
+    [/^ca_peace$/, () => 10], [/^ca_peace\.channel$/, Q => Q.peace_talks < 3 ? 8 : 0.5], [/^a4_war_aims\.peace$/, () => 9], [/\.dialogue$/, () => 6], [/\.grievances$/, () => 6],
+    [/^a3_bonteri\.answer$/, () => 9], [/^a1_dooku_leaves\.meet$/, () => 9], [/^a4_dooku_doubt\.accept$/, () => 20], [/^ca_rim$/, () => 5]]
+};
+function strategyWeight(id, Q) {
+  for (const [re, f] of STRATEGIES[STRAT] || []) if (re.test(id)) { if (!f) return null; const w = f(Q); if (w !== null && w !== undefined) return w; }
+  return null;
+}
 // the careful player's choice in each war dilemma
 const SMART_DILEMMA = {umbara: 'b', ryloth: 'a', blockade: 'b', mandalore: 'a', levy: 'a', clone_surge: 'b', refugees: 'a', zygerria: 'a', jedi_stretch: 'a', citadel: 'b', bacta: 'a', hydian: 'a'};
 // "smart": a careful player who reads the state of the game (used to tune difficulty)
@@ -120,7 +142,9 @@ function smartWeight(id, Q) {
     [/^rec_referendum\.relief$/, Q.treasury >= 4 ? 5 : 1], [/^rec_referendum\.figure$/, 6], [/^rec_referendum\.expose$/, 7], [/^rec_referendum\.autonomy$/, 3],
     [/^rec_referendum\.campaign$/, 3], [/^rec_referendum\.out$/, 0.5],
     [/^rec_recall\.apologise$/, Q.capital >= 2 ? 4 : 1], [/^rec_recall\.campaign$/, 3], [/^rec_recall\.accept$/, 1],
-    [/^sa_coalition\.mandate$/, (Q.cv_outlook || 0) >= 58 ? 6 : 0.1]
+    [/^sa_coalition\.mandate$/, (Q.cv_outlook || 0) >= 58 ? 6 : 0.1],
+    // lay charges only when the case should hold
+    [/^rec_case_ready\.charges$/, SW.chargesOdds(Q) >= 0.7 ? 8 : 0.3], [/^rec_case_ready\.wait$/, 2]
   ];
   for (const [re, w] of W) if (re.test(id)) {
     // a careful player does not break a pledge in the budget
@@ -143,6 +167,8 @@ function nomineeWeight(nid, Q) {
 }
 function weightFor(id) {
   if (POLICY === 'smart' && curEngine) {
+    const st = STRAT ? strategyWeight(id, curEngine.state.qualities) : null;
+    if (st !== null) return st;
     const sw = smartWeight(id, curEngine.state.qualities);
     if (sw !== null) return sw;
     if (curEngine.state.qualities.pl_no_powers && /(powers_yes|^sa_emergency\.(request|martial))$/.test(id)) return 0.05;
@@ -190,6 +216,8 @@ const PREMISES = [
   [/^rec_campaign_trail$/, Q => Q.election_season && !Q.election_suspended, 'campaign trail outside election season'],
   [/^rec_world_election$/, Q => !(Q.wv_id === 'mandalore' || Q.wv_id === 'ryloth') || Q.war, 'wartime world election without a war'],
   [/^rec_world_election$/, Q => !(Q.wv_id === 'rodia') || !Q.farr_dead, 'Rodia election after Farr died'],
+  [/^a4_dooku_doubt$/, Q => Q.war && Q.dooku_contact, 'Dooku defects without contact or a war'],
+  [/^rec_case_ready$/, Q => Q.evidence >= 8.5 && !Q.sidious_known && !Q.finale, 'case offered without the evidence'],
 ];
 const PREMISE_HITS = {};
 function checkPremises(id, Q, game, out) {
@@ -326,6 +354,15 @@ function playOne(gameIndex) {
       if (Q.war_aim) audit.econ.aims[Q.war_aim] = (audit.econ.aims[Q.war_aim] || 0) + 1;
       for (const fr of ['outer', 'mid', 'core']) if ((Q['front_ev_' + fr] || -99) > 0) audit.econ.collapses++;
       audit.gavels += Q.gavels || 0;
+      // which way through the crisis did this game take, and did it work?
+      const route = Q.gambit_kind === 'exposed' ? 'unmasked in the Senate' : (Q.gambit_kind === 'coup' ? 'coup from outside office' : (Q.gambit_kind === 'decree' ? (Q.peace_achieved ? 'decree after peace' : 'decree after victory') :
+        (r.visits && r.visits.fin_coruscant ? 'Jedi arrest (' + (Q.known_by || 'none') + ')' : 'lost before the finale')));
+      audit.routes = audit.routes || {};
+      const ra = audit.routes[route] = audit.routes[route] || {n: 0, beaten: 0, good: 0};
+      ra.n++; if (Q.sidious_defeated) ra.beaten++; if (Q.ending === 'reborn' || Q.ending === 'endures') ra.good++;
+      audit.routeFlags = audit.routeFlags || {charges: 0, chargesOk: 0, compact: 0, peace: 0, dooku: 0, palOut: 0};
+      const rf = audit.routeFlags; if (Q.premature_accusations >= 1 || Q.gambit_kind === 'exposed') rf.charges++; if (Q.gambit_kind === 'exposed') rf.chargesOk++;
+      if (Q.fc_vote) rf.compact++; if (Q.peace_achieved) rf.peace++; if (Q.dooku_turned) rf.dooku++; if (!Q.pal_was_chancellor || (Q.pal_office_months || 0) < 24) rf.palOut++;
       audit.el = audit.el || {noms: {}, second: 0, deals: 0, pledges: 0, broken: 0, wins: 0, losses: 0, refWon: 0, refLost: 0, disrupt: 0, protWon: 0, protLost: 0, recalls: 0, mandWon: 0, mandLost: 0, campaigns: 0, debates: 0, endorse: 0, momEnd: []};
       for (const n in SW.NOMINEES) if (Q['nominated_' + n]) audit.el.noms[n] = (audit.el.noms[n] || 0) + Q['nominated_' + n];
       audit.el.second += Q.second_ballots || 0; audit.el.deals += Q.kingmaker_deals || 0; audit.el.pledges += Q.pledges_made || 0; audit.el.broken += Q.pledges_broken || 0;
@@ -355,7 +392,7 @@ function playOne(gameIndex) {
     }
     if (VERBOSE) origLog(g, e, Q.date_label, 'steps', r.steps, r.stuck || '', 'ep', Q.emergency_powers, 'ev', Q.evidence.toFixed(1), 'gp', Math.round(Q.grand_plan), 'rc', Q.rc_r, 'pal', Q.pal_r, 'ch', Q.chancellor);
   }
-  origLog('policy', POLICY, 'games', GAMES);
+  origLog('policy', POLICY_ARG, 'games', GAMES);
   origLog('endings', JSON.stringify(endings));
   origLog('stuck', JSON.stringify(stucks));
   origLog('NaN qualities', JSON.stringify(nanKeys));
@@ -382,6 +419,11 @@ function playOne(gameIndex) {
   if (audit.el) { const e = audit.el;
     origLog('audit: elections nominees ' + JSON.stringify(e.noms) + ', second ballots ' + e.second + ', kingmaker deals ' + e.deals + ', pledges made ' + e.pledges + ' broken ' + e.broken + ', confidence votes won ' + e.mandWon + ' lost ' + e.mandLost);
     origLog('audit: campaigns run ' + e.campaigns + ', debates won ' + e.debates + ', endorsements ' + e.endorse + ', rallies disrupted ' + e.disrupt + ' (protected ' + e.protWon + ', broken up ' + e.protLost + '); world elections won ' + e.wins + ' lost ' + e.losses + '; referendums stayed ' + e.refWon + ' left ' + e.refLost + '; recalls ' + e.recalls + '; momentum at end avg ' + avg(e.momEnd)); }
+  if (audit.routes) {
+    const pc = (a, b) => b ? Math.round(100 * a / b) + '%' : '-';
+    origLog('audit: routes ' + Object.entries(audit.routes).sort((a, b) => b[1].n - a[1].n).map(([k, v]) => k + ' ' + pc(v.n, GAMES) + ' (Sidious beaten ' + pc(v.beaten, v.n) + ', good end ' + pc(v.good, v.n) + ')').join('; '));
+    const rf = audit.routeFlags; origLog('audit: route steps: charges laid or premature accusations ' + rf.charges + ', charges that stuck ' + rf.chargesOk + ', Federal Compact votes ' + rf.compact + ', peace ' + rf.peace + ', Dooku turned ' + rf.dooku + ', Palpatine under 2 years in office ' + rf.palOut);
+  }
   origLog('audit: bureaucrat purges ' + audit.purges + ' (in ' + audit.purgeGames + ' games), Vice Chair gavels ' + audit.gavels);
   origLog('audit: leaders at the end: ' + Object.entries(audit.endLeaders).sort().map(([k, v]) => k + '=' + v).join(' '));
   origLog('audit: avg peak faction dissent ' + avg(audit.maxDissent) + '; cards played 6+ times (games): ' + JSON.stringify(audit.repeatCards));

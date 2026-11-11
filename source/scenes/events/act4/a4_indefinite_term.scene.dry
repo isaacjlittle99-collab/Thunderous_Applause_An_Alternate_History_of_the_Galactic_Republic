@@ -18,7 +18,7 @@ A motion is tabled: "That the Supreme Chancellor's mandate and emergency authori
 
 @oppose
 on-arrival: {!
-var st = {pal: 1, sec: 0.9, mod: 0.45 + Q.fear / 250, guild: 0.5, ind: 0.4 + Q.fear / 300, rim: 0.3, rfc: 0.2};
+var st = {pal: 1, sec: 0.9, mod: 0.45 + Q.fear / 250 - SW.clamp(Q.rc_momentum || 0, -3, 3) * 0.02, guild: 0.5, ind: 0.4 + Q.fear / 300 - SW.clamp(Q.rc_momentum || 0, -3, 3) * 0.02, rim: 0.3, rfc: 0.2};
 if (Q.emergency_sunset) { st.mod -= 0.15; st.ind -= 0.1; }
 Q.it_vote = SW.vote(Q, st, 0, 'powers');
 Q.vote_html = SW.voteBanner('Continuation of the Chancellor\'s mandate', Q.it_vote);
@@ -32,7 +32,7 @@ Q.senate_resolve += 0.5;
 
 @support
 on-arrival: {!
-var st = {pal: 1, sec: 0.9, mod: 0.45 + Q.fear / 250, guild: 0.5, ind: 0.4 + Q.fear / 300, rim: 0.3, rfc: 0.2};
+var st = {pal: 1, sec: 0.9, mod: 0.45 + Q.fear / 250 - SW.clamp(Q.rc_momentum || 0, -3, 3) * 0.02, guild: 0.5, ind: 0.4 + Q.fear / 300 - SW.clamp(Q.rc_momentum || 0, -3, 3) * 0.02, rim: 0.3, rfc: 0.2};
 Q.it_vote = SW.vote(Q, st, 1, 'powers');
 Q.vote_html = SW.voteBanner('Continuation of the Chancellor\'s mandate', Q.it_vote);
 if (Q.it_vote >= 50) { Q.emergency_powers += 1; Q.next_election_date = 999; Q.election_suspended = 1; }

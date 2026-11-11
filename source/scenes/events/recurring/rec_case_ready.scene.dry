@@ -1,0 +1,29 @@
+title: The Case Is Ready
+subtitle: Our investigators think we can prove it.
+tags: event
+view-if: case_ready and not finale and not game_ending
+priority: 2
+new-page: true
+face-image: img/ev_law.svg
+on-arrival: {! Q.case_ready = 0; Q.case_timer = 2; Q.case_odds = Math.round(100 * SW.chargesOdds(Q)); !}
+
+= The Case Is Ready
+
+The Caucus's investigators have been working for years. Tonight they lay it all out on Bail Organa's table: the Damask money, the clone order, the payments, the murders. They believe the man behind them can be named before the full Senate.
+
+If the charges stick, his allies will desert him and he will have to show his hand at once, before he is ready. If they fail, the Caucus will look like paranoid fools, and he will be stronger than ever.
+
+- @charges: Lay charges before the Senate.
+- @wait: Keep building the case.
+
+@charges
+subtitle: −1 political capital. [? if case_odds >= 80 : The case is conclusive. ?][? if case_odds >= 55 and case_odds < 80 : The case is strong. It will probably hold, but not certainly. ?][? if case_odds < 55 : The case is not yet strong enough; it will probably fail. ?]
+choose-if: capital >= 1
+unavailable-subtitle: Needs 1 political capital.
+on-arrival: {! Q.capital -= 1; SW.breakPledge(Q, 'no_probe', 'the Caucus laid charges before the Senate'); !}
+go-to: fin_charges
+
+@wait
+subtitle: Every month gives us more proof, and gives him more time.
+
+The files go back into the safe. The investigators keep digging.

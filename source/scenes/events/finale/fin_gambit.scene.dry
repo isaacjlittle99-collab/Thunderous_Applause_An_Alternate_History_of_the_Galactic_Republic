@@ -9,6 +9,7 @@ face-image: img/ev_shadow.svg
 on-arrival: {!
 Q.finale = 1; Q.finale_day = 1; Q.months_per_turn = 0; Q.clear_hand = 1; Q.gambit = 1;
 Q.gambit_kind = Q.pal_chancellor ? 'decree' : 'coup';
+Q.pal_reach_low = (Q.pal_office_months || 0) < 12 ? 1 : 0;
 Q.sidious_known = (Q.evidence >= 6 || Q.jedi_suspicion >= 6) ? 1 : 0;
 Q.fear += 8;
 SW.updateDate(Q);
@@ -16,7 +17,9 @@ SW.updateDate(Q);
 
 = Sidious's Last Gambit
 
-[? if gambit_kind = "decree" : The war is over, but the Chancellor has not given up his powers. Now Chancellor Palpatine announces that he has uncovered "a Jedi plot to overthrow the Republic". By emergency decree, he dissolves the Jedi Council and places the Senate Guard, the Coruscant Security Force and [? if clones > 0 : the Grand Army ?][? if clones <= 0 : every armed force he can command ?] under his personal authority. ?][? if gambit_kind = "coup" : The Sith Lord has run out of patience. Palpatine, who never quite held the power he needed, strikes with everything he has built over fifteen years. Vice Chair Mas Amedda, the Security Bloc's hard men and [? if kamino_army and not army_oversight : a secret army of clones nobody controls ?][? if not kamino_army or army_oversight : the Senate Guard and a handful of loyal officers ?] move to seize the Senate, claiming to "save the Republic from Jedi treason". ?]
+[? if gambit_kind = "decree" and peace_achieved : The Federal Compact has ended the war, and with it every excuse for his powers. ?] [? if gambit_kind = "decree" : The war is over, but the Chancellor has not given up his powers. Now Chancellor Palpatine announces that he has uncovered "a Jedi plot to overthrow the Republic". By emergency decree, he dissolves the Jedi Council and places the Senate Guard, the Coruscant Security Force and [? if clones > 0 : the Grand Army ?][? if clones <= 0 : every armed force he can command ?] under his personal authority. ?][? if gambit_kind = "coup" : The Sith Lord has run out of patience. Palpatine, who never quite held the power he needed, strikes with everything he has built over fifteen years. Vice Chair Mas Amedda, the Security Bloc's hard men and [? if kamino_army and not army_oversight : a secret army of clones nobody controls ?][? if not kamino_army or army_oversight : the Senate Guard and a handful of loyal officers ?] move to seize the Senate, claiming to "save the Republic from Jedi treason". ?]
+
+[? if gambit_kind = "coup" and pal_reach_low : But Palpatine never held the Chancellery long enough to bend its institutions to his will, and he has fewer friends than he thinks. ?]
 
 [? if sidious_known : Thanks to our investigations, the Jedi and much of the Senate already suspect who is really behind it. ?][? if not sidious_known : Few understand who is really behind it. ?]
 

@@ -34,7 +34,7 @@ on-arrival: capital -= 2; senate_resolve += 1.5 if mod_relation >= 45; senate_re
 Senators from four blocs begin meeting quietly in Bail Organa's office. They call themselves nothing at all. It is safer that way.
 
 @vonc
-view-if: senate_resolve >= 4 and not war and not rc_chancellor
+view-if: senate_resolve >= 3 and not rc_chancellor
 subtitle: [? if evidence >= 6 : We may have enough to bring the Chancellor down. ?][? if evidence < 6 : A long shot. If it fails, the Chancellor will be stronger than ever. ?]
 choose-if: capital >= 2
 unavailable-subtitle: Needs 2 political capital.

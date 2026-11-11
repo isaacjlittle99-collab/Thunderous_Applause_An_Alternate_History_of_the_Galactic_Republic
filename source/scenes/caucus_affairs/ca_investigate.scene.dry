@@ -19,6 +19,7 @@ Too many of the Republic's crises seem to serve someone. Our evidence is **[+ ev
 - @slicer: Hire a slicer to break into sealed records.
 - @share: Share our findings with the Jedi Council.
 - @archives: Pursue the gap in the Jedi Archives.
+- @brief: Brief trusted senators and justices in confidence.
 - @charges: Lay charges before the Senate.
 - @records: Comb through public records.
 - @easy_discard
@@ -68,9 +69,18 @@ on-arrival: capital -= 1; kamino_hunt += 1; evidence += 0.3
 
 Our people work through old hyperspace charts, cargo manifests and the travel logs of a dead Jedi Master named Sifo-Dyas. [? if kamino_hunt >= 2 : The gap is closing. One more push and we will find the missing world. ?]
 
+@brief
+view-if: evidence >= 6 and not case_briefed and not sidious_known and not finale
+subtitle: −1 political capital. When the case is ready, it will have friends waiting in the Senate and the courts.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; case_briefed = 1; senate_resolve += 0.3
+
+Bail Organa invites a handful of senators and two Supreme Court justices to a quiet dinner and shows them part of the file. Nobody says anything aloud. Everybody understands.
+
 @charges
 view-if: evidence >= 7 and not sidious_known and not finale
-subtitle: [? if evidence >= 10 : Our case is conclusive. This is the moment. ?][? if evidence < 10 : Our case is strong but not conclusive. If it fails, the Caucus may not survive. ?]
+subtitle: [? if dooku_turned or evidence >= 10 : Our case is conclusive. This is the moment. ?][? if not dooku_turned and evidence >= 9 and evidence < 10 : Our case is strong. It will probably hold, but not certainly. ?][? if not dooku_turned and evidence < 9 : Our case is not yet strong enough; it will probably fail, and if it fails, the Caucus may not survive. ?]
 choose-if: capital >= 2
 unavailable-subtitle: Needs 2 political capital.
 on-arrival: {! Q.capital -= 2; SW.breakPledge(Q, 'no_probe', 'the Caucus laid charges before the Senate'); !}
