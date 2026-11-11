@@ -38,29 +38,14 @@ view-if: peace_talks >= 3
 subtitle: −2 political capital. A reformed Republic in which the seceded worlds could live. Needs a Senate majority.
 choose-if: capital >= 2
 unavailable-subtitle: Needs 2 political capital.
-on-arrival: {!
-Q.capital -= 2;
-var st = SW.stance(Q, {mod: 0.5, guild: 0.45, rim: 0.8, sec: 0.15, ind: 0.7, pal: 0.1, cis: 0.9}, true);
-st.mod += (Q.war_weariness - 30) / 200; st.ind += (Q.war_weariness - 30) / 200;
-st.mod += Q.rim_enfranchised * 0.1; st.ind += Q.rim_enfranchised * 0.1;
-Q.fc_vote = SW.vote(Q, st, 1, 'peace');
-Q.vote_html = SW.voteBanner('The Federal Compact', Q.fc_vote);
-if (Q.fc_vote >= 50) { Q.fc_passed = 1; }
-!}
+on-arrival: {! Q.capital -= 2; SW.federalCompact(Q); if (Q.federal_compact) this.achieve('federal_compact'); !}
 go-to: fc_outcome
 
 @fc_outcome
-on-arrival: {!
-if (Q.fc_passed) {
-    var sabotage = (Q.dooku_turned ? 0 : 0.35) + Q.grand_plan / 300 - (Q.evidence >= 6 ? 0.2 : 0) - (Q.satine_mediation ? 0.1 : 0);
-    if (Math.random() < sabotage) { Q.fc_sabotaged = 1; Q.peace_talks = 1; Q.fear += 6; Q.war_weariness += 3; }
-    else { Q.federal_compact = 1; Q.war = 0; Q.peace_achieved = 1; Q.outer_sep -= 20; Q.midrim_sep -= 15; Q.corporate_sep -= 15; Q.fear -= 10; Q.faith += 5; this.achieve('federal_compact'); }
-}
-!}
 
 [+ vote_html +]
 
-[? if federal_compact : The Senate approves the Federal Compact. Seceded worlds may return with guarantees of autonomy, fair representation and an end to guild monopolies. Within weeks, system after system lowers the Confederate flag. The guns fall silent. ?][? if fc_sabotaged : The Senate approves the Compact, but on the night it is to be signed, a bomb destroys the Separatist delegation's ship. Each side blames the other. The war resumes, more bitter than before. Someone did not want peace. ?][? if not fc_passed : The Compact fails on the floor. The Chancellor's allies call it "surrender with a ribbon on it". ?]
+[? if federal_compact : The Senate approves the Federal Compact. Seceded worlds may return with guarantees of autonomy, fair representation and an end to guild monopolies. Within weeks, system after system lowers the Confederate flag. The guns fall silent. ?][? if fc_sabotaged : The Senate approves the Compact, but on the night it is to be signed, a bomb destroys the Separatist delegation's ship. Each side blames the other. The war resumes, more bitter than before. Someone did not want peace. ?][? if not fc_passed and not vote_tabled : The Compact fails on the floor. The Chancellor's allies call it "surrender with a ribbon on it". ?]
 
 @recognise
 view-if: war and (war_balance <= -2 or war_weariness >= 60)

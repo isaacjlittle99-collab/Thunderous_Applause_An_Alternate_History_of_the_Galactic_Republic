@@ -54,7 +54,7 @@
     'corruption_scandal', 'piracy', 'famine', 'embargo', 'secession', 'profiteering', 'protest',
     'assassination', 'leak', 'unease', 'sunset', 'battle', 'gunray', 'pal_media', 'faction_crisis',
     'last_days', 'coalition_strain', 'leadership', 'faction_leader', 'bureau_reform', 'scheme',
-    'trail', 'world_election', 'referendum', 'recall'
+    'trail', 'world_election', 'referendum', 'recall', 'case'
   ];
 
   // Initial pairwise affinity of each bloc for each potential partner/candidate bloc (0-100).
@@ -221,6 +221,7 @@
     for (var gd = 0; gd < SW.REGIONS.length; gd++) D['grievance_' + SW.REGIONS[gd]] = 0;
     D.recall_ready = 0; D.recall_region = 'core'; D.recall_region_name = ''; D.recall_why = ''; D.recall_lost = 0; D.recall_timer = 0; D.recalls = 0;
     D.cv_outlook = 0; D.cv_vote = 0; D.cv_won = 0; D.mandate_term = -1; D.mandates_won = 0; D.mandates_lost = 0; D.mandate_ok = 0;
+    D.pal_office_months = 0; D.pal_reach_low = 0; D.case_ready = 0; D.case_timer = 0; D.case_odds = 0; D.case_briefed = 0;
     D.trail_debate_for = -1; D.trail_endorse_for = -1; D.trail_research_for = -1; D.trail_gaffe_for = -1; D.trail_smear_for = -1;
     D.guild_patience = 60; D.guild_hurt_turn = -99; D.guild_patience_why = ''; D.guild_lobby = 0; D.guild_lobby_halved = 0; D.guild_step_ready = 0;
     D.guild_step_1 = 0; D.guild_step_2 = 0; D.guild_step_3 = 0; D.guild_step_4 = 0; D.guild_step_5 = 0; D.gs_step = 0; D.gs_heading = ''; D.gs_world = 'Rodia'; D.gs_leader = ''; D.gs_why = ''; D.gs_open = 0; D.gs_senate_ok = 0; D.gs_vote = 0;
@@ -3455,6 +3456,8 @@
     SW.worldElectionCheck(Q);
     SW.referendumCheck(Q);
     SW.recallCheck(Q);
+    var groundwork = (Q.warrant ? 1 : 0) + (Q.chair_judiciary === 'rc' ? 1 : 0) + (Q.dooku_turned ? 1 : 0) + ((Q.evidence_public || 0) >= 2 ? 1 : 0) + (Q.case_briefed ? 1 : 0);
+    Q.case_ready = (((Q.evidence >= 9 && groundwork >= 1) || (Q.evidence >= 8.5 && groundwork >= 2)) && !Q.sidious_known && !Q.finale && !Q.game_ending && !(Q.case_timer > 0) && Q.date >= 60 && !Q.sidious_defeated) ? 1 : 0;
     Q.mandate_ok = (Q.rc_chancellor && Q.mandate_term !== Q.elections_held && !Q.election_due && !Q.election_suspended && Q.next_election_date - Q.date > 12) ? 1 : 0;
     SW.factionAgendas(Q);
     SW.cardAvailability(Q);
@@ -3486,6 +3489,8 @@
   // ------------------------------------------------------------------ turn advance
   SW.advanceTurn = function (Q, engine) {
     SW.advanceCalendar(Q);
+    // how long Palpatine (or his puppet) has held the Chancellery: the longer, the deeper his grip on the state
+    if (Q.pal_chancellor || Q.puppet_chancellor) Q.pal_office_months = (Q.pal_office_months || 0) + (Q.months_per_turn > 0 ? Q.months_per_turn : 0);
     for (var i = 0; i < Q.timers.length; i++) {
       var key = Q.timers[i] + '_timer';
       if (Q[key] > 0) Q[key] -= 1;
@@ -3566,6 +3571,33 @@
     return Q.emergency_sunset + Q.term_limits_protected + ((Q.army_oversight || !Q.kamino_army) ? 1 : 0) + Q.senate_guard_reformed + Q.jedi_independence +
       Q.banking_independent + Q.rim_enfranchised + Q.anti_corruption;
   };
+  // The Federal Compact: a Senate bill that ends (or forestalls) the war, if it survives someone's sabotage
+  SW.compactSabotage = function (Q) {
+    if (Q.dooku_turned) return 0;
+    return SW.clamp(0.3 + Q.grand_plan / 300 - (Q.evidence >= 6 ? 0.15 : 0) - (Q.jedi_suspicion >= 6 ? 0.1 : 0) - (Q.satine_mediation ? 0.1 : 0), 0.05, 0.9);
+  };
+  SW.federalCompact = function (Q) {
+    var st = SW.stance(Q, {mod: 0.55, guild: 0.5, rim: 0.8, sec: 0.15, ind: 0.75, pal: 0.1, cis: 0.9}, true);
+    var lift = (Q.war_weariness - 25) / 120 + (Q.satine_mediation ? 0.05 : 0) + (Q.dooku_turned ? 0.1 : 0) + (Q.war && Q.war_balance < 0 ? 0.05 : 0);
+    st.mod += lift + Q.rim_enfranchised * 0.1; st.ind += lift + Q.rim_enfranchised * 0.1; st.guild += lift / 2;
+    for (var sb in st) st[sb] = SW.clamp(st[sb], 0, 1);
+    Q.fc_vote = SW.vote(Q, st, 1, 'peace');
+    Q.vote_html = SW.voteBanner('The Federal Compact', Q.fc_vote);
+    Q.fc_passed = Q.fc_vote >= 50 ? 1 : 0;
+    Q.fc_sabotaged = 0;
+    if (!Q.fc_passed) return;
+    if (SW.rnd() < SW.compactSabotage(Q)) { Q.fc_sabotaged = 1; Q.peace_talks = 1; Q.fear += 6; Q.war_weariness += 3; }
+    else { Q.federal_compact = 1; Q.war = 0; Q.peace_achieved = 1; Q.outer_sep -= 20; Q.midrim_sep -= 15; Q.corporate_sep -= 15; Q.fear -= 10; Q.faith += 5; }
+  };
+  // the odds that charges before the Senate stick: strong evidence, a warrant, the Jedi's suspicion and our own committee help
+  SW.chargesOdds = function (Q) {
+    var p = 0.2 + (Q.evidence - 7) * 0.2 + (Q.warrant ? 0.1 : 0) + (Q.jedi_suspicion >= 6 ? 0.1 : 0) + (Q.chair_judiciary === 'rc' ? 0.1 : 0) +
+      (Q.senate_resolve >= 3 ? 0.05 : 0) - ((Q.evidence_public || 0) < 1 ? 0.1 : 0);
+    if (Q.dooku_turned) p = Math.max(p, 0.9);
+    return SW.clamp(p, 0.05, Q.dooku_turned ? 0.95 : 0.92);
+  };
+  // Palpatine's reach into the state: guards, admirals, governors and the army follow a man who has held power
+  SW.palReach = function (Q) { return SW.clamp(0.85 + (Q.pal_office_months || 0) / 160, 0.85, 1); };
   SW.routeEnding = function (Q) {
     Q.cis_negotiated = 0; Q.shadow_remains = 0;
     if (Q.cis_victory) return 'confederacy';

@@ -41,7 +41,7 @@ The Caucus denounces secession in the strongest terms. Dooku's followers call th
 
 @dialogue
 subtitle: The Pacifists approve; a door opens.
-on-arrival: pacifist_dissent -= 5; peace_talks += 0.5; cis_relation += 5; hawk_dissent += 4; dooku_doubt += 1 if dooku_contact
+on-arrival: pacifist_dissent -= 5; peace_talks += 0.5; cis_relation += 5; hawk_dissent += 4; dooku_doubt += 1 if dooku_contact; dooku_contact = 1
 
 The Caucus offers to hear the grievances of every world that is considering secession. Some accept.
 

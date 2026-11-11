@@ -8,13 +8,22 @@ new-page: true
 face-image: img/ev_war.svg
 on-arrival: {!
 Q.gambit_resolved = 1;
-if (Q.clones >= 3 && !Q.chips_removed && !Q.army_oversight) { Q.order66 = 1; Q.jedi_strength = 1.5; }
-var f = SW.forces(Q);
-var sith = f.sith;
-if (Q.gambit_kind === 'exposed') sith -= f.sithParts.security_bloc * 0.5 + 1;
-if (Q.gambit_kind === 'coup') sith -= 1;
+var reach = SW.palReach(Q);
+// Order 66 needs the chips, and either a Chancellor long enough in office to plant the command codes
+// or a plan so far advanced that his contingency is in place regardless
+var o66 = Q.clones >= 3 && !Q.chips_removed && !Q.army_oversight;
+if (Q.gambit_kind === 'coup' && (Q.pal_office_months || 0) < 12 && Q.grand_plan < 55) o66 = false;
+if (o66) { Q.order66 = 1; Q.jedi_strength = 1.5; }
+var f = SW.forces(Q), P = f.sithParts;
+var sith = f.sith, rep = f.rep;
+// exposed before the Senate: his guards and governors defect, his allies desert, and the Senate rallies
+if (Q.gambit_kind === 'exposed') sith -= P.security_bloc * 0.5 + P.guard * 0.5 + P.governors + 1;
+// a coup from outside office: only as many follow him as his years in power bought
+if (Q.gambit_kind === 'coup') sith -= (P.clones + P.navy + P.security_bloc + P.secret_army) * (1 - reach) + 1;
+// after a peace there is no war to justify him, the army is going home, and the returned worlds stand with the Senate
+if (Q.peace_achieved) { sith -= 1.5 + P.clones * 0.4; if (!Q.pact_formed) rep += Q.member_forces * 0.5; }
 if (sith < 0.5) sith = 0.5;
-Q.gb_ratio = Math.round(100 * (f.rep + Q.gambit_bonus) / sith) / 100;
+Q.gb_ratio = Math.round(100 * (rep + Q.gambit_bonus) / sith) / 100;
 if (Q.gb_ratio > 1.1) { Q.sidious_defeated = 1; Q.sidious_method = 'trial'; Q.sidious_gone = 1; }
 else if (Q.gb_ratio >= 0.6) { Q.civil_war_result = 'long'; Q.game_ending = 1; }
 else { Q.empire_declared = 1; Q.game_ending = 1; }

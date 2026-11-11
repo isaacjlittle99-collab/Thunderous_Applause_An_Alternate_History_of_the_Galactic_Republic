@@ -14,6 +14,7 @@ new-page: true
 - @rallies: Organise peace rallies across the Core.
 - @channel: Open a channel to Separatist moderates.
 - @corridors: Negotiate humanitarian corridors.
+- @compact: Table a Federal Compact in the Senate.
 - @easy_discard
 
 @rallies
@@ -39,3 +40,14 @@ unavailable-subtitle: Not enough political capital.
 on-arrival: capital -= 1; rim_hardship -= 2; war_weariness -= 3; faith += 0.5
 
 Medical frigates under neutral flags begin to reach the worst-hit worlds.
+
+@compact
+view-if: peace_talks >= 3 and not rc_in_govt
+subtitle: −2 political capital. From the opposition benches, the Caucus proposes a reformed Republic in which the seceded worlds could live. Needs a Senate majority.
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: {! Q.capital -= 2; SW.federalCompact(Q); if (Q.federal_compact) this.achieve('federal_compact'); !}
+
+[+ vote_html +]
+
+[? if federal_compact : The Senate approves the Federal Compact. Seceded worlds may return with guarantees of autonomy, fair representation and an end to guild monopolies. Within weeks, system after system lowers the Confederate flag. The guns fall silent. ?][? if fc_sabotaged : The Senate approves the Compact, but on the night it is to be signed, a bomb destroys the Separatist delegation's ship. Each side blames the other. The war resumes, more bitter than before. Someone did not want peace. ?][? if not fc_passed and not vote_tabled : The Compact fails on the floor. The Chancellor's allies call it "surrender with a ribbon on it". ?]

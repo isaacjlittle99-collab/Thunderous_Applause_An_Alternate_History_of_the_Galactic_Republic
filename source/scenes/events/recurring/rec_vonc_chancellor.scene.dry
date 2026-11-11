@@ -3,7 +3,7 @@ new-page: true
 face-image: img/ev_senate.svg
 on-arrival: {!
 var st = SW.stance(Q, {mod: 0.35, guild: 0.3, rim: 0.5, sec: 0.15, ind: 0.4, pal: 0, cis: 0.6}, true);
-var adj = (Q.evidence - 5) * 0.04 + (Q.senate_resolve - 4) * 0.03 + (Q.corruption - 60) / 300;
+var adj = (Q.evidence - 5) * 0.04 + (Q.senate_resolve - 4) * 0.03 + (Q.corruption - 60) / 300 + SW.clamp(Q.rc_momentum || 0, -3, 3) * 0.02;
 for (var b in st) if (b !== 'pal') st[b] = SW.clamp(st[b] + adj, 0, 1);
 if (Q.chancellor_bloc !== 'pal') { st.pal = 0.6; st[Q.chancellor_bloc] = 0.05; }
 Q.vc_vote = SW.vote(Q, st, 1, 'vonc');

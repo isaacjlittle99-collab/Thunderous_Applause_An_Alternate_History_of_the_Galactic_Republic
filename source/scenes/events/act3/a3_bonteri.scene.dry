@@ -16,9 +16,9 @@ on-arrival: bonteri_contact = 1
 
 @answer
 subtitle: +1 peace channel.
-on-arrival: peace_talks += 1; cis_relation += 5; pacifist_dissent -= 3
+on-arrival: peace_talks += 1; cis_relation += 5; pacifist_dissent -= 3; dooku_contact = 1; dooku_doubt += 1
 
-Bonteri and Caucus envoys begin to meet, quietly, on neutral worlds.
+Bonteri and Caucus envoys begin to meet, quietly, on neutral worlds. Through her, word of what the Caucus stands for reaches Count Dooku himself.
 
 @report
 view-if: not rc_chancellor
