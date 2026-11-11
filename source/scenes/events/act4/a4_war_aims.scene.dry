@@ -39,4 +39,3 @@ go-to: aims_result
 
 [? if wa_overruled : The Senate rejects our proposal. The Republic will fight for **[+ war_aim_text +]**. ?][? if not wa_overruled : The Republic will fight for **[+ war_aim_text +]**. ?]
 
-*The war aim is shown on the Forces tab. Every second turn, the War Council decides where the Republic commits its strength.*

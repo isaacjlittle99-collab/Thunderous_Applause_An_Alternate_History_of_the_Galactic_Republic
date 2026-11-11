@@ -138,6 +138,24 @@
     if (Q.bureau_relation < 25 && (Q.rc_in_govt || Q.rc_chairs > 0)) h += '<div class="sb-note warn">Our bills are being lost in committee.</div>';
     var dos = Q.bureau_dossier || 0;
     if (dos >= 0.5 && (Q.rc_in_govt || Q.rc_chairs > 0)) h += '<div class="sb-note ' + (dos >= 3 ? 'bad' : 'warn') + '">Their case against us: ' + (dos >= 5 ? '<b>ready to strike</b>' : (dos >= 3 ? 'half built' : 'gathering files')) + '.</div>';
+    // relations between the other blocs: who will not sit together, and each bloc's closest ally
+    if (SW.rel) {
+      h += head('Between the blocs');
+      var others = Q.parties.filter(function (b) { return b !== 'rc' && SW.REL_BLOCS.indexOf(b) >= 0; });
+      var cold = [], warm = [];
+      for (var ia = 0; ia < others.length; ia++) {
+        var a = others[ia];
+        h += row(bloc(Q, a), SW.stanceWord(SW.firm(Q, a)) + ', needs ' + SW.joinWord(Q, a));
+        for (var ib = ia + 1; ib < others.length; ib++) {
+          var bb2 = others[ib], v = SW.rel(Q, a, bb2);
+          var pair = SW.name(Q, a) + ' and ' + SW.name(Q, bb2) + ' (' + SW.relWord(v) + ')';
+          if (!SW.relOk(Q, a, bb2)) cold.push(pair); else warm.push({t: pair, v: v});
+        }
+      }
+      warm.sort(function (x, y) { return y.v - x.v; });
+      if (warm.length) h += '<div class="sb-note"><b>Warmest ties:</b> ' + warm.slice(0, 3).map(function (x) { return x.t; }).join('; ') + '.</div>';
+      h += '<div class="sb-note' + (cold.length ? ' warn' : '') + '">' + (cold.length ? '<b>Will not govern together:</b> ' + cold.join('; ') + '.' : 'Every pair of blocs could, in principle, govern together.') + '</div>';
+    }
     h += head('Committee chairs');
     for (var c = 0; c < SW.COMMITTEES.length; c++) {
       var cm = SW.COMMITTEES[c];
@@ -146,8 +164,7 @@
     var pls = SW.pledgeList ? SW.pledgeList(Q) : [];
     h += head('Our pledges');
     if (pls.length) for (var pi = 0; pi < pls.length; pi++) h += '<div class="sb-note">' + pls[pi] + '</div>';
-    else h += '<p class="sb-note">None. Pledges made in a Chancellor race or coalition talks bind us until the next Chancellor election.</p>';
-    if (pls.length) h += '<p class="sb-note">Breaking a pledge costs that bloc\'s goodwill and our momentum, and strains a coalition. Budgets and votes warn before we break one.</p>';
+    else h += '<p class="sb-note">None.</p>';
     return h;
   }
 
@@ -196,7 +213,7 @@
           var fr = SW.FRONTS[fi];
           h += row(SW.FRONT_SHORT[fr], SW.label('war', SW.front(Q, fr)) + (Q.war_priority === fr ? ' ★' : ''));
         }
-        h += '<p class="sb-note">The Outer Rim Sieges feed Rim hardship and separatism; the Hydian Way, the Republic\'s trade; the Core approaches, fear on Coruscant. ★ marks this season\'s priority.</p>';
+        h += '<p class="sb-note">★ marks this season\'s priority.</p>';
       }
       if (Q.war_aim_text) h += row('War aim', Q.war_aim_text);
       h += row('Strategy set by', SW.warCommand && SW.warCommand(Q) ? '<span class="good">the Caucus</span>' : 'the Chancellor\'s War Council');
@@ -234,7 +251,7 @@
     if ((Q.rim_donors || 0) >= 1) h += row('Rim grassroots donors', '+' + Math.floor(Q.rim_donors) + ' capital a year');
     var tired = [];
     for (var src in SW.REVENUE) if (src !== 'none' && (Q['rev_streak_' + src] || 0) >= 2) tired.push(SW.REVENUE[src].name + ' (' + Q['rev_streak_' + src] + ' years running)');
-    if (tired.length) h += '<div class="sb-note warn">Tax fatigue: ' + tired.join(', ') + '. Each further year bites harder.</div>';
+    if (tired.length) h += '<div class="sb-note warn">Tax fatigue: ' + tired.join(', ') + '.</div>';
     if (Q.budget_defeats) h += '<div class="sb-note bad">Our last budget was defeated. Another defeat ' + (Q.rc_chancellor && !Q.constructive_vonc ? 'would bring the government down.' : 'would shake the coalition again.') + '</div>';
     if (Q.budgets) {
       h += head('Last budget');
@@ -245,7 +262,6 @@
     h += row('Bacta (Thyferra)', SW.marketLabel(Q.bacta || 0)) + bar(Q.bacta || 0, 100, 'bad-fill');
     h += row('Tibanna gas (Bespin)', SW.marketLabel(Q.tibanna || 0)) + bar(Q.tibanna || 0, 100, 'bad-fill');
     h += row('Spice (Kessel)', SW.marketLabel(Q.spice || 0) + (Q.spice_legal ? ' · legal' : '')) + bar(Q.spice || 0, 100, 'bad-fill');
-    h += '<p class="sb-note">The war drives up bacta and Tibanna; hardship and corruption drive the spice trade. A market in crisis forces a decision. Heavy debt gives the Banking Clan a say in the Republic\'s affairs, and in our elections: angry guilds and creditors bankroll our rivals.</p>';
     return h;
   }
 
@@ -280,7 +296,6 @@
     if (Q.election_season && SW.whipText) h += SW.whipText(Q);
     if (Q.wv_ready && Q.wv_name) h += row('Coming vote', Q.wv_name);
     if (Q.ref_ready && Q.ref_world) h += row('Referendum', Q.ref_world + ': ' + (Q.ref_poll_word || ''));
-    h += '<p class="sb-note">Momentum lifts our support everywhere and sways the blocs at a Chancellor election; it fades each quarter unless renewed by reforms, good campaigns and won contests. In election season (the last year before a vote) the Caucus can campaign every turn.</p>';
     return h;
   }
 
@@ -299,7 +314,6 @@
         h += '<div class="sb-note' + (mood <= -3 ? ' bad' : (mood <= -1 ? ' warn' : '')) + '">' + SW.leaderLine(Q, b) + '</div>';
       }
     }
-    h += '<p class="sb-note">A leader\'s mood follows what they care about and how the Caucus has treated them. Angry leaders dig in, in votes and coalitions; pleased ones bend. See the Holocron.</p>';
     h += head('Our advisors');
     var any = false;
     for (var a in SW.ADVISOR_NAMES) {

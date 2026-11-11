@@ -11,7 +11,7 @@ on-arrival: coup_warned = 1
 
 Fleet officers loyal to Wilhuff Tarkin have been meeting aboard a Star Destroyer above Eriadu. They talk about a Senate too weak to win the war, and about what disciplined men could do about it.
 
-*With fear this high and the Navy's loyalty to the Senate this low, the Security Bloc could attempt a coup. A Navy at least 50% loyal, or a Senate Guard that answers to the Senate, would stop it.*
+*With fear this high and the Navy wavering, the Security Bloc could attempt a coup.*
 
 - @purge: Have the plotters reassigned.
 - @reassure: Reassure the fleet.

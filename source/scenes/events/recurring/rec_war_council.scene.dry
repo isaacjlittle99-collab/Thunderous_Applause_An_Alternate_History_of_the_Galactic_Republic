@@ -13,8 +13,6 @@ on-arrival: {! SW.warCouncilOpen(Q); !}
 
 **The fronts:** [+ wc_fronts +]. The Republic is fighting for [+ war_aim_text +].
 
-*Each front feeds a different part of the galaxy. Losing the Outer Rim Sieges means hunger and separatism on the Rim. Losing the Hydian Way strangles the Republic's trade. Losing the Core approaches brings fear to Coruscant.*
-
 [? if wc_command : The War Council follows the Caucus's lead. Where does the Republic commit its strength this season? ?][? if not wc_command : The Chancellor's War Council means to [+ wc_gov_text +]. The Caucus can lobby for a different priority (1 political capital, and no guarantee), or let the plan stand. ?]
 
 - @outer: Relieve the Outer Rim sieges.

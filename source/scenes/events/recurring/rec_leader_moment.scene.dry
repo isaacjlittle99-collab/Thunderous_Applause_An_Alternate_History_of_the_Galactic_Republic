@@ -13,8 +13,6 @@ on-arrival: {! SW.leaderMomentOpen(Q); !}
 
 [? if lm_ultimatum : "[+ lm_ask +]" ?][? if not lm_ultimatum : [+ lm_offer +] [+ lm_leader +] asks what the Caucus needs. ?]
 
-*Leaders' moods follow what they care about and what they remember of the Caucus. An angry leader holds their bloc's line harder, in votes and in coalitions; a pleased one bends.*
-
 - @accept: [+ lm_label +]
 - @refuse: Refuse.
 - @vote: Ask them to back our next reform bill.

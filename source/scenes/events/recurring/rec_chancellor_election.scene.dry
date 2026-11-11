@@ -7,6 +7,9 @@ new-page: true
 face-image: img/ev_senate.svg
 on-arrival: {!
 SW.rotateRcLeader(Q);
+// an election forced by a collapsing coalition or by the bureaucrats: voters lose faith in the system itself
+Q.el_broken = 0;
+if (Q.govt_fell_now && (Q.fall_reason === 'collapse' || Q.fall_reason === 'bureaucrats')) { SW.brokenSystem(Q, Q.fall_reason === 'collapse' ? 'collapse' : 'bureau'); Q.el_broken = 1; }
 SW.senateSession(Q);
 SW.electionOpen(Q);
 !}
@@ -17,13 +20,13 @@ SW.electionOpen(Q);
 
 [+ el_text +]
 
+[? if el_broken : Voters are losing patience with a Senate that cannot govern. Since the government fell apart, Palpatine's bloc and the separatists have gained ground across the galaxy. ?]
+
 [? if el_warchest : **Money in the race.** [+ el_warchest_text +] ?]
 
 [? if el_mom_note : [+ el_mom_text +] ?]
 
 [? if naboo_sympathy and el_has_pal : The Senate is moved by the plight of Naboo, and Senator Palpatine is widely seen as the sympathetic candidate. ?]
-
-*Each candidate has strengths with some blocs and weaknesses with others, and the Caucus's momentum sways every bloc.*
 
 - @el_run: Run a Caucus candidate for Supreme Chancellor.
 - @el_back_mod: Endorse [+ mod_leader +] of the Core Moderates.
@@ -113,8 +116,6 @@ on-arrival: {! Q.el_whip = SW.whipText(Q, Q.el_cands, Q.el_backing, '_r'); Q.el_
 The Caucus is backing **[+ el_backing_name +]**. Before the Senate votes, we can court other blocs with political capital, or win them with promises. We have [+ capital +] political capital.
 
 [+ el_whip +]
-
-*A pledge wins a bloc's votes outright, but it binds the Caucus until the next Chancellor election. Break it and that bloc's leader will remember.*
 
 - @el_court_mod: Court the Core Moderates.
 - @el_court_ind: Court the Independents.
@@ -314,7 +315,7 @@ on-arrival: {! SW.electionSecond(Q); !}
 go-to: el_result_rc if el_winner = "rc"; el_result_other if el_winner != "rc"
 
 @el_result_rc
-on-arrival: {! SW.prepareRcCoalitions(Q); Q.rc_chancellor_count = (Q.rc_chancellor_count || 0) + 1; !}
+on-arrival: {! Q.gov_minority_swing = 0; SW.prepareRcCoalitions(Q); Q.rc_chancellor_count = (Q.rc_chancellor_count || 0) + 1; !}
 achievement: caucus_chancellor
 
 = [+ el_winner_name +] is elected!
@@ -323,6 +324,8 @@ achievement: caucus_chancellor
 
 The rotunda erupts. For the first time in a generation, a reformer holds the Republic's highest office. Now [+ el_winner_name +] must assemble a governing coalition.
 
+[? if coal_all_blocked : **No coalition the Caucus could lead has both the seats and partners willing to sit together.** Only a minority government is possible this time. ?]
+
 - @el_coal_0: [+ el_opt0_label +]
 - @el_coal_1: [+ el_opt1_label +]
 - @el_coal_2: [+ el_opt2_label +]
@@ -330,6 +333,7 @@ The rotunda erupts. For the first time in a generation, a reformer holds the Rep
 - @el_coal_4: [+ el_opt4_label +]
 - @el_coal_5: [+ el_opt5_label +]
 - @el_coal_6: [+ el_opt6_label +]
+- @el_coal_7: [+ el_opt7_label +]
 - @el_coal_minority: Govern as a minority, relying on case-by-case support.
 
 @el_coal_0
@@ -388,22 +392,38 @@ unavailable-subtitle: [+ el_opt6_why +]
 on-arrival: {! SW.chooseRcCoalition(Q, 6); !}
 go-to: el_chairs
 
+@el_coal_7
+view-if: el_opt7
+subtitle: [+ el_opt7_bureau +] Built in order of our relations.
+choose-if: el_opt7_ok
+unavailable-subtitle: [+ el_opt7_why +]
+on-arrival: {! SW.chooseRcCoalition(Q, 7); !}
+go-to: el_chairs
+
 @el_coal_minority
 subtitle: Every vote will be a struggle, and the coalition will be fragile.
-on-arrival: {! SW.setGovt(Q, ['rc', 'ind'], 'Caucus Minority Government'); SW.openChairs(Q, Math.round(Q.rc_r) + 20); Q.coalition_dissent = 2; !}
+on-arrival: {! SW.brokenSystem(Q, 'minority'); Q.gov_minority_swing = 1; SW.setGovt(Q, SW.relOk(Q, 'rc', 'ind') ? ['rc', 'ind'] : ['rc'], 'Caucus Minority Government'); SW.openChairs(Q, Math.round(Q.rc_r) + 20); Q.coalition_dissent = 2; !}
 go-to: el_chairs
 
 @el_result_other
 on-arrival: {!
-var members = SW.formCoalitionAuto(Q, Q.el_winner, false);
-SW.setGovt(Q, members);
-Q.el_invited = (Q.el_winner !== 'cis' && SW.affinity(Q, Q.el_winner, 'rc') >= 38 && Q.rc_r >= 5) ? 1 : 0;
-if (Q.el_backing === Q.el_winner) Q.el_invited = 1;
-Q.el_walkout_blocks = (Q.walkout_bloc && Q.date < Q.walkout_until && (Q.govt_blocs || []).indexOf(Q.walkout_bloc) >= 0) ? 1 : 0;
-if (Q.el_walkout_blocks) Q.el_invited = 0;
+// the new Chancellor builds a coalition in order of relationship, the Caucus included
+var members = SW.formCoalitionAuto(Q, Q.el_winner, true);
+var gov = members.filter(function (b) { return b !== 'rc'; });
+var needRc = members.indexOf('rc') >= 0;
+var friendly = gov.every(function (b) { return SW.relOk(Q, 'rc', b); });
+var notHostile = gov.every(function (b) { return SW.rel(Q, 'rc', b) >= 10; });
+Q.el_walkout_blocks = (Q.walkout_bloc && Q.date < Q.walkout_until && gov.indexOf(Q.walkout_bloc) >= 0) ? 1 : 0;
+Q.el_invited = (Q.el_winner !== 'cis' && Q.rc_r >= 3 && friendly && !Q.el_walkout_blocks && (needRc || Q.el_backing === Q.el_winner)) ? 1 : 0;
+if (Q.el_deal_won && notHostile) { Q.el_invited = 1; Q.el_walkout_blocks = 0; }
+Q.el_rc_needed = needRc && Q.el_invited ? 1 : 0;
+// if they wanted us but cannot have us, they build without us
+if (needRc && !Q.el_invited) gov = SW.formCoalitionAuto(Q, Q.el_winner, false);
+SW.setGovt(Q, gov);
+Q.gov_minority_swing = 0;
+if (SW.seats(Q, gov) < 50 && !Q.el_rc_needed) { SW.brokenSystem(Q, 'minority'); Q.gov_minority_swing = 1; Q.coalition_name = SW.candidateName(Q, Q.el_winner) + '\'s minority government'; }
 Q.el_pal_won = Q.el_winner === 'pal' ? 1 : 0;
 Q.el_join_bureau = SW.bureauReaction(SW.bureauComfort(Q, (Q.govt_blocs || []).concat(['rc'])));
-if (Q.el_deal_won) { Q.el_invited = 1; Q.el_walkout_blocks = 0; }
 SW.juniorPrice(Q);
 SW.assignChairs(Q);
 !}
@@ -414,7 +434,9 @@ SW.assignChairs(Q);
 
 [? if el_pal_won : Senator Palpatine of Naboo accepts the office with quiet humility, promising to "end the corruption and paralysis of the Senate". The galleries applaud. ?][? if not el_pal_won : [+ el_winner_name +] forms a government: the [+ coalition_name +]. ?]
 
-[? if el_invited and el_deal_won : [+ el_winner_name +] keeps the bargain struck between the ballots: the Caucus is invited into the government, and the [+ el_deal_chair_name +] chair is ours if we join. ?][? if el_invited and not el_deal_won : The new Chancellor's office has invited the Caucus to join the governing coalition, with a share of the committee chairs. ?] [? if el_invited : [+ el_join_price +] ?][? if not el_invited and el_walkout_blocks : The [+ walkout_name +], who walked out on the Caucus, sit in the new government and will not have us. ?][? if not el_invited and not el_walkout_blocks : The new government does not need the Caucus, and has not asked for it. ?]
+[? if gov_minority_swing : No coalition can command a majority, and the new Chancellor must govern as a minority. Voters lose patience with a Senate that cannot govern: Palpatine's bloc and the separatists gain. ?]
+
+[? if el_invited and el_deal_won : [+ el_winner_name +] keeps the bargain struck between the ballots: the Caucus is invited into the government, and the [+ el_deal_chair_name +] chair is ours if we join. ?][? if el_invited and not el_deal_won and el_rc_needed : The new Chancellor needs the Caucus's votes for a majority, and has invited us into the government, with a share of the committee chairs. ?][? if el_invited and not el_deal_won and not el_rc_needed : The new Chancellor's office has invited the Caucus to join the governing coalition, with a share of the committee chairs. ?] [? if el_invited : [+ el_join_price +] ?][? if not el_invited and el_walkout_blocks : The [+ walkout_name +], who walked out on the Caucus, sit in the new government and will not have us. ?][? if not el_invited and not el_walkout_blocks : The new government does not need the Caucus, and has not asked for it. ?]
 
 - @el_join: Join the government.
 - @el_oppose: Remain in opposition.
@@ -426,15 +448,24 @@ on-arrival: {! SW.joinGovernment(Q); if (Q.el_pal_won) { Q.pacifist_dissent += 4
 go-to: el_chairs
 
 @el_oppose
-subtitle: Freedom to criticise, but no committee chairs.
-on-arrival: {! SW.assignChairs(Q); Q.rc_momentum += 0.5; !}
+subtitle: Freedom to criticise, but no committee chairs. [? if el_rc_needed : Without us, the new government may have no majority. ?]
+on-arrival: {!
+if (Q.el_rc_needed) {
+    var g2 = SW.formCoalitionAuto(Q, Q.el_winner, false);
+    SW.setGovt(Q, g2);
+    if (SW.seats(Q, g2) < 50) { SW.brokenSystem(Q, 'minority'); Q.gov_minority_swing = 1; }
+}
+SW.assignChairs(Q); Q.rc_momentum += 0.5;
+!}
 
-The Caucus will hold the new government to account from the opposition benches.
+The Caucus will hold the new government to account from the opposition benches. [? if gov_minority_swing : Without us, the new Chancellor can only govern as a minority, and voters lose patience with a Senate that cannot govern: Palpatine's bloc and the separatists gain. ?]
 
 @el_chairs
 new-page: true
 
 = Committee Chairs
+
+[? if gov_minority_swing and rc_chancellor and govt_seats < 50 : The Caucus governs as a minority. Voters lose patience with a Senate that cannot form a majority: Palpatine's bloc and the separatists gain. ?]
 
 Every new government shares out the committee chairs afresh. The Caucus has [+ leverage +] leverage to spend, and holds [+ rc_chairs +] of the [+ chair_cap +] chairs our partners will let us have: each partner insists on at least one for itself, and chairs promised in the coalition talks are theirs. Each chair unlocks new Senate Affairs cards.
 

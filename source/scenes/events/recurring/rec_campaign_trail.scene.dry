@@ -9,7 +9,7 @@ on-arrival: {! SW.trailOpen(Q); !}
 
 = [+ tr_title +]
 
-[? if trail_kind = "debate" : The HoloNet hosts a debate ahead of the Chancellor election. [+ tr_speaker +] will speak for the Caucus[? if tr_has_rival : , facing [+ tr_rival_name +] of the [+ tr_rival_bloc +]?]. A good night lifts our momentum and wins over particular blocs; a bad one costs us. A message that fits the moment (reform when corruption is high, the Rim when it is suffering, security when the galaxy is afraid) is more likely to land, and so is a united Caucus. ?]
+[? if trail_kind = "debate" : The HoloNet hosts a debate ahead of the Chancellor election. [+ tr_speaker +] will speak for the Caucus[? if tr_has_rival : , facing [+ tr_rival_name +] of the [+ tr_rival_bloc +]?]. ?]
 
 [? if trail_kind = "endorse" : [+ tr_pitch +] An endorsement from [+ tr_endorser_name +] would carry weight. [+ tr_price +] ?]
 
@@ -18,8 +18,6 @@ on-arrival: {! SW.trailOpen(Q); !}
 [? if trail_kind = "gaffe" : A Caucus senator, caught on an open microphone, [+ tr_gaffe_text +]. The clip is everywhere by morning, and the [+ tr_gaffe_region_name +] is not amused. ?]
 
 [? if trail_kind = "smear" : A HoloNet feed carries documents purporting to show a Caucus senator taking money from Separatist sympathisers. The documents are very good, almost too good. Someone with resources wants the Caucus on the back foot before the election. ?]
-
-*Momentum lifts the Caucus's support in every region and sways the blocs on election day. It fades each quarter unless renewed.*
 
 - @db_reform: Make it about clean government and reform.
 - @db_rim: Speak for the Rim.

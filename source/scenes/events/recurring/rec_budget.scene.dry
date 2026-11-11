@@ -15,8 +15,6 @@ The guilds' patience is [+ gp_label +]; our Core patrons are [+ pg_label +].
 
 [? if bd_write : The Caucus [? if rc_chancellor : holds the Chancellery?][? if not rc_chancellor : chairs the Finance & Commerce Committee?], so we write this year's budget, but it must still pass the Senate. First: how will the Republic raise money? ?][? if not bd_write : The government proposes to [+ bd_gov_text +]. On present form it would win about [+ bd_gov_outlook +]% of the Senate. ?]
 
-*Every source of money has people who pay for it, and they push back harder each year it is used in a row. Every budget must pass the Senate, where each bloc judges what it costs their own worlds.*
-
 - @rev_tariffs: Trade-route tariffs (about [+ bd_tariff_yield +]).
 - @rev_levy: A levy on the Core worlds (3).
 - @rev_loan: Borrow from the Banking Clan (3).

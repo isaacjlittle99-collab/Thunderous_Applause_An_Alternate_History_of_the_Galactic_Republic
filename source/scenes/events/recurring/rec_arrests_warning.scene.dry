@@ -11,7 +11,7 @@ on-arrival: arrests_warned = 1
 
 A clerk in the Senate Bureau of Intelligence, risking her career, brings us a copy of a document. It lists every senator who signed the Delegation's statement, with notes on their families, their debts and their "associations". Under the Security Act, the Chancellor can order their detention without trial.
 
-*If nothing changes, the arrests will begin next turn. Senate resolve of 5, or a Navy that is at least 60% loyal to the Senate, would make him think twice.*
+*If nothing changes, the arrests will begin next turn.*
 
 - @tame: Persuade the Delegation to soften its stand.
 - @scatter: Scatter the leadership before the arrests.

@@ -11,7 +11,7 @@ on-arrival: empire_warned = 1
 
 The Chancellor now holds powers no Chancellor has held since the Ruusan Reformation. In the Senate's corridors his allies speak openly of a "more secure and stable order", and of how tiresome it is to renew the emergency every year.
 
-*If his powers reach **8** while the Senate's resolve is below **5**, the next crisis could be the excuse he needs to proclaim a new order. That would end the Republic, and the game, before the war is over.*
+*If he gathers much more power while the Senate stays this timid, the next crisis could be the excuse he needs to proclaim a new order.*
 
 - @rally: Rally the Senate against him.
 - @sunset: Force a sunset review now.

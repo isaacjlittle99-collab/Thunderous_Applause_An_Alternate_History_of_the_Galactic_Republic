@@ -11,8 +11,6 @@ on-arrival: core_revolt_timer = 8; core_revolts += 1
 
 The Core worlds that built the Caucus (Alderaan, Chandrila, Corellia and their neighbours) have paid the levy year after year. Their great houses, banks and merchant families say they are done. Delegations that have voted with the Caucus for a generation threaten to sit with the opposition, and the patrons who fund our campaigns have stopped returning our calls.
 
-*Our Core patrons fund the Caucus. When they are angry, our yearly political capital falls and our support in the Core erodes.*
-
 - @repeal: Repeal the levy, and promise no new one for two years.
 - @hold: Hold firm. The Core can afford it.
 - @compensate: Soften the blow with subsidies for Core industry.
