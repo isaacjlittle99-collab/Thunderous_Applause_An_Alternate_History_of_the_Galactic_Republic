@@ -38,10 +38,11 @@ artwork, music or footage is included; all images are original abstract art.*
 - **Relations between blocs.** Every pair of blocs has a living relationship. No bloc will govern beside a partner it is too
   cold toward (hardline leaders need cordial ties, flexible ones will sit even with a cold partner); new Chancellors build
   coalitions in order of relationship; and a Senate that cannot form a majority drives voters toward Palpatine and the separatists.
-- **Elections and campaigns.** Momentum, campaign messages that fit (or backfire on) the moment, election-season
+- **Elections and campaigns.** Momentum, campaigns whose gains in a region last for years, messages that fit (or backfire on) the moment, election-season
   debates and endorsements, a Chancellor race with nominees, a whip count, pledges and bargaining between ballots,
   coalition partners who name their price, world elections from Naboo to Corellia, secession referendums,
-  rallies that need protecting, recalls, and confidence votes.
+  rallies that need protecting, recalls, and confidence votes. A map of the galaxy in the Polls tab (and at every Senate
+  session and Chancellor election) shades each region by its leading bloc; hover over a region for its delegations.
 - **The threat** is mostly hidden. Corruption, fear and emergency powers feed the Sith Lord's plan.
   Evidence, Senate resolve and structural safeguards work against it.
 

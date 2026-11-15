@@ -110,6 +110,7 @@
     if ((m = /^([a-z]+)_dissent$/.exec(id)) && FACTIONS[m[1]]) return FACTIONS[m[1]] + ' faction dissent';
     if ((m = /^([a-z]+)_strength$/.exec(id)) && FACTIONS[m[1]]) return FACTIONS[m[1]] + ' faction strength';
     if ((m = /^([a-z]+)_sep$/.exec(id)) && REGIONS[m[1]]) return 'Separatism in ' + REGIONS[m[1]];
+    if ((m = /^cm_presence_([a-z]+)$/.exec(id)) && REGIONS[m[1]]) return 'Caucus campaign presence in ' + REGIONS[m[1]];
     if ((m = /^([a-z]+)_([a-z]+)$/.exec(id)) && REGIONS[m[1]] && BLOCS[m[2]]) return 'Support for ' + BLOCS[m[2]] + ' in ' + REGIONS[m[1]];
     if ((m = /^(.+)_timer$/.exec(id))) return 'Cooldown: ' + pretty(m[1]) + ' (turns)';
     if ((m = /^(.+)_seen$/.exec(id))) return 'Already seen: ' + pretty(m[1]);

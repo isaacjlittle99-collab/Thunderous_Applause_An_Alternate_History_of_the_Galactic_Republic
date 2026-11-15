@@ -56,6 +56,8 @@ const REFORM_PREFS = [
 //   unmask: build the case and lay charges before the Senate
 //   peace: end the war through peace channels and a Federal Compact, or turn Count Dooku
 const STRATEGIES = {
+  // a player who campaigns whenever the card comes up, and raises the capital to do it
+  campaign: [[/^ca_campaign$/, () => 25], [/^ca_contributions$/, Q => Q.capital <= 1 ? 12 : 2], [/^ca_campaign\.shoestring$/, Q => Q.capital < 1 ? 5 : 0.2]],
   keep: [[/el_back_pal$/, () => 0.01], [/\.el_run$/, () => 12], [/\.el_court_\w+$/, () => 6], [/\.el_pledge$/, () => 5], [/\.el_expose$/, () => 12],
     [/\.el_attack_pal$/, Q => Q.evidence >= 5 ? 9 : 0.1], [/\.eb_deal_[ab]$/, null], [/^ca_campaign$/, () => 8], [/^ca_contributions$/, Q => Q.capital <= 2 ? 8 : 1],
     [/^ca_confront$/, () => 7], [/^ca_confront\.vonc$/, Q => Q.pal_chancellor ? 12 : 0.5], [/^ca_confront\.(alarm|crossbloc)$/, Q => Q.senate_resolve < 3 ? 9 : 1],
@@ -122,6 +124,8 @@ function smartWeight(id, Q) {
     [/^rec_guild_pressure\.break_blockade$/, 5], [/^rec_guild_pressure\.senate_blockade$/, 2], [/^rec_guild_pressure\.give_in$/, 2],
     [/^rec_core_revolt\.repeal$/, 5], [/^rec_core_revolt\.compensate$/, Q.treasury >= 3 ? 3 : 0.5], [/^rec_credits_refused\.back$/, 5],
     // campaigning: the message that fits the moment; protect a rally only with enough strength
+    // spread campaigns: prefer regions where our presence has faded
+    [/^ca_campaign\.(core|colonies|midrim|outer|corporate)$/, 1 + 4 * (1 - (Q['cm_presence_' + id.split('.').pop()] || 0) / SW.PRESENCE_CAP)],
     [/^ca_campaign\.msg_\w+$/, ({strong: 6, solid: 4, weak: 1.5, poor: 0.5, 'may backfire': 0.05})[Q['cm_word_' + id.split('_').pop()]] || 1],
     [/\.protect_judicials$/, (Q.judicial_forces || 0) * 0.9 >= Q.cm_threat ? 6 : 1], [/\.protect_guard$/, 4.5 >= Q.cm_threat ? 7 : 1],
     [/\.protect_local$/, Q.cm_local * 0.9 >= Q.cm_threat ? 5 : 1], [/\.(protect_cancel|cancel)$/, 1.5],
@@ -365,6 +369,9 @@ function playOne(gameIndex) {
       for (const fr of ['outer', 'mid', 'core']) if ((Q['front_ev_' + fr] || -99) > 0) audit.econ.collapses++;
       audit.gavels += Q.gavels || 0;
       audit.rel = audit.rel || {swings: 0, minority: 0, collapse: 0, bureau: 0, blocked: 0, delivered: 0, kept: 0, size: [], modRim: [], guildMod: [], rimSec: [], palSec: []};
+      audit.cm = audit.cm || {pres: {}, rcVotes: [], rcSeats: [], runs: []};
+      for (const rg of SW.REGIONS) (audit.cm.pres[rg] = audit.cm.pres[rg] || []).push(Q['cm_presence_' + rg] || 0);
+      audit.cm.rcVotes.push(Q.rc_votes || 0); audit.cm.rcSeats.push(Q.rc_r || 0); audit.cm.runs.push(Q.campaigns_run || 0);
       const ar = audit.rel; ar.swings += Q.broken_swings || 0; ar.minority += Q.broken_minority || 0; ar.collapse += Q.broken_collapse || 0; ar.bureau += Q.broken_bureau || 0;
       ar.blocked += Q.coal_blocked_games || 0; ar.delivered += Q.delivered || 0; ar.kept += Q.pledges_kept || 0; ar.size.push((Q.govt_blocs || []).length);
       ar.modRim.push(SW.rel(Q, 'mod', 'rim')); ar.guildMod.push(SW.rel(Q, 'guild', 'mod')); ar.rimSec.push(SW.rel(Q, 'rim', 'sec')); ar.palSec.push(SW.rel(Q, 'pal', 'sec'));
@@ -438,6 +445,9 @@ function playOne(gameIndex) {
     origLog('audit: routes ' + Object.entries(audit.routes).sort((a, b) => b[1].n - a[1].n).map(([k, v]) => k + ' ' + pc(v.n, GAMES) + ' (Sidious beaten ' + pc(v.beaten, v.n) + ', good end ' + pc(v.good, v.n) + ')').join('; '));
     const rf = audit.routeFlags; origLog('audit: route steps: charges laid or premature accusations ' + rf.charges + ', charges that stuck ' + rf.chargesOk + ', Federal Compact votes ' + rf.compact + ', peace ' + rf.peace + ', Dooku turned ' + rf.dooku + ', Palpatine under 2 years in office ' + rf.palOut);
   }
+  if (audit.cm) { const c = audit.cm;
+    origLog('audit: campaigns per game avg ' + avg(c.runs) + '; presence at end ' + SW.REGIONS.map(rg => rg + ' ' + avg(c.pres[rg])).join(', ') +
+      '; Caucus at end: support ' + avg(c.rcVotes) + '%, seats ' + avg(c.rcSeats) + '%'); }
   if (audit.rel) { const r = audit.rel;
     origLog('audit: relations: broken-system swings ' + r.swings + ' (minority governments ' + r.minority + ', collapses ' + r.collapse + ', bureaucrats ' + r.bureau + '); every Caucus coalition blocked ' + r.blocked + 'x; deliveries ' + r.delivered + ', pledges kept ' + r.kept + '; government size at end avg ' + avg(r.size) + '; end relations mod-rim ' + avg(r.modRim) + ', guild-mod ' + avg(r.guildMod) + ', rim-sec ' + avg(r.rimSec) + ', pal-sec ' + avg(r.palSec)); }
   origLog('audit: bureaucrat purges ' + audit.purges + ' (in ' + audit.purgeGames + ' games), Vice Chair gavels ' + audit.gavels);
