@@ -856,3 +856,31 @@ ul.reactions {
 ul.reactions li {
   margin: 0.25em 0;
 }
+
+/* ------------------------------------------------------------------ mods and playtests */
+#mod-banner {
+  margin: 4px auto 0;
+  padding: 3px 10px;
+  max-width: 600px;
+  font-size: 0.85em;
+  text-align: center;
+  border-radius: 4px;
+  background: #f3e6c4;
+  color: #4a3b12;
+  border: 1px solid #c9a94a;
+}
+#mod-banner.playtest { background: #d9ecf7; color: #123a52; border-color: #5b9ac2; }
+#mod-banner.error { background: #f7dcdc; color: #5a1414; border-color: #c25b5b; }
+#mod-banner a { color: inherit; font-weight: bold; margin-left: 8px; }
+a.button-link {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid #888;
+  border-radius: 3px;
+  background: #f4f4f4;
+  color: #222;
+  text-decoration: none;
+}
+body.dark-mode a.button-link { background: #333; color: #eee; border-color: #666; }
+body.dark-mode #mod-banner { background: #3d351f; color: #f3e6c4; }
+body.dark-mode #mod-banner.playtest { background: #1d3442; color: #d9ecf7; }

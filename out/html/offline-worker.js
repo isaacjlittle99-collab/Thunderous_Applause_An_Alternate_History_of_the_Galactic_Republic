@@ -6,11 +6,12 @@
  * it in the background, so a new version arrives the next time the game is opened.
  * Bump CACHE when the list of files changes.
  */
-var CACHE = 'thunderous-applause-v4';
+var CACHE = 'thunderous-applause-v5';
 var SHELL = [
   "./",
   "index.html",
   "core.js",
+  "mod_loader.js",
   "game.js",
   "game.css",
   "sw.js",
@@ -76,12 +77,23 @@ var IMAGES = [
   "img/ev_war.svg"
 ];
 
+// the card and event editor: best-effort, so a build without it still installs
+var EDITOR = [
+  "editor.html",
+  "editor/editor.js",
+  "editor/editor.css",
+  "editor/dry_model.js",
+  "editor/names.js",
+  "editor/compiler.js",
+  "editor/sources.js"
+];
+
 self.addEventListener('install', function (event) {
   event.waitUntil(
     caches.open(CACHE).then(function (cache) {
       // the shell must all succeed; images are best-effort
       return cache.addAll(SHELL).then(function () {
-        return Promise.all(IMAGES.map(function (u) { return cache.add(u).catch(function () {}); }));
+        return Promise.all(IMAGES.concat(EDITOR).map(function (u) { return cache.add(u).catch(function () {}); }));
       });
     }).then(function () { return self.skipWaiting(); })
   );

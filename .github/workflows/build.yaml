@@ -40,6 +40,8 @@ jobs:
         run: npm run dendrynexus make-html -- --pretty
       - name: Copy game.json to output
         run: cp out/game.json out/html/
+      - name: Build the card and event editor
+        run: node tools/build_editor.js
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

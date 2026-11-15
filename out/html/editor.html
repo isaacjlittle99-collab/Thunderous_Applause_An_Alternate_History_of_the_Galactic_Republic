@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Card and Event Editor · Thunderous Applause</title>
+    <meta name="description" content="Edit, add and playtest the cards and events of Thunderous Applause, and share them as mods.">
+    <link rel="icon" href="favicon.ico">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="editor/editor.css">
+  </head>
+  <body>
+    <header id="topbar">
+      <a class="back" href="index.html">← Back to the game</a>
+      <h1>Card and Event Editor</h1>
+      <div id="modbar">
+        <label class="modname">Mod <input id="mod-name" type="text" maxlength="60" placeholder="Untitled mod" aria-label="Mod name"></label>
+        <label class="switch" title="When on, the game is played with your changes"><input type="checkbox" id="mod-enabled"> Play with this mod</label>
+        <button id="btn-export" type="button">Export…</button>
+        <button id="btn-import" type="button">Import…</button>
+        <button id="btn-details" type="button">Mod details</button>
+        <input type="file" id="import-file" accept=".json,.tamod,application/json" hidden>
+      </div>
+    </header>
+
+    <div id="layout">
+      <nav id="sidebar" aria-label="Cards and events">
+        <input id="search" type="search" placeholder="Search titles and text" aria-label="Search cards and events">
+        <div class="new-buttons">
+          <button id="new-card" type="button">+ New card</button>
+          <button id="new-event" type="button">+ New event</button>
+        </div>
+        <div id="list" role="list"></div>
+      </nav>
+
+      <main id="main">
+        <div id="loading">Loading the game's cards and events…</div>
+        <div id="welcome" hidden>
+          <h2>Make the game your own</h2>
+          <p>Pick a card or an event on the left to change its text, what it costs and does, when it appears, and the choices it offers.
+            You can also write brand-new cards and events, and playtest any of them straight away.</p>
+          <ul>
+            <li><b>Your changes stay in this browser.</b> The game uses them while <i>Play with this mod</i> is on.</li>
+            <li><b>Share a mod</b> with <i>Export</i>; anyone can load it with <i>Import</i>.</li>
+            <li><b>Playtests never touch your saves.</b> Add <code>?nomod</code> to the game's address to play without the mod.</li>
+          </ul>
+          <p id="welcome-stats"></p>
+        </div>
+        <div id="pane" hidden></div>
+      </main>
+    </div>
+
+    <div id="toast" role="status" aria-live="polite"></div>
+
+    <dialog id="dlg-playtest">
+      <form method="dialog" id="playtest-form">
+        <h2>Playtest <span id="pt-title"></span></h2>
+        <fieldset>
+          <legend>Start from</legend>
+          <label><input type="radio" name="pt-start" value="new" checked> A new game on
+            <select id="pt-difficulty">
+              <option value="-1">Story</option>
+              <option value="0" selected>Senator</option>
+              <option value="1">Jedi Master</option>
+            </select></label>
+          <label><input type="radio" name="pt-start" value="save"> One of your saved games
+            <select id="pt-save"></select></label>
+        </fieldset>
+        <fieldset>
+          <legend>Set before starting</legend>
+          <label class="inline">Date <select id="pt-year"></select> <select id="pt-month"></select></label>
+          <div id="pt-sets"></div>
+          <button type="button" id="pt-add-set">+ Set a quality</button>
+        </fieldset>
+        <div id="pt-check"></div>
+        <menu>
+          <button value="cancel" type="submit" formnovalidate>Cancel</button>
+          <button id="pt-go" value="go" type="submit" class="primary">Start the playtest</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <dialog id="dlg-new">
+      <form method="dialog" id="new-form">
+        <h2 id="new-heading">New card</h2>
+        <label id="new-kind-row">Kind
+          <select id="new-kind">
+            <option value="caucus_affairs">Caucus Affairs card</option>
+            <option value="senate_affairs">Senate Affairs card</option>
+            <option value="last_days">Last Days card</option>
+          </select></label>
+        <label id="new-act-row">Part of the game
+          <select id="new-act">
+            <option value="act1">Act I (33–32 BBY)</option>
+            <option value="act2">Act II (31–25 BBY)</option>
+            <option value="act3">Act III (24–22 BBY)</option>
+            <option value="act4">Act IV: the Clone Wars (22–19 BBY)</option>
+            <option value="recurring" selected>Recurring (any time)</option>
+            <option value="finale">The Last Days</option>
+          </select></label>
+        <label>Title <input id="new-title" type="text" required maxlength="80"></label>
+        <p class="hint" id="new-hint"></p>
+        <menu>
+          <button value="cancel" type="submit" formnovalidate>Cancel</button>
+          <button value="create" type="submit" class="primary">Create</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <dialog id="dlg-import">
+      <form method="dialog">
+        <h2>Import a mod</h2>
+        <p id="import-summary"></p>
+        <menu>
+          <button value="cancel" type="submit">Cancel</button>
+          <button value="merge" type="submit">Merge into my mod</button>
+          <button value="replace" type="submit" class="primary">Replace my mod</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <dialog id="dlg-details">
+      <form method="dialog">
+        <h2>Mod details</h2>
+        <label>Author <input id="mod-author" type="text" maxlength="80"></label>
+        <label>Notes <textarea id="mod-notes" rows="3"></textarea></label>
+        <div id="details-body"></div>
+        <h3>Make it part of the official game</h3>
+        <p>Export your mod and send the <code>.tamod.json</code> file to the game's maintainer. They can apply it to the game's
+          source with <code>node tools/apply_mod.js your-mod.tamod.json</code>, which writes your edited and new cards and events into
+          <code>source/scenes/</code>.</p>
+        <menu>
+          <button value="reset" type="submit" class="danger" id="btn-reset">Delete this mod…</button>
+          <button value="close" type="submit" class="primary">Close</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <datalist id="qualities-list"></datalist>
+
+    <script src="sw.js"></script>
+    <script src="editor/sources.js"></script>
+    <script src="editor/compiler.js"></script>
+    <script src="editor/dry_model.js"></script>
+    <script src="editor/names.js"></script>
+    <script src="mod_loader.js"></script>
+    <script src="editor/editor.js"></script>
+  </body>
+</html>

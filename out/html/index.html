@@ -20,6 +20,7 @@
     <script src="sw.js"></script>
     <script src="sw_ui.js"></script>
     <script src="core.js"></script>
+    <script src="mod_loader.js"></script>
     <script src="game.js"></script>
     <script>
       // offline support for the installed app (not needed, and not allowed, when opened as a local file)
@@ -165,6 +166,18 @@
                     </td>
                     <td colspan="4">
                         <button onclick="window.showCustomArt();">Use your own images…</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td> <hr> </td>
+                </tr>
+                <tr>
+                    <td>
+                        Modding:
+                    </td>
+                    <td colspan="4">
+                        <a class="button-link" href="editor.html">Card and event editor…</a>
+                        <span id="mod_status_option"></span>
                     </td>
                 </tr>
                 <tr>
@@ -359,6 +372,7 @@
             <header>
                 <h1 id="game-title">Thunderous Applause</h1>
                 <h2 id="game-author">a fan adaptation of Autumn Chen's <i>Social Democracy</i></h2>
+                <div id="mod-banner" style="display: none;"></div>
 
                 <div id="header-links">
                     <a id="stats-link" onclick="window.showStats();" href="#">Holocron</a>

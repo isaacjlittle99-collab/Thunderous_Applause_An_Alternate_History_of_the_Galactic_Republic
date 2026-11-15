@@ -5,3 +5,5 @@ out/html/core.js
 package-lock.json
 out/html/jquery-1.11.1.min.js
 out/html/game.json
+out/html/editor/compiler.js
+out/html/editor/sources.js
