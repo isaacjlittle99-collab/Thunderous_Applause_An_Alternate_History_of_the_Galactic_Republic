@@ -13,7 +13,71 @@
     ui = dendryUI;
     game = ui.game;
 
-    // Add your custom code here.
+    // A playtest from the card and event editor starts straight at the chosen card or event.
+    var status = window.TA_MOD_STATUS || {};
+    if (status.playtest && status.playtest.scene) {
+      try {
+        startPlaytest(dendryUI, status.playtest);
+        return true;
+      } catch (e) {
+        console.error('Playtest could not start:', e);
+        status.error = 'The playtest could not start: ' + (e && e.message || e);
+      }
+    }
+  };
+
+  // ------------------------------------------------------------------ playtests
+  // Saves made during a playtest go to their own slots, so the player's real saves are never touched,
+  // and playtests earn no achievements.
+  var startPlaytest = function (ui, pt) {
+    var engine = ui.dendryEngine;
+    if (!engine.game.scenes[pt.scene]) throw new Error('There is no card or event called "' + pt.scene + '".');
+    ui.save_prefix = ui.save_prefix + '_playtest';
+    engine.achieve = function () {};
+    engine.beginGame();
+    if (pt.saveString) {
+      engine.setState(JSON.parse(pt.saveString));
+    } else {
+      var Q = engine.state.qualities;
+      SW.newGame(Q, pt.difficulty || 0);
+      // the same set-up as root.scene.dry @setup and @begin
+      engine.state.currentHands = {};
+      Q.adv_antilles = 1;
+      Q.adv_bel_iblis = 1;
+      Q.adv_farr = 1;
+      SW.countAdvisors(Q);
+      SW.everyVisit(Q);
+      Q.started = 1;
+      engine.state.bg = 'img/bg_galaxy.jpg';
+    }
+    var S = engine.state.qualities;
+    var set = pt.set || {};
+    for (var k in set) if (Object.prototype.hasOwnProperty.call(set, k)) S[k] = set[k];
+    if (set.bby !== undefined || set.month !== undefined) SW.updateDate(S);
+    SW.everyVisit(S);
+    window.justLoaded = true;
+    engine.goToScene(pt.scene);
+  };
+
+  var showModBanner = function () {
+    var status = window.TA_MOD_STATUS || {};
+    var el = document.getElementById('mod-banner');
+    var opt = document.getElementById('mod_status_option');
+    var esc = function (t) { return String(t).replace(/[&<>"]/g, function (c) { return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]; }); };
+    if (opt) opt.textContent = status.active ? ' Playing with: ' + status.name : '';
+    if (!el) return;
+    var html = '', cls = '';
+    if (status.error) { cls = 'error'; html = esc(status.error) + ' <a href="editor.html">Open the editor</a>'; }
+    else if (status.playtest && status.playtest.scene) {
+      cls = 'playtest';
+      html = 'Playtest' + (status.name ? ' of ' + esc(status.name) : '') + ': your saves and achievements are not affected.' +
+        ' <a href="editor.html#' + esc(status.playtest.scene) + '">Back to the editor</a>';
+    } else if (status.active) {
+      html = 'Modded: ' + esc(status.name) + ' <a href="editor.html">Edit</a><a href="?nomod">Play without it</a>';
+    }
+    el.className = cls;
+    el.innerHTML = html;
+    el.style.display = html ? '' : 'none';
   };
 
   var TITLE = "Thunderous Applause: An Alternate History of the Galactic Republic" + '_' + "isaacjlittle99-collab, after Autumn Chen";
@@ -475,6 +539,7 @@ window.disableGrayMode = function() {
       }
     } catch (e) {}
     setupArt();
+    showModBanner();
     if (window.dendryUI.dark_mode) {
         document.body.classList.add('dark-mode');
     } else {
