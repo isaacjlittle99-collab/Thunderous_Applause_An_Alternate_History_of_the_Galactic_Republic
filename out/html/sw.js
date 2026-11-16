@@ -218,7 +218,7 @@
     D.ref_ready = 0; D.ref_id = ''; D.ref_world = ''; D.ref_region = 'outer'; D.ref_region_name = ''; D.ref_chance = 0.5; D.ref_poll = 50; D.ref_poll_word = ''; D.ref_boost = 0; D.referendum_timer = 0;
     D.ref_bonteri = 0; D.ref_fig = ''; D.ref_fig_name = ''; D.ref_heading = ''; D.ref_campaign_ok = 0; D.ref_stayed = 0; D.ref_stay_pct = 50; D.ref_leave_pct = 50; D.we_rally = 0; D.referendums_won = 0; D.referendums_lost = 0;
     for (var rf in SW.REFERENDUMS) D['ref_done_' + rf] = 0;
-    for (var gd = 0; gd < SW.REGIONS.length; gd++) D['grievance_' + SW.REGIONS[gd]] = 0;
+    for (var gd = 0; gd < SW.REGIONS.length; gd++) { D['grievance_' + SW.REGIONS[gd]] = 0; D['cm_presence_' + SW.REGIONS[gd]] = 0; }
     D.recall_ready = 0; D.recall_region = 'core'; D.recall_region_name = ''; D.recall_why = ''; D.recall_lost = 0; D.recall_timer = 0; D.recalls = 0;
     D.cv_outlook = 0; D.cv_vote = 0; D.cv_won = 0; D.mandate_term = -1; D.mandates_won = 0; D.mandates_lost = 0; D.mandate_ok = 0;
     for (var ra = 0; ra < SW.REL_BLOCS.length; ra++) for (var rb2 = ra + 1; rb2 < SW.REL_BLOCS.length; rb2++)
@@ -2336,6 +2336,11 @@
 
   // ------------------------------------------------------------------ drift each turn
   SW.PAL_GROWTH = 75; // months for Palpatine's bloc to gain one more 'natural size'
+  // campaigns: how much one moves a region, how much lasting presence a region can hold, how fast it fades
+  SW.CAMPAIGN_SIZE = 8;
+  SW.PRESENCE_CAP = 14;
+  SW.PRESENCE_DECAY = 0.96;    // per quarter
+  SW.RC_BASE = 1;              // the Caucus's natural level, before campaigns
   SW.drift = function (Q) {
     var m = Q.months_per_turn;
     var f = m > 0 ? m / 3 : 0.15;
@@ -2386,7 +2391,7 @@
 
     // regional support drifts toward targets set by the state of the galaxy
     var mult = {
-      rc: Math.max(0.3, 1 + (Q.faith - 50) / 40 - (Q.dissent - 0.15) * 1.2 + (Q.rc_in_govt ? 0.05 : 0) + 0.04 * SW.clamp(Q.rc_momentum || 0, -5, 5)),
+      rc: SW.RC_BASE * Math.max(0.3, 1 + (Q.faith - 50) / 40 - (Q.dissent - 0.15) * 1.2 + (Q.rc_in_govt ? 0.05 : 0) + 0.04 * SW.clamp(Q.rc_momentum || 0, -5, 5)),
       mod: Math.max(0.2, 1 + (50 - Q.corruption) / 40 - (Q.valorum_scandal && Q.mod_leader === 'Finis Valorum' ? 0.3 : 0)),
       // Sidious's agents work the Senate every year, in office or not; a clean Senate only slows them
       pal: Math.max(0.3, 1 + Math.max(-0.2, (Q.corruption - 55) / 25) + Math.max(-0.2, (Q.fear - 25) / 20) + Q.grand_plan / (palInPower ? 40 : 70) +
@@ -2403,7 +2408,11 @@
         m2 *= 1 + SW.leaderPull(Q, b);
         var target = START_SUPPORT[rg][b] * m2;
         // splinters take a share of the Caucus
-        if (b === 'rc') target *= Math.max(0.3, 1 - (Q.split_share_total || 0));
+        if (b === 'rc') {
+          target *= Math.max(0.3, 1 - (Q.split_share_total || 0));
+          // where the Caucus has campaigned, its organisation holds support up for years
+          target += Q['cm_presence_' + rg] || 0;
+        }
         if (Q['split_gain_' + b]) target += START_SUPPORT[rg].rc * Q['split_gain_' + b];
         Q[rg + '_' + b] += (target - Q[rg + '_' + b]) * 0.08 * f + noise();
       }
@@ -2436,7 +2445,10 @@
     }
     SW.economyTick(Q, f);
     Q.rc_momentum = (Q.rc_momentum || 0) * Math.pow(0.8, f);
-    for (var gr = 0; gr < SW.REGIONS.length; gr++) Q['grievance_' + SW.REGIONS[gr]] = (Q['grievance_' + SW.REGIONS[gr]] || 0) * Math.pow(0.9, f);
+    for (var gr = 0; gr < SW.REGIONS.length; gr++) {
+      Q['grievance_' + SW.REGIONS[gr]] = (Q['grievance_' + SW.REGIONS[gr]] || 0) * Math.pow(0.9, f);
+      Q['cm_presence_' + SW.REGIONS[gr]] = (Q['cm_presence_' + SW.REGIONS[gr]] || 0) * Math.pow(SW.PRESENCE_DECAY, f);
+    }
     SW.clampAll(Q);
   };
 
@@ -2991,10 +3003,19 @@
   SW.campaignPreview = function (Q) {
     for (var k in SW.CAMPAIGN_MESSAGES) Q['cm_word_' + k] = SW.campaignWord(SW.CAMPAIGN_MESSAGES[k].mult(Q, Q.cm_region));
   };
+  // A campaign moves a region at once and leaves a presence that holds the gain for years.
+  // Each campaign in the same region adds less presence than the last.
+  SW.addPresence = function (Q, r, amount) {
+    var k = 'cm_presence_' + r, p = Q[k] || 0;
+    if (amount >= 0) p += amount * Math.max(0.25, 1 - p / SW.PRESENCE_CAP);
+    else p += amount;
+    Q[k] = SW.clamp(p, 0, SW.PRESENCE_CAP);
+  };
   SW.campaignRun = function (Q, msg) {
     var M = SW.CAMPAIGN_MESSAGES[msg], r = Q.cm_region;
-    var m = M.mult(Q, r), eff = 4 * SW.unity(Q) * m;
+    var m = M.mult(Q, r), eff = SW.CAMPAIGN_SIZE * SW.unity(Q) * m;
     Q[r + '_rc'] += eff;
+    SW.addPresence(Q, r, eff);
     if (msg === 'security') Q.pacifist_dissent += 2;
     if (msg === 'peace') Q.hawk_dissent += 2;
     if (msg === 'relief' && (r === 'core' || r === 'colonies')) Q.mod_relation -= 1;
@@ -3041,6 +3062,14 @@
     if (Q.cm_protect_won) { Q.faith += 0.3; Q.fear -= 1; Q.protects_won = (Q.protects_won || 0) + 1; }
     else { Q[Q.cm_region + '_rc'] -= 1; Q.fear += 2; SW.momentum(Q, -0.5, 'a rally broken up by ' + Q.cm_disruptor); Q.protects_lost = (Q.protects_lost || 0) + 1; }
     return Q.cm_protect_won;
+  };
+  // the free, volunteer-run campaign in a random region
+  SW.shoestring = function (Q) {
+    var r = SW.REGIONS[Math.floor(SW.rnd() * SW.REGIONS.length)];
+    var eff = SW.CAMPAIGN_SIZE * 0.3 * SW.unity(Q);
+    Q[r + '_rc'] += eff;
+    SW.addPresence(Q, r, eff / 2);
+    Q.shoestring_region = SW.REGION_NAMES[r];
   };
   SW.campaignStart = function (Q, msg) {
     Q.cm_msg = msg;

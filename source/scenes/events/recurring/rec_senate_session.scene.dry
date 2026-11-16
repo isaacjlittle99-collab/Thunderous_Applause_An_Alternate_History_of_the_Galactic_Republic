@@ -15,13 +15,15 @@ for (var i = 0; i < Q.parties.length; i++) {
 }
 Q.session_changes = ch.length ? ch.join('; ') + '.' : 'The balance of the Senate is little changed.';
 !}
-on-display: {! if (typeof SW !== 'undefined' && SW.drawSenate) { SW.drawSenate(Q, 'senate_chart'); SW.drawHistory(Q, 'support_history', 'support'); } !}
+on-display: {! if (typeof SW !== 'undefined' && SW.drawSenate) { SW.drawSenate(Q, 'senate_chart'); SW.drawHistory(Q, 'support_history', 'support'); } if (typeof SW !== 'undefined' && SW.drawRegionMap) SW.drawRegionMap(Q, 'session_region_map'); !}
 
 = The Senate in [+ bby +] BBY
 
 {!<svg id="senate_chart" style="width: 500px; height: 260px;"></svg>!}
 
 [+ session_legend +]
+
+{!<div id="session_region_map"></div>!}
 
 [+ session_changes +] The governing [+ coalition_name +] holds [+ govt_seats +]% of the Senate.[? if minority_govt : It no longer commands a majority. ?]
 

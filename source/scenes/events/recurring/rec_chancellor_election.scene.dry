@@ -13,12 +13,15 @@ if (Q.govt_fell_now && (Q.fall_reason === 'collapse' || Q.fall_reason === 'burea
 SW.senateSession(Q);
 SW.electionOpen(Q);
 !}
+on-display: {! if (typeof SW !== 'undefined' && SW.drawRegionMap) SW.drawRegionMap(Q, 'el_region_map'); !}
 
 = Election of the Supreme Chancellor
 
 [? if valorum_fallen and elections_held = 0 : With Valorum brought down, the Senate must choose a new Supreme Chancellor. ?][? if govt_fell_now : The government of Chancellor [+ el_incumbent +] has fallen. [? if fall_reason = "collapse" : The [+ walkout_name +] walked out of the coalition and brought it down. ?][? if fall_reason = "bureaucrats" : A crisis manufactured by the Senate bureaucracy brought it down. ?][? if fall_reason = "vonc" : The Senate withdrew its confidence. ?][? if fall_reason = "budget" : The Senate rejected its budget twice in a row. ?][? if fall_reason = "withdrew" : The Caucus withdrew its support. ?][? if fall_reason = "confidence" : The Senate voted down the Chancellor's call for a fresh mandate. ?] The Senate must choose who will lead the Republic for the next four years. ?][? if not govt_fell_now and (elections_held > 0 or not valorum_fallen) : Supreme Chancellor [+ el_incumbent +]'s term has run its course, and the Senate must choose who will lead the Republic for the next four years. ?] Each bloc will back the candidate it trusts most. If no one wins a majority on the first ballot, the two leading candidates go to a second.
 
 [+ el_text +]
+
+{!<div id="el_region_map"></div>!}
 
 [? if el_broken : Voters are losing patience with a Senate that cannot govern. Since the government fell apart, Palpatine's bloc and the separatists have gained ground across the galaxy. ?]
 

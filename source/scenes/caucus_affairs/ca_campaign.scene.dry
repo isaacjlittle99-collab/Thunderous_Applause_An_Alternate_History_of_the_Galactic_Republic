@@ -56,7 +56,7 @@ go-to: message
 
 @shoestring
 subtitle: Free. A small boost in a random region.
-on-arrival: {! var r = SW.REGIONS[Math.floor(Math.random() * SW.REGIONS.length)]; Q[r + '_rc'] += 1.2 * SW.unity(Q); Q.shoestring_region = SW.REGION_NAMES[r]; !}
+on-arrival: {! SW.shoestring(Q); !}
 
 Volunteers and borrowed shuttles carry the Caucus's message to the [+ shoestring_region +].
 

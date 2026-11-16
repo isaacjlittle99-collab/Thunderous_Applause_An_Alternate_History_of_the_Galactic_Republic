@@ -483,6 +483,104 @@ body:not(.dark-mode) .crawl {
   white-space: nowrap;
 }
 
+/* ---- the galaxy map: who leads each region (sw_ui.js SW.regionMapSvg) */
+.region-map {
+  margin: 0.3em 0 0.6em;
+}
+.region-map.large {
+  max-width: 520px;
+  margin: 0.8em auto 1em;
+}
+.region-map-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.region-map-svg .rm-space {
+  fill: #0b0f1d;
+}
+.region-map-svg .rm-region {
+  cursor: pointer;
+  outline: none;
+}
+.region-map-svg .rm-fill {
+  fill-opacity: 0.82;
+  stroke: #0b0d14;
+  stroke-opacity: 0.7;
+  stroke-width: 0.8;
+  transition: fill-opacity 0.15s;
+}
+.region-map-svg .rm-region:hover .rm-fill,
+.region-map-svg .rm-region:focus .rm-fill {
+  fill-opacity: 1;
+  stroke: #fff6d8;
+  stroke-opacity: 1;
+  stroke-width: 1.4;
+}
+.region-map-svg .rm-labels text {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  fill: #fbf7ea;
+  stroke: #0b0d14;
+  stroke-width: 2.2px;
+  stroke-opacity: 0.75;
+  paint-order: stroke;
+  text-anchor: middle;
+}
+.rm-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15em 0.8em;
+  font-size: 0.8em;
+  margin-top: 0.3em;
+}
+.rm-legend span {
+  white-space: nowrap;
+}
+.rm-sw {
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
+  border-radius: 2px;
+  margin-right: 0.35em;
+  vertical-align: -0.05em;
+}
+#region-tip {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  max-width: 280px;
+  padding: 0.5em 0.7em;
+  border-radius: 5px;
+  border: 1px solid var(--card-border-color);
+  background: var(--card-bg-color);
+  color: var(--text-color);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  font-size: 0.85rem;
+  line-height: 1.35;
+}
+#region-tip table {
+  border-collapse: collapse;
+  margin-top: 0.3em;
+  width: 100%;
+}
+#region-tip td {
+  padding: 0.05em 0;
+}
+#region-tip td + td {
+  text-align: right;
+  padding-left: 0.8em;
+  font-variant-numeric: tabular-nums;
+}
+#region-tip .rm-tip-note {
+  margin-top: 0.35em;
+  color: var(--muted-color);
+  font-size: 0.92em;
+}
+
 .legacy {
   border: 1px solid var(--card-border-color);
   border-radius: 3px;

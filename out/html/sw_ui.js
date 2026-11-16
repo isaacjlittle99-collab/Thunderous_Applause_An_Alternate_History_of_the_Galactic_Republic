@@ -275,6 +275,8 @@
       var arrow = d > 0.4 ? ' <span class="good">▲</span>' : (d < -0.4 ? ' <span class="bad">▼</span>' : '');
       h += row(bloc(Q, b), (Q[b + '_votes'] || 0).toFixed(1) + '%' + arrow);
     }
+    h += head('Who leads each region');
+    h += SW.regionMapSvg(Q);
     h += head('Our support by region');
     for (var r = 0; r < SW.REGIONS.length; r++) {
       var rg = SW.REGIONS[r];
@@ -444,6 +446,163 @@
     lines.width(width).height(320);
     d3.select('#' + svgId).datum(recs).call(lines);
   };
+
+  // ------------------------------------------------------------------ the galaxy map: who leads each region
+  // A schematic of the background map (tools/gen_map.js): off-centre bands around the Deep Core,
+  // with the Corporate Sector as a territory in the north-east.
+  var MAP = {w: 240, h: 150, cx: 126, cy: 75, ux: 10.47, uy: 6.86};
+  var MAP_REGIONS = [
+    // id, outer radius, inner radius (grid units), label, label x, label y
+    ['outer', 10.6, 7.0, 'Outer Rim', 58, 120],
+    ['midrim', 7.0, 4.1, 'Mid Rim', 126, 113],
+    ['colonies', 4.1, 1.9, 'Colonies', 126, 55],
+    ['core', 1.9, 0, 'Core', 126, 78]
+  ];
+  var CORPORATE = {cx: 214, cy: 33, rx: 19, ry: 12.5, label: 'Corporate', lx: 214, ly: 36};
+  var MAP_STARS = (function () {
+    var s = 7, out = [];
+    var rnd = function () { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
+    for (var i = 0; i < 46; i++) out.push([rnd() * MAP.w, rnd() * MAP.h, 0.3 + rnd() * 0.6, 0.25 + rnd() * 0.5]);
+    return out;
+  }());
+
+  function ellipsePath(cx, cy, rx, ry) {
+    return 'M' + (cx - rx).toFixed(1) + ',' + cy + 'a' + rx.toFixed(1) + ',' + ry.toFixed(1) + ' 0 1,0 ' + (2 * rx).toFixed(1) + ',0' +
+      'a' + rx.toFixed(1) + ',' + ry.toFixed(1) + ' 0 1,0 ' + (-2 * rx).toFixed(1) + ',0Z';
+  }
+  function escAttr(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+  // Delegations in a region by bloc, rounded so they add up to the region's total.
+  SW.regionBreakdown = function (Q, r) {
+    var parties = (Q.parties || []).slice();
+    var total = 0, i;
+    for (i = 0; i < parties.length; i++) total += Math.max(0, Q[r + '_' + parties[i]] || 0);
+    var delegations = Math.round((Q[r] > 0 ? Q[r] : 0) * 20);
+    var rows = parties.map(function (b) {
+      var share = total > 0 ? Math.max(0, Q[r + '_' + b] || 0) / total : 0;
+      return {bloc: b, share: share, exact: share * delegations};
+    });
+    var used = 0;
+    rows.forEach(function (x) { x.n = Math.floor(x.exact); used += x.n; });
+    rows.slice().sort(function (a, b) { return (b.exact - b.n) - (a.exact - a.n); }).slice(0, Math.max(0, delegations - used)).forEach(function (x) { x.n++; });
+    rows.sort(function (a, b) { return b.share - a.share; });
+    var seceded = Math.round((SW.BASE_WEIGHTS[r] || 0) * (Q[r + '_seceded'] || 0) * 20);
+    return {region: r, delegations: delegations, seceded: seceded, rows: rows, leader: rows.length && rows[0].share > 0 ? rows[0].bloc : null};
+  };
+
+  SW.regionTip = function (Q, r) {
+    var d = SW.regionBreakdown(Q, r);
+    var h = '<div class="rm-tip-head"><b>' + SW.REGION_NAMES[r] + '</b> · ' + d.delegations + ' delegations</div><table>';
+    d.rows.forEach(function (x) {
+      if (x.share < 0.005) return;
+      h += '<tr><td><i class="rm-sw" style="background:' + SW.color(x.bloc) + '"></i>' + SW.name(Q, x.bloc) + '</td><td>' + x.n + '</td><td>' +
+        Math.round(100 * x.share) + '%</td></tr>';
+    });
+    h += '</table>';
+    if (d.seceded > 0) h += '<div class="rm-tip-note">' + d.seceded + ' delegations have left the Republic.</div>';
+    var p = Q['cm_presence_' + r] || 0;
+    if (p > 1) h += '<div class="rm-tip-note">The Caucus has campaigned here ' + (p >= 6 ? 'recently' : 'in the past') + '.</div>';
+    return h;
+  };
+
+  SW.regionMapSvg = function (Q, opts) {
+    opts = opts || {};
+    var id = 'rm' + Math.floor(Math.random() * 1e6);
+    var h = '<svg class="region-map-svg" viewBox="0 0 ' + MAP.w + ' ' + MAP.h + '" role="group" aria-label="The galaxy by region, shaded by the leading bloc">';
+    h += '<defs><pattern id="' + id + 'h" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">' +
+      '<line x1="0" y1="0" x2="0" y2="5" stroke="#0b0d14" stroke-width="2" stroke-opacity="0.55"/></pattern>' +
+      '<radialGradient id="' + id + 'g" cx="0.525" cy="0.5" r="0.12"><stop offset="0" stop-color="#fff6d8" stop-opacity="0.9"/>' +
+      '<stop offset="1" stop-color="#fff6d8" stop-opacity="0"/></radialGradient></defs>';
+    h += '<rect class="rm-space" width="' + MAP.w + '" height="' + MAP.h + '" rx="6"/>';
+    MAP_STARS.forEach(function (s) { h += '<circle cx="' + s[0].toFixed(1) + '" cy="' + s[1].toFixed(1) + '" r="' + s[2].toFixed(2) + '" fill="#fff" opacity="' + s[3].toFixed(2) + '"/>'; });
+    function region(r, d, label) {
+      var b = SW.regionBreakdown(Q, r);
+      var col = b.leader ? SW.color(b.leader) : '#444';
+      var lead = b.leader ? SW.name(Q, b.leader) : 'no one';
+      var title = SW.REGION_NAMES[r] + ': led by ' + lead + '. ' + b.rows.filter(function (x) { return x.share >= 0.005; }).map(function (x) {
+        return SW.name(Q, x.bloc) + ' ' + x.n;
+      }).join(', ') + (b.seceded ? '. ' + b.seceded + ' have left the Republic.' : '.');
+      var g = '<g class="rm-region" data-region="' + r + '" tabindex="0" role="img" aria-label="' + escAttr(title) + '" data-tip="' + escAttr(SW.regionTip(Q, r)) + '">';
+      g += '<title>' + escAttr(title) + '</title>';
+      g += '<path d="' + d + '" fill="' + col + '" fill-rule="evenodd" class="rm-fill"/>';
+      if (b.delegations > 0 && (Q[r + '_seceded'] || 0) > 0.5) g += '<path d="' + d + '" fill="url(#' + id + 'h)" fill-rule="evenodd" pointer-events="none"/>';
+      g += '</g>';
+      return g;
+    }
+    var labels = '';
+    MAP_REGIONS.forEach(function (m) {
+      var d = ellipsePath(MAP.cx, MAP.cy, m[1] * MAP.ux, m[1] * MAP.uy);
+      if (m[2] > 0) d += ellipsePath(MAP.cx, MAP.cy, m[2] * MAP.ux, m[2] * MAP.uy);
+      h += region(m[0], d, m[3]);
+      labels += '<text x="' + m[4] + '" y="' + m[5] + '">' + m[3] + '</text>';
+    });
+    h += region('corporate', ellipsePath(CORPORATE.cx, CORPORATE.cy, CORPORATE.rx, CORPORATE.ry), CORPORATE.label);
+    labels += '<text x="' + CORPORATE.lx + '" y="' + CORPORATE.ly + '">' + CORPORATE.label + '</text>';
+    h += '<ellipse cx="' + MAP.cx + '" cy="' + MAP.cy + '" rx="' + (1.2 * MAP.ux).toFixed(1) + '" ry="' + (1.2 * MAP.uy).toFixed(1) + '" fill="url(#' + id + 'g)" pointer-events="none"/>';
+    h += '<g class="rm-labels" pointer-events="none">' + labels + '</g>';
+    h += '</svg>';
+    // legend: the blocs that lead somewhere
+    var leaders = [];
+    SW.REGIONS.forEach(function (r) { var l = SW.regionBreakdown(Q, r).leader; if (l && leaders.indexOf(l) < 0) leaders.push(l); });
+    h += '<div class="rm-legend">' + leaders.map(function (b) {
+      return '<span><i class="rm-sw" style="background:' + SW.color(b) + '"></i>' + SW.name(Q, b) + '</span>';
+    }).join('') + '</div>';
+    return '<div class="region-map' + (opts.large ? ' large' : '') + '">' + h + '</div>';
+  };
+
+  SW.drawRegionMap = function (Q, elId) {
+    if (typeof document === 'undefined') return;
+    var el = document.getElementById(elId);
+    if (el) el.innerHTML = SW.regionMapSvg(Q, {large: true});
+  };
+
+  // One floating panel for every map on the page: hover, keyboard focus, or a tap shows a region's delegations.
+  (function installRegionTips() {
+    if (typeof document === 'undefined' || !document.addEventListener) return;
+    var tip = null, current = null, watch = null, touch = false;
+    function ensure() {
+      if (!tip) { tip = document.createElement('div'); tip.id = 'region-tip'; tip.setAttribute('role', 'tooltip'); document.body.appendChild(tip); }
+      return tip;
+    }
+    function regionOf(t) { return t && t.closest ? t.closest('.rm-region') : null; }
+    function place(x, y) {
+      var w = tip.offsetWidth, hgt = tip.offsetHeight, vw = window.innerWidth, vh = window.innerHeight;
+      var left = x + 14, top = y + 14;
+      if (left + w > vw - 8) left = Math.max(8, x - w - 14);
+      if (top + hgt > vh - 8) top = Math.max(8, y - hgt - 14);
+      tip.style.left = left + 'px'; tip.style.top = top + 'px';
+    }
+    function show(el, x, y) {
+      ensure();
+      current = el;
+      tip.innerHTML = el.getAttribute('data-tip') || '';
+      tip.style.display = 'block';
+      if (x === undefined) { var r = el.getBoundingClientRect(); x = r.left + r.width / 2; y = r.top + r.height / 2; }
+      place(x, y);
+      clearInterval(watch);
+      watch = setInterval(function () { if (!current || !document.contains(current)) hide(); }, 400);
+    }
+    function hide() {
+      current = null;
+      clearInterval(watch);
+      if (tip) tip.style.display = 'none';
+    }
+    // on touch screens a tap shows the panel and a tap elsewhere hides it; the mouse events a tap imitates are ignored
+    document.addEventListener('pointerdown', function (e) { touch = e.pointerType === 'touch' || e.pointerType === 'pen'; }, true);
+    document.addEventListener('mouseover', function (e) { var el = regionOf(e.target); if (el && !touch) show(el, e.clientX, e.clientY); });
+    document.addEventListener('mousemove', function (e) { if (current && regionOf(e.target) === current) place(e.clientX, e.clientY); });
+    document.addEventListener('mouseout', function (e) {
+      var el = regionOf(e.target);
+      if (!touch && el && el === current && regionOf(e.relatedTarget) !== el) hide();
+    });
+    document.addEventListener('focusin', function (e) { var el = regionOf(e.target); if (el) show(el); });
+    document.addEventListener('focusout', function (e) { if (!touch && regionOf(e.target) === current) hide(); });
+    document.addEventListener('click', function (e) {
+      var el = regionOf(e.target);
+      if (el) show(el, e.clientX, e.clientY); else hide();
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hide(); });
+  }());
 
   SW.parliamentLegend = function (Q) {
     var data = SW.parliamentData(Q);
