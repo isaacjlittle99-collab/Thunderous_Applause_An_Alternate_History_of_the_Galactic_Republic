@@ -1,0 +1,11 @@
+title: The Security Bloc Decides
+tags: event
+view-if: threat_due_ready = 1 and threat_due_id = "sec" and not game_ending
+priority: 4
+new-page: true
+face-image: img/ev_chancellery.svg
+on-arrival: {! SW.threatResolve(Q); !}
+
+= The Security Bloc Decides
+
+[? if threat_how = "leader" : [+ threat_leader +] has taken the Security Bloc's leadership from [+ threat_old_leader +], and the Bloc keeps its independence. ?][? if threat_how = "reform" : The Senate's new command of the military answers the hawks' complaint that no one is in charge. They stay their own masters. ?][? if threat_how = "relations" : The Caucus's work with the Security Bloc pays off. Its hawks will not be anyone's errand boys. ?][? if threat_how = "cooled" : The moment passes. The Security Bloc keeps its own counsel, for now. ?][? if not threat_averted : The Security Bloc folds into [+ pal_name +]. Tarkin's hawks sit with Palpatine's people now, and the Navy's officers know where their careers will be made. ?]

@@ -17,6 +17,11 @@ The Caucus chairs the Judiciary & Intelligence Committee: the Republic's courts,
 - @gunray: Press the case against Nute Gunray.
 - @warrant: Prepare a Senate warrant for the Sith Lord.
 - @bureau_reform: Reform the Senate bureaucracy.
+- @civil_service: Put the Civil Service Act to the Senate.
+- @amedda: Arrest Vice Chair Mas Amedda.
+- @integrity: Create an Office of Public Integrity.
+- @hhc_investigate: Investigate the human-first groups.
+- @syndicates: Break the syndicates.
 - @easy_discard
 
 @prosecute
@@ -29,8 +34,8 @@ Twelve senators and forty officials are indicted for bribery. Several of them we
 @ethics
 view-if: not anti_corruption
 subtitle: −1 political capital. A permanent safeguard against corruption, if the Senate agrees.
-choose-if: capital >= 1 and rc_in_govt
-unavailable-subtitle: Needs 1 political capital and a seat in government.
+choose-if: capital >= 1 and rc_in_govt and guild_hold = 0
+unavailable-subtitle: [? if guild_hold > 0 : The guilds whose money we took will not allow it. ?][? if guild_hold = 0 : Needs 1 political capital and a seat in government. ?]
 on-arrival: {!
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.55, guild: 0.15, rim: 0.7, sec: 0.45, ind: 0.55, pal: 0.45, cis: 0.3}, true);
@@ -67,10 +72,90 @@ on-arrival: warrant = 1; senate_resolve += 0.5
 A sealed warrant is drafted and signed by three justices of the Supreme Court. It names no one yet. It does not need to. If the moment comes, the Jedi will be acting for the Senate, not against it.
 
 @bureau_reform
-view-if: bureau_reform_timer <= 0 and bureau_relation < 70
+view-if: bureau_reform_timer <= 0 and bureau_relation < 70 and not bureau_reformed
 subtitle: −2 political capital. Clears out the guilds' placemen: the bureaucracy warms to us considerably, the guilds less so.
 choose-if: capital >= 2
 unavailable-subtitle: Needs 2 political capital.
-on-arrival: capital -= 2; bureau_relation += 30; bureau_dossier = 0; guild_relation -= 5; inst_dissent -= 3; bureau_reform_timer = 6
+on-arrival: capital -= 2; bureau_relation += 30; bureau_dossier = 0; guild_relation -= 5; inst_dissent -= 3; bureau_reform_timer = 6; bureau_reviewed = 1
 
 The Committee audits the Senate's payroll. Forty officials on retainer to the Trade Federation are quietly retired; their replacements owe their jobs to the reform. For a while, at least, the Caucus's bills reach the floor on time.
+
+@civil_service
+view-if: bureau_reviewed and not bureau_reformed
+subtitle: −2 political capital. A permanent, independent civil service, if the Senate agrees.
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: {!
+Q.capital -= 2;
+var st = SW.stance(Q, {mod: 0.6, guild: 0.25, rim: 0.65, sec: 0.45, ind: 0.55, pal: 0.2, cis: 0.3}, true);
+Q.cs_vote = SW.vote(Q, st, 1, ['oversight']);
+Q.vote_html = SW.voteBanner('Civil Service Act', Q.cs_vote);
+if (Q.cs_vote >= 50) { Q.bureau_reformed = 1; Q.bureau_relation = Math.max(Q.bureau_relation, 60); Q.bureau_dossier = 0; Q.guild_relation -= 4; Q.faith += 1; }
+!}
+
+[+ vote_html +]
+
+[? if bureau_reformed : The Civil Service Act passes. Appointments to the Senate's permanent staff will be made on merit and reviewed in public, and no official may take a fee from a bloc or a guild. The men and women who ran the Republic from its back offices now answer to it. ?][? if not bureau_reformed : The bill dies on the floor. The back offices of the Senate go on as before, and they will remember who tried. ?]
+
+@amedda
+view-if: bureau_reformed and not amedda_arrested and not sidious_defeated and not sidious_fled
+subtitle: −1 political capital. The new civil service has opened the Vice Chair's files.
+choose-if: capital >= 1 and evidence >= 3
+unavailable-subtitle: [? if evidence < 3 : We need more evidence before we can move against him. ?][? if evidence >= 3 : Needs 1 political capital. ?]
+on-arrival: {!
+Q.capital -= 1; Q.amedda_arrested = 1; Q.vice_chair = 'Ask Aak';
+Q.evidence += 1.5; Q.grand_plan -= 2; Q.pal_relation -= 10; Q.senate_resolve += 0.5;
+for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_rc'] += 2;
+SW.momentum(Q, 0.6, 'the arrest of Mas Amedda');
+Q.scheme_timer = 0;
+SW.computeSupport(Q);
+!}
+achievement: amedda
+
+Senate Guards walk into the Vice Chair's office at dawn. The files the reformed civil service found in his archive are laid out on his desk: bills ruled out of order for money, appointments sold, a private line to the Chancellery that no one could explain. Mas Amedda says nothing at all. The Senate elects Ask Aak of Malastare to the gavel, and for the first time in years the Caucus's bills are heard. Somewhere, someone is very angry.
+
+@integrity
+view-if: anti_corruption and not integrity_office
+subtitle: −2 political capital. A permanent office to audit every senator, if the Senate agrees.
+choose-if: capital >= 2 and guild_hold = 0
+unavailable-subtitle: [? if guild_hold > 0 : The guilds whose money we took will not allow it. ?][? if guild_hold = 0 : Needs 2 political capital. ?]
+on-arrival: {!
+Q.capital -= 2;
+var st = SW.stance(Q, {mod: 0.55, guild: 0.1, rim: 0.7, sec: 0.4, ind: 0.55, pal: 0.3, cis: 0.3}, true);
+Q.io_vote = SW.vote(Q, st, 1, ['oversight', 'regulate']);
+Q.vote_html = SW.voteBanner('Office of Public Integrity Act', Q.io_vote);
+if (Q.io_vote >= 50) { Q.integrity_office = 1; Q.corruption -= 3; Q.faith += 1; Q.guild_relation -= 4; }
+!}
+
+[+ vote_html +]
+
+[? if integrity_office : The Office of Public Integrity opens on the lowest floor of the Senate Building, with a staff of auditors who cannot be fired by the people they audit. Votes are no longer for sale, or at least no longer cheap. ?][? if not integrity_office : The Office is voted down. Too many senators would have had to explain their accounts. ?]
+
+@hhc_investigate
+view-if: not hhc_investigated
+subtitle: −1 political capital. Follow the money behind the human-first movement.
+choose-if: capital >= 1
+unavailable-subtitle: Needs 1 political capital.
+on-arrival: capital -= 1; hhc_investigated = 1; evidence += 0.3; fear -= 1
+
+The Bureau of Intelligence follows the credits behind the human-first rallies on Coruscant and Corulag. They lead to shipping magnates, to retired admirals, and to a charity whose board meets at the Chancellery. The report is careful, and damning.
+
+@syndicates
+view-if: pirates_crushed and not syndicates_broken and not hutt_deal
+subtitle: −2 political capital. Go after the Hutt cartels and Black Sun themselves.
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: {!
+Q.capital -= 2;
+Q.syndicate_tries = (Q.syndicate_tries || 0) + 1;
+var p = SW.clamp(0.45 + Q.judicial_forces * 0.04 + Q.evidence * 0.02 + (Q.integrity_office ? 0.1 : 0) + Q.syndicate_tries * 0.08, 0.3, 0.9);
+Q.syndicates_ok = Math.random() < p ? 1 : 0;
+if (Q.syndicates_ok) {
+    Q.syndicates_broken = 1; Q.corruption -= 8; Q.faith += 2; Q.rim_hardship -= 3;
+    for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_rc'] += 2.5;
+    SW.momentum(Q, 0.8, 'breaking the syndicates'); this.achieve('syndicates');
+    SW.computeSupport(Q);
+} else { Q.corruption += 1; SW.momentum(Q, -0.3, 'a failed raid on the syndicates'); }
+!}
+
+[? if syndicates_ok : Judicial task forces, backed by the patrol fleets, raid the counting houses of Nal Hutta and the Black Sun vigos' towers on Coruscant's lower levels in a single night. A hundred senators wake to find their benefactors in custody. The HoloNet calls it the end of an age, and for once the HoloNet is right. ?][? if not syndicates_ok : The raids are betrayed: the vigos are gone hours before the task forces arrive, and the cartels' lawyers are on the HoloNet by morning. We will have to try again. ?]

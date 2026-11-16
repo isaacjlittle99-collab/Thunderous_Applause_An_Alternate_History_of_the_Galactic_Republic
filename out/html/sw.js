@@ -284,6 +284,34 @@
       D[bb + '_in_govt'] = 0;
       if (!D[bb + '_name']) D[bb + '_name'] = SW.BLOC_DEFAULT_NAMES[bb];
     }
+    // the Separatist threat, reform tracks, guild money and blocs that bleed
+    D.sep_momentum = 0; D.rim_addressed = 0; D.sep_growing = 0;
+    D.war_rep = 0; D.war_cis = 0; D.war_ratio = 2; D.war_strength_label = '';
+    D.lost_outer = 0; D.lost_mid = 0; D.lost_core = 0; D.worlds_lost = 0; D.worlds_liberated = 0; D.worlds_lost_list = '';
+    D.world_fall_ready = 0; D.world_fall_front = 'outer'; D.world_fall_name = ''; D.world_fall_region = ''; D.world_fall_front_name = '';
+    D.world_lib_ready = 0; D.world_lib_front = 'outer'; D.world_lib_name = ''; D.world_lib_front_name = ''; D.coruscant_falls = 0;
+    D.sidious_fled = 0; D.sidious_flee_ready = 0; D.admirals_strike_ready = 0; D.admirals_strike = 0;
+    for (var tb = 0; tb < SW.BLOCS.length; tb++) D['merged_' + SW.BLOCS[tb]] = '';
+    ['rim', 'rfc', 'rimward', 'sec'].forEach(function (t) {
+      D[t + '_threat'] = 0; D[t + '_threat_until'] = 0; D[t + '_threat_steps'] = 0; D[t + '_threat_dissent'] = 0;
+      D[t + '_threat_rival'] = 0; D[t + '_threat_cool'] = 0; D[t + '_done'] = 0; D[t + '_threat_leader_name'] = '';
+    });
+    D.threat_warn_ready = 0; D.threat_warn_id = ''; D.threat_due_ready = 0; D.threat_due_id = ''; D.threat_id = '';
+    D.threat_group_name = ''; D.threat_leader = ''; D.threat_old_leader = ''; D.threat_how = ''; D.threat_averted = 0; D.threat_left_senate = 0;
+    D.threats_seen = 0; D.threats_averted = 0; D.threats_happened = 0;
+    D.rim_defected = 0; D.rfc_defected = 0; D.rimward_defected = 0; D.sec_folded = 0;
+    for (var tk in SW.TRACKS) D['track_' + tk] = 0;
+    D.track_total = 0; D.mil_invest = 0;
+    D.bureau_reviewed = 0; D.bureau_reformed = 0; D.amedda_arrested = 0;
+    D.rim_relief_act = 0; D.rim_assembly = 0; D.integrity_office = 0; D.powers_review = 0; D.senate_command = 0;
+    D.new_jedi_order = 0; D.anakin_light = 0; D.anakin_choice_seen = 0;
+    D.slavery_report = 0; D.slavery_enforced = 0; D.shmi_freed_now = 0;
+    D.patrol_fleets = 0; D.pirates_crushed = 0; D.pirate_humiliation = 0; D.syndicates_broken = 0; D.syndicate_tries = 0; D.syndicates_ok = 0;
+    D.hutt_deal = 0; D.hutt_deal_seen = 0; D.hutt_deal_vote = 0; D.hutt_deal_forced = 0;
+    D.pirates_ready = 0; D.pirate_next = 0; D.pirate_route = ''; D.pirate_gang = ''; D.pirate_raids = 0;
+    D.sentience_rights = 0; D.officer_corps = 0; D.hhc_investigated = 0; D.hhc_discredited = 0;
+    D.hhc_ready = 0; D.hhc_next = 0; D.hhc_kind = 'core'; D.hhc_heat = 0; D.hhc_events = 0;
+    D.guild_hold = 0; D.guild_breaks = 0; D.guild_leak = 0; D.el_chest_offer = 0; D.el_chest_taken = 0;
     D.timers = SW.TIMERS.slice();
     for (var t = 0; t < SW.TIMERS.length; t++) D[SW.TIMERS[t] + '_timer'] = 0;
     return D;
@@ -400,6 +428,10 @@
     // the treasury is set by the yearly budget (rec_budget); the old trade tax still pays in
     if (Q.trade_tax) Q.treasury += 1;
     Q.budget_due = 1;
+    // the Separatists gain ground every year the Rim is left to them
+    SW.separatistYear(Q);
+    // under the Powers Review Act the Senate takes back one emergency power a year
+    if (Q.powers_review && Q.emergency_powers > 0 && !Q.finale) { Q.emergency_powers -= 1; Q.powers_returned = (Q.powers_returned || 0) + 1; }
   };
 
   // ------------------------------------------------------------------ factions
@@ -1048,10 +1080,14 @@
       if (!inc) continue;
       var incAvail = !inc.available || inc.available(Q);
       var hold = incAvail ? inc.rise(Q) + 0.15 : -1;
+      var push = SW.hhcPush(Q);
+      if (incAvail && inc.firm >= 0.7) hold += push;
+      // a looming defection under a hardliner brings a challenge against them
+      if (incAvail && inc.firm >= 0.7 && SW.threatOnGroup(Q, g)) hold -= 0.3;
       var pool = SW.leaderPool(Q, g);
       for (var j = 0; j < pool.length; j++) {
         if (pool[j] === incId) continue;
-        var press = SW.LEADERS[pool[j]].rise(Q) - hold;
+        var press = SW.LEADERS[pool[j]].rise(Q) + (SW.LEADERS[pool[j]].firm >= 0.7 ? push : 0) - hold;
         if (press > 0.15 && (!best || press > best.press)) best = {group: g, challenger: pool[j], press: press};
       }
     }
@@ -1131,6 +1167,9 @@
     Q.contest_backed_won = ours && backedWon ? 1 : 0;
     Q.contest_backed_lost = ours && !backedWon ? 1 : 0;
     if (Q.contest_backed_won) Q[g + '_favour'] = (Q[g + '_favour'] || 0) + 2;
+    // backing the rival who unseats a hardliner heads off the defection they were threatening
+    var tid = SW.threatOnGroup(Q, g);
+    if (tid && won && (backing === 'ch' || (backing === 'offer' && Q.contest_soft_id === Q.contest_ch_id)) && SW.THREATS[tid].hard.indexOf(Q.contest_inc_id) >= 0) Q[tid + '_threat_rival'] = 1;
     if (Q.contest_backed_lost) Q[g + '_grudge'] = (Q[g + '_grudge'] || 0) + 2;
     if (Q.contest_kind === 'bloc') {
       if (Q.contest_backed_won) Q[g + '_relation'] += 6;
@@ -2123,7 +2162,7 @@
   // called each turn: Sidious picks his next move
   SW.schemeTick = function (Q) {
     if (SW.off('schemes')) return;
-    if (Q.finale || Q.sidious_defeated || Q.sidious_gone || Q.date < 12 || Q.scheme_pending) return;
+    if (Q.finale || Q.sidious_defeated || Q.sidious_gone || Q.sidious_fled || Q.date < 12 || Q.scheme_pending) return;
     if (Q.scheme_timer > 0) return;
     var ids = [], ws = [], tot = 0;
     for (var id in SW.SCHEMES) { var w = Math.max(0, SW.SCHEMES[id].weight(Q)); if (w > 0) { ids.push(id); ws.push(w); tot += w; } }
@@ -2174,7 +2213,16 @@
   };
   SW.reformCount = function (Q) {
     return Q.emergency_sunset + Q.term_limits_protected + Q.army_oversight + Q.senate_guard_reformed + Q.jedi_independence +
-      Q.banking_independent + Q.rim_enfranchised + Q.anti_corruption + Q.slavery_abolished + Q.tf_broken_up;
+      Q.banking_independent + Q.rim_enfranchised + Q.anti_corruption + Q.slavery_abolished + Q.tf_broken_up + SW.newReforms(Q);
+  };
+  // the later steps of the reform tracks (each 0 or 1)
+  SW.NEW_REFORMS = ['bureau_reformed', 'rim_relief_act', 'rim_assembly', 'integrity_office', 'powers_review', 'senate_command', 'new_jedi_order',
+    'slavery_report', 'slavery_enforced', 'patrol_fleets', 'pirates_crushed', 'syndicates_broken', 'sentience_rights', 'officer_corps',
+    'hhc_investigated', 'hhc_discredited'];
+  SW.newReforms = function (Q) {
+    var n = 0;
+    for (var i = 0; i < SW.NEW_REFORMS.length; i++) n += Q[SW.NEW_REFORMS[i]] ? 1 : 0;
+    return n;
   };
   // the Caucus enters a government: the bureaucrats take the measure of its partners at once
   SW.bureauJoin = function (Q, blocs) {
@@ -2184,6 +2232,12 @@
   SW.bureauTick = function (Q) {
     if (SW.off('bureau')) return;
     var f = Q.months_per_turn > 0 ? Q.months_per_turn / 3 : 0.1;
+    if (Q.bureau_reformed) {
+      Q.bureau_relation += (60 - Q.bureau_relation) * 0.15 * f;
+      Q.bureau_dossier = 0;
+      Q.bureau_reforms_seen = SW.reformCount(Q);
+      return;
+    }
     var rcount = SW.reformCount(Q);
     var inGov = Q.rc_in_govt || Q.rc_chairs > 0;
     if (!inGov) {
@@ -2253,7 +2307,7 @@
     var live = !Q.finale && !Q.sidious_defeated;
     var reformVote = rcYes === 1 && topics.some(function (t) { return SW.REFORM_TOPICS.indexOf(t) >= 0; });
     // the Vice Chair controls the agenda: once a year he rules a Caucus reform out of order
-    if (!SW.off('gavel') && live && reformVote && !Q.rc_chancellor && (Q.pal_chancellor || Q.puppet_chancellor || (Q.govt_blocs || []).indexOf('pal') >= 0) &&
+    if (!SW.off('gavel') && live && reformVote && !Q.rc_chancellor && !Q.amedda_arrested && (Q.pal_chancellor || Q.puppet_chancellor || (Q.govt_blocs || []).indexOf('pal') >= 0) &&
         Q.senate_resolve < 3 && !Q.senate_guard_reformed && Q.date - (Q.gavel_date === undefined ? -99 : Q.gavel_date) >= 24) {
       Q.gavel_date = Q.date; Q.vote_tabled = 1; SW._tabled = 1; Q.gavels = (Q.gavels || 0) + 1;
       Q.last_vote = 0;
@@ -2261,7 +2315,7 @@
     }
     // delegations on the Chancellery's payroll follow its line on powers and oversight
     var bought = 0;
-    if (!SW.off('bought') && live && topics.some(function (t) { return /powers|oversight/.test(t); })) {
+    if (!SW.off('bought') && live && !Q.integrity_office && topics.some(function (t) { return /powers|oversight/.test(t); })) {
       bought = SW.clamp((Q.corruption - 60) / 150 + Q.grand_plan / 600, 0, 0.2);
       if (bought >= 0.08) SW._notes.push('bought votes');
     }
@@ -2297,7 +2351,7 @@
     if (total <= 0) total = 1;
     var share = SW.round1(100 * yes / total);
     // cold bureaucrats lose Caucus bills in committee
-    if (!SW.off('committee') && live && reformVote && Q.bureau_relation < 25 && (Q.rc_in_govt || Q.rc_chairs > 0)) {
+    if (!SW.off('committee') && live && reformVote && !Q.bureau_reformed && Q.bureau_relation < 25 && (Q.rc_in_govt || Q.rc_chairs > 0)) {
       share = SW.round1(Math.max(0, share - 3));
       SW._notes.push('\u22123, lost in committee');
     }
@@ -2347,13 +2401,16 @@
     var noise = function () { return (SW.rnd() - 0.5) * 0.6 * f; };
 
     // corruption, fear, faith
-    Q.corruption += f * (0.3 + Q.emergency_powers * 0.08 - Q.anti_corruption * 0.6 + (Q.war ? 0.25 : 0) + ((Q.guild_r || 20) - 20) * 0.02);
+    Q.corruption += f * (0.3 + Q.emergency_powers * 0.08 - Q.anti_corruption * 0.6 + (Q.war ? 0.25 : 0) + ((Q.guild_r || 20) - 20) * 0.02 +
+      (Q.guild_hold || 0) * 0.08 - (Q.integrity_office ? 0.6 : 0));
     var targetFear = 18 + (Q.dooku_movement ? 14 : 0) + (Q.war ? 14 + Math.max(0, -Q.war_balance) * 1.5 + Math.max(0, -SW.front(Q, 'core')) * 2 - Math.max(0, SW.front(Q, 'core')) + Math.min(5, Q.war_turns * 0.25) + (Q.war_aim === 'victory' ? 5 : 0) : 0) + (Q.secession_recent || 0) * 2;
     Q.fear += (targetFear - Q.fear) * 0.25 * f;
     Q.secession_recent = 0;
     var reforms = Q.emergency_sunset + Q.term_limits_protected + Q.army_oversight + Q.senate_guard_reformed +
       Q.jedi_independence + Q.banking_independent + Q.rim_enfranchised + Q.anti_corruption;
-    var targetFaith = 80 - Q.corruption * 0.45 - Q.fear * 0.15 - Q.war_weariness * 0.1 + reforms * 2.5 - Q.emergency_powers * 1.2 + (Q.rc_r || 0) * 0.2;
+    var bigReforms = (Q.bureau_reformed ? 1 : 0) + (Q.rim_assembly ? 1 : 0) + (Q.integrity_office ? 1 : 0) + (Q.powers_review ? 1 : 0) + (Q.senate_command ? 1 : 0) +
+      (Q.new_jedi_order ? 1 : 0) + (Q.slavery_enforced ? 1 : 0) + (Q.syndicates_broken ? 1 : 0) + (Q.hhc_discredited ? 1 : 0);
+    var targetFaith = 80 - Q.corruption * 0.45 - Q.fear * 0.15 - Q.war_weariness * 0.1 + reforms * 2.5 + bigReforms * 1.5 - Q.emergency_powers * 1.2 + (Q.rc_r || 0) * 0.2;
     Q.faith += (targetFaith - Q.faith) * 0.12 * f;
 
     // the Outer Rim
@@ -2376,6 +2433,9 @@
       }
       d -= Q.federal_compact * 2 + Q.peace_talks * 0.3 + Q.anti_corruption * 0.3;
       if (Q.war && Q.war_balance > 4) d -= 1;
+      // every year the Rim is left to them, the Separatists' cause gathers pace
+      d += SW.SEP_PUSH * (Q.sep_momentum || 0) * (r === 'corporate' ? ((Q.guild_patience === undefined ? 60 : Q.guild_patience) < 50 ? 0.6 : 0.3) : 1);
+      if (Q.rim_assembly && r !== 'corporate' && Q[r + '_sep'] > 10) d -= (Q[r + '_sep'] - 10) * 0.03;
       Q[r + '_sep'] += f * d;
     }
 
@@ -2394,19 +2454,43 @@
       rc: SW.RC_BASE * Math.max(0.3, 1 + (Q.faith - 50) / 40 - (Q.dissent - 0.15) * 1.2 + (Q.rc_in_govt ? 0.05 : 0) + 0.04 * SW.clamp(Q.rc_momentum || 0, -5, 5)),
       mod: Math.max(0.2, 1 + (50 - Q.corruption) / 40 - (Q.valorum_scandal && Q.mod_leader === 'Finis Valorum' ? 0.3 : 0)),
       // Sidious's agents work the Senate every year, in office or not; a clean Senate only slows them
-      pal: Math.max(0.3, 1 + Math.max(-0.2, (Q.corruption - 55) / 25) + Math.max(-0.2, (Q.fear - 25) / 20) + Q.grand_plan / (palInPower ? 40 : 70) +
-        (Q.sidious_defeated || Q.pal_disgraced ? 0 : Q.date / SW.PAL_GROWTH) + (Q.pal_chancellor ? 0.8 : 0) - Q.evidence_public * 0.4 - (Q.rc_chancellor ? 0.3 : 0)),
+      pal: 1 + Math.max(-0.2, (Q.corruption - 55) / 25) + Math.max(-0.2, (Q.fear - 25) / 20) + Q.grand_plan / (palInPower ? 40 : 70) +
+        (Q.pal_chancellor ? 0.8 : 0) - Q.evidence_public * 0.4 - (Q.rc_chancellor ? 0.3 : 0),
       guild: Math.max(0.3, 1 - (Q.tf_broken_up ? 0.3 : 0) + Q.guild_embargo * 0.03),
       rim: 1, sec: Math.max(0.2, 1 + (Q.fear - 20) / 25 + (Q.war ? 0.3 : 0)), ind: 1
     };
+    // Palpatine's agents work hardest where power lies: the Core and the Inner Rim
+    var palDate = Q.sidious_defeated || Q.pal_disgraced ? 0 : Q.date / SW.PAL_GROWTH;
+    // the Moderates and the Independents lose their natural support over the years; the Security Bloc to Palpatine
+    var bleed = SW.off('bleed') ? 0 : SW.bleedFrac(Q), share = SW.bleedShare(Q), subv = SW.off('bleed') ? 0 : SW.secSubversion(Q);
+    var cisIn = Q.cis_formed && Q.parties.indexOf('cis') >= 0, rimIn = Q.parties.indexOf('rim') >= 0;
     for (var j = 0; j < SW.REGIONS.length; j++) {
       var rg = SW.REGIONS[j];
+      var S0 = START_SUPPORT[rg];
+      var extra = {rc: 0, pal: 0, rim: 0, cis: 0};
+      var lostMod = S0.mod * bleed, lostInd = S0.ind * bleed;
+      extra.rc += lostMod * share; extra.pal += lostMod * (1 - share);
+      var sepR = (rg === 'outer' || rg === 'midrim' || rg === 'corporate') ? (Q[rg + '_sep'] || 0) : 0;
+      var wCis = cisIn ? 0.35 * Math.min(1, sepR / 60) : 0;
+      var wRim = rimIn && (rg === 'outer' || rg === 'midrim') ? 0.3 * Math.min(1, Q.rim_hardship / 50) : 0;
+      var wRP = Math.max(0.3, 1 - wCis - wRim);
+      extra.rc += lostInd * wRP * share; extra.pal += lostInd * wRP * (1 - share);
+      extra.rim += lostInd * wRim; extra.cis += lostInd * wCis;
+      extra.pal += S0.sec * mult.sec * subv;
+      // a bloc absorbed by another brings its natural support with it
+      if (Q.merged_sec === 'pal') extra.pal += S0.sec * mult.sec * 0.8;
+      if (Q.merged_rim === 'cis') extra.cis += S0.rim * 0.6;
       for (var bi = 0; bi < 7; bi++) {
         var b = ['rc', 'mod', 'pal', 'guild', 'rim', 'sec', 'ind'][bi];
+        if (Q['merged_' + b]) { Q[rg + '_' + b] = 0.3; continue; }
         var m2 = mult[b];
         if (b === 'rim' && (rg === 'outer' || rg === 'midrim')) m2 = Math.max(0.3, 1 + (Q.rim_hardship - 30) / 30);
+        if (b === 'pal') m2 = Math.max(0.3, m2 + palDate * SW.PAL_REGION[rg]);
         m2 *= 1 + SW.leaderPull(Q, b);
-        var target = START_SUPPORT[rg][b] * m2;
+        var target = S0[b] * m2;
+        if (b === 'mod' || b === 'ind') target *= 1 - bleed;
+        if (b === 'sec') target *= 1 - subv;
+        target += extra[b] || 0;
         // splinters take a share of the Caucus
         if (b === 'rc') {
           target *= Math.max(0.3, 1 - (Q.split_share_total || 0));
@@ -2416,8 +2500,8 @@
         if (Q['split_gain_' + b]) target += START_SUPPORT[rg].rc * Q['split_gain_' + b];
         Q[rg + '_' + b] += (target - Q[rg + '_' + b]) * 0.08 * f + noise();
       }
-      if (Q.cis_formed && Q.parties.indexOf('cis') >= 0) {
-        var tc = (rg === 'core' || rg === 'colonies') ? 0.5 : (Q[rg + '_sep'] || 0) / 2.5;
+      if (cisIn) {
+        var tc = ((rg === 'core' || rg === 'colonies') ? 0.5 : (Q[rg + '_sep'] || 0) / 2.5 * (1 + 0.03 * (Q.sep_momentum || 0))) + extra.cis;
         Q[rg + '_cis'] += (tc - Q[rg + '_cis']) * 0.25 * f;
       }
       for (var b2 = 0; b2 < SW.BLOCS.length; b2++) {
@@ -2429,8 +2513,7 @@
     // war
     if (Q.war) {
       Q.war_turns += 1;
-      var rep = Q.clones * 0.6 + Q.judicial_forces * 0.25 + Q.member_forces * 0.2 + Q.jedi_strength * 0.25 + (Q.navy_loyalty - 50) / 50;
-      var cis = Q.droid_armies + (Q.guild_embargo * 0.2);
+      var wst = SW.warStrength(Q), rep = wst.rep, cis = wst.cis;
       // Sidious keeps the war going: the front drifts back toward a slow Republic advance
       var drift_target = 0.5 + Math.max(0, Q.date - 135) / 30 + (Q.war_aim === 'victory' ? 0.8 : (Q.war_aim === 'peace' ? -0.5 : 0));
       Q.war_balance += f * ((rep - cis) * 0.08 + (drift_target - Q.war_balance) * 0.18 + (SW.rnd() - 0.5) * 1.2);
@@ -2442,6 +2525,7 @@
       if (!Q.kamino_army) Q.clones = 0;
       if (Q.droid_armies > 0) Q.droid_armies += f * 0.15;
       SW.frontsTick(Q, f);
+      SW.warWorldsTick(Q, f);
     }
     SW.economyTick(Q, f);
     Q.rc_momentum = (Q.rc_momentum || 0) * Math.pow(0.8, f);
@@ -2946,6 +3030,7 @@
           var dk = prevPri === pri ? 0.5 : 1;
           if (pri === 'relief') SW.deliver(Q, Q.parties.indexOf('rim') >= 0 ? 'rim' : 'rfc', 10 * dk, 'relief for the Rim');
           if (pri === 'defence') SW.deliver(Q, 'sec', 10 * dk, 'money for the fleet');
+          if (pri === 'defence') Q.mil_invest = (Q.mil_invest || 0) + 1;
           if (pri === 'subsidies') { SW.deliver(Q, 'guild', 8 * dk, 'subsidies for trade'); SW.deliver(Q, 'mod', 5 * dk, 'subsidies for the Core'); }
           if (pri === 'repay') { SW.deliver(Q, 'mod', 6 * dk, 'a sound treasury'); SW.deliver(Q, 'ind', 4 * dk, 'a sound treasury'); }
         }
@@ -3408,6 +3493,7 @@
   SW.momentumLabel = function (m) { return m >= 1.5 ? '<span class="good">surging</span>' : (m >= 0.4 ? '<span class="good">rising</span>' : (m > -0.4 ? 'steady' : (m > -1.5 ? '<span class="warn">falling</span>' : '<b class="bad">collapsing</b>'))); };
   SW.warChest = function (Q) {
     var notes = [];
+    Q.el_chest_offer = 0; Q.el_chest_taken = 0;
     var add = function (a, c, v) { Q['bonus_' + a + '_for_' + c] = (Q['bonus_' + a + '_for_' + c] || 0) + v; };
     var mo = SW.clamp(Q.rc_momentum || 0, -5, 5);
     Q.el_mom_note = 0;
@@ -3419,9 +3505,9 @@
     if (Q.guild_patience < 35) {
       add('guild', 'rc', -10); add('ind', 'rc', -6); add('mod', 'rc', -4); add('guild', 'pal', 4); add('ind', 'pal', 4);
       notes.push('The guilds, whose patience with the Caucus is exhausted, are bankrolling our rivals.');
-    } else if (Q.guild_patience >= 75) {
-      add('guild', 'rc', 6); Q.capital += 1; Q.corruption += 0.5;
-      notes.push('The guilds, pleased with the Caucus, quietly fund our campaign.');
+    } else if (Q.guild_patience >= 60 && !Q.integrity_office) {
+      Q.el_chest_offer = 1;
+      notes.push('The guilds, pleased with the Caucus, have offered to fund our campaign.');
     }
     if ((Q.debt || 0) >= 25) { add('guild', 'pal', 4); add('mod', 'pal', 2); notes.push('The Banking Clan, owed a fortune, backs the Chancellery\'s candidate.'); }
     if ((Q.patrons_goodwill || 60) < 30) { add('mod', 'rc', -4); notes.push('Our own Core patrons, angry at the levy, keep their purses shut.'); }
@@ -3552,17 +3638,18 @@
       judicials: Q.judicial_forces,
       members: Q.member_forces * (Q.pact_formed ? 1 : 0.5),
       guard: (Q.senate_guard_reformed || ours) ? 2 : (his ? (Q.guard_turned ? 1 : 0) : 1),
-      clones: Q.clones * (chips ? (oversight ? 0.8 : 0.6) : (oversight ? 0.15 : 0.05) + (Q.clone_trust || 0) * 0.02),
+      clones: Q.clones * (Q.senate_command ? (chips ? 0.9 : 0.4) : (chips ? (oversight ? 0.8 : 0.6) : (oversight ? 0.15 : 0.05) + (Q.clone_trust || 0) * 0.02)),
       navy: Q.clones > 0 ? Q.navy_loyalty / 100 * 4 : 0,
       anakin: anakinGood ? 3 : 0
     };
     var sith = {
-      clones: Q.clones * (chips ? (oversight ? 0.2 : 0.4) : (oversight ? 0.85 : 0.95)),
+      clones: Q.clones * (Q.senate_command ? (chips ? 0.1 : 0.6) : (chips ? (oversight ? 0.2 : 0.4) : (oversight ? 0.85 : 0.95))),
       guard: (Q.senate_guard_reformed || ours) ? 0 : (his ? (Q.guard_turned ? 1 : 2) : 0.5),
       navy: Q.clones > 0 ? (1 - Q.navy_loyalty / 100) * 4 : 0,
       governors: (Q.governors && his) ? 2 : 0,
       sith: 3 + (anakinBad ? 3 : 0),
-      security_bloc: (Q.sec_r || 0) / 10,
+      security_bloc: (Q.sec_r || 0) / 10 + (Q.sec_folded ? 1.5 : 0),
+      black_sun: (Q.finale && !Q.syndicates_broken && !Q.sidious_fled) ? 2 : 0,
       secret_army: (Q.kamino_army && Q.clones === 0 && !Q.army_oversight && Q.date >= 132) ? 4 : 0
     };
     var r = 0, s = 0, k;
@@ -3593,10 +3680,10 @@
   // Which cards still have something meaningful to offer (fallback options don't count).
   SW.cardAvailability = function (Q) {
     var c = {};
-    c.rim = (Q.rim_hardship > 15) || (!Q.slavery_abolished && Q.slavery_campaign < 2) ||
-      (Q.anakin_found && !Q.shmi_freed && !Q.shmi_dead && Q.date >= 18) || Q.outer_sep > 12 || (Q.dooku_movement && Q.outer_sep > 20);
+    c.rim = (Q.rim_hardship > 15) || (!Q.slavery_abolished && Q.slavery_campaign < 2) || Q.outer_sep > 12 || (Q.dooku_movement && Q.outer_sep > 20);
     c.jedi = Q.jedi_relation < 85 || (Q.date >= 18 && Q.jedi_suspicion < 9 && !Q.sidious_known) || Q.jedi_standing < 85 ||
-      ((Q.date >= 108 || Q.war) && Q.jedi_reform < 3 && !Q.jedi_reformed) || (Q.anakin_found && Q.date >= 20 && Q.anakin_fall > 0.5);
+      ((Q.date >= 108 || Q.war) && Q.jedi_reform < 3 && !Q.jedi_reformed) || (Q.anakin_found && Q.date >= 20 && Q.anakin_fall > 0.5) ||
+      (Q.jedi_reform >= 3 && !Q.jedi_reformed) || (Q.jedi_reformed && Q.anakin_light && !Q.new_jedi_order);
     c.media = Q.corruption > 20 || Q.faith < 85 || (!Q.rc_chancellor && Q.senate_resolve < 10);
     c.investigate = !Q.sidious_known && !Q.sidious_defeated && (Q.evidence < 11.5 || (Q.archive_gap_known && !Q.kamino_known));
     c.confront = !Q.rc_chancellor && Q.senate_resolve < 9.5;
@@ -3606,11 +3693,15 @@
     c.finance = (Q.corruption > 25 && Q.guild_relation > 5) || (!Q.tf_broken_up && (Q.gunray_convicted || Q.evidence >= 4 || Q.naboo_free)) ||
       !Q.banking_audit || (!Q.banking_independent && Q.date >= 120) || Q.treasury < 6;
     c.judiciary = (Q.bureau_relation < 70 && Q.bureau_reform_timer <= 0) || Q.corruption > 20 || !Q.anti_corruption || Q.intel_runs < 3 || (Q.gunray_stage >= 1 && Q.gunray_stage <= 4 && !Q.gunray_convicted) ||
-      (Q.evidence >= 7 && !Q.warrant);
+      (Q.evidence >= 7 && !Q.warrant) || (Q.bureau_reviewed && !Q.bureau_reformed) || (Q.bureau_reformed && !Q.amedda_arrested && !Q.sidious_defeated) ||
+      (Q.anti_corruption && !Q.integrity_office) || !Q.hhc_investigated || (Q.pirates_crushed && !Q.syndicates_broken && !Q.hutt_deal);
     c.security = Q.judicial_forces < 8 || (!Q.army_oversight && (Q.clones > 0 || Q.kamino_known)) || !Q.senate_guard_reformed ||
-      (Q.clones > 0 && Q.navy_loyalty < 90) || Q.security_audits < 3;
-    c.rimaffairs = Q.rim_hardship > 15 || (!Q.slavery_abolished && Q.slavery_campaign >= 1) || !Q.rim_enfranchised;
-    c.constitution = !Q.emergency_sunset || !Q.term_limits_protected || !Q.constructive_vonc || !Q.jedi_independence || !Q.rim_enfranchised;
+      (Q.clones > 0 && Q.navy_loyalty < 90) || Q.security_audits < 3 || (Q.army_oversight && !Q.senate_command) ||
+      (!Q.pirates_crushed && !Q.hutt_deal) || !Q.officer_corps;
+    c.rimaffairs = Q.rim_hardship > 15 || !Q.slavery_report || (Q.slavery_report && !Q.slavery_abolished) || !Q.rim_enfranchised || !Q.rim_relief_act ||
+      (Q.rim_enfranchised && !Q.rim_assembly) || (Q.slavery_abolished && !Q.slavery_enforced) || !Q.sentience_rights;
+    c.constitution = !Q.emergency_sunset || !Q.term_limits_protected || !Q.constructive_vonc || !Q.jedi_independence || !Q.rim_enfranchised ||
+      (Q.emergency_sunset && !Q.powers_review);
     c.clones = !Q.chips_found || (Q.chips_found && !Q.chips_removed) || (Q.clones > 0 && !Q.clone_citizenship) || Q.clones > 6;
     for (var k in c) Q['cardok_' + k] = c[k] ? 1 : 0;
   };
@@ -3657,6 +3748,12 @@
     Q.inst_split_ready = (Q.inst_dissent >= SW.splitAt(Q, 'inst') && !Q.inst_crisis) ? 1 : 0;
     var fb = SW.forces(Q);
     Q.force_rep = fb.rep; Q.force_sith = fb.sith; Q.force_ratio = fb.ratio;
+    SW.trackLevels(Q);
+    var ws = SW.warStrength(Q);
+    Q.war_rep = SW.round1(ws.rep); Q.war_cis = SW.round1(ws.cis); Q.war_ratio = Math.round(ws.ratio * 100) / 100;
+    Q.rim_addressed = Math.round(SW.rimAddressed(Q) * 100);
+    // a Jedi Order remade around him: Anakin will not fall
+    if (Q.new_jedi_order) Q.anakin_fall = 0;
     Q.unease = Math.floor(Q.grand_plan / 20);
     for (var pb = 0; pb < SW.BLOCS.length; pb++) Q['parties_has_' + SW.BLOCS[pb]] = Q.parties.indexOf(SW.BLOCS[pb]) >= 0 ? 1 : 0;
     Q.pal_display = SW.name(Q, 'pal');
@@ -3719,6 +3816,7 @@
     }
     SW.drift(Q);
     SW.secession(Q);
+    SW.threatsTurn(Q);
     if (Q.months_per_turn > 0 || !Q.finale) {
       SW.computeSupport(Q);
       var rec = {t: Q.date};
@@ -3754,11 +3852,413 @@
     return n;
   };
 
+  // ================================================================== the Separatist threat, reforms in steps,
+  // guild money with strings, and blocs that bleed
+
+  // ------------------------------------------------------------------ reform tracks
+  // A track is a series of decisions, each a bigger and more lasting change. Its level is read from the
+  // flags those decisions set, so the existing reforms keep working as the first steps of their tracks.
+  SW.TRACKS = {
+    bureau: {name: 'The bureaucracy', steps: ['A civil service review', 'The Civil Service Act'],
+      level: function (Q) { return Q.bureau_reformed ? 2 : (Q.bureau_reviewed ? 1 : 0); }},
+    rim: {name: 'The Rim', steps: ['The Rim Relief Act', 'Rim enfranchisement', 'The Rim Assembly'],
+      level: function (Q) { return Q.rim_assembly ? 3 : (Q.rim_enfranchised ? 2 : (Q.rim_relief_act ? 1 : 0)); }},
+    corruption: {name: 'Corruption', steps: ['The ethics law', 'The Office of Public Integrity'],
+      level: function (Q) { return Q.integrity_office ? 2 : (Q.anti_corruption ? 1 : 0); }},
+    powers: {name: 'Emergency powers', steps: ['Sunset clauses', 'The Powers Review Act'],
+      level: function (Q) { return Q.powers_review ? 2 : (Q.emergency_sunset ? 1 : 0); }},
+    military: {name: 'The military', steps: ['Senate oversight of the army', 'The Senate Command Act'],
+      level: function (Q) { return Q.senate_command ? 2 : (Q.army_oversight ? 1 : 0); }},
+    jedi: {name: 'The Jedi', steps: ['A campaign for reform', 'The Council accepts attachment', 'A New Jedi Order'],
+      level: function (Q) { return Q.new_jedi_order ? 3 : (Q.jedi_reformed ? 2 : ((Q.jedi_reform || 0) >= 3 ? 1 : 0)); }},
+    slavery: {name: 'Slavery', steps: ['A Senate report on slavery', 'Abolition', 'Enforcing abolition'],
+      level: function (Q) { return Q.slavery_enforced ? 3 : (Q.slavery_abolished ? 2 : (Q.slavery_report ? 1 : 0)); }},
+    syndicates: {name: 'The syndicates', steps: ['Patrol fleets in the Rim', 'The campaign against the pirate fleets', 'Breaking the syndicates'],
+      level: function (Q) { return Q.syndicates_broken ? 3 : (Q.pirates_crushed ? 2 : (Q.patrol_fleets ? 1 : 0)); }},
+    hhc: {name: 'High Human Culture', steps: ['The Rights of Sentience', 'A diverse officer corps', 'Human-first groups investigated', 'High Human Culture discredited'],
+      level: function (Q) { return Q.hhc_discredited ? 4 : ((Q.sentience_rights ? 1 : 0) + (Q.officer_corps ? 1 : 0) + (Q.hhc_investigated ? 1 : 0)); }}
+  };
+  SW.trackSteps = function (Q, ids) {
+    var n = 0;
+    for (var i = 0; i < ids.length; i++) n += SW.TRACKS[ids[i]].level(Q);
+    return n;
+  };
+  SW.trackLevels = function (Q) {
+    var tot = 0;
+    for (var id in SW.TRACKS) { var l = SW.TRACKS[id].level(Q); Q['track_' + id] = l; tot += l; }
+    Q.track_total = tot;
+    return tot;
+  };
+
+  // ------------------------------------------------------------------ the Separatists grow every year
+  SW.SEP_GROWTH = 1;          // momentum gained in a year in which nothing is done for the Rim
+  SW.SEP_PUSH = 0.1;          // separatism added per quarter for each point of momentum
+  SW.PAL_REGION = {core: 1.4, colonies: 1.3, midrim: 0.8, outer: 0.5, corporate: 0.6};
+  // How far the Caucus has addressed the Rim's grievances (0 = not at all, 1 = fully).
+  SW.rimAddressed = function (Q) {
+    if (Q.rim_assembly) return 1;
+    var a = SW.TRACKS.rim.level(Q) * 0.2 + SW.TRACKS.slavery.level(Q) * 0.08 + SW.TRACKS.syndicates.level(Q) * 0.08 +
+      (Q.anti_corruption ? 0.05 : 0) + (Q.budget_pri === 'relief' ? 0.05 : 0) + (Q.federal_compact ? 0.3 : 0) +
+      Math.min(Q.rim_relief || 0, 3) * 0.07 + Math.min(Q.slavery_campaign || 0, 2) * 0.04 + SW.clamp(((Q.rim_relation || 30) - 40) / 200, -0.05, 0.15);
+    return SW.clamp(a, 0, 1);
+  };
+  SW.separatistYear = function (Q) {
+    var a = SW.rimAddressed(Q);
+    Q.rim_addressed = Math.round(a * 100);
+    if (Q.date < 24 || Q.federal_compact || Q.peace_achieved || Q.war_won || Q.recognized_cis) { Q.sep_growing = 0; return; }
+    Q.sep_momentum = (Q.sep_momentum || 0) + SW.SEP_GROWTH * (1 - a);
+    if (a >= 0.6) Q.sep_momentum *= 0.85;
+    if (Q.war) Q.droid_armies += 0.5 * (1 - a);
+    Q.sep_growing = a < 0.6 ? 1 : 0;
+  };
+
+  // ------------------------------------------------------------------ the war: strength, worlds lost and won
+  SW.warStrength = function (Q) {
+    var rep = Q.clones * 0.6 + Q.judicial_forces * 0.25 + Q.member_forces * 0.2 + Q.jedi_strength * 0.25 + (Q.navy_loyalty - 50) / 50 +
+      (Q.hutt_deal ? 0.6 : 0) + (Q.senate_command ? 0.3 : 0) + (Q.new_jedi_order ? 0.3 : 0);
+    var cis = Q.droid_armies + (Q.guild_embargo * 0.2);
+    return {rep: rep, cis: cis, ratio: cis > 0 ? Math.max(0, rep) / cis : 2};
+  };
+  // Loyalist worlds on each front, from the edge of the war toward the Core, and the region whose delegations they hold.
+  SW.LOYAL_WORLDS = {
+    outer: [['Christophsis', 'outer'], ['Ryloth', 'outer'], ['Saleucami', 'outer'], ['Felucia', 'outer'], ['Mygeeto', 'outer']],
+    mid: [['Rodia', 'midrim'], ['Malastare', 'midrim'], ['Bothawui', 'midrim'], ['Kashyyyk', 'midrim'], ['Naboo', 'midrim']],
+    core: [['Anaxes', 'core'], ['Ord Mantell', 'colonies'], ['Kuat', 'core'], ['Corellia', 'core'], ['Alderaan', 'core']]
+  };
+  SW.FRONT_DEPTH = {outer: 0, mid: 0.5, core: 1};
+  SW.recountSecession = function (Q) {
+    var tot = 0, base = 0;
+    for (var j = 0; j < SW.REGIONS.length; j++) {
+      var r = SW.REGIONS[j];
+      Q[r] = SW.BASE_WEIGHTS[r] * (1 - (Q[r + '_seceded'] || 0));
+      tot += SW.BASE_WEIGHTS[r] * (Q[r + '_seceded'] || 0); base += SW.BASE_WEIGHTS[r];
+    }
+    Q.seceded_total = Math.round(100 * tot / base);
+  };
+  // Each quarter of war (and each day of the finale), a stronger Confederacy may break through somewhere.
+  SW.warWorldsTick = function (Q, f) {
+    if (!Q.war || Q.world_fall_ready || Q.world_lib_ready || Q.game_ending || SW.off('worlds')) return;
+    var ws = SW.warStrength(Q);
+    var weak = null, wv = 99;
+    for (var i = 0; i < SW.FRONTS.length; i++) {
+      var fr = SW.FRONTS[i], v = SW.front(Q, fr);
+      if ((Q['lost_' + fr] || 0) < 5 && v < wv) { wv = v; weak = fr; }
+    }
+    var p = 0;
+    if (ws.ratio < 1) p += (1 - ws.ratio) * 0.6;
+    if (wv <= -3) p += Math.min(0.3, (-wv - 2) * 0.06);
+    p = Math.min(0.6, p) * f;
+    if (weak && p > 0 && SW.rnd() < p) { Q.world_fall_ready = 1; Q.world_fall_front = weak; return; }
+    // liberation: when we are clearly stronger, a front that is advancing retakes its last lost world
+    if (ws.ratio >= 1.25) {
+      for (var k = 0; k < SW.FRONTS.length; k++) {
+        var fl = SW.FRONTS[k];
+        if ((Q['lost_' + fl] || 0) > 0 && SW.front(Q, fl) >= 3 && SW.rnd() < 0.35 * f) { Q.world_lib_ready = 1; Q.world_lib_front = fl; return; }
+      }
+    }
+  };
+  SW.worldFalls = function (Q) {
+    var fr = Q.world_fall_front, k = Q['lost_' + fr] || 0, w = SW.LOYAL_WORLDS[fr][Math.min(4, k)], d = SW.FRONT_DEPTH[fr];
+    Q['lost_' + fr] = k + 1;
+    Q.fear += 3 + 5 * d; Q.faith -= 1 + 2 * d; Q.jedi_standing -= 2 + 2 * d;
+    SW.pushFront(Q, fr, -1);
+    var r = w[1];
+    Q[r + '_seceded'] = Math.min(0.9, (Q[r + '_seceded'] || 0) + 0.03);
+    SW.recountSecession(Q);
+    Q.world_fall_name = w[0]; Q.world_fall_region = SW.REGION_NAMES[r]; Q.world_fall_front_name = SW.FRONT_NAMES[fr];
+    Q.worlds_lost = (Q.worlds_lost || 0) + 1;
+    Q.worlds_lost_list = SW.lostWorldsList(Q);
+    if (fr === 'core' && Q.lost_core >= 5) Q.coruscant_falls = 1;
+    Q.world_fall_ready = 0;
+    SW.computeSupport(Q);
+  };
+  SW.worldLiberated = function (Q) {
+    var fr = Q.world_lib_front, k = (Q['lost_' + fr] || 1) - 1, w = SW.LOYAL_WORLDS[fr][Math.max(0, k)], d = SW.FRONT_DEPTH[fr];
+    Q['lost_' + fr] = Math.max(0, k);
+    Q.fear -= 2 + 2 * d; Q.faith += 1 + d; Q.jedi_standing += 1;
+    SW.pushFront(Q, fr, 0.5);
+    var r = w[1];
+    Q[r + '_seceded'] = Math.max(0, (Q[r + '_seceded'] || 0) - 0.03);
+    SW.recountSecession(Q);
+    Q.world_lib_name = w[0]; Q.world_lib_front_name = SW.FRONT_NAMES[fr];
+    Q.worlds_liberated = (Q.worlds_liberated || 0) + 1;
+    Q.worlds_lost_list = SW.lostWorldsList(Q);
+    Q.world_lib_ready = 0;
+    SW.computeSupport(Q);
+  };
+  SW.lostWorldsList = function (Q) {
+    var out = [];
+    for (var i = 0; i < SW.FRONTS.length; i++) {
+      var fr = SW.FRONTS[i];
+      for (var k = 0; k < (Q['lost_' + fr] || 0) && k < 5; k++) out.push(SW.LOYAL_WORLDS[fr][k][0]);
+    }
+    return out.join(', ');
+  };
+
+  // ------------------------------------------------------------------ one bloc absorbed by another
+  // The bloc's worlds go over to the bloc that absorbs it. If that bloc is not in the Senate (the Separatists
+  // after Geonosis), its delegations leave the Republic instead.
+  SW.mergeBloc = function (Q, from, into) {
+    var seated = Q.parties.indexOf(into) >= 0;
+    var lost = 0;
+    for (var i = 0; i < SW.REGIONS.length; i++) {
+      var r = SW.REGIONS[i], v = Q[r + '_' + from] || 0;
+      if (seated) Q[r + '_' + into] = (Q[r + '_' + into] || 0) + v;
+      else {
+        var tot = 0;
+        for (var p = 0; p < Q.parties.length; p++) tot += Q[r + '_' + Q.parties[p]] || 0;
+        var sd = Q[r + '_seceded'] || 0, add = (1 - sd) * (tot > 0 ? v / tot : 0);
+        Q[r + '_seceded'] = Math.min(0.9, sd + add);
+        lost += add * SW.BASE_WEIGHTS[r];
+      }
+      Q[r + '_' + from] = 0.3;
+    }
+    Q.parties = Q.parties.filter(function (b) { return b !== from; });
+    Q['merged_' + from] = into;
+    Q['parties_has_' + from] = 0;
+    var vacated = false;
+    for (var c = 0; c < SW.COMMITTEES.length; c++) if (Q['chair_' + SW.COMMITTEES[c]] === from) { Q['chair_' + SW.COMMITTEES[c]] = ''; vacated = true; }
+    if (Q.chancellor_bloc === from) {
+      if (seated && into !== 'cis') Q.chancellor_bloc = into;
+      else { Q.election_due = 1; Q.govt_fell_now = 1; Q.fall_reason = 'defection'; }
+    }
+    if ((Q.govt_blocs || []).indexOf(from) >= 0) {
+      Q.govt_blocs = Q.govt_blocs.filter(function (b) { return b !== from; });
+      if (seated && into !== 'cis' && Q.chancellor_bloc === into && Q.govt_blocs.indexOf(into) < 0) Q.govt_blocs.push(into);
+      if (Q.rc_in_govt) Q.coalition_dissent += 1;
+    }
+    if (Q.walkout_bloc === from) Q.walkout_bloc = '';
+    if (Q.strain_bloc === from) Q.strain_bloc = '';
+    if (vacated && (Q.govt_blocs || []).length) SW.assignChairs(Q);
+    if (lost > 0) {
+      SW.recountSecession(Q);
+      Q.secession_recent = (Q.secession_recent || 0) + lost / 10;
+      if (Q.war) Q.droid_armies += lost / 12;
+    }
+    SW.senateSession(Q);
+  };
+
+  // Our own Rimward wing goes over to the Separatists (or, after Geonosis, leaves the Senate with them).
+  SW.wingDefects = function (Q) {
+    var share = SW.clamp((Q.rimward_strength || 0) / 100 * 0.5, 0.04, 0.4);
+    var seated = Q.parties.indexOf('cis') >= 0;
+    for (var i = 0; i < SW.REGIONS.length; i++) {
+      var r = SW.REGIONS[i];
+      var k = (r === 'outer' || r === 'midrim') ? share * 1.4 : share * 0.6;
+      var mv = Q[r + '_rc'] * Math.min(0.8, k);
+      if (seated) Q[r + '_cis'] += mv;
+      else {
+        var tot = 0;
+        for (var p = 0; p < Q.parties.length; p++) tot += Q[r + '_' + Q.parties[p]] || 0;
+        var sd = Q[r + '_seceded'] || 0;
+        Q[r + '_seceded'] = Math.min(0.9, sd + (1 - sd) * (tot > 0 ? mv / tot : 0));
+      }
+      Q[r + '_rc'] -= mv;
+    }
+    SW.recountSecession(Q);
+    Q.split_share_total = (Q.split_share_total || 0) + share;
+    Q.rimward_split = 1; Q.rimward_defected = 1;
+    Q.rimward_strength *= 0.25; Q.rimward_dissent = 20;
+    Q.adv_farr = 0; Q.adv_chuchi = 0;
+    SW.countAdvisors(Q);
+    SW.updateDissent(Q);
+    SW.senateSession(Q);
+  };
+
+  // ------------------------------------------------------------------ threats of defection
+  // A warning gives the Caucus a few turns. The threat passes only through the normal channels: better relations
+  // (for our own wing, a calmer wing), a reform step on the tracks that matter to them, or a rival we backed
+  // winning their next leadership challenge. Otherwise it happens.
+  SW.THREAT_TURNS = 4;
+  SW.maxRimSep = function (Q) { return Math.max(Q.outer_sep || 0, Q.midrim_sep || 0); };
+  SW.THREATS = {
+    rim: {group: 'rim', kind: 'bloc', into: 'cis', tracks: ['rim', 'slavery', 'syndicates'], hard: ['ardana'],
+      start: function (Q) {
+        if (Q.parties.indexOf('rim') < 0 || !Q.dooku_movement || Q.rim_defected) return false;
+        if (Q.rim_leader_id === 'ardana') return SW.maxRimSep(Q) >= 40;
+        return SW.maxRimSep(Q) >= 55 && Q.rim_relation < 25 && SW.rel(Q, 'rim', 'cis') >= 40;
+      }},
+    rfc: {group: 'rfc', kind: 'bloc', into: 'cis', tracks: ['rim', 'slavery', 'syndicates'], hard: ['tandeth', 'corvane'],
+      start: function (Q) {
+        return Q.parties.indexOf('rfc') >= 0 && Q.rfc_kind === 'rimward' && Q.dooku_movement && !Q.rfc_defected &&
+          ['tandeth', 'corvane'].indexOf(Q.rfc_leader_id) >= 0 && SW.maxRimSep(Q) >= 45;
+      }},
+    rimward: {group: 'rimward', kind: 'faction', into: 'cis', tracks: ['rim', 'slavery', 'syndicates'], hard: ['corvane'],
+      start: function (Q) {
+        return !Q.rimward_split && Q.dooku_movement && Q.rimward_leader_id === 'corvane' && Q.rimward_dissent >= 35 && SW.maxRimSep(Q) >= 50;
+      }},
+    sec: {group: 'sec', kind: 'bloc', into: 'pal', tracks: ['military'], hard: ['tarkin'],
+      start: function (Q) {
+        return Q.parties.indexOf('sec') >= 0 && !Q.sec_folded && Q.sec_leader_id === 'tarkin' && Q.sec_relation < 25 &&
+          Q.parties.indexOf('pal') >= 0 && !Q.pal_disgraced && !Q.sidious_defeated &&
+          (Q.pal_chancellor || Q.puppet_chancellor || Q.fear >= 45 || Q.grand_plan >= 50);
+      }}
+  };
+  SW.threatOnGroup = function (Q, g) {
+    for (var id in SW.THREATS) if (SW.THREATS[id].group === g && Q[id + '_threat']) return id;
+    return '';
+  };
+  SW.threatTick = function (Q) {
+    if (Q.finale || Q.game_ending || !(Q.months_per_turn > 0) || SW.off('threats')) return;
+    for (var id in SW.THREATS) {
+      var T = SW.THREATS[id];
+      if (Q[id + '_threat']) {
+        var gone = T.kind === 'bloc' ? Q.parties.indexOf(T.group) < 0 : Q.rimward_split;
+        if (gone) { Q[id + '_threat'] = 0; continue; }
+        if (Q.time >= Q[id + '_threat_until'] && !Q.threat_due_ready) { Q.threat_due_ready = 1; Q.threat_due_id = id; }
+        continue;
+      }
+      if (Q.threat_warn_ready || Q[id + '_done'] || (Q[id + '_threat_cool'] || 0) > Q.time) continue;
+      if (T.start(Q)) { Q.threat_warn_ready = 1; Q.threat_warn_id = id; }
+    }
+  };
+  SW.threatBegin = function (Q) {
+    var id = Q.threat_warn_id, T = SW.THREATS[id];
+    Q.threat_warn_ready = 0;
+    if (!T) return;
+    Q[id + '_threat'] = 1;
+    Q[id + '_threat_until'] = Q.time + SW.THREAT_TURNS;
+    Q[id + '_threat_steps'] = SW.trackSteps(Q, T.tracks);
+    Q[id + '_threat_dissent'] = Q.rimward_dissent || 0;
+    Q[id + '_threat_rival'] = 0;
+    // a crisis brings the next leadership challenge forward
+    if (T.kind === 'bloc') Q.leadership_timer = 0; else Q.faction_leader_timer = 0;
+    Q.threat_id = id;
+    Q.threat_group_name = T.kind === 'bloc' ? SW.name(Q, T.group) : 'our Rimward wing';
+    Q.threat_leader = T.kind === 'bloc' ? (Q[T.group + '_leader'] || SW.leader(Q, T.group).name || '') : (SW.leader(Q, 'rimward').name || '');
+    Q[id + '_threat_leader_name'] = Q.threat_leader;
+    Q.threats_seen = (Q.threats_seen || 0) + 1;
+  };
+  // Called at the deadline. Returns '' if the threat comes to pass, or how it was averted.
+  SW.threatAverted = function (Q, id) {
+    var T = SW.THREATS[id];
+    if (Q[id + '_threat_rival']) return 'leader';
+    if (SW.trackSteps(Q, T.tracks) > (Q[id + '_threat_steps'] || 0)) return 'reform';
+    if (T.kind === 'bloc' && (Q[T.group + '_relation'] || 0) >= 40) return 'relations';
+    if (T.kind === 'faction' && ((Q.rimward_dissent || 0) <= (Q[id + '_threat_dissent'] || 0) - 12 || (Q.rimward_dissent || 0) < 30)) return 'relations';
+    if (!T.start(Q)) return 'cooled';
+    return '';
+  };
+  SW.threatResolve = function (Q) {
+    var id = Q.threat_due_id, T = SW.THREATS[id];
+    Q.threat_due_ready = 0;
+    if (!T) return;
+    Q.threat_id = id;
+    Q.threat_group_name = T.kind === 'bloc' ? SW.name(Q, T.group) : 'our Rimward wing';
+    Q.threat_leader = T.kind === 'bloc' ? (Q[T.group + '_leader'] || SW.leader(Q, T.group).name || '') : (SW.leader(Q, 'rimward').name || '');
+    Q.threat_old_leader = Q[id + '_threat_leader_name'] || Q.threat_leader;
+    var how = SW.threatAverted(Q, id);
+    Q[id + '_threat'] = 0;
+    Q.threat_how = how;
+    Q.threat_averted = how ? 1 : 0;
+    if (how) { Q[id + '_threat_cool'] = Q.time + 10; Q.threats_averted = (Q.threats_averted || 0) + 1; return; }
+    Q[id + '_done'] = 1;
+    Q.threats_happened = (Q.threats_happened || 0) + 1;
+    Q.threat_left_senate = Q.parties.indexOf('cis') < 0 && id !== 'sec' ? 1 : 0;
+    if (id === 'rim') { SW.mergeBloc(Q, 'rim', 'cis'); Q.rim_defected = 1; Q.fear += 3; }
+    else if (id === 'rfc') { SW.mergeBloc(Q, 'rfc', 'cis'); Q.rfc_defected = 1; Q.fear += 2; }
+    else if (id === 'rimward') { SW.wingDefects(Q); Q.fear += 2; }
+    else if (id === 'sec') { SW.mergeBloc(Q, 'sec', 'pal'); Q.sec_folded = 1; Q.navy_loyalty -= 8; Q.grand_plan += 3; }
+  };
+
+  // ------------------------------------------------------------------ blocs that bleed
+  // Over the years the Core Moderates and the Independents lose their natural support, to the Caucus or to Palpatine
+  // (the Independents also to the Separatists and the Rimward Coalition); the Security Bloc bleeds to Palpatine.
+  SW.BLEED = 0.5;             // share of their natural size the Moderates and Independents have lost by 19 BBY
+  SW.bleedFrac = function (Q) { return SW.BLEED * SW.clamp((Q.date || 0) / 168, 0, 1); };
+  SW.bleedShare = function (Q) {
+    return SW.clamp(0.5 + ((Q.mod_relation || 45) - 45) / 100 + 0.06 * SW.clamp(Q.rc_momentum || 0, -5, 5) + 0.06 * Math.min(3, Q.evidence_public || 0) +
+      0.02 * Math.min(10, SW.reformCount(Q)) - (Q.pal_chancellor ? 0.1 : 0) - Math.max(0, Q.corruption - 70) / 200 - Math.max(0, Q.fear - 40) / 250, 0.2, 0.8);
+  };
+  SW.secSubversion = function (Q) {
+    if (Q.sidious_defeated || Q.pal_disgraced) return 0;
+    return SW.clamp(((Q.pal_chancellor || Q.puppet_chancellor) ? 0.1 : 0) + Math.max(0, Q.fear - 45) / 200 + (Q.grand_plan || 0) / 600, 0, 0.25);
+  };
+
+  // ------------------------------------------------------------------ High Human Culture, pirates, Sidious's flight
+  SW.hhcPush = function (Q) { return Q.hhc_discredited ? 0 : Math.min(0.2, (Q.hhc_heat || 0) * 0.03); };
+  SW.HHC_KINDS = ['core', 'senate', 'military'];
+  SW.hhcEvent = function (Q) {
+    Q.core_pal += 0.5; Q.colonies_pal += 0.35;
+    Q.sep_momentum = (Q.sep_momentum || 0) + 0.15;
+    Q.hhc_heat = (Q.hhc_heat || 0) + 1;
+    Q.hhc_events = (Q.hhc_events || 0) + 1;
+    if (Q.hhc_kind === 'military') Q.navy_loyalty -= 2;
+    if (Q.hhc_kind === 'core') Q.fear += 1;
+    if (Q.hhc_kind === 'senate') Q.pal_relation += 2;
+    Q.hhc_ready = 0;
+    SW.computeSupport(Q);
+  };
+  SW.PIRATE_ROUTES = ['the Corellian Run', 'the Hydian Way', 'the Perlemian Trade Route', 'the Rimma Trade Route', 'the Triellus Trade Route'];
+  SW.PIRATE_GANGS = ['Weequay raiders', 'Nikto corsairs', 'a Hutt-backed pirate fleet', 'Black Sun privateers', 'Zygerrian slavers'];
+  SW.pirateRaid = function (Q) {
+    var cb = Q.chancellor_bloc;
+    var regs = ['outer', 'midrim', 'colonies'];
+    for (var i = 0; i < regs.length; i++) {
+      if (cb && Q[regs[i] + '_' + cb] !== undefined) Q[regs[i] + '_' + cb] *= 0.97;
+      if (Q.parties.indexOf('sec') >= 0) Q[regs[i] + '_sec'] += 0.6;
+    }
+    Q.trade = (Q.trade || 0) - 3;
+    Q.rim_hardship += 1;
+    Q.pirate_raids = (Q.pirate_raids || 0) + 1;
+    Q.pirates_ready = 0;
+    SW.computeSupport(Q);
+  };
+  // the Republic's treaty with the Hutt clans: fast lanes to the Rim, and the syndicates beyond the law's reach
+  // does the government want the deal? Palpatine's always does; others only when the war is going badly
+  SW.huttGovWants = function (Q) { return Q.chancellor_bloc === 'pal' || SW.warStrength(Q).ratio < 0.8 ? 1 : 0; };
+  SW.huttDeal = function (Q, forced) {
+    Q.hutt_deal = 1; Q.hutt_deal_forced = forced ? 1 : 0;
+    Q.corruption += forced ? 4 : 8; Q.trade = (Q.trade || 0) + 8;
+    SW.pushFront(Q, 'outer', 3);
+    Q.rim_hardship -= 2;
+  };
+  SW.sidiousFlees = function (Q) {
+    Q.sidious_fled = 1; Q.sidious_flee_ready = 0;
+    Q.pal_disgraced = 1;
+    for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_pal'] *= 0.7;
+    Q.droid_armies += 1.5; Q.fear += 5;
+    if (Q.finale) Q.finale_day = 13;
+    SW.computeSupport(Q);
+  };
+
+  // ------------------------------------------------------------------ the turn's checks for all of the above
+  SW.threatsTurn = function (Q) {
+    SW.threatTick(Q);
+    var live = !Q.game_ending && !Q.sidious_defeated;
+    // High Human Culture shows itself every few turns until it is discredited
+    if (!Q.hhc_discredited && !Q.finale && !Q.game_ending && Q.date >= 18 && Q.months_per_turn > 0 && !SW.off('hhc')) {
+      if (!Q.hhc_next) Q.hhc_next = Q.time + 3;
+      if (Q.time >= Q.hhc_next && !Q.hhc_ready) {
+        Q.hhc_ready = 1;
+        Q.hhc_kind = SW.HHC_KINDS[(Q.hhc_events || 0) % 3];
+        Q.hhc_next = Q.time + 4 + Math.floor(SW.rnd() * 3);
+      }
+    }
+    // pirates raid the trade lanes while nothing is done about them, more often as the years go by
+    if (!Q.patrol_fleets && !Q.syndicates_broken && !Q.finale && !Q.game_ending && Q.date >= 12 && Q.months_per_turn > 0 && !SW.off('pirates')) {
+      if (!Q.pirate_next) Q.pirate_next = Q.time + 4;
+      if (Q.time >= Q.pirate_next && !Q.pirates_ready) {
+        Q.pirates_ready = 1;
+        Q.pirate_route = SW.PIRATE_ROUTES[Math.floor(SW.rnd() * SW.PIRATE_ROUTES.length)];
+        Q.pirate_gang = SW.PIRATE_GANGS[Math.floor(SW.rnd() * SW.PIRATE_GANGS.length)];
+        Q.pirate_next = Q.time + Math.max(3, 8 - Math.floor(Q.date / 30)) + Math.floor(SW.rnd() * 2);
+      }
+    }
+    // an exposed or escaped Sith Lord, with the Confederacy winning, goes to them
+    var ws = SW.warStrength(Q);
+    if (live && Q.war && !Q.sidious_fled && ws.ratio < 1 && !Q.pal_chancellor && !Q.puppet_chancellor &&
+        (Q.sidious_free || (Q.sidious_known && Q.evidence_public >= 3) || (Q.premature_accusations >= 1 && Q.evidence_public >= 3))) Q.sidious_flee_ready = 1;
+    // even with Palpatine gone, admirals with a navy that answers to them may take the Republic
+    if (Q.finale && Q.sidious_defeated && !Q.game_ending && !Q.admirals_coup && Q.navy_loyalty < 50 && !Q.hhc_discredited &&
+        Q.emergency_powers > 0 && !Q.admirals_strike_ready && SW.rnd() < 0.3) Q.admirals_strike_ready = 1;
+  };
+
   // ------------------------------------------------------------------ endings
   SW.safeguardCount = function (Q) {
     // a disbanded clone army counts as the army safeguard
     return Q.emergency_sunset + Q.term_limits_protected + ((Q.army_oversight || !Q.kamino_army) ? 1 : 0) + Q.senate_guard_reformed + Q.jedi_independence +
-      Q.banking_independent + Q.rim_enfranchised + Q.anti_corruption;
+      Q.banking_independent + Q.rim_enfranchised + Q.anti_corruption + (Q.integrity_office ? 1 : 0) + (Q.powers_review ? 1 : 0) + (Q.senate_command ? 1 : 0);
   };
   // The Federal Compact: a Senate bill that ends (or forestalls) the war, if it survives someone's sabotage
   SW.compactSabotage = function (Q) {
@@ -3789,7 +4289,7 @@
   SW.palReach = function (Q) { return SW.clamp(0.85 + (Q.pal_office_months || 0) / 160, 0.85, 1); };
   SW.routeEnding = function (Q) {
     Q.cis_negotiated = 0; Q.shadow_remains = 0;
-    if (Q.cis_victory) return 'confederacy';
+    if (Q.cis_victory) return Q.sidious_fled ? 'sith_confederacy' : 'republic_falls';
     if (Q.dissolved) return 'dissolved';
     if (Q.admirals_coup) return 'admirals';
     if (Q.civil_war_result === 'long') return 'divided';
@@ -3797,7 +4297,13 @@
     if (Q.jedi_coup) return 'protectorate';
     if (Q.hollow_crown) return 'hollow_crown';
     // a war still raging at the end decides the ending, unless Sidious has fallen and the front holds
+    if (Q.war && Q.sidious_fled) {
+      if (Q.war_balance <= -2 || SW.warStrength(Q).ratio < 1) return 'sith_confederacy';
+      return 'endless_war';
+    }
     if (Q.war && !(Q.sidious_defeated && Q.war_balance >= -2)) {
+      // a Confederacy far stronger than the Republic does not negotiate: it conquers
+      if (Q.war_balance <= -7 || (Q.war_balance <= -4 && SW.warStrength(Q).ratio < 0.7)) return 'republic_falls';
       if (Q.war_balance <= -4) { Q.cis_negotiated = 1; return 'confederacy'; }
       return 'endless_war';
     }
@@ -3815,7 +4321,7 @@
     reborn: 'The Republic Reborn', endures: 'The Republic Endures', blood: 'Victory in Blood',
     divided: 'The Galaxy Divided', protectorate: 'The Jedi Protectorate', admirals: 'The Admirals\' Republic',
     hollow_crown: 'The Hollow Crown', confederacy: 'Confederacy Triumphant', dissolved: 'A Republic Dissolved', endless_war: 'The Endless War',
-    empire: 'The Galactic Empire'
+    empire: 'The Galactic Empire', sith_confederacy: 'The Sith Confederacy', republic_falls: 'The Fall of the Republic'
   };
 
   // ------------------------------------------------------------------ charts

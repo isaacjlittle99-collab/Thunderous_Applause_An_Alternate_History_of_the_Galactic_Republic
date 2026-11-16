@@ -16,6 +16,7 @@ Constitutional amendments need **two-thirds** of the Senate (three-fifths if fai
 - @vonc: A constructive vote of no confidence.
 - @jedi: Guarantee the independence of the Jedi Order.
 - @rim: Constitutional seats for the Outer Rim.
+- @powers_review: The Powers Review Act.
 - @groundwork: Build support for a future amendment.
 - @easy_discard
 
@@ -89,7 +90,7 @@ if (Q.cr_vote >= Q.amend_threshold) { Q.jedi_independence = 1; Q.jedi_relation +
 [? if jedi_independence : The Order's independence is written into the constitution. No Chancellor may appoint its Council or direct its Knights. ?][? if not jedi_independence : The amendment fails. ?]
 
 @rim
-view-if: not rim_enfranchised
+view-if: not rim_enfranchised and rim_relief_act
 subtitle: Permanent constitutional seats for the Outer Rim.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
@@ -104,6 +105,24 @@ if (Q.cr_vote >= Q.amend_threshold) { Q.rim_enfranchised = 1; Q.outer_sep -= 10;
 [+ vote_html +]
 
 [? if rim_enfranchised : The Outer Rim gains permanent seats and a constitutional voice. ?][? if not rim_enfranchised : The amendment fails. ?]
+
+
+@powers_review
+view-if: emergency_sunset and not powers_review
+subtitle: −1 political capital. The Senate reviews the emergency powers every year, and takes them back.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {!
+Q.capital -= 1;
+var st = SW.stance(Q, {mod: 0.6, guild: 0.5, rim: 0.65, sec: 0.2, ind: 0.65, pal: 0.1, cis: 0.6}, true);
+Q.pr_vote = SW.vote(Q, st, 1, ['oversight', '-powers']);
+Q.vote_html = SW.voteBanner('Powers Review Amendment', Q.pr_vote, Q.amend_threshold);
+if (Q.pr_vote >= Q.amend_threshold) { Q.powers_review = 1; Q.faith += 1; Q.senate_resolve += 0.5; }
+!}
+
+[+ vote_html +]
+
+[? if powers_review : The amendment passes. Every year a joint committee of the Senate will review each emergency power the Chancellery holds, and the Senate will vote to take one back. The war powers will no longer simply accumulate. ?][? if not powers_review : The amendment falls short. The Chancellery's powers will outlast the emergencies that justified them. ?]
 
 @groundwork
 subtitle: Free. Makes future constitutional votes a little easier.

@@ -1,0 +1,13 @@
+title: High Human Culture Discredited
+subtitle: The human-first movement is exposed.
+tags: event
+view-if: sentience_rights and officer_corps and hhc_investigated and not hhc_discredited and not finale and not game_ending
+priority: 3
+new-page: true
+face-image: img/ev_law.svg
+on-arrival: {! Q.hhc_discredited = 1; Q.hhc_heat = 0; Q.faith += 2; Q.core_pal *= 0.95; Q.colonies_pal *= 0.95; SW.momentum(Q, 0.5, 'discrediting High Human Culture'); SW.computeSupport(Q); !}
+achievement: hhc
+
+= High Human Culture Discredited
+
+With the Rights of Sentience in law, the officer corps opened to every species and the Bureau's report on the human-first groups in every newsroom, the movement collapses. Its donors are named, its admirals retired, its clubs empty. "High Human Culture" becomes a phrase people use as a joke, and then not at all.

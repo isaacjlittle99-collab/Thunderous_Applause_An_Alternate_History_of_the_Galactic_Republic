@@ -9,6 +9,7 @@ if (Q.anakin_fallen && Q.ending !== 'reborn') Q.padme_alive = 0;
 Q.sub_reborn = 'ruusan';
 if (Q.rim_enfranchised && (Q.slavery_abolished || Q.rim_relief >= 2)) Q.sub_reborn = 'rim';
 else if ((Q.jedi_reformed || Q.jedi_independence) && Q.anakin_found && !Q.anakin_fallen) Q.sub_reborn = 'order';
+if (Q.new_jedi_order) Q.sub_reborn = 'order';
 Q.seeds = (Q.delegation_formed || Q.petition >= 1 || Q.pact_formed) ? 1 : 0;
 Q.blood_liberty = (Q.faith >= 50 && Q.emergency_powers <= 4) ? 1 : 0;
 this.achieve('ending_' + Q.ending);
@@ -18,7 +19,7 @@ Q.summary_html = (typeof SW.summaryHTML === 'function') ? SW.summaryHTML(Q) : ''
 Q.game_ach_html = (typeof SW.achievementsHTML === 'function') ? SW.achievementsHTML(Q, true) : '';
 Q.game_over_reached = 1;
 !}
-go-to: ep_reborn if ending = "reborn"; ep_endures if ending = "endures"; ep_blood if ending = "blood"; ep_divided if ending = "divided"; ep_protectorate if ending = "protectorate"; ep_admirals if ending = "admirals"; ep_hollow if ending = "hollow_crown"; ep_confederacy if ending = "confederacy"; ep_dissolved if ending = "dissolved"; ep_endless if ending = "endless_war"; ep_empire if ending = "empire"
+go-to: ep_reborn if ending = "reborn"; ep_endures if ending = "endures"; ep_blood if ending = "blood"; ep_divided if ending = "divided"; ep_protectorate if ending = "protectorate"; ep_admirals if ending = "admirals"; ep_hollow if ending = "hollow_crown"; ep_confederacy if ending = "confederacy"; ep_sith_confederacy if ending = "sith_confederacy"; ep_republic_falls if ending = "republic_falls"; ep_dissolved if ending = "dissolved"; ep_endless if ending = "endless_war"; ep_empire if ending = "empire"
 
 @ep_reborn
 go-to: legacy
@@ -72,7 +73,7 @@ go-to: legacy
 
 = The Admirals' Republic
 
-[? if admirals_coup : Wilhuff Tarkin's Council of Admirals rules "until victory", and victory never quite comes. The Senate is suspended, then recalled as an advisory chamber. Somewhere in the Chancellery district, a retired senator from Naboo offers the admirals his counsel, and they are wise enough to take it. ?][? if not admirals_coup : Darth Sidious is gone, but the machine he built runs on without him. The emergency powers, the regional governors and the security services pass to the men who served him: Vice Chair Mas Amedda, Governor Tarkin, the admirals of the Grand Army. They speak of order, stability and the dangers of the Jedi. ?]
+[? if admirals_strike : The Sith Lord fell, but the admirals did not. They seized the Republic in the weeks after his arrest, with the emergency powers he left behind and the human-first officers he promoted. ?][? if admirals_coup and not admirals_strike : Wilhuff Tarkin's Council of Admirals rules "until victory", and victory never quite comes. The Senate is suspended, then recalled as an advisory chamber. Somewhere in the Chancellery district, a retired senator from Naboo offers the admirals his counsel, and they are wise enough to take it. ?][? if not admirals_coup : Darth Sidious is gone, but the machine he built runs on without him. The emergency powers, the regional governors and the security services pass to the men who served him: Vice Chair Mas Amedda, Governor Tarkin, the admirals of the Grand Army. They speak of order, stability and the dangers of the Jedi. ?]
 
 The Republic survives in name. The Senate still meets, when it is allowed to. It is not the Empire. But it is not the Republic the Caucus fought for, either.
 
@@ -93,6 +94,24 @@ go-to: legacy
 [? if cis_negotiated : The war never ends on a battlefield. The front collapses one system at a time, until the Senate, exhausted and afraid, votes to negotiate. ?] The Republic sues for peace. The Treaty of Raxus hands the Rim, the Mid Rim and the trade lanes to the Confederacy of Independent Systems, and leaves a shrunken, humiliated Republic clinging to the Core.
 
 The Confederacy is not the free federation Dooku promised. It is ruled by the guilds, the Banking Clan and the Techno Union, and its parliament is a facade. Behind them all, a hooded figure is satisfied. He has a galaxy at war with itself, and both halves in his debt.
+
+@ep_sith_confederacy
+go-to: legacy
+
+= The Sith Confederacy
+
+The Republic falls to an enemy it once seated in its own Senate. The man the galaxy knew as Palpatine rules from Raxus now, openly, as Darth Sidious, master of the Confederacy he built. Its parliament is gone. Its droid armies answer to him alone, and the worlds that left the Republic for freedom find they have traded one master for a worse one.
+
+What remains of the Republic clings to the Core. Its Senate still meets, smaller every year, and its people know exactly what is coming for them. The Jedi who survived are hunted from Kashyyyk to Ilum. Somewhere a few of them are teaching children to hide.
+
+@ep_republic_falls
+go-to: legacy
+
+= The Fall of the Republic
+
+[? if sidious_defeated : The Republic beat the Sith and lost the war. The Sith Lord is gone, but the war he began outlived him, and the armies he built on both sides went on fighting without him. ?][? if not sidious_defeated : The droid armies come to Coruscant at last. ?] Alderaan, Corellia and Kuat have fallen. The Confederacy's fleets fill the sky over the capital, and the Senate surrenders before the bombardment can begin.
+
+The Confederacy that takes the Republic's place is not a free federation. It is a commonwealth of guilds and banks and trade cartels, governed by the shareholders of the Techno Union and the Banking Clan. The Senate's rotunda becomes a trading floor. The galaxy did not fall to a Sith Lord. It was bought.
 
 @ep_dissolved
 go-to: legacy

@@ -1,0 +1,43 @@
+title: A Deal with the Hutts
+subtitle: The Hutt clans offer their hyperspace lanes.
+tags: event
+view-if: war and not hutt_deal and not hutt_deal_seen and not syndicates_broken and war_turns >= 3 and not finale and not game_ending
+priority: 3
+new-page: true
+face-image: img/ev_rim.svg
+on-arrival: hutt_deal_seen = 1
+
+= A Deal with the Hutts
+
+Jabba the Hutt's emissaries are on Coruscant. The Hutt clans control the hyperspace lanes through their space, the fastest routes to the Outer Rim sieges. They will open them to the Republic's fleets, for a price: no more questions about their trade, their slaves or their senators.
+
+[? if not rc_chancellor and chair_security != "rc" : The government will decide. We can only try to sway the Senate. ?]
+
+- @deal: Make the deal.
+- @refuse: Refuse to deal with gangsters.
+
+@deal
+subtitle: Faster to the Rim. The syndicates' hold will be beyond our reach.
+on-arrival: {!
+if (SW.warCommand(Q) || SW.huttGovWants(Q)) Q.hutt_deal_vote = 100;
+else {
+    var st = SW.stance(Q, {mod: 0.4, guild: 0.6, rim: 0.35, sec: 0.7, ind: 0.45, pal: 0.8, cis: 0}, false);
+    Q.hutt_deal_vote = SW.vote(Q, st, 1, []);
+}
+if (Q.hutt_deal_vote >= 50) SW.huttDeal(Q);
+!}
+
+[? if hutt_deal : The treaty is signed in a Hutt palace on Tatooine. Within weeks Republic fleets pour through Hutt space to the Outer Rim sieges, and the clans' accounts on Coruscant grow fat. ?][? if not hutt_deal : The government will not deal with the Hutts, and the Senate will not make it. The emissaries go home. ?]
+
+@refuse
+subtitle: The syndicates stay within reach of the law.
+on-arrival: {!
+if (SW.warCommand(Q) || !SW.huttGovWants(Q)) Q.hutt_deal_vote = 100;
+else {
+    var st = SW.stance(Q, {mod: 0.65, guild: 0.3, rim: 0.75, sec: 0.3, ind: 0.65, pal: 0.15, cis: 0}, true);
+    Q.hutt_deal_vote = SW.vote(Q, st, 1, []);
+}
+if (Q.hutt_deal_vote < 50) SW.huttDeal(Q, true);
+!}
+
+[? if hutt_deal : We could not hold the Senate. The government signs with the Hutts anyway, and their fleets pour into Hutt space. ?][? if not hutt_deal : The Hutts' emissaries go home without a treaty. The road to the Rim stays long, but the cartels stay where the law can reach them. ?]

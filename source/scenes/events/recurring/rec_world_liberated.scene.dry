@@ -1,0 +1,12 @@
+title: A World Is Freed
+subtitle: The Republic retakes lost ground.
+tags: event
+view-if: world_lib_ready = 1 and war and not game_ending
+priority: 6
+new-page: true
+face-image: img/ev_war.svg
+on-arrival: {! SW.worldLiberated(Q); !}
+
+= [+ world_lib_name +] Is Free
+
+Republic forces advancing on [+ world_lib_front_name +] have liberated [+ world_lib_name +]. Its people line the streets for the troops, and its senators fly home to a hero's welcome.

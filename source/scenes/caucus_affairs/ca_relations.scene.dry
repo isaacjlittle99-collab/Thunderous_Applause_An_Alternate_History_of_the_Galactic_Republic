@@ -25,12 +25,14 @@ No bloc in the Senate can govern alone, and none will govern beside a partner it
 - @easy_discard
 
 @mod
+view-if: parties_has_mod
 subtitle: −1 political capital. +15 relations with the Core Moderates, now [+ mod_relation : relationships +].
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 on-arrival: capital -= 1; mod_relation += 15; inst_dissent -= 2
 
 @ind
+view-if: parties_has_ind
 subtitle: −1 political capital. +15 relations with the Independents, now [+ ind_relation : relationships +].
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
@@ -44,18 +46,21 @@ unavailable-subtitle: Not enough political capital.
 on-arrival: capital -= 1; rim_relation += 15; rimward_dissent -= 2; inst_dissent += 1
 
 @sec
+view-if: parties_has_sec
 subtitle: −1 political capital. +15 relations with the Security Bloc, now [+ sec_relation : relationships +]. The Pacifists disapprove.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 on-arrival: capital -= 1; sec_relation += 15; hawk_dissent -= 2; pacifist_dissent += 3
 
 @guild
+view-if: parties_has_guild
 subtitle: −1 political capital. +15 relations with the Commerce Guilds, now [+ guild_relation : relationships +]. The Rimward wing disapproves.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 on-arrival: capital -= 1; guild_relation += 15; rimward_dissent += 5
 
 @pal
+view-if: parties_has_pal
 subtitle: −1 political capital. +15 relations with the [+ pal_name +], now [+ pal_relation : relationships +]. [? if evidence >= 4 : The Caucus is deeply uneasy about this. ?]
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
@@ -69,7 +74,7 @@ unavailable-subtitle: Not enough political capital.
 on-arrival: capital -= 1; cis_relation += 15; hawk_dissent += 6; pacifist_dissent -= 3
 
 @rfc
-view-if: rfc_formed
+view-if: rfc_formed and parties_has_rfc
 subtitle: −1 political capital. +15 relations with the [+ rfc_name +], now [+ rfc_relation : relationships +].
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.

@@ -1,0 +1,11 @@
+title: The Rimward Coalition Decides
+tags: event
+view-if: threat_due_ready = 1 and threat_due_id = "rim" and not game_ending
+priority: 4
+new-page: true
+face-image: img/ev_separatist.svg
+on-arrival: {! SW.threatResolve(Q); !}
+
+= The Rimward Coalition Decides
+
+[? if threat_how = "leader" : [+ threat_leader +] has taken the Coalition's leadership from [+ threat_old_leader +], and sends the Raxus envoys home. ?][? if threat_how = "reform" : The Senate's new law for the Rim has done what speeches could not: the Coalition's worlds have something to stay for. The Raxus envoys go home empty-handed. ?][? if threat_how = "relations" : The Caucus's patient work with the Coalition pays off. Its senators will not abandon allies who have stood by them. ?][? if threat_how = "cooled" : The moment passes. The Coalition's senators stay in their seats, for now. ?][? if not threat_averted : The Rimward Coalition crosses the floor. [? if threat_left_senate : Its delegations walk out of the rotunda and take their worlds' oaths to the Confederacy. ?][? if not threat_left_senate : Its senators take their seats with the Separatist Caucus. ?] Raxus celebrates. Coruscant is afraid. ?]

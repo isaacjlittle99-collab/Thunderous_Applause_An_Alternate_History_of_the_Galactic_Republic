@@ -1,14 +1,14 @@
-title: Pirates on the Rim
-subtitle: Raiders are preying on Rim trade lanes.
+title: Pirates on the Trade Lanes
+subtitle: Raiders are preying on the Republic's trade.
 tags: event
-view-if: rim_hardship >= 38 and piracy_timer <= 0 and time >= 2 and not war and not finale
+view-if: pirates_ready = 1 and not patrol_fleets and not finale and not game_ending
 new-page: true
 face-image: img/ev_rim.svg
-on-arrival: {! Q.piracy_timer = 6 + Math.floor(Math.random() * 4); Q.rim_hardship += 2; Q.outer_sep += 1; Q.trade -= 6; !}
+on-arrival: {! SW.pirateRaid(Q); Q.outer_sep += 1; !}
 
-= Pirates on the Rim
+= Pirates on the Trade Lanes
 
-A pirate fleet has sacked a convoy in the Outer Rim, killing hundreds. Rim senators ask, again, why the Republic cannot protect its own citizens.
+[+ pirate_gang +] have sacked a convoy on [+ pirate_route +], killing hundreds. Shipping insurers are raising their rates, and the HoloNet asks why Chancellor [+ chancellor +]'s government cannot protect the Republic's own citizens. Frightened voters are listening to the Security Bloc.
 
 - @judicials: Demand that the Judicial Forces respond.
 - @relief: Fund relief for the victims.

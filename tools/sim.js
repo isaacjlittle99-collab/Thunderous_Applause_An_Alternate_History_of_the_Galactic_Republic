@@ -77,7 +77,23 @@ const SMART_DILEMMA = {umbara: 'b', ryloth: 'a', blockade: 'b', mandalore: 'a', 
 // "smart": a careful player who reads the state of the game (used to tune difficulty)
 function smartWeight(id, Q) {
   const has = (k) => id === k || id.endsWith('.' + k);
+  const threatContest = Q.contest_group && SW.threatOnGroup(Q, Q.contest_group) && SW.LEADERS[Q.contest_inc_id] && SW.LEADERS[Q.contest_inc_id].firm >= 0.7;
+  const anyThreat = Q.rim_threat || Q.rfc_threat || Q.sec_threat;
   const W = [
+    // a defection looming: court the bloc through the usual channels, and back a rival against its hardliner
+    ...(anyThreat ? [[/^ca_relations$/, 12]] : []),
+    ...(Q.rim_threat ? [[/^ca_relations\.rim$/, 14]] : []), ...(Q.rfc_threat ? [[/^ca_relations\.rfc$/, 14]] : []),
+    ...(Q.sec_threat ? [[/^ca_relations\.sec$/, 14]] : []),
+    ...(threatContest ? [[/leadership\.(back_ch|adv_ch)$/, 14]] : []),
+    // the reform tracks: take the next step
+    [/\.civil_service$/, 7], [/\.amedda$/, 9], [/\.integrity$/, 6], [/\.hhc_investigate$/, 4], [/^sa_judiciary\.syndicates$/, 5],
+    [/\.relief_act$/, 8], [/\.assembly$/, 9], [/\.slavery_report$/, 5], [/\.enforce$/, 6], [/\.sentience$/, 4],
+    [/\.powers_review$/, 7], [/^sa_security\.command$/, 6], [/^sa_security\.patrols$/, 5], [/\.pirate_campaign$/, (Q.mil_invest || 0) >= 2 ? 6 : 0.1],
+    [/^sa_security\.officers$/, 4], [/^ca_jedi\.attachment$/, 4], [/^ca_jedi\.new_order$/, 7],
+    // guild money: avoid the strings, and break free when they bind
+    [/^ca_contributions\.guilds$/, 0.4], [/^ca_contributions\.break$/, (Q.guild_hold || 0) > 0 ? 5 : 0], [/\.el_chest$/, 0.3],
+    // the Hutts: deal only when the war is being lost
+    [/^rec_hutt_deal\.deal$/, (Q.war_ratio || 2) < 0.6 ? 4 : 0.5], [/^rec_hutt_deal\.refuse$/, (Q.war_ratio || 2) < 0.6 ? 1 : 4],
     // never waste a foreseen scheme or a warning
     [/counter_adv$/, Q.advisor_action_timer <= 0 ? 9 : 0], [/counter$/, Q.capital >= 2 ? 8 : 3],
     [/tame$/, 8], [/\.rally$/, Q.capital >= 2 ? 7 : 2], [/\.sunset$/, 9], [/\.purge$/, 7], [/reassure$/, 5],
@@ -224,6 +240,14 @@ const PREMISES = [
   [/^rec_world_election$/, Q => !(Q.wv_id === 'rodia') || !Q.farr_dead, 'Rodia election after Farr died'],
   [/^a4_dooku_doubt$/, Q => Q.war && Q.dooku_contact, 'Dooku defects without contact or a war'],
   [/^rec_case_ready$/, Q => Q.evidence >= 8.5 && !Q.sidious_known && !Q.finale, 'case offered without the evidence'],
+  [/^rec_world_(falls|liberated)$/, Q => Q.war, 'a world falls or is freed without a war'],
+  [/^rec_hutt_deal$/, Q => Q.war && !Q.syndicates_broken, 'Hutt deal after the syndicates were broken'],
+  [/^rec_hhc$/, Q => !Q.hhc_discredited, 'High Human Culture event after it was discredited'],
+  [/^rec_piracy$/, Q => !Q.patrol_fleets, 'pirate raid with patrol fleets on station'],
+  [/^rec_threat_sec$/, Q => Q.parties.indexOf('sec') >= 0 && Q.sec_leader_id === 'tarkin', 'Security Bloc courted without Tarkin'],
+  [/^rec_threat_rim$/, Q => Q.parties.indexOf('rim') >= 0 && Q.dooku_movement, 'Rimward Coalition courted outside the crisis'],
+  [/^rec_admirals_strike$/, Q => Q.sidious_defeated && !Q.hhc_discredited && Q.emergency_powers > 0, 'admirals strike without the conditions'],
+  [/^rec_sidious_flees$/, Q => Q.war && !Q.sidious_defeated, 'Sith Lord flees without a war'],
 ];
 const PREMISE_HITS = {};
 let lastGovt = [];
@@ -242,6 +266,8 @@ function checkPremises(id, Q, game, out) {
   }
   if (Q.clones > 0 && !Q.kamino_army) out['clones without an army'] = (out['clones without an army'] || 0) + 1;
   if (Q.pal_name === 'Chancellor\'s Bloc' && Q.chancellor_bloc !== 'pal') out['Palpatine\'s bloc named for an office it does not hold'] = (out['Palpatine\'s bloc named for an office it does not hold'] || 0) + 1;
+  for (const b of (Q.govt_blocs || [])) if (Q.parties.indexOf(b) < 0) out['a bloc outside the Senate in government'] = (out['a bloc outside the Senate in government'] || 0) + 1;
+  for (const b of SW.BLOCS) if (Q['merged_' + b] && Q.parties.indexOf(b) >= 0) out['a merged bloc back in the Senate'] = (out['a merged bloc back in the Senate'] || 0) + 1;
   if (Q.rc_chairs > (Q.chair_cap || 4) && Q.rc_in_govt) out['more chairs than partners allow'] = (out['more chairs than partners allow'] || 0) + 1;
 }
 
@@ -369,6 +395,17 @@ function playOne(gameIndex) {
       for (const fr of ['outer', 'mid', 'core']) if ((Q['front_ev_' + fr] || -99) > 0) audit.econ.collapses++;
       audit.gavels += Q.gavels || 0;
       audit.rel = audit.rel || {swings: 0, minority: 0, collapse: 0, bureau: 0, blocked: 0, delivered: 0, kept: 0, size: [], modRim: [], guildMod: [], rimSec: [], palSec: []};
+      audit.sep = audit.sep || {mom: [], addr: [], lost: 0, lib: 0, seen: 0, averted: 0, happened: 0, done: {}, tracks: {}, shmi: 0, humil: 0, hhcEv: [], hhcDisc: 0,
+        hold: [], breaks: 0, chests: 0, modEnd: [], indEnd: [], palEnd: [], strike: 0, fled: 0, hutt: 0, raids: [], amedda: 0};
+      const se = audit.sep;
+      se.mom.push(Q.sep_momentum || 0); se.addr.push(Q.rim_addressed || 0); se.lost += Q.worlds_lost || 0; se.lib += Q.worlds_liberated || 0;
+      se.seen += Q.threats_seen || 0; se.averted += Q.threats_averted || 0; se.happened += Q.threats_happened || 0;
+      for (const t of ['rim', 'rfc', 'rimward', 'sec']) if (Q[t + '_done']) se.done[t] = (se.done[t] || 0) + 1;
+      for (const tk in SW.TRACKS) se.tracks[tk] = (se.tracks[tk] || 0) + (SW.TRACKS[tk].level(Q) || 0);
+      if (Q.shmi_freed && Q.slavery_enforced) se.shmi++; if (Q.pirate_humiliation) se.humil++; se.hhcEv.push(Q.hhc_events || 0); if (Q.hhc_discredited) se.hhcDisc++;
+      se.hold.push(Q.guild_hold || 0); se.breaks += Q.guild_breaks || 0; if (Q.el_chest_taken) se.chests++;
+      se.modEnd.push(Q.mod_votes || 0); se.indEnd.push(Q.ind_votes || 0); se.palEnd.push(Q.pal_votes || 0);
+      if (Q.admirals_strike) se.strike++; if (Q.sidious_fled) se.fled++; if (Q.hutt_deal) se.hutt++; se.raids.push(Q.pirate_raids || 0); if (Q.amedda_arrested) se.amedda++;
       audit.cm = audit.cm || {pres: {}, rcVotes: [], rcSeats: [], runs: []};
       for (const rg of SW.REGIONS) (audit.cm.pres[rg] = audit.cm.pres[rg] || []).push(Q['cm_presence_' + rg] || 0);
       audit.cm.rcVotes.push(Q.rc_votes || 0); audit.cm.rcSeats.push(Q.rc_r || 0); audit.cm.runs.push(Q.campaigns_run || 0);
@@ -445,6 +482,14 @@ function playOne(gameIndex) {
     origLog('audit: routes ' + Object.entries(audit.routes).sort((a, b) => b[1].n - a[1].n).map(([k, v]) => k + ' ' + pc(v.n, GAMES) + ' (Sidious beaten ' + pc(v.beaten, v.n) + ', good end ' + pc(v.good, v.n) + ')').join('; '));
     const rf = audit.routeFlags; origLog('audit: route steps: charges laid or premature accusations ' + rf.charges + ', charges that stuck ' + rf.chargesOk + ', Federal Compact votes ' + rf.compact + ', peace ' + rf.peace + ', Dooku turned ' + rf.dooku + ', Palpatine under 2 years in office ' + rf.palOut);
   }
+  if (audit.sep) { const e = audit.sep;
+    origLog('audit: separatists: momentum at end avg ' + avg(e.mom) + ', Rim addressed avg ' + avg(e.addr) + '%; worlds lost ' + e.lost + ', liberated ' + e.lib +
+      '; Sidious fled in ' + e.fled + ' games; Hutt deals ' + e.hutt + '; admirals struck after the arrest in ' + e.strike);
+    origLog('audit: defections: warnings ' + e.seen + ', averted ' + e.averted + ', happened ' + e.happened + ' ' + JSON.stringify(e.done) +
+      '; end support Moderates ' + avg(e.modEnd) + '%, Independents ' + avg(e.indEnd) + '%, Palpatine ' + avg(e.palEnd) + '%');
+    origLog('audit: reform track levels (sum over games) ' + JSON.stringify(e.tracks) + '; Mas Amedda arrested ' + e.amedda + '; Shmi freed by enforcement ' + e.shmi +
+      '; pirate humiliations ' + e.humil + '; pirate raids avg ' + avg(e.raids) + '; High Human Culture events avg ' + avg(e.hhcEv) + ', discredited ' + e.hhcDisc +
+      '; guild debts at end avg ' + avg(e.hold) + ', breaks ' + e.breaks + ', war chests taken ' + e.chests); }
   if (audit.cm) { const c = audit.cm;
     origLog('audit: campaigns per game avg ' + avg(c.runs) + '; presence at end ' + SW.REGIONS.map(rg => rg + ' ' + avg(c.pres[rg])).join(', ') +
       '; Caucus at end: support ' + avg(c.rcVotes) + '%, seats ' + avg(c.rcSeats) + '%'); }

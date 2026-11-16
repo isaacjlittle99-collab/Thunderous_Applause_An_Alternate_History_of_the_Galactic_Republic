@@ -14,6 +14,7 @@ Politics in the Galactic Senate runs on favours and credits. The Caucus has frie
 - @core: Appeal to wealthy Core patrons.
 - @grassroots: Appeal to the member worlds directly.
 - @guilds: Accept a generous offer from guild-linked donors.
+- @break: Break with the guilds and return their money.
 - @easy_discard
 
 @core
@@ -29,8 +30,24 @@ on-arrival: capital += 1; faith += 0.5; core_rc += 0.5; colonies_rc += 0.5; midr
 Small donations pour in from a hundred worlds. It is not much money, but it is a great deal of goodwill.
 
 @guilds
-view-if: difficulty < 1
+view-if: difficulty < 1 and not integrity_office
 subtitle: +3 political capital. The guilds will expect something; the Caucus will not like it.
-on-arrival: capital += 3; guild_relation += 4; corruption += 1.5; rimward_dissent += 12; pacifist_dissent += 4; inst_dissent += 3; guild_money += 1
+on-arrival: capital += 3; guild_relation += 4; corruption += 1.5; rimward_dissent += 12; pacifist_dissent += 4; inst_dissent += 3; guild_money += 1; guild_hold += 1
 
 The money arrives through three intermediaries and a charitable foundation on Muunilinst. Nobody asks too many questions. That is rather the point.
+
+@break
+view-if: guild_hold > 0
+subtitle: −2 political capital. Our hands are free again; the guilds will not forgive it.
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: {!
+Q.capital -= 2; Q.guild_hold = 0; Q.guild_breaks = (Q.guild_breaks || 0) + 1;
+Q.guild_relation -= 15; SW.guildPatience(Q, -15, 'the Caucus broke with its guild donors');
+Q.rimward_dissent -= 5; Q.pacifist_dissent -= 3;
+Q.guild_leak = Math.random() < 0.35 ? 1 : 0;
+if (Q.guild_leak) { Q.faith -= 0.5; Q.scandal_ours_until = Q.date + 12; SW.momentum(Q, -0.8, 'the guilds leaking our donations'); }
+!}
+
+The Caucus returns every credit the guild foundations gave it, with a public letter. [? if guild_leak : The guilds answer within the hour: every past donation, every intermediary and every thank-you note is on the HoloNet by evening. The Caucus is free, and embarrassed. ?][? if not guild_leak : The guilds say nothing in public. In private, they are already counting what it will cost us. ?]
+

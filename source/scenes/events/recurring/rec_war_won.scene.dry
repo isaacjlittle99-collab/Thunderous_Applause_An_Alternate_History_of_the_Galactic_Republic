@@ -5,10 +5,10 @@ view-if: war and war_balance >= 9 and not war_won_seen and not finale
 priority: 5
 new-page: true
 face-image: img/ev_war.svg
-on-arrival: war_won_seen = 1; war = 0; war_won = 1; fear -= 12; faith += 3; outer_sep -= 15; midrim_sep -= 12; corporate_sep -= 12
+on-arrival: {! Q.war_won_seen = 1; Q.war = 0; Q.war_won = 1; Q.fear -= 12; Q.faith += 3; Q.outer_sep -= 15; Q.midrim_sep -= 12; Q.corporate_sep -= 12; if (Q.sidious_fled && !Q.sidious_defeated) { Q.sidious_defeated = 1; Q.sidious_method = 'war'; Q.game_ending = 1; } !}
 
 = The Tide Turns
 
-The Confederacy's armies are broken. System after system surrenders, and the Separatist Parliament on Raxus votes to negotiate. The war is over. The Republic has won.
+The Confederacy's armies are broken. System after system surrenders, and the Separatist Parliament on Raxus votes to negotiate. The war is over. The Republic has won. [? if sidious_fled : The Sith Lord who led them dies in the ruins of his last fortress, and with him the darkness he brought. ?]
 
 [? if emergency_powers >= 3 : The Chancellor's emergency powers, granted "for the duration of the crisis", remain in place. His allies say there is still a peace to secure. ?][? if emergency_powers < 3 : With the war over, the Senate looks forward to normal government. ?]

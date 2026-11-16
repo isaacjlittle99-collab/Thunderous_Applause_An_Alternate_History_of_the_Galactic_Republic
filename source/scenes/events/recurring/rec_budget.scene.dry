@@ -29,8 +29,8 @@ The guilds' patience is [+ gp_label +]; our Core patrons are [+ pg_label +].
 @rev_tariffs
 view-if: bd_write
 subtitle: The guilds' patience wears thinner[? if rev_streak_tariffs >= 1 : , faster than last year?]; shippers pass the cost on to the Rim. The guilds will vote against it. [? if bd_brkn_rev_tariffs : **[+ bd_brk_rev_tariffs +]** ?]
-choose-if: date >= tariff_ban_until
-unavailable-subtitle: We promised the guilds no new tariffs for now.
+choose-if: date >= tariff_ban_until and guild_hold = 0
+unavailable-subtitle: [? if guild_hold > 0 : The guilds whose money we took will not allow it. ?][? if guild_hold = 0 : We promised the guilds no new tariffs for now. ?]
 on-arrival: bd_rev = "tariffs"
 go-to: priority
 

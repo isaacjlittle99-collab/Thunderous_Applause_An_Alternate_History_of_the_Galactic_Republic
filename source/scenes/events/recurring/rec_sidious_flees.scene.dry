@@ -1,0 +1,14 @@
+title: The Sith Lord Flees
+subtitle: Palpatine has vanished from Coruscant.
+tags: event
+view-if: sidious_flee_ready = 1 and not sidious_fled and not game_ending
+priority: 9
+new-page: true
+face-image: img/ev_shadow.svg
+on-arrival: {! SW.sidiousFlees(Q); !}
+
+= The Sith Lord Flees
+
+Palpatine's offices are found empty. His aides are gone, his files are ash, and his shuttle left the planet before dawn under false codes. Three days later he appears on Raxus at Count Dooku's side, no longer pretending to be anything but what he is.
+
+The Confederacy has a new master. Its parliament is dissolved within the month, and its armies march under a darker banner. The war is no longer between a Republic and its rebels. It is between the Republic and the Sith.

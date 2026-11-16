@@ -1,0 +1,12 @@
+title: The Rim Freedom Caucus Wavers
+subtitle: Our breakaway party is talking to the Separatists.
+tags: event
+view-if: threat_warn_ready = 1 and threat_warn_id = "rfc" and not finale and not game_ending
+priority: 4
+new-page: true
+face-image: img/ev_separatist.svg
+on-arrival: {! SW.threatBegin(Q); !}
+
+= The Rim Freedom Caucus Wavers
+
+[+ threat_leader +], who leads the [+ rfc_name +], has been seen at a Separatist reception on Raxus. The senators who left us for the Rim's sake are asking whether the Republic is worth staying in at all.

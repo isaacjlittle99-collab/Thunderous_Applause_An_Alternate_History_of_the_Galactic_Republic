@@ -1,0 +1,12 @@
+title: The Admirals Strike
+subtitle: The Navy acts on its own.
+tags: event
+view-if: admirals_strike_ready = 1 and not game_ending and not admirals_coup
+priority: 20
+new-page: true
+face-image: img/ev_war.svg
+on-arrival: admirals_coup = 1; admirals_strike = 1; game_ending = 1
+
+= The Admirals Strike
+
+The Sith Lord is gone, but the emergency powers he built are not, and neither are the admirals who served them. Before the Senate can vote to return those powers, the fleet commanders act. Warships take station over Coruscant. A council of admirals announces that it will "hold the Republic in trust" until order is restored. Their speeches praise the founding peoples of the Core.

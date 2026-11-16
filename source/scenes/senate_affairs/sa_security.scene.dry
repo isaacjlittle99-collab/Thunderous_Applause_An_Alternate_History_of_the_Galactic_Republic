@@ -16,6 +16,10 @@ The Caucus chairs the Security & Defence Committee.
 - @guard: Return the Senate Guard to the Senate's command.
 - @navy: Shape the Navy's officer appointments.
 - @audit: Audit defence procurement.
+- @command: Put the Senate Command Act to the Senate.
+- @patrols: Deploy regional patrol fleets to the Rim.
+- @pirate_campaign: Launch a campaign against the pirate fleets.
+- @officers: Open the officer corps to every species.
 - @review: Review the Republic's defences.
 - @easy_discard
 
@@ -24,7 +28,7 @@ view-if: judicial_forces < 8
 subtitle: −2 treasury. +1 Judicial Forces, loyal to the Senate.
 choose-if: treasury >= 2
 unavailable-subtitle: The treasury cannot afford it.
-on-arrival: treasury -= 2; judicial_forces += 1; judicial_expansion = 1; sec_relation += 2; hawk_dissent -= 3
+on-arrival: treasury -= 2; judicial_forces += 1; judicial_expansion = 1; sec_relation += 2; hawk_dissent -= 3; mil_invest += 1
 
 New Judicial cruisers are commissioned, crewed by volunteers sworn to the Senate.
 
@@ -65,7 +69,7 @@ if (Q.sg_vote >= 50) { Q.senate_guard_reformed = 1; Q.pal_relation -= 10; }
 @navy
 view-if: clones > 0 and navy_loyalty < 90
 subtitle: +8 Navy loyalty to the Senate; the Security Bloc objects.
-on-arrival: navy_loyalty += 8; sec_relation -= 4
+on-arrival: navy_loyalty += 8; sec_relation -= 4; mil_invest += 1
 
 The committee confirms a slate of officers known for their loyalty to the constitution. A few promising officers whose loyalty runs to [+ pal_title +] rather than to the Senate, such as one Captain Tarkin, are passed over.
 
@@ -79,3 +83,58 @@ The audit finds that the Republic has paid for the same frigate four times.
 @review
 subtitle: Free. The Hawks appreciate it.
 on-arrival: hawk_dissent -= 3; judicial_forces += 0.1
+
+@command
+view-if: army_oversight and not senate_command
+subtitle: −2 political capital. The army and the Guard take their orders from the Senate, if it agrees.
+choose-if: capital >= 2 and senate_guard_reformed
+unavailable-subtitle: [? if not senate_guard_reformed : The Senate Guard must answer to the Senate first. ?][? if senate_guard_reformed : Needs 2 political capital. ?]
+on-arrival: {!
+Q.capital -= 2;
+var st = SW.stance(Q, {mod: 0.55, guild: 0.4, rim: 0.6, sec: 0.2, ind: 0.55, pal: 0.05, cis: 0.5}, true);
+Q.sc_vote = SW.vote(Q, st, 1, ['oversight', '-army']);
+Q.vote_html = SW.voteBanner('Senate Command Act', Q.sc_vote);
+if (Q.sc_vote >= 50) { Q.senate_command = 1; Q.navy_loyalty += 15; Q.sec_relation -= 6; Q.pal_relation -= 6; }
+!}
+
+[+ vote_html +]
+
+[? if senate_command : The Senate Command Act passes. Every order to the Grand Army and the Senate Guard must now carry the countersignature of the Senate's defence committee, and every officer swears to the Senate by name. ?][? if not senate_command : The Act fails. The army's chain of command still ends at a single desk. ?]
+
+@patrols
+view-if: not patrol_fleets and not hutt_deal
+subtitle: −1 political capital. Standing fleets to guard the Rim's trade lanes.
+choose-if: capital >= 1 and mil_invest >= 1
+unavailable-subtitle: [? if mil_invest < 1 : We need a stronger military first. ?][? if mil_invest >= 1 : Needs 1 political capital. ?]
+on-arrival: capital -= 1; patrol_fleets = 1; rim_hardship -= 3; trade += 3; rim_relation += 2; sec_relation += 2
+
+Regional patrol fleets take station along the Rimma, the Hydian Way and the Corellian Run. For the first time in a generation, a freighter captain on the Rim can call for help and expect it to come.
+
+@pirate_campaign
+view-if: patrol_fleets and not pirates_crushed and not hutt_deal
+subtitle: −2 political capital. Take the war to the pirate fleets' havens.
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: {!
+Q.capital -= 2;
+if (Q.mil_invest >= 2) { Q.pirates_crushed = 1; Q.fear -= 2; Q.faith += 1; Q.trade += 4; Q.rim_hardship -= 2; Q.sec_relation += 3; SW.momentum(Q, 0.4, 'the rout of the pirate fleets'); }
+else { Q.pirate_humiliation = 1; Q.fear += 6; Q.faith -= 3; Q.navy_loyalty -= 5; Q.sec_relation -= 4; SW.momentum(Q, -1, 'a humiliating defeat by the pirates'); }
+!}
+go-to: pirate_victory if pirates_crushed; pirate_defeat if not pirates_crushed
+
+@pirate_victory
+
+The Republic's task forces strike the pirate havens of the Rim one after another: the asteroid bases of the Cron Drift, the hidden docks of Florrum. The great pirate fleets that have preyed on the trade lanes for a century are broken. Only the syndicates that financed them remain.
+
+@pirate_defeat
+
+The task force is ambushed in the Cron Drift. Three cruisers are lost, two more are captured and paraded on the HoloNet by the pirate lord who took them. The Republic has been humiliated by bandits, and every senator who voted for the campaign is asked why our fleets were not ready.
+
+@officers
+view-if: not officer_corps
+subtitle: −1 political capital. An officer corps that looks like the Republic.
+choose-if: capital >= 1
+unavailable-subtitle: Needs 1 political capital.
+on-arrival: capital -= 1; officer_corps = 1; navy_loyalty += 3; hawk_dissent += 2; sec_relation -= 2
+
+The committee orders that commissions and promotions be open to every species of the Republic, and reviews every case of an officer passed over for not being human. A good many admirals are quietly furious. A good many captains are not.

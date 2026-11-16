@@ -56,7 +56,8 @@ The **Holocron** link at the top of the page explains the factions, blocs and sy
 - @htp_senate: The Senate: coalitions and relations
 - @htp_elections: Elections and campaigns
 - @htp_purse: The Republic's purse
-- @htp_war: The war
+- @htp_reforms: Reforms, step by step
+- @htp_war: The Separatists and the war
 - @htp_dangers: Dangers and warnings
 - @start_menu: Back
 
@@ -80,6 +81,10 @@ new-page: true
 **The bureaucrats.** Once the Caucus governs or chairs a committee, the Senate's permanent staff judge us by the partners we choose and the reforms we pass. Cold, they lose our bills in committee; hostile, they build a case against us and strike. Finis Valorum, Bail Organa or Bail Antilles can work with them as advisors, the Judiciary & Intelligence Committee can reform them, and a more establishment coalition reassures them.
 
 **Leaders.** Every bloc and every faction of the Caucus has a leader whose mood follows what they care about and what they remember of us. Now and then a leader makes a demand or an offer.
+
+**Shifting blocs.** Over the years the Core Moderates and the Independents lose about half their natural support. It goes to the Caucus or to Palpatine: more of it to us when our relations with the Moderates are good, our momentum is high, the evidence against Sidious is public and reforms have passed; more to him when he holds the Chancellery and the Senate is corrupt and afraid. The Independents also lose voters to the Separatists where separatism runs high, and to the Rimward Coalition where the Rim suffers. The Security Bloc drifts toward Palpatine while he holds power or fear is high.
+
+**Defections.** A bloc or faction under a hardline leader may be subverted. The Rimward Coalition (under Ardana), our own Rimward wing (under Corvane) or the Rim Freedom Caucus may go over to the Separatists; the Security Bloc, led by Tarkin and cold toward us, may fold into Palpatine's bloc. A warning comes first, and the next leadership challenge comes sooner. In the few turns that follow, the threat passes only if relations with that bloc reach *cordial* (for our own wing, if its anger cools), if the Caucus takes a reform step that answers its grievances (the Rim, slavery or the syndicates for the Rim; the military for the Security Bloc), or if a rival we backed unseats the hardliner. Otherwise it happens, and after Geonosis the Rim's defectors leave the Republic altogether.
 
 - @how_to_play: Back to How to play
 
@@ -113,6 +118,8 @@ new-page: true
 
 **Our Core patrons** fund the Caucus. Angry, they cut our yearly political capital and our support in the Core erodes.
 
+**Guild money.** Taking money from guild donors, in Patron Contributions or as a war chest in a Chancellor race, raises corruption, and while we owe them the guilds block every reform that would hurt them: the ethics law and the integrity office, guild regulation, breaking up the Trade Federation, the Banking Clan's independence, and tariffs in our budgets. Breaking with them (in Patron Contributions) costs political capital and their goodwill, and they may leak what we took.
+
 **Debt and markets.** The more the Republic owes, the more the Banking Clan can ask; repaying it, or guaranteeing the Clan's independence, loosens its grip. While Tibanna is scarce, defence costs more.
 
 - @how_to_play: Back to How to play
@@ -120,9 +127,44 @@ new-page: true
 @htp_war
 new-page: true
 
-= The war
+= The Separatists and the war
 
-The Senate sets the war aims, shown on the Forces tab. Every second turn the War Council decides where the Republic commits its strength. Each front feeds a different part of the galaxy: losing the Outer Rim Sieges brings hunger and separatism to the Rim, losing the Hydian Way strangles trade, and losing the Core approaches brings fear to Coruscant. When a front breaks, worlds change sides.
+**The Separatist cause** grows every year from 31 BBY, faster in the Outer and Mid Rim, unless the Caucus deals with the Rim's grievances: the Rim Relief Act, enfranchisement and above all a Rim Assembly; abolishing slavery and enforcing it; breaking the syndicates; and relief for the Rim, in budgets and on the ground. The Forces tab shows whether the cause is gathering strength or held back. In wartime it also feeds the droid armies.
+
+**War aims and the fronts.** The Senate sets the war aims, shown on the Forces tab. Every second turn the War Council decides where the Republic commits its strength. Each front feeds a different part of the galaxy: losing the Outer Rim Sieges brings hunger and separatism to the Rim, losing the Hydian Way strangles trade, and losing the Core approaches brings fear to Coruscant.
+
+**Named worlds.** While the Confederacy is stronger than the Republic, or a front is collapsing, its armies break through and take loyalist worlds one by one, from the edge of the war toward the Core: each loss raises fear, erodes faith in the Republic and in the Jedi, and costs the Senate delegations. A stronger Republic, advancing, takes them back. If the Core falls as far as Alderaan, Coruscant itself is next.
+
+**The Republic's strength** comes from the clone army, the Judicial Forces, the member worlds' forces, the Jedi and a loyal Navy; a Senate-commanded army and a New Jedi Order add to it, and so does a deal with the Hutts.
+
+**After Sidious.** Capturing or killing the Sith Lord does not end the war. If the Confederacy is stronger at the end, the Republic falls to it. If Sidious is exposed or escapes while the Confederacy is winning, he may flee to it and make it his own.
+
+- @how_to_play: Back to How to play
+
+@htp_reforms
+new-page: true
+
+= Reforms, step by step
+
+Many of the Republic's problems can only be fixed in several steps, each a separate decision and most a Senate vote. Each step needs the one before it, and the Status tab shows how far each has gone. The committee chairs are the offices that open them: the **Rim office** (Outer Rim Affairs), the **military office** (Security & Defence) and the **investigation office** (Judiciary & Intelligence).
+
+• **The bureaucracy:** a civil service review, then the Civil Service Act, after which the bureaucrats are no longer a threat and Vice Chair Mas Amedda can be arrested, ending his gavel.
+
+• **The Rim:** the Rim Relief Act, then enfranchisement, then a Rim Assembly, which stops the Separatist cause from growing.
+
+• **Corruption:** the ethics law, then an Office of Public Integrity: no more bought votes, and corruption keeps falling.
+
+• **Emergency powers:** sunset clauses, then the Powers Review Act, which takes one power back every year.
+
+• **The military:** Senate oversight of the army, then the Senate Command Act (the Senate Guard must be reformed first).
+
+• **The Jedi:** a campaign for reform, then a Council that accepts attachment, then a New Jedi Order. The last needs Anakin Skywalker firmly on the light side, and close relations with the Order.
+
+• **Slavery** (Rim office): a Senate report, abolition, then enforcing it, which needs the syndicates broken. Each step helps the Caucus on the Rim and Anakin's state of mind; enforcement frees his mother.
+
+• **The syndicates:** patrol fleets in the Rim (military office, after investing in the military), a campaign against the pirate fleets (the military office again, and the fleets must be strong enough, or the Republic is humiliated), then breaking the syndicates (investigation office). Until something is done, pirates raid the trade lanes, hurting whoever holds the Chancellery and driving voters to the Security Bloc. In wartime the Republic may be offered a deal with the Hutts, which ends this track for good. Unbroken syndicates stand with Palpatine when he makes his move.
+
+• **High Human Culture:** the Rights of Sentience (Rim office), a diverse officer corps (military office) and an investigation of the human-first groups (investigation office) together discredit it. Until then it keeps rising, helping Palpatine and the Separatists and making hardline leaders likelier to win their contests.
 
 - @how_to_play: Back to How to play
 
@@ -136,6 +178,12 @@ new-page: true
 • **The Senatorial Arrests.** Senate resolve of 5, or a Navy at least 60% loyal to the Senate, makes him think twice.
 
 • **The admirals.** With fear at 60 or more, Tarkin leading the Security Bloc and the Navy's loyalty below 50%, the Security Bloc may seize power. A loyal Navy or a reformed Senate Guard stops them.
+
+• **The admirals, later.** Even after Palpatine is arrested or killed, if the Navy's loyalty is below 50%, emergency powers remain and High Human Culture has not been discredited, the admirals may take the Republic for themselves.
+
+• **The Sith Confederacy.** If Sidious is exposed or escapes while the Confederacy is winning the war, he may flee to it. If the Republic then loses the war, he rules the galaxy from Raxus.
+
+• **The Fall of the Republic.** A Confederacy far stronger than the Republic, or one that reaches Coruscant, conquers it, whatever has become of the Sith Lord.
 
 • **Schemes.** If we are watching closely, we get a turn's warning before a scheme lands.
 
