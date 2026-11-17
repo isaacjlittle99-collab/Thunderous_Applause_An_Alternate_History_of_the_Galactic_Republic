@@ -47,6 +47,7 @@ subtitle: −1 political capital. A historic act. The Hutts will retaliate.
 choose-if: capital >= 1 and rc_in_govt
 unavailable-subtitle: Needs 1 political capital and a seat in government.
 on-arrival: {!
+Q.rimaffairs_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.6, guild: 0.3, rim: 0.7, sec: 0.45, ind: 0.45, pal: 0.4, cis: 0.2}, true);
 st.rim += Q.slavery_campaign * 0.05; st.mod += Q.slavery_campaign * 0.05;
@@ -65,11 +66,12 @@ if (Q.ab_vote >= 50) {
 
 @enfranchise
 view-if: not rim_enfranchised and rim_relief_act
-subtitle: −2 political capital. Full representation for the Rim: a lasting cure for separatism, if it passes.
-choose-if: capital >= 2 and rc_in_govt
-unavailable-subtitle: Needs 2 political capital and a seat in government.
+subtitle: −1 political capital. Full representation for the Rim: a lasting cure for separatism, if it passes.
+choose-if: capital >= 1 and rc_in_govt
+unavailable-subtitle: Needs 1 political capital and a seat in government.
 on-arrival: {!
-Q.capital -= 2;
+Q.rimaffairs_timer = 1;
+Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.35, guild: 0.25, rim: 0.95, sec: 0.2, ind: 0.6, pal: 0.35, cis: 0.7}, true);
 Q.en_vote = SW.vote(Q, st, 1, 'rim');
 Q.vote_html = SW.voteBanner('Rim Enfranchisement Act', Q.en_vote);
@@ -92,6 +94,7 @@ subtitle: −1 political capital. A standing commitment to the Rim, if the Senat
 choose-if: capital >= 1
 unavailable-subtitle: Needs 1 political capital.
 on-arrival: {!
+Q.rimaffairs_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.5, guild: 0.35, rim: 0.9, sec: 0.35, ind: 0.6, pal: 0.4, cis: 0.7}, true);
 Q.ra_vote = SW.vote(Q, st, 1, 'rim');
@@ -105,11 +108,12 @@ if (Q.ra_vote >= 50) { Q.rim_relief_act = 1; Q.rim_relief += 1; Q.rim_hardship -
 
 @assembly
 view-if: rim_enfranchised and not rim_assembly
-subtitle: −2 political capital. The Rim governs its own affairs within the Republic, if the Senate agrees.
-choose-if: capital >= 2 and rim_relation >= 55
-unavailable-subtitle: [? if rim_relation < 55 : The Rim does not trust us enough yet. ?][? if rim_relation >= 55 : Needs 2 political capital. ?]
+subtitle: −1 political capital. The Rim governs its own affairs within the Republic, if the Senate agrees.
+choose-if: capital >= 1 and rim_relation >= 55
+unavailable-subtitle: [? if rim_relation < 55 : The Rim does not trust us enough yet. ?][? if rim_relation >= 55 : Needs 1 political capital. ?]
 on-arrival: {!
-Q.capital -= 2;
+Q.rimaffairs_timer = 1;
+Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.3, guild: 0.25, rim: 0.95, sec: 0.2, ind: 0.55, pal: 0.25, cis: 0.8}, true);
 Q.as_vote = SW.vote(Q, st, 1, 'rim');
 Q.vote_html = SW.voteBanner('Rim Assembly Act', Q.as_vote);
@@ -128,17 +132,18 @@ view-if: not slavery_report
 subtitle: −1 political capital. The Senate's own record of the slave trade.
 choose-if: capital >= 1
 unavailable-subtitle: Needs 1 political capital.
-on-arrival: {! Q.capital -= 1; Q.slavery_report = 1; Q.slavery_campaign += 0.5; Q.anakin_fall -= 1; Q.outer_rc += 1.5; Q.midrim_rc += 1.5; Q.colonies_rc += 0.5; SW.computeSupport(Q); !}
+on-arrival: {! Q.capital -= 1; Q.slavery_report = 1; Q.slavery_campaign += 0.5; Q.anakin_fall -= 1; Q.outer_rc += 1.5; Q.midrim_rc += 1.5; Q.colonies_rc += 0.5; SW.computeSupport(Q); Q.rimaffairs_timer = 1; !}
 
 The committee's report runs to four thousand pages: the slave markets of Tatooine and Nar Shaddaa, the Zygerrian slavers, the shipping lines that carry their cargo and the senators who look away. It is read into the record, page by page, and the HoloNet broadcasts every word. [? if anakin_found : Somewhere in the Temple, a young Jedi reads it all. ?]
 
 @enforce
 view-if: slavery_abolished and not slavery_enforced
-subtitle: −2 political capital. Send the Judicial Forces into the slave markets.
-choose-if: capital >= 2 and syndicates_broken
-unavailable-subtitle: [? if not syndicates_broken : The slave markets are protected by the syndicates. ?][? if syndicates_broken : Needs 2 political capital. ?]
+subtitle: −1 political capital. Send the Judicial Forces into the slave markets.
+choose-if: capital >= 1 and syndicates_broken
+unavailable-subtitle: [? if not syndicates_broken : The slave markets are protected by the syndicates. ?][? if syndicates_broken : Needs 1 political capital. ?]
 on-arrival: {!
-Q.capital -= 2; Q.slavery_enforced = 1; Q.anakin_fall -= 1; Q.rim_relation += 5; Q.faith += 1;
+Q.rimaffairs_timer = 1;
+Q.capital -= 1; Q.slavery_enforced = 1; Q.anakin_fall -= 1; Q.rim_relation += 5; Q.faith += 1;
 Q.outer_rc += 2; Q.midrim_rc += 2; Q.colonies_rc += 0.5;
 if (!Q.shmi_freed && !Q.shmi_dead) { Q.shmi_freed = 1; Q.shmi_freed_now = 1; }
 SW.computeSupport(Q);
@@ -152,6 +157,7 @@ subtitle: −1 political capital. Equal rights for every sentient being, if the 
 choose-if: capital >= 1
 unavailable-subtitle: Needs 1 political capital.
 on-arrival: {!
+Q.rimaffairs_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.55, guild: 0.45, rim: 0.85, sec: 0.25, ind: 0.65, pal: 0.2, cis: 0.6}, true);
 Q.sr_vote = SW.vote(Q, st, 1, 'rim');

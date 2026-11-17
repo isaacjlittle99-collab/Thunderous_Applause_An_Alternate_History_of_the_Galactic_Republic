@@ -109,7 +109,7 @@ go-to: legacy
 
 = The Fall of the Republic
 
-[? if sidious_defeated : The Republic beat the Sith and lost the war. The Sith Lord is gone, but the war he began outlived him, and the armies he built on both sides went on fighting without him. ?][? if not sidious_defeated : The droid armies come to Coruscant at last. ?] Alderaan, Corellia and Kuat have fallen. The Confederacy's fleets fill the sky over the capital, and the Senate surrenders before the bombardment can begin.
+[? if sidious_defeated : The Republic beat the Sith and lost the war. The Sith Lord is gone, but the war he began outlived him, and the armies he built on both sides went on fighting without him. ?][? if not sidious_defeated and not fell_divided : The droid armies come to Coruscant at last. ?][? if fell_divided : While the Republic and the Sith Lord's Empire fought each other block by block across Coruscant, no one was left to hold the Rim. The droid armies came for what remained of both. ?] Alderaan, Corellia and Kuat have fallen. The Confederacy's fleets fill the sky over the capital, and the Senate surrenders before the bombardment can begin.
 
 The Confederacy that takes the Republic's place is not a free federation. It is a commonwealth of guilds and banks and trade cartels, governed by the shareholders of the Techno Union and the Banking Clan. The Senate's rotunda becomes a trading floor. The galaxy did not fall to a Sith Lord. It was bought.
 

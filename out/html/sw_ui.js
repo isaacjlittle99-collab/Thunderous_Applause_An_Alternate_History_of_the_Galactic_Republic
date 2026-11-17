@@ -233,6 +233,8 @@
       h += row('War-weariness', SW.label('level', Q.war_weariness)) + bar(Q.war_weariness, 100, 'bad-fill');
     }
     if (Q.war) {
+      var ws = Q.war_state || (SW.warStateWord ? SW.warStateWord(Q) : '');
+      if (ws) h += row('How the war stands', ws === 'won' ? '<span class="good">being won</span>' : (ws === 'lost' ? '<b class="bad">being lost</b>' : '<span class="warn">in the balance</span>'));
       h += row('Republic against Confederacy', SW.label('ratio', Q.war_ratio));
       if (Q.worlds_lost_list) h += row('Worlds held by the Separatists', '<span class="bad">' + Q.worlds_lost_list + '</span>');
     }

@@ -1,0 +1,14 @@
+title: The Front Gives Way
+subtitle: The war has turned against the Republic.
+tags: event
+view-if: war_turning_ready = 1 and war and not game_ending
+priority: 4
+new-page: true
+face-image: img/ev_war.svg
+on-arrival: war_turning_ready = 0
+
+= The Front Gives Way
+
+The reports reach the War Council faster than it can read them. The droid foundries of the Confederacy are outbuilding Kamino, and on every front the clone legions are giving ground they bled for a year ago. [? if worlds_lost_list : Worlds the Republic swore to defend are flying the Confederacy's colours: [+ worlds_lost_list +]. ?] [? if sidious_fled : And it is Darth Sidious, not Count Dooku, who gives the droid armies their orders now. ?]
+
+The admirals have stopped promising victory by the spring. On the HoloNet, for the first time, commentators ask in public what a Separatist peace would look like, and whether the Republic would survive it.

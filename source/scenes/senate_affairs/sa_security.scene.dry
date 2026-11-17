@@ -38,6 +38,7 @@ subtitle: −1 political capital. A permanent Senate committee over the army's c
 choose-if: capital >= 1 and rc_in_govt
 unavailable-subtitle: Needs 1 political capital and a seat in government.
 on-arrival: {!
+Q.security_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.6, guild: 0.4, rim: 0.6, sec: 0.25, ind: 0.55, pal: 0.1, cis: 0.5}, true);
 Q.ov_vote = SW.vote(Q, st, 1, 'oversight');
@@ -86,11 +87,12 @@ on-arrival: hawk_dissent -= 3; judicial_forces += 0.1
 
 @command
 view-if: army_oversight and not senate_command
-subtitle: −2 political capital. The army and the Guard take their orders from the Senate, if it agrees.
-choose-if: capital >= 2 and senate_guard_reformed
-unavailable-subtitle: [? if not senate_guard_reformed : The Senate Guard must answer to the Senate first. ?][? if senate_guard_reformed : Needs 2 political capital. ?]
+subtitle: −1 political capital. The army and the Guard take their orders from the Senate, if it agrees.
+choose-if: capital >= 1 and senate_guard_reformed
+unavailable-subtitle: [? if not senate_guard_reformed : The Senate Guard must answer to the Senate first. ?][? if senate_guard_reformed : Needs 1 political capital. ?]
 on-arrival: {!
-Q.capital -= 2;
+Q.security_timer = 1;
+Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.55, guild: 0.4, rim: 0.6, sec: 0.2, ind: 0.55, pal: 0.05, cis: 0.5}, true);
 Q.sc_vote = SW.vote(Q, st, 1, ['oversight', '-army']);
 Q.vote_html = SW.voteBanner('Senate Command Act', Q.sc_vote);
@@ -106,17 +108,18 @@ view-if: not patrol_fleets and not hutt_deal
 subtitle: −1 political capital. Standing fleets to guard the Rim's trade lanes.
 choose-if: capital >= 1 and mil_invest >= 1
 unavailable-subtitle: [? if mil_invest < 1 : We need a stronger military first. ?][? if mil_invest >= 1 : Needs 1 political capital. ?]
-on-arrival: capital -= 1; patrol_fleets = 1; rim_hardship -= 3; trade += 3; rim_relation += 2; sec_relation += 2
+on-arrival: capital -= 1; patrol_fleets = 1; rim_hardship -= 3; trade += 3; rim_relation += 2; sec_relation += 2; security_timer = 1
 
 Regional patrol fleets take station along the Rimma, the Hydian Way and the Corellian Run. For the first time in a generation, a freighter captain on the Rim can call for help and expect it to come.
 
 @pirate_campaign
 view-if: patrol_fleets and not pirates_crushed and not hutt_deal
-subtitle: −2 political capital. Take the war to the pirate fleets' havens.
-choose-if: capital >= 2
-unavailable-subtitle: Needs 2 political capital.
+subtitle: −1 political capital. Take the war to the pirate fleets' havens.
+choose-if: capital >= 1
+unavailable-subtitle: Needs 1 political capital.
 on-arrival: {!
-Q.capital -= 2;
+Q.security_timer = 1;
+Q.capital -= 1;
 if (Q.mil_invest >= 2) { Q.pirates_crushed = 1; Q.fear -= 2; Q.faith += 1; Q.trade += 4; Q.rim_hardship -= 2; Q.sec_relation += 3; SW.momentum(Q, 0.4, 'the rout of the pirate fleets'); }
 else { Q.pirate_humiliation = 1; Q.fear += 6; Q.faith -= 3; Q.navy_loyalty -= 5; Q.sec_relation -= 4; SW.momentum(Q, -1, 'a humiliating defeat by the pirates'); }
 !}
@@ -135,6 +138,6 @@ view-if: not officer_corps
 subtitle: −1 political capital. An officer corps that looks like the Republic.
 choose-if: capital >= 1
 unavailable-subtitle: Needs 1 political capital.
-on-arrival: capital -= 1; officer_corps = 1; navy_loyalty += 3; hawk_dissent += 2; sec_relation -= 2
+on-arrival: capital -= 1; officer_corps = 1; navy_loyalty += 3; hawk_dissent += 2; sec_relation -= 2; security_timer = 1
 
 The committee orders that commissions and promotions be open to every species of the Republic, and reviews every case of an officer passed over for not being human. A good many admirals are quietly furious. A good many captains are not.

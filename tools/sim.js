@@ -86,10 +86,13 @@ function smartWeight(id, Q) {
     ...(Q.sec_threat ? [[/^ca_relations\.sec$/, 14]] : []),
     ...(threatContest ? [[/leadership\.(back_ch|adv_ch)$/, 14]] : []),
     // the reform tracks: take the next step
-    [/\.civil_service$/, 7], [/\.amedda$/, 9], [/\.integrity$/, 6], [/\.hhc_investigate$/, 4], [/^sa_judiciary\.syndicates$/, 5],
-    [/\.relief_act$/, 8], [/\.assembly$/, 9], [/\.slavery_report$/, 5], [/\.enforce$/, 6], [/\.sentience$/, 4],
-    [/\.powers_review$/, 7], [/^sa_security\.command$/, 6], [/^sa_security\.patrols$/, 5], [/\.pirate_campaign$/, (Q.mil_invest || 0) >= 2 ? 6 : 0.1],
-    [/^sa_security\.officers$/, 4], [/^ca_jedi\.attachment$/, 4], [/^ca_jedi\.new_order$/, 7],
+    // (a careful player takes the next step whenever it holds the office and can afford it)
+    [/\.civil_service$/, 12], [/\.amedda$/, 14], [/\.integrity$/, 12], [/\.hhc_investigate$/, 10], [/^sa_judiciary\.syndicates$/, 12],
+    [/\.relief_act$/, 12], [/\.assembly$/, 14], [/\.slavery_report$/, 11], [/^sa_rimaffairs\.abolition$/, 12], [/^sa_rimaffairs\.enfranchise$/, 12], [/\.enforce$/, 12], [/\.sentience$/, 10],
+    [/^sa_constitution\.(sunset|rim)$/, 11], [/\.powers_review$/, 12], [/^sa_security\.oversight$/, 11], [/^sa_security\.command$/, 12], [/^sa_security\.patrols$/, 11], [/\.pirate_campaign$/, (Q.mil_invest || 0) >= 2 ? 12 : 0.1],
+    [/^sa_security\.officers$/, 10], [/^ca_jedi\.reform$/, 8], [/^ca_jedi\.attachment$/, 10], [/^ca_jedi\.new_order$/, 14],
+    // the offices are few and short: play their cards while we hold them
+    [/^sa_(judiciary|rimaffairs|security)$/, 10], [/^sa_constitution$/, 9],
     // guild money: avoid the strings, and break free when they bind
     [/^ca_contributions\.guilds$/, 0.4], [/^ca_contributions\.break$/, (Q.guild_hold || 0) > 0 ? 5 : 0], [/\.el_chest$/, 0.3],
     // the Hutts: deal only when the war is being lost
@@ -206,6 +209,9 @@ function weightFor(id) {
   return w;
 }
 function pick(list, idf) {
+  // on the title menu, a player begins the game (browsing the help pages only delays it)
+  const begin = list.find(x => /(^|\.)new_game$/.test(idf(x)));
+  if (begin && Math.random() < 0.5) return begin;
   if (POLICY === 'passive') {
     // passive: never court, campaign or spend; otherwise random
     const cheap = list.filter(x => !/court|attack|_run$|el_run|campaign|\.hard$|\.pl_|el_pledge|eb_pledge|mandate|apologise|amends/.test(idf(x)));
@@ -241,6 +247,7 @@ const PREMISES = [
   [/^a4_dooku_doubt$/, Q => Q.war && Q.dooku_contact, 'Dooku defects without contact or a war'],
   [/^rec_case_ready$/, Q => Q.evidence >= 8.5 && !Q.sidious_known && !Q.finale, 'case offered without the evidence'],
   [/^rec_world_(falls|liberated)$/, Q => Q.war, 'a world falls or is freed without a war'],
+  [/^rec_war_turning$/, Q => Q.war && SW.warScore(Q) < SW.FLEE_SCORE + 1, 'the front gives way while the war is going well'],
   [/^rec_hutt_deal$/, Q => Q.war && !Q.syndicates_broken, 'Hutt deal after the syndicates were broken'],
   [/^rec_hhc$/, Q => !Q.hhc_discredited, 'High Human Culture event after it was discredited'],
   [/^rec_piracy$/, Q => !Q.patrol_fleets, 'pirate raid with patrol fleets on station'],
@@ -292,6 +299,7 @@ function playOne(gameIndex) {
         const sc = eng.getCurrentScene();
         visits[eng.state.sceneId] = (visits[eng.state.sceneId] || 0) + 1;
         if (eng.state.sceneId !== lastScene) { lastScene = eng.state.sceneId; checkPremises(lastScene, Q, game, PREMISE_HITS); }
+        if (process.env.TRAIL) { trace.sceneTrail = trace.sceneTrail || []; if (trace.sceneTrail[trace.sceneTrail.length - 1] !== eng.state.sceneId) { trace.sceneTrail.push(eng.state.sceneId + '@' + Q.time); if (trace.sceneTrail.length > 40) trace.sceneTrail.shift(); } if (steps > 50 && Q.date === undefined && !trace.trailShown) { trace.trailShown = 1; origLog('TRAIL game', gameIndex, trace.sceneTrail.join(' > ')); } }
         if (Q.time && trace.capital[Q.time] === undefined) trace.capital[Q.time] = Q.capital;
         if (Q.chancellor !== lastChancellor) { trace.chancellors.push(Q.bby + ':' + Q.chancellor_bloc + (process.env.TRACE ? '[fell' + (Q.govt_fell||0) + ' rc' + Q.rc_r + ' pal' + Q.pal_r + ' mod' + Q.mod_r + ' faith' + Math.round(Q.faith) + ' corr' + Math.round(Q.corruption) + ']' : '')); lastChancellor = Q.chancellor; }
         if (Q.rim_enfranchised && trace.enfranchisedAt === null) trace.enfranchisedAt = Q.date;
@@ -396,6 +404,9 @@ function playOne(gameIndex) {
       if (Q.war) { const rr = SW.warStrength(Q).ratio; const bk = rr < 0.6 ? '<0.6' : rr < 0.8 ? '0.6-0.8' : rr < 1 ? '0.8-1' : rr < 1.25 ? '1-1.25' : '1.25+'; audit.wr.hist[bk] = (audit.wr.hist[bk] || 0) + 1;
         if (Q.sidious_defeated) audit.wr.hist['beaten ' + bk] = (audit.wr.hist['beaten ' + bk] || 0) + 1; }
       if (Q.war) { const sc = SW.warScore(Q), sb = sc <= -3 ? '<=-3' : sc < 0 ? '-3..0' : sc < 2 ? '0..2' : sc < 4 ? '2..4' : '4+'; audit.wr.score = audit.wr.score || {}; audit.wr.score[(Q.sidious_defeated ? 'beaten ' : '') + sb] = (audit.wr.score[(Q.sidious_defeated ? 'beaten ' : '') + sb] || 0) + 1; }
+      if (Q.war) { const sc = SW.warScore(Q); audit.wr.byEnd = audit.wr.byEnd || {}; const k = (Q.ending || 'none') + (sc <= -2 ? ' losing' : sc < 1 ? ' even' : ' winning'); audit.wr.byEnd[k] = (audit.wr.byEnd[k] || 0) + 1; }
+      if (Q.ending === 'admirals') { audit.wr.adm = audit.wr.adm || {}; const k = Q.admirals_strike ? 'strike after the arrest' : (Q.coup_done ? 'coup before the finale' : ('no restoration, powers ' + Q.emergency_powers + (Q.restoration_seen ? ', vote lost' : ', no vote'))); audit.wr.adm[k] = (audit.wr.adm[k] || 0) + 1; }
+      if (process.env.RESTDBG && Q.restoration_seen && Q.rest_vote < 50 && Q.rest_stance) origLog('RESTFAIL vote ' + Math.round(Q.rest_vote) + ' ep ' + Q.emergency_powers + ' fear ' + Math.round(Q.fear) + ' ' + Q.parties.map(b => b + ' ' + Math.round(Q[b + '_r'] || 0) + '%@' + (Q.rest_stance[b] !== undefined ? Q.rest_stance[b].toFixed(2) : '-')).join(' ') + ' rc_chanc ' + (Q.rc_chancellor || 0) + ' secfold ' + (Q.sec_folded || 0) + ' hand ' + JSON.stringify(SW.palBorrowed(Q)));
       const wl = Q.worlds_lost || 0; audit.wr.wl[wl >= 6 ? '6+' : wl] = (audit.wr.wl[wl >= 6 ? '6+' : wl] || 0) + 1; audit.wr.secR.push(Q.sec_r || 0);
       for (const c in t.cardPlays) if (t.cardPlays[c] >= 6) audit.repeatCards[c] = (audit.repeatCards[c] || 0) + 1;
       // leaders
@@ -471,7 +482,7 @@ function playOne(gameIndex) {
       if (Q.rim_was_radical) { audit.radicalRim++; if (Q.geonosis_seen) audit.radicalRimWar++; audit.radicalRimSep.push(rimSep); }
       else audit.softRimSep.push(rimSep);
     }
-    if (VERBOSE) origLog(g, e, Q.date_label, 'steps', r.steps, r.stuck || '', 'ep', Q.emergency_powers, 'ev', Q.evidence.toFixed(1), 'gp', Math.round(Q.grand_plan), 'rc', Q.rc_r, 'pal', Q.pal_r, 'ch', Q.chancellor);
+    if (VERBOSE) origLog(g, e, Q.date_label, 'steps', r.steps, r.stuck || '', 'ep', Q.emergency_powers, 'ev', (Q.evidence || 0).toFixed(1), 'gp', Math.round(Q.grand_plan), 'rc', Q.rc_r, 'pal', Q.pal_r, 'ch', Q.chancellor);
   }
   origLog('policy', POLICY_ARG, 'games', GAMES);
   origLog('endings', JSON.stringify(endings));
@@ -522,7 +533,7 @@ function playOne(gameIndex) {
     '; forces at the finale: ours avg ' + avg(e.rep) + ', his avg ' + avg(e.sith) + ', ratio avg ' + (e.ratio.length ? (e.ratio.reduce((x, y) => x + y, 0) / e.ratio.length).toFixed(2) : '-') +
     '; turns in government avg ' + avg(e.govt) + '; chair-turns per game ' + SW.COMMITTEES.map(c => c + ' ' + (e.chairs[c] / GAMES).toFixed(1)).join(', ')); }
   if (audit.wr) { const e = audit.wr; origLog('audit: war: turns per game ' + (e.turns / GAMES).toFixed(1) + ', share of them with the Confederacy stronger ' + Math.round(100 * e.weak / Math.max(1, e.turns)) + '%, ratio avg ' + (e.ratio / Math.max(1, e.turns)).toFixed(2) +
-    ', balance avg ' + (e.bal / Math.max(1, e.turns)).toFixed(1) + ', lowest balance avg ' + avg(e.minBal) + '; still at war at the end in ' + e.atWarEnd + ' (balance avg ' + avg(e.endBal) + '); droid armies at end avg ' + avg(e.droid) + ', clones avg ' + avg(e.clones) + ', seceded avg ' + avg(e.sec) + '%; ratio at the end ' + JSON.stringify(e.hist) + '; war score at the end ' + JSON.stringify(e.score || {}) + '; worlds lost per game ' + JSON.stringify(e.wl) + '; Security Bloc seats at end avg ' + avg(e.secR)); }
+    ', balance avg ' + (e.bal / Math.max(1, e.turns)).toFixed(1) + ', lowest balance avg ' + avg(e.minBal) + '; still at war at the end in ' + e.atWarEnd + ' (balance avg ' + avg(e.endBal) + '); droid armies at end avg ' + avg(e.droid) + ', clones avg ' + avg(e.clones) + ', seceded avg ' + avg(e.sec) + '%; ratio at the end ' + JSON.stringify(e.hist) + '; war score at the end ' + JSON.stringify(e.score || {}) + '; admirals by route ' + JSON.stringify(e.adm || {}) + '; by ending ' + JSON.stringify(e.byEnd || {}) + '; worlds lost per game ' + JSON.stringify(e.wl) + '; Security Bloc seats at end avg ' + avg(e.secR)); }
   if (audit.an && audit.an.fparts) { const fp = audit.an.fparts; origLog('audit: forces at the finale by part: ' + Object.keys(fp).filter(k => k !== 'n').map(k => k + ' ' + (fp[k] / fp.n).toFixed(1)).join(', ')); }
   if (process.env.STEPS) origLog('audit: steps offered/affordable/taken: ' + Object.keys(STEP_SEEN).sort().map(k => k + ' ' + STEP_SEEN[k].seen + '/' + STEP_SEEN[k].can + '/' + STEP_SEEN[k].took).join(', '));
   origLog('audit: bureaucrat purges ' + audit.purges + ' (in ' + audit.purgeGames + ' games), Vice Chair gavels ' + audit.gavels);

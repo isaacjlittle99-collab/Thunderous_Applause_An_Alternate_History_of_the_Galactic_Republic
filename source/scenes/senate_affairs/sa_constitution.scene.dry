@@ -26,6 +26,7 @@ subtitle: Emergency powers will lapse unless the Senate renews them every year.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 on-arrival: {!
+Q.constitution_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.6, guild: 0.55, rim: 0.65, sec: 0.25, ind: 0.6, pal: 0.15 + (Q.emergency_powers < 1 ? 0.25 : 0), cis: 0.6}, true);
 Q.cr_vote = SW.vote(Q, st, 1, 'oversight');
@@ -95,6 +96,7 @@ subtitle: Permanent constitutional seats for the Outer Rim.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 on-arrival: {!
+Q.constitution_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.35, guild: 0.25, rim: 0.95, sec: 0.2, ind: 0.6, pal: 0.35, cis: 0.75}, true);
 Q.cr_vote = SW.vote(Q, st, 1, 'rim');
@@ -113,6 +115,7 @@ subtitle: −1 political capital. The Senate reviews the emergency powers every 
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 on-arrival: {!
+Q.constitution_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.6, guild: 0.5, rim: 0.65, sec: 0.2, ind: 0.65, pal: 0.1, cis: 0.6}, true);
 Q.pr_vote = SW.vote(Q, st, 1, ['oversight', '-powers']);

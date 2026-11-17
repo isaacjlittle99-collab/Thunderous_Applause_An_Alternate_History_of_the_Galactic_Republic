@@ -307,7 +307,8 @@
     D.new_jedi_order = 0; D.anakin_light = 0; D.anakin_choice_seen = 0;
     D.slavery_report = 0; D.slavery_enforced = 0; D.shmi_freed_now = 0;
     D.patrol_fleets = 0; D.pirates_crushed = 0; D.pirate_humiliation = 0; D.syndicates_broken = 0; D.syndicate_tries = 0; D.syndicates_ok = 0;
-    D.sidious_escaped = 0; D.hutt_deal = 0; D.hutt_deal_seen = 0; D.hutt_deal_vote = 0; D.hutt_deal_forced = 0;
+    D.as_vote = 0; D.cs_vote = 0; D.io_vote = 0; D.pr_vote = 0; D.ra_vote = 0; D.sc_vote = 0;
+    D.sidious_escaped = 0; D.fell_divided = 0; D.war_turning_ready = 0; D.war_turning_armed = 0; D.war_turning_count = 0; D.war_state = ''; D.hutt_deal = 0; D.hutt_deal_seen = 0; D.hutt_deal_vote = 0; D.hutt_deal_forced = 0;
     D.pirates_ready = 0; D.pirate_next = 0; D.pirate_route = ''; D.pirate_gang = ''; D.pirate_raids = 0;
     D.sentience_rights = 0; D.officer_corps = 0; D.hhc_investigated = 0; D.hhc_discredited = 0;
     D.hhc_ready = 0; D.hhc_next = 0; D.hhc_kind = 'core'; D.hhc_heat = 0; D.hhc_events = 0;
@@ -2509,11 +2510,12 @@
       Q.war_turns += 1;
       var wst = SW.warStrength(Q), rep = wst.rep, cis = wst.cis;
       // Sidious keeps the war going: the front drifts back toward a slow Republic advance
-      // while he rules the Republic; out of office he lets the droid armies press; once he is gone, strength alone decides
+      // while he rules the Republic; out of office he no longer holds the droid armies back, and strength counts for more;
+      // once he is gone, strength alone decides; at the Confederacy's head, he drives it on
       var hand = SW.sidiousHand(Q);
-      var drift_target = (hand === 'republic' ? 0.5 + Math.max(0, Q.date - 135) / 30 : (hand === 'confederacy' ? -2.5 : (hand === 'presses' ? -0.5 - Math.max(0, Q.date - 135) / 40 : 0))) +
+      var drift_target = (hand === 'republic' ? 0.5 + Math.max(0, Q.date - 135) / 30 : (hand === 'confederacy' ? -2.5 : 0)) +
         (Q.war_aim === 'victory' ? 0.8 : (Q.war_aim === 'peace' ? -0.5 : 0));
-      var pull = hand === 'none' ? 0.06 : 0.18, edge = (rep - cis) * (hand === 'none' ? 0.14 : 0.08);
+      var pull = {republic: 0.18, confederacy: 0.18, presses: 0.12, none: 0.06}[hand], edge = (rep - cis) * {republic: 0.08, confederacy: 0.08, presses: 0.11, none: 0.14}[hand];
       Q.war_balance += f * (edge + (drift_target - Q.war_balance) * pull + (SW.rnd() - 0.5) * 1.2);
       Q.war_weariness += f * 3;
       Q.treasury -= f * (1.0 + Q.clones * 0.08);
@@ -3749,6 +3751,7 @@
     SW.trackLevels(Q);
     var ws = SW.warStrength(Q);
     Q.war_rep = SW.round1(ws.rep); Q.war_cis = SW.round1(ws.cis); Q.war_ratio = Math.round(ws.ratio * 100) / 100;
+    Q.war_state = Q.war ? SW.warStateWord(Q) : '';
     Q.rim_addressed = Math.round(SW.rimAddressed(Q) * 100);
     // a Jedi Order remade around him: Anakin will not fall
     if (Q.new_jedi_order) Q.anakin_fall = 0;
@@ -3930,6 +3933,11 @@
     if (!Q.war) return 9;
     var ws = SW.warStrength(Q);
     return Q.war_balance + (Math.min(1.5, ws.ratio) - 1) * 6 - (Q.worlds_lost || 0) * 0.5;
+  };
+  // How the war stands, in a word, for the Forces tab.
+  SW.warStateWord = function (Q) {
+    var sc = SW.warScore(Q);
+    return sc >= SW.SITH_SCORE + 1 ? 'won' : (sc > SW.FALL_SCORE ? 'balance' : 'lost');
   };
   // Loyalist worlds on each front, from the edge of the war toward the Core, and the region whose delegations they hold.
   SW.LOYAL_WORLDS = {
@@ -4196,15 +4204,22 @@
     extra.rim += lostInd * wRim; extra.cis += lostInd * wCis;
     return extra;
   };
-  // The share of Palpatine's bloc made up of centrists who drifted to him: they drift back when he falls.
+  // The shares of Palpatine's bloc made up of centrists who drifted to him, and of Security Bloc hawks he
+  // absorbed or subverted. Once he is unmasked they vote by their own lights again.
   SW.palBorrowed = function (Q) {
-    if (SW.off('bleed')) return 0;
-    var bleed = SW.bleedFrac(Q), share = SW.bleedShare(Q), got = 0, all = 0;
+    if (SW.off('bleed')) return {centre: 0, hawks: 0};
+    var bleed = SW.bleedFrac(Q), share = SW.bleedShare(Q), got = 0, hawks = 0, all = 0;
     for (var j = 0; j < SW.REGIONS.length; j++) {
-      var rg = SW.REGIONS[j], w = Q[rg] || 0;
-      got += w * SW.bleedExtra(Q, rg, bleed, share, false, false).pal; all += w * (Q[rg + '_pal'] || 0);
+      var rg = SW.REGIONS[j], w = Q[rg] || 0, S0 = START_SUPPORT[rg];
+      got += w * SW.bleedExtra(Q, rg, bleed, share, false, false).pal;
+      // (the Security Bloc's natural size, swollen by fear and war, as in the drift)
+      var secSize = S0.sec * Math.max(0.2, 1 + (Q.fear - 20) / 25 + (Q.war ? 0.3 : 0));
+      hawks += w * secSize * ((Q.merged_sec === 'pal' ? 0.8 : 0) + (Q.pal_was_chancellor ? 0.08 : 0));
+      all += w * (Q[rg + '_pal'] || 0);
     }
-    return all > 0 ? SW.clamp(got / all, 0, 0.6) : 0;
+    if (all <= 0) return {centre: 0, hawks: 0};
+    var c = SW.clamp(got / all, 0, 0.6), h = SW.clamp(hawks / all, 0, 0.6 - c);
+    return {centre: c, hawks: h};
   };
   SW.secSubversion = function (Q) {
     if (Q.sidious_defeated || Q.pal_disgraced) return 0;
@@ -4219,7 +4234,7 @@
     Q.sep_momentum = (Q.sep_momentum || 0) + 0.15;
     Q.hhc_heat = (Q.hhc_heat || 0) + 1;
     Q.hhc_events = (Q.hhc_events || 0) + 1;
-    if (Q.hhc_kind === 'military') Q.navy_loyalty -= 1.5;
+    if (Q.hhc_kind === 'military') Q.navy_loyalty -= 1;
     if (Q.hhc_kind === 'core') Q.fear += 1;
     if (Q.hhc_kind === 'senate') Q.pal_relation += 2;
     Q.hhc_ready = 0;
@@ -4297,6 +4312,12 @@
         Q.pirate_next = Q.time + Math.max(5, 10 - Math.floor(Q.date / 30)) + Math.floor(SW.rnd() * 3);
       }
     }
+    // the front gives way: a warning when the war turns against the Republic (again, if it recovers and turns once more)
+    if (Q.war && !Q.game_ending) {
+      var sc = SW.warScore(Q);
+      if (sc < SW.FLEE_SCORE && !Q.war_turning_armed && !Q.war_turning_ready) { Q.war_turning_ready = 1; Q.war_turning_armed = 1; Q.war_turning_count = (Q.war_turning_count || 0) + 1; }
+      if (sc >= 2) Q.war_turning_armed = 0;
+    }
     // an exposed or escaped Sith Lord, with the Confederacy winning, goes to them
     var ws = SW.warStrength(Q);
     if (live && Q.war && !Q.sidious_fled && !Q.finale && SW.warScore(Q) < SW.FLEE_SCORE && !SW.off('flee') && !Q.pal_chancellor && !Q.puppet_chancellor &&
@@ -4344,7 +4365,10 @@
     if (Q.cis_victory) return Q.sidious_fled ? 'sith_confederacy' : 'republic_falls';
     if (Q.dissolved) return 'dissolved';
     if (Q.admirals_coup) return 'admirals';
-    if (Q.civil_war_result === 'long') return 'divided';
+    if (Q.civil_war_result === 'long') {
+      if (Q.war && SW.warScore(Q) <= SW.FALL_SCORE && !SW.off('fall')) { Q.fell_divided = 1; return Q.sidious_fled ? 'sith_confederacy' : 'republic_falls'; }
+      return 'divided';
+    }
     if (Q.empire_declared && Q.civil_war_result !== 'won') return 'empire';
     if (Q.jedi_coup) return 'protectorate';
     if (Q.hollow_crown) return 'hollow_crown';
