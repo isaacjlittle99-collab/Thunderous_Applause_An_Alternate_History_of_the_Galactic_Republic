@@ -72,18 +72,19 @@ unavailable-subtitle: Not enough political capital.
 on-arrival: {!
 Q.jedi_affairs_timer = 1;
 Q.capital -= 1;
+Q.js_had_generals = Q.jedi_generals ? 1 : 0;
 var st = SW.stance(Q, {mod: 0.55, guild: 0.4, rim: 0.6, sec: 0.15, ind: 0.65, pal: 0.15, cis: 0.6}, true);
 Q.js_vote = SW.vote(Q, st, 1, 'peace');
 Q.vote_html = SW.voteBanner('Jedi Service Act', Q.js_vote);
 if (Q.js_vote >= 50) {
-    Q.jedi_service_act = 1; Q.jedi_generals = 0; Q.jedi_strength += 1; Q.jedi_relation += 6; Q.jedi_standing += 3; Q.hawk_dissent += 4;
-    if (Q.war) Q.war_balance -= 1;
+    Q.jedi_service_act = 1; Q.jedi_service_suspended = 0; Q.jedi_generals = 0; Q.jedi_strength += 1; Q.jedi_relation += 6; Q.jedi_standing += 3; Q.hawk_dissent += 4;
+    if (Q.war && Q.js_had_generals) Q.war_balance -= 1;
 }
 !}
 
 [+ vote_html +]
 
-[? if jedi_service_act : The Jedi hand their commands to clone and Navy officers. They will scout, negotiate, protect civilians and advise, but never again lead the Republic's armies. The Council is quietly relieved. [? if war : The generals' staffs are not. ?] ?][? if not jedi_service_act : The act fails. The Security Bloc says the Republic cannot fight a war with one hand tied. ?]
+[? if jedi_service_act : The Act makes it law: the Jedi are keepers of the peace, and may never hold military command. ?][? if jedi_service_act and js_had_generals : The Jedi hand their commands to clone and Navy officers. They will scout, negotiate, protect civilians and advise, but never again lead the Republic's armies. The Council is quietly relieved; the generals' staffs are not. ?][? if jedi_service_act and not js_had_generals and not war : Should war come, they will scout, negotiate, protect civilians and advise, but never lead the Republic's armies. The Council is quietly relieved. ?][? if jedi_service_act and not js_had_generals and war : They will go on scouting, negotiating, protecting civilians and advising, but they will never lead the Republic's armies. The Council is quietly relieved. ?][? if not jedi_service_act : The act fails. The Security Bloc says the Republic cannot fight a war with one hand tied. ?]
 
 @compact
 view-if: jedi_service_act and not jedi_compact

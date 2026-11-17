@@ -320,7 +320,8 @@
     D.suspects_open_text = '';
     D.cha_arrest_done = 0; D.cha_arrest_result = ''; D.cha_arrest_score = 0; D.cha_arrest_missing = ''; D.cha_flee_odds = 0;
     D.anti_cartel = 0; D.republic_bonds = 0; D.senators_expelled = 0; D.intel_oversight = 0; D.compor = 0; D.judicial_charter = 0;
-    D.independent_speaker = 0; D.jedi_service_act = 0; D.jedi_compact = 0;
+    D.minority_support = []; D.minority_support_names = ''; D.minority_defeats = 0; D.collapse_at = 4; D.coalition_mood_v = 0; D.el_min_support_names = ''; D.el_min_support_n = 0; D.minority_support_n = 0; D.cc_minority = 0; D.cc_noone = 0; D.cc_supporter_left = 0; D.lost_chair_to = '';
+    D.independent_speaker = 0; D.jedi_service_act = 0; D.jedi_compact = 0; D.jedi_service_suspended = 0; D.js_had_generals = 0; D.ws_vote = 0; D.ws_held = 0;
     D.ac_vote = 0; D.rb_vote = 0; D.ex_vote = 0; D.io_act_vote = 0; D.cp_vote = 0; D.jc_charter_vote = 0; D.sp_vote = 0; D.js_vote = 0; D.jc_vote = 0;
     for (var mc = 0; mc < SW.COMMITTEES.length; mc++) { var mk = SW.COMMITTEES[mc]; D['minister_' + mk] = ''; D['minister_' + mk + '_name'] = ''; D['minister_' + mk + '_bloc'] = ''; D['ministry_act_' + mk] = ''; D['ministry_act_by_' + mk] = ''; }
     D.appoint_queue = ''; D.appoint_ready = 0; D.reappoint_all = 0; D.ap_com = ''; D.ap_com_name = ''; D.ap_chosen_name = ''; D.ap_chosen_faction = '';
@@ -1390,6 +1391,41 @@
     Q.rc_has_access = (Q.rc_in_govt || chairs > 0) ? 1 : 0;
     SW.palStrings(Q);
   };
+  // "the Core Moderates and the Independents"
+  SW.listNames = function (Q, blocs) {
+    var n = (blocs || []).map(function (b) { return 'the ' + SW.name(Q, b); });
+    return n.length <= 1 ? (n[0] || '') : n.slice(0, -1).join(', ') + ' and ' + n[n.length - 1];
+  };
+  // A Caucus minority government leans on blocs outside it: the friendliest first, until together they hold a majority.
+  SW.minoritySupporters = function (Q, govt) {
+    govt = govt || Q.govt_blocs || [];
+    var pool = (Q.parties || []).filter(function (b) {
+      return b !== 'rc' && b !== 'cis' && govt.indexOf(b) < 0 && SW.relOk(Q, 'rc', b) && !(b === Q.walkout_bloc && Q.date < (Q.walkout_until || -99));
+    });
+    pool.sort(function (a, b) { return SW.rel(Q, 'rc', b) - SW.rel(Q, 'rc', a); });
+    var sup = [];
+    for (var i = 0; i < pool.length && SW.seats(Q, govt.concat(sup)) < 50; i++) sup.push(pool[i]);
+    return sup;
+  };
+  SW.isCaucusMinority = function (Q) { return !!(Q.rc_chancellor && Q.rc_in_govt && Q.minority_govt); };
+  // Keep the supporters while they last; the threshold a government falls at; the mood word it shows.
+  SW.syncSupporters = function (Q) {
+    if (SW.isCaucusMinority(Q)) {
+      var had = Q.minority_support || [];
+      var cur = had.filter(function (b) { return Q.parties.indexOf(b) >= 0 && (Q.govt_blocs || []).indexOf(b) < 0; });
+      if (!cur.length || cur.length !== had.length) cur = SW.minoritySupporters(Q);
+      Q.minority_support = cur;
+    } else Q.minority_support = [];
+    Q.minority_support_names = SW.listNames(Q, Q.minority_support); Q.minority_support_n = Q.minority_support.length;
+    Q.collapse_at = SW.isCaucusMinority(Q) ? 3 : 4;
+    Q.coalition_mood_v = (Q.coalition_dissent || 0) + (4 - Q.collapse_at);
+  };
+  // Whoever a minority government loses first: the least friendly of its partners and supporters.
+  SW.minorityLeaver = function (Q) {
+    var s = (Q.govt_blocs || []).filter(function (b) { return b !== 'rc'; }).concat(Q.minority_support || []);
+    s.sort(function (a, b) { return SW.rel(Q, 'rc', a) - SW.rel(Q, 'rc', b); });
+    return s[0] || '';
+  };
 
   SW.coalitionName = function (Q, blocs) {
     var has = function (b) { return blocs.indexOf(b) >= 0; };
@@ -1780,6 +1816,11 @@
     SW.computeSupport(Q);
   };
 
+  // The Senate suspends the Jedi Service Act for the duration of the war: the Jedi become generals.
+  SW.suspendServiceAct = function (Q) {
+    Q.jedi_service_act = 0; Q.jedi_service_suspended = 1; Q.jedi_generals = 1; Q.war_balance += 1;
+  };
+
   // ------------------------------------------------------------------ the Chancellery
   // The office of Supreme Chancellor, apart from the committees, and the powers it gathers. Each power is gained
   // by time or by events, and checked for good by a reform (or by our own Chancellor handing it back to the Senate).
@@ -2135,6 +2176,9 @@
     }
     Q.el_opts = opts.map(function (o) { return o.blocs; });
     Q.coal_all_blocked = opts.some(function (o) { return o.seats >= 50 && !o.cold && !o.block; }) ? 0 : 1;
+    var mg = SW.relOk(Q, 'rc', 'ind') ? ['rc', 'ind'] : ['rc'];
+    var ms = SW.minoritySupporters(Q, mg);
+    Q.el_min_support_names = SW.listNames(Q, ms); Q.el_min_support_n = ms.length;
     if (Q.coal_all_blocked) Q.coal_blocked_games = (Q.coal_blocked_games || 0) + 1;
   };
 
@@ -2926,6 +2970,12 @@
     }
     var weight = live ? SW.officeWeight(Q, rcYes, topics) : 0;
     if (weight > 0) { share = SW.round1(Math.min(100, share + weight)); SW._notes.push('+' + weight + ', the Chancellery\u2019s weight'); }
+    // a Caucus minority's own bill voted down: its supporters lose patience (the budget has its own price; confidence votes are their own reckoning)
+    if (live && rcYes === 1 && share < 50 && SW.isCaucusMinority(Q) && topics.length && topics.indexOf('confidence') < 0) {
+      Q.coalition_dissent = (Q.coalition_dissent || 0) + 1; Q.minority_defeats = (Q.minority_defeats || 0) + 1;
+      Q.coalition_mood_v = Q.coalition_dissent + (4 - (Q.collapse_at || 4));
+      SW._notes.push('the government\u2019s supporters lose patience');
+    }
     Q.last_vote = share;
     return share;
   };
@@ -4352,6 +4402,7 @@
     if (Q.bureau_relation >= 20 && (Q.bureau_dossier || 0) < 2) Q.bureau_warn_hostile = 0;
     SW.computeSupport(Q);
     SW.recomputeGovt(Q);
+    SW.syncSupporters(Q);
     SW.syncMinisters(Q);
     Q.decree_mode = 0;
     SW.chancellery(Q);
@@ -4385,6 +4436,8 @@
     // laws that hold whatever else happens: no guild embargo after the break-up, no Jedi generals under the Service Act
     if (Q.tf_broken_up) Q.guild_embargo = 0;
     if (Q.jedi_service_act) Q.jedi_generals = 0;
+    // an Act suspended for the war comes back into force when the war ends
+    if (Q.jedi_service_suspended && !Q.war) { Q.jedi_service_suspended = 0; Q.jedi_service_act = 1; Q.jedi_generals = 0; }
     SW.anakinTick(Q);
     Q.rim_radical_word = SW.RADICAL_WORDS[Q.rim_radical || 0] || '';
     var fb = SW.forces(Q);
@@ -4449,9 +4502,12 @@
     SW.bureauTick(Q);
     SW.schemeTick(Q);
     Q.assassination_roll = Math.random();
-    if (Q.rc_in_govt && Q.govt_blocs && Q.govt_blocs.length > 1) {
+    var leanOn = (Q.govt_blocs || []).filter(function (b) { return b !== 'rc'; }).concat(Q.minority_support || []);
+    if (Q.rc_in_govt && (leanOn.length || SW.isCaucusMinority(Q))) {
       var strain = 0.12;
-      for (var gb = 0; gb < Q.govt_blocs.length; gb++) if (Q.govt_blocs[gb] !== 'rc') strain += 0.25 * (SW.firm(Q, Q.govt_blocs[gb]) - 0.5);
+      for (var gb = 0; gb < leanOn.length; gb++) strain += 0.25 * (SW.firm(Q, leanOn[gb]) - 0.5);
+      // a minority with nobody it can count on
+      if (SW.isCaucusMinority(Q) && !(Q.minority_support || []).length) strain += 0.2;
       Q.coalition_dissent += Math.max(0.04, strain);
     }
     SW.drift(Q);

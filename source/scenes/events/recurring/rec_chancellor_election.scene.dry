@@ -411,8 +411,8 @@ on-arrival: {! SW.chooseRcCoalition(Q, 7); !}
 go-to: el_chairs
 
 @el_coal_minority
-subtitle: Every vote will be a struggle, and the coalition will be fragile.
-on-arrival: {! SW.brokenSystem(Q, 'minority'); Q.gov_minority_swing = 1; SW.setGovt(Q, SW.relOk(Q, 'rc', 'ind') ? ['rc', 'ind'] : ['rc'], 'Caucus Minority Government'); SW.openChairs(Q, Math.round(Q.rc_r) + 20); Q.coalition_dissent = 2; !}
+subtitle: [? if el_min_support_n > 0 : Relying on [+ el_min_support_names +]. ?][? if el_min_support_n = 0 : No bloc will promise its support. ?] Their patience is short, and every bill the Senate votes down tries it.
+on-arrival: {! SW.brokenSystem(Q, 'minority'); Q.gov_minority_swing = 1; SW.setGovt(Q, SW.relOk(Q, 'rc', 'ind') ? ['rc', 'ind'] : ['rc'], 'Caucus Minority Government'); Q.minority_support = []; SW.recomputeGovt(Q); SW.syncSupporters(Q); SW.openChairs(Q, Math.round(Q.rc_r) + 20); Q.coalition_dissent = 1; Q.coalition_mood_v = 1 + (4 - Q.collapse_at); !}
 go-to: el_chairs
 
 @el_result_other

@@ -9,7 +9,7 @@ new-page: true
 
 = Coalition Affairs
 
-The [+ coalition_name +] is [+ coalition_dissent : coalition_dissent +]. [? if not constructive_vonc : If its mood reaches collapsing, our partners will walk out and bring the government down. ?][? if constructive_vonc : If its mood reaches collapsing, a partner will walk out. ?]
+The [+ coalition_name +] is [+ coalition_mood_v : coalition_dissent +]. [? if minority_govt and rc_chancellor and minority_support_n > 0 : It relies on [+ minority_support_names +] to pass its bills, and every bill the Senate votes down tries their patience. ?][? if minority_govt and rc_chancellor and minority_support_n = 0 : No bloc has promised it anything: every bill is a fight, and every defeat tries the Senate's patience. ?][? if not constructive_vonc and not minority_govt : If its mood reaches collapsing, our partners will walk out and bring the government down. ?][? if not constructive_vonc and minority_govt : If its mood reaches collapsing, its support will melt away and bring the government down. ?][? if constructive_vonc : If its mood reaches collapsing, a partner or supporter will walk out. ?]
 
 - @concede: Make concessions to our partners.
 - @chair: Give up a committee chair to a partner.
@@ -29,12 +29,12 @@ A carefully worded joint statement papers over the cracks.
 view-if: rc_chairs >= 1
 subtitle: −3 coalition dissent; we lose a chair.
 on-arrival: {!
-for (var i = SW.COMMITTEES.length - 1; i >= 0; i--) { var c = SW.COMMITTEES[i]; if (Q['chair_' + c] === 'rc') { var partner = Q.govt_blocs.filter(function (b) { return b !== 'rc'; })[0] || 'mod'; Q['chair_' + c] = partner; Q.lost_chair = SW.COMMITTEE_NAMES[c]; break; } }
+for (var i = SW.COMMITTEES.length - 1; i >= 0; i--) { var c = SW.COMMITTEES[i]; if (Q['chair_' + c] === 'rc') { var partner = Q.govt_blocs.filter(function (b) { return b !== 'rc'; })[0] || (Q.minority_support || [])[0] || 'mod'; Q['chair_' + c] = partner; Q.lost_chair = SW.COMMITTEE_NAMES[c]; Q.lost_chair_to = SW.name(Q, partner); break; } }
 Q.coalition_dissent -= 3;
 SW.recomputeGovt(Q);
 !}
 
-We hand the [+ lost_chair +] Committee to our partners. They are mollified.
+We hand the [+ lost_chair +] Committee to the [+ lost_chair_to +]. They are mollified.
 
 @mandate
 view-if: mandate_ok
