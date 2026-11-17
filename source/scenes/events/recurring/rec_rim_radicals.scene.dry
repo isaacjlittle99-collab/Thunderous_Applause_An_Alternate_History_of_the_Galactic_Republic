@@ -1,0 +1,16 @@
+title: The Rim's Patience
+subtitle: The Rim's own politicians are running out of patience with the Caucus.
+tags: event
+view-if: rim_radical_ready = 1 and not finale and not game_ending
+priority: 3
+new-page: true
+face-image: img/ev_rim.svg
+on-arrival: {! SW.rimRadicalEvent(Q); !}
+
+= [+ rr_heading +]
+
+[? if rr_level = 1 : Another year has passed without a word from the Caucus on slavery, and without a vote for the Rim. [? if rr_wing : In our own ranks, the Rimward wing has stopped being polite. At its weekly meeting, senator after senator asks where the abolition bill is, and where the Rim's seats are. [+ rimward_leader +] has no answer for them. ?] [? if rr_coalition : Across the floor, the Rimward Coalition has noticed the same silence, and its whips have begun to vote against the Caucus as a matter of principle. ?] [? if rr_rfc : The Rim Freedom Caucus, which left us over exactly this, says it told us so. ?] ?]
+
+[? if rr_level = 2 : The Rim's moderates have run out of arguments. [? if rr_wing and rr_corvane_new : Jessa Corvane has taken the leadership of our Rimward wing, on a promise to stop asking the Caucus politely for things it never delivers. ?][? if rr_wing and not rr_corvane_new : Under Jessa Corvane, our Rimward wing has stopped asking politely. ?] [? if rr_coalition and rr_ardana_new : In the Rimward Coalition, the moderates have been swept aside. Tal Ardana of Ord Mantell leads it now, and he has promised no more deals with the Core. ?][? if rr_coalition and not rr_ardana_new : Tal Ardana's Rimward Coalition hardens its line. ?] [? if rr_rfc and rr_tandeth_new : Mira Tandeth has taken the Rim Freedom Caucus, and says the Rim has waited long enough. ?] ?]
+
+[? if rr_level >= 3 : The Rim's politicians have stopped waiting for the Republic. [? if rr_wing : Our Rimward wing's senators now meet, openly, with people who say the Rim should leave. [? if dooku_movement : Some of them are Count Dooku's envoys. ?] [+ rimward_leader +] no longer argues with them. ?] [? if rr_coalition : The Rimward Coalition's newsfeeds have begun to talk about the Republic in the past tense. ?] [? if rr_rfc : The Rim Freedom Caucus has stopped attending the Senate's committees. ?] [? if not dooku_movement : When someone finally offers the Rim a way out, they will be listening. ?] ?]
