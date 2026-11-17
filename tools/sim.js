@@ -276,6 +276,8 @@ const PREMISES = [
   [/^ld_anakin$/, Q => (Q.padme_alive && (Q.padme_married || Q.adv_amidala)) || Q.jedi_relation >= 60 || Q.quigon_alive, 'Anakin reached without anyone close to him'],
   [/^fin_gambit_response\.pact$/, Q => Q.pact_formed, 'Defence Pact mobilised without a Pact'],
   [/^fin_gambit_response\.army$/, Q => Q.army_oversight || Q.chips_removed || Q.senate_command, 'army called on without Senate command'],
+  [/^rec_rim_radical$/, Q => !Q.dooku_movement, 'a story of the radicalising Rim after Dooku\'s declaration'],
+  [/^rec_rim_radicals$/, Q => !SW.rimTackled(Q) && Q.date >= 60, 'the Rim\'s politicians radicalising although the Rim was tackled'],
 ];
 const PREMISE_HITS = {};
 const STEP_SEEN = {};

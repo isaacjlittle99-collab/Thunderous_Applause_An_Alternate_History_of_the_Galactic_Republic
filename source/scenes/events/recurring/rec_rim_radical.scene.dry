@@ -1,0 +1,28 @@
+title: The Rim Radicalises
+subtitle: News from the Rim, and a new kind of politics.
+tags: event
+view-if: rim_story_ready = 1 and not dooku_movement and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_rim.svg
+on-arrival: {! SW.rimStoryEvent(Q); !}
+
+= [+ rim_story_heading +]
+
+[? if rim_story = "ordmantell" : The price of grain on Ord Mantell has doubled in a year, and the queues outside the ration halls now stretch around the docks. Nobody on Coruscant has noticed. At the head of one queue, a dock workers' speaker climbs onto a crate and asks the crowd a question: why does the Core eat while the Rim waits in line? By the end of the week, the question is painted on half the warehouses in the port. ?]
+
+[? if rim_story = "kessel" : The miners of Kessel have downed tools. They are not asking for higher pay: they asked for that three times, through the proper channels, and the petitions are still in a committee drawer on Coruscant. This time the strike committee has stopped asking Coruscant for anything at all. Its bulletins call the Republic "the absentee landlord". ?]
+
+[? if rim_story = "rodia" : Fever season has come early to Rodia's lowland cities. The Republic's medical aid was voted months ago, and has been stuck in committee ever since. The clan leaders have stopped waiting for it. In the great hall at Iskaayuma, for the first time in living memory, they are talking openly about governing themselves. ?]
+
+[? if rim_story = "ryloth" : A convoy of Twi'lek refugees, fleeing a failed harvest on Ryloth, was turned back from a Core port last week for want of the right papers. A passenger's holorecording of the patrol cruiser's guns has now played on every world of the Outer Rim. The commentary is always the same: this is what the Republic thinks of us. ?]
+
+[? if rim_story = "vote" : The Tion Cluster's delegate to the Senate has been caught selling his vote to a Core shipping line, which wanted its tariffs left alone. He is not the first, and nobody in the Tion Cluster expects him to be the last. On the streets of Desevro the question is no longer who to send to Coruscant, but why send anyone at all. ?]
+
+[? if rim_story = "customs" : An investigation by a Mid Rim newsfeed has found the customs officers of the Hydian Way waving guild freighters through for a fee, while local traders pay full duty and wait for weeks. Half the independent traders of the Hydian worlds are ruined. Their guild has stopped petitioning the Senate and started printing pamphlets instead. ?]
+
+[? if rim_story = "relief" : The Senate voted relief for the drought worlds of the Outer Rim a year ago. It never arrived. The credits went somewhere, through a Core bank and three holding companies, and the auditors who followed them were reassigned. On the drought worlds, people have stopped believing that Coruscant ever meant to send it. ?]
+
+[? if rim_story = "census" : A census of the Mid Rim, carried out under contract by Core firms, has found the region's population mysteriously shrunk, and its seats in the Senate with it. The fraud is plain to anyone who can count. The Senate's response is a review that will report in three years. ?]
+
+All across the Rim, the same pamphlets are passed from hand to hand, and the same speakers draw bigger crowds every month. They no longer ask the Republic for anything. They say the Rim would be better off on its own.

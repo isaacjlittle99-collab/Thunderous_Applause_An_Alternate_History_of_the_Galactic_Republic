@@ -57,6 +57,9 @@ artwork, music or footage is included; all images are original abstract art.*
   a hidden hand behind the crises, a shortlist of suspects close to power (Mas Amedda, Sate Pestage, Orn Free Taa, Lott Dod) and,
   once every one is cleared, a name. Then the hunt begins: an informant, frozen accounts, compromised officers named, the ways off Coruscant
   watched, the Jedi told. Every move risks tipping him off, and a Caucus Chancellor can order his arrest.
+- **The Rim leaves by default.** Rim separatism grows while hardship is above 20 or corruption above 40, faster the further
+  above; stories from the radicalising Rim lead up to Dooku's declaration, and if the Caucus does nothing about slavery or
+  enfranchisement, radicals take over our Rimward wing and the Rimward Coalition and make ready to defect.
 - **Anakin falls unless something holds him**, as in the films: his freed mother, a reformed Jedi Order, or friends who
   warned him (the Jedi kept out of command, a warning about Palpatine that was heard, and action on slavery). Every
   arrest weighs the balance of forces, and a fallen Anakin betrays it.

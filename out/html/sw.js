@@ -317,6 +317,10 @@
     D.hunt_anakin_told = 0; D.hunt_anakin_turned = 0; D.hunt_case_runs = 0; D.hunt_timer = 0; D.hunt_result = ''; D.hunt_alarmed = 0; D.intel_cleared = '';
     D.suspects_open_text = '';
     D.cha_arrest_done = 0; D.cha_arrest_result = ''; D.cha_arrest_score = 0; D.cha_arrest_missing = ''; D.cha_flee_odds = 0;
+    D.rim_story_ready = 0; D.rim_story = ''; D.rim_story_heading = ''; D.rim_story_region = ''; D.rim_story_cause = ''; D.rim_story_next = 0; D.rim_stories = 0;
+    for (var rsid in SW.RIM_STORIES) D['rim_story_done_' + rsid] = 0;
+    D.rim_radical = 0; D.rim_radical_ready = 0; D.rim_radical_word = ''; D.rr_level = 0; D.rr_heading = ''; D.rr_wing = 0; D.rr_coalition = 0; D.rr_rfc = 0;
+    D.rr_corvane_new = 0; D.rr_ardana_new = 0; D.rr_tandeth_new = 0;
     D.anakin_anchor = ''; D.anakin_anchor_name = 'Nothing'; D.anakin_warned = 0; D.anakin_floor = 0; D.arrest_forces_score = 0; D.arrest_forces_note = '';
     D.as_vote = 0; D.cs_vote = 0; D.io_vote = 0; D.pr_vote = 0; D.ra_vote = 0; D.sc_vote = 0;
     D.sidious_escaped = 0; D.fell_divided = 0; D.war_turning_ready = 0; D.war_turning_armed = 0; D.war_turning_count = 0; D.war_state = ''; D.hutt_deal = 0; D.hutt_deal_seen = 0; D.hutt_deal_vote = 0; D.hutt_deal_forced = 0;
@@ -442,8 +446,9 @@
     // the treasury is set by the yearly budget (rec_budget); the old trade tax still pays in
     if (Q.trade_tax) Q.treasury += 1;
     Q.budget_due = 1;
-    // the Separatists gain ground every year the Rim is left to them
+    // the Separatists gain ground every year the Rim is left to them, and the Rim's politicians radicalise
     SW.separatistYear(Q);
+    SW.rimRadicalYear(Q);
     // under the Powers Review Act the Senate takes back one emergency power a year
     if (Q.powers_review && Q.emergency_powers > 0 && !Q.finale) { Q.emergency_powers -= 1; Q.powers_returned = (Q.powers_returned || 0) + 1; }
   };
@@ -503,7 +508,7 @@
       blurb: 'An Ord Mantell firebrand. No more promises from Coruscant, and no deals with the Core or the guilds.',
       rise: function (Q) {
         var lostRim = (Q.secession_where || '').indexOf('outer') >= 0 || (Q.secession_where || '').indexOf('midrim') >= 0;
-        return 0.05 + Math.max(0, Q.rim_hardship - 45) / 30 + 0.2 * on(lostRim) + 0.1 * on(Q.dooku_movement) -
+        return 0.05 + Math.max(0, Q.rim_hardship - 45) / 30 + 0.2 * on(lostRim) + 0.1 * on(Q.dooku_movement) + 0.3 * on((Q.rim_radical || 0) >= 2) -
           0.3 * on(Q.rim_enfranchised) - Math.min(Q.rim_relief || 0, 3) * 0.05;
       }},
     // Commerce Guilds
@@ -582,7 +587,7 @@
       views: {rim: 0.15, regulate: 0.15, army: -0.1, peace: 0.1}, likes: {mod: -10, guild: -15, cis: 10}, refuses: ['guild'],
       rimGriev: 0.1, rimSep: 0.15,
       blurb: 'A Mid Rim organiser who thinks the Caucus betrayed the Rim.',
-      rise: function (Q) { return 0.1 + Math.max(0, Q.rim_hardship - 40) / 30 + (Q.farr_dead ? 1 : 0); }},
+      rise: function (Q) { return 0.1 + Math.max(0, Q.rim_hardship - 40) / 30 + (Q.farr_dead ? 1 : 0) + 0.3 * on((Q.rim_radical || 0) >= 2); }},
 
     // Caucus factions. agenda(Q) is true when the faction's demands are not being met.
     ryder: {group: 'inst', name: 'Horox Ryder', tag: 'mainstream', firm: 0.5,
@@ -613,7 +618,7 @@
         return (Q.rim_hardship > 36 && !Q.rim_enfranchised) || (Q.date >= 60 && !Q.slavery_abolished && Q.slavery_campaign < 2) ||
           (Q.rc_in_govt && (Q.govt_blocs || []).indexOf('guild') >= 0);
       },
-      rise: function (Q) { return 0.05 + Math.max(0, Q.rim_hardship - 42) / 30 + Math.max(0, Q.rimward_dissent - 40) / 60 + 0.1 * on(Q.rim_sep_high); }},
+      rise: function (Q) { return 0.05 + Math.max(0, Q.rim_hardship - 42) / 30 + Math.max(0, Q.rimward_dissent - 40) / 60 + 0.1 * on(Q.rim_sep_high) + 0.3 * on((Q.rim_radical || 0) >= 2); }},
     rusk: {group: 'rimward', name: 'Hollin Rusk', tag: 'gradualist', firm: 0.25,
       demand: 'steady relief for the Rim, and a start on abolition',
       blurb: 'A Bakuran pragmatist. Half a loaf now beats a whole one never.',
@@ -2422,7 +2427,8 @@
       var r = regionsSep[i];
       var d;
       if (r !== 'corporate') {
-        d = (Q.rim_hardship - 35) / 25 + (Q.corruption - 55) / 40 + (Q.dooku_movement ? 1.4 * Q.rim_grievance : 0.1)
+        // separatism is the default: it grows while hardship or corruption is above its line, faster the further above
+        d = SW.sepPressure(Q.rim_hardship, SW.SEP_HARDSHIP_LINE, 60) + SW.sepPressure(Q.corruption, SW.SEP_CORRUPTION_LINE, 80) + (Q.dooku_movement ? 1.4 * Q.rim_grievance : 0.1)
           - Q.rim_enfranchised * 1.5 - Q.slavery_abolished * 0.3 - Math.min(Q.rim_relief, 3) * 0.15;
         // a reformed Rim slowly settles back toward loyalty
         if (Q.rim_enfranchised && Q[r + '_sep'] > 15) d -= (Q[r + '_sep'] - 15) * 0.04;
@@ -2532,9 +2538,18 @@
     SW.clampAll(Q);
   };
 
+  // The Rim's separatism grows while Rim hardship is above 20 or corruption above 40, faster the further above;
+  // below its line, each eases it back slowly.
+  SW.SEP_HARDSHIP_LINE = 20;
+  SW.SEP_CORRUPTION_LINE = 40;
+  SW.sepPressure = function (x, line, k) {
+    var e = (x || 0) - line;
+    return e > 0 ? (e / k) * (1 + e / 30) : e / k;
+  };
+
   // How much real grievance Dooku's movement can feed on (0 = none, ~1.5 = the Rim is furious).
   SW.grievances = function (Q) {
-    Q.rim_grievance = SW.clamp((Q.rim_hardship - 25) / 30 + (Q.corruption - 45) / 45 - Q.rim_enfranchised * 0.8 -
+    Q.rim_grievance = SW.clamp((Q.rim_hardship - SW.SEP_HARDSHIP_LINE) / 30 + (Q.corruption - SW.SEP_CORRUPTION_LINE) / 45 - Q.rim_enfranchised * 0.8 -
       Q.slavery_abolished * 0.2 - Math.min(Q.rim_relief, 3) * 0.1 - Q.anti_corruption * 0.2 - Q.federal_compact +
       SW.leaderSum(Q, 'rimGriev', ['rim', 'rfc']), 0, 1.6);
     Q.guild_grievance = SW.clamp(Q.guild_embargo * 0.12 + (Q.tf_broken_up ? 0.5 : 0) + (Q.trade_tax ? 0.2 : 0) +
@@ -3771,6 +3786,7 @@
     // a Jedi Order remade around him: Anakin will not fall. Without anything to hold him, the dark side rises under him.
     if (Q.new_jedi_order) Q.anakin_fall = 0;
     SW.anakinTick(Q);
+    Q.rim_radical_word = SW.RADICAL_WORDS[Q.rim_radical || 0] || '';
     var fb = SW.forces(Q);
     Q.force_rep = fb.rep; Q.force_sith = fb.sith; Q.force_ratio = fb.ratio;
     SW.trackLevels(Q);
@@ -4119,17 +4135,18 @@
     rim: {group: 'rim', kind: 'bloc', into: 'cis', tracks: ['rim', 'slavery', 'syndicates'], hard: ['ardana'],
       start: function (Q) {
         if (Q.parties.indexOf('rim') < 0 || !Q.dooku_movement || Q.rim_defected) return false;
-        if (Q.rim_leader_id === 'ardana') return SW.maxRimSep(Q) >= 40;
+        if (Q.rim_leader_id === 'ardana') return SW.maxRimSep(Q) >= 40 || (Q.rim_radical || 0) >= 3;
         return SW.maxRimSep(Q) >= 55 && Q.rim_relation < 25 && SW.rel(Q, 'rim', 'cis') >= 40;
       }},
     rfc: {group: 'rfc', kind: 'bloc', into: 'cis', tracks: ['rim', 'slavery', 'syndicates'], hard: ['tandeth', 'corvane'],
       start: function (Q) {
         return Q.parties.indexOf('rfc') >= 0 && Q.rfc_kind === 'rimward' && Q.dooku_movement && !Q.rfc_defected &&
-          ['tandeth', 'corvane'].indexOf(Q.rfc_leader_id) >= 0 && SW.maxRimSep(Q) >= 45;
+          ['tandeth', 'corvane'].indexOf(Q.rfc_leader_id) >= 0 && (SW.maxRimSep(Q) >= 45 || (Q.rim_radical || 0) >= 3);
       }},
     rimward: {group: 'rimward', kind: 'faction', into: 'cis', tracks: ['rim', 'slavery', 'syndicates'], hard: ['corvane'],
       start: function (Q) {
-        return !Q.rimward_split && Q.dooku_movement && Q.rimward_leader_id === 'corvane' && Q.rimward_dissent >= 35 && SW.maxRimSep(Q) >= 50;
+        return !Q.rimward_split && Q.dooku_movement && Q.rimward_leader_id === 'corvane' &&
+          ((Q.rim_radical || 0) >= 3 || (Q.rimward_dissent >= 35 && SW.maxRimSep(Q) >= 50));
       }},
     sec: {group: 'sec', kind: 'bloc', into: 'pal', tracks: ['military'], hard: ['tarkin'],
       start: function (Q) {
@@ -4262,6 +4279,91 @@
     if (Q.hhc_kind === 'senate') Q.pal_relation += 2;
     Q.hhc_ready = 0;
     SW.computeSupport(Q);
+  };
+  // ------------------------------------------------------------------ the Rim radicalises
+  // Before Dooku's declaration, stories from the Rim show where hardship and corruption are driving it. Each is told once.
+  SW.RIM_STORIES = {
+    ordmantell: {cause: 'hardship', region: 'midrim', heading: 'Bread Lines on Ord Mantell'},
+    kessel: {cause: 'hardship', region: 'outer', heading: 'The Kessel Mines Go Quiet'},
+    rodia: {cause: 'hardship', region: 'midrim', heading: 'Fever Season on Rodia'},
+    ryloth: {cause: 'hardship', region: 'outer', heading: 'The Ryloth Convoy'},
+    vote: {cause: 'corruption', region: 'outer', heading: 'A Vote for Sale'},
+    customs: {cause: 'corruption', region: 'midrim', heading: 'The Hydian Way Customs Scandal'},
+    relief: {cause: 'corruption', region: 'outer', heading: 'Relief That Never Came'},
+    census: {cause: 'corruption', region: 'midrim', heading: 'The Census Fraud'}
+  };
+  // The story for whichever driver is further over its line (relative to the line); '' if none is left to tell.
+  SW.pickRimStory = function (Q) {
+    var h = (Q.rim_hardship - SW.SEP_HARDSHIP_LINE) / SW.SEP_HARDSHIP_LINE, c = (Q.corruption - SW.SEP_CORRUPTION_LINE) / SW.SEP_CORRUPTION_LINE;
+    var causes = [];
+    if (h > 0) causes.push(['hardship', h]);
+    if (c > 0) causes.push(['corruption', c]);
+    causes.sort(function (a, b) { return b[1] - a[1]; });
+    for (var i = 0; i < causes.length; i++) {
+      for (var id in SW.RIM_STORIES) if (SW.RIM_STORIES[id].cause === causes[i][0] && !Q['rim_story_done_' + id]) return id;
+    }
+    return '';
+  };
+  SW.rimStoryTick = function (Q) {
+    if (Q.dooku_movement || Q.finale || Q.game_ending || Q.date < 24 || !(Q.months_per_turn > 0) || SW.off('rimradical')) return;
+    if (!Q.rim_story_next) Q.rim_story_next = Q.time + 3;
+    if (Q.time < Q.rim_story_next || Q.rim_story_ready) return;
+    var id = SW.pickRimStory(Q);
+    if (!id) return;
+    var S = SW.RIM_STORIES[id];
+    Q.rim_story_ready = 1; Q.rim_story = id; Q.rim_story_heading = S.heading; Q.rim_story_region = S.region; Q.rim_story_cause = S.cause;
+    Q['rim_story_done_' + id] = 1;
+    Q.rim_story_next = Q.time + 3 + Math.floor(SW.rnd() * 3);
+  };
+  SW.rimStoryEvent = function (Q) {
+    var r = Q.rim_story_region || 'outer', other = r === 'outer' ? 'midrim' : 'outer';
+    Q[r + '_sep'] += 3; Q[other + '_sep'] += 1;
+    Q.rim_stories = (Q.rim_stories || 0) + 1;
+    Q.rim_story_ready = 0;
+  };
+
+  // The Rim's politicians radicalise: every year from month 60 in which the Caucus has neither tackled slavery nor
+  // enfranchised the Rim, our Rimward wing and the Rimward Coalition move a step closer to Dooku (0 to 3).
+  SW.RADICAL_WORDS = ['', 'Losing patience with the Caucus', 'Led by radicals', 'Looking for a way out'];
+  SW.RADICAL_HEADINGS = ['', 'The Rim Loses Patience', 'The Radicals Take Over', 'The Rim Looks for a Way Out'];
+  SW.rimTackled = function (Q) {
+    return !!(Q.slavery_report || Q.slavery_abolished || (Q.slavery_campaign || 0) >= 1 || Q.rim_enfranchised);
+  };
+  SW.rimRadicalGroups = function (Q) {
+    return {
+      wing: !Q.rimward_split && !Q.rimward_defected,
+      coalition: Q.parties.indexOf('rim') >= 0,
+      rfc: Q.parties.indexOf('rfc') >= 0 && Q.rfc_kind === 'rimward'
+    };
+  };
+  SW.rimRadicalYear = function (Q) {
+    if (Q.date < 60 || Q.finale || Q.game_ending || SW.off('rimradical')) return;
+    var g = SW.rimRadicalGroups(Q);
+    if (!g.wing && !g.coalition && !g.rfc) return;
+    if (SW.rimTackled(Q)) { if ((Q.rim_radical || 0) > 0) Q.rim_radical -= 1; return; }
+    if ((Q.rim_radical || 0) >= 3) return;
+    Q.rim_radical = (Q.rim_radical || 0) + 1;
+    Q.rim_radical_ready = 1;
+  };
+  SW.rimRadicalEvent = function (Q) {
+    var lv = Q.rim_radical || 0, g = SW.rimRadicalGroups(Q);
+    Q.rim_radical_ready = 0; Q.rr_level = lv; Q.rr_heading = SW.RADICAL_HEADINGS[Math.min(3, lv)] || '';
+    Q.rr_wing = g.wing ? 1 : 0; Q.rr_coalition = g.coalition ? 1 : 0; Q.rr_rfc = g.rfc ? 1 : 0;
+    Q.rr_corvane_new = 0; Q.rr_ardana_new = 0; Q.rr_tandeth_new = 0;
+    if (lv === 1) {
+      if (g.wing) Q.rimward_dissent += 8;
+      if (g.coalition) Q.rim_relation -= 6;
+      if (g.rfc) Q.rfc_relation -= 6;
+    } else if (lv === 2) {
+      if (g.wing) { if (Q.rimward_leader_id !== 'corvane') { SW.setLeader(Q, 'rimward', 'corvane'); Q.rr_corvane_new = 1; } Q.rimward_dissent += 6; }
+      if (g.coalition) { if (Q.rim_leader_id !== 'ardana') { SW.setLeader(Q, 'rim', 'ardana'); Q.rr_ardana_new = 1; } Q.rim_relation -= 4; }
+      if (g.rfc) { if (['tandeth', 'corvane'].indexOf(Q.rfc_leader_id) < 0) { SW.setLeader(Q, 'rfc', 'tandeth'); Q.rr_tandeth_new = 1; } Q.rfc_relation -= 4; }
+    } else if (lv >= 3) {
+      if (g.wing) Q.rimward_dissent += 6;
+      if (g.coalition) Q.rim_relation -= 4;
+      if (g.rfc) Q.rfc_relation -= 4;
+    }
+    SW.updateDissent(Q);
   };
   SW.PIRATE_ROUTES = ['the Corellian Run', 'the Hydian Way', 'the Perlemian Trade Route', 'the Rimma Trade Route', 'the Triellus Trade Route'];
   SW.PIRATE_GANGS = ['Weequay raiders', 'Nikto corsairs', 'a Hutt-backed pirate fleet', 'Black Sun privateers', 'Zygerrian slavers'];
@@ -4452,6 +4554,8 @@
     SW.threatTick(Q);
     if (SW.off('hutt')) Q.hutt_deal_seen = 1;
     var live = !Q.game_ending && !Q.sidious_defeated;
+    // before Dooku's declaration, the Rim radicalises while hardship or corruption is over its line
+    SW.rimStoryTick(Q);
     // High Human Culture shows itself every few turns until it is discredited
     if (!Q.hhc_discredited && !Q.finale && !Q.game_ending && Q.date >= 18 && Q.months_per_turn > 0 && !SW.off('hhc')) {
       if (!Q.hhc_next) Q.hhc_next = Q.time + 3;

@@ -109,6 +109,7 @@
       var led = (Q[f + '_leader'] && SW.firmLabel) ? 'Led by ' + Q[f + '_leader'] + ' (' + SW.firmLabel(Q, f) + '): ' + (SW.leaderLine ? SW.leaderLine(Q, f).replace(' · ', ', ') : '') + '.' : '';
       if (Q[f + '_unmet']) h += '<div class="sb-note warn">' + led + ' Restless: they want ' + Q[f + '_demand'] + '.</div>';
       else if (led) h += '<div class="sb-note">' + led + '</div>';
+      if (f === 'rimward' && Q.rim_radical_word && !Q.rimward_split) h += '<div class="sb-note ' + ((Q.rim_radical || 0) >= 2 ? 'bad' : 'warn') + '">' + Q.rim_radical_word + '.</div>';
     }
     if (Q.hawks_split) h += '<p class="sb-note">The Hawks have broken away to the Security Bloc.</p>';
     if (Q.rimward_defected) h += '<p class="sb-note warn">Our Rimward wing has gone over to the Separatists.</p>';
@@ -145,6 +146,7 @@
       h += row(bloc(Q, bb), SW.label('relation', Q[bb + '_relation']));
       var ref = SW.leader ? (SW.leader(Q, bb).refuses || []).filter(function (x) { return Q.parties.indexOf(x) >= 0; }) : [];
       if (ref.length) h += '<div class="sb-note">' + Q[bb + '_leader'] + ' won\'t govern with the ' + ref.map(function (x) { return SW.name(Q, x); }).join(' or the ') + '.</div>';
+      if ((bb === 'rim' || (bb === 'rfc' && Q.rfc_kind === 'rimward')) && Q.rim_radical_word) h += '<div class="sb-note ' + ((Q.rim_radical || 0) >= 2 ? 'bad' : 'warn') + '">' + Q.rim_radical_word + '.</div>';
     }
     // the Senate's permanent staff, shown like a bloc ("the true rulers of the Republic")
     h += row('The Senate bureaucracy', SW.label('relation', Q.bureau_relation));

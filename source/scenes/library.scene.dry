@@ -417,9 +417,13 @@ go-to: lib_sys_menu
 
 **The guild embargo** is the guilds' willingness to squeeze the Republic. Taxing trade routes, regulating the guilds and breaking up the Trade Federation raise it. At 5 the guilds strike back, and at 8 they mount a full credit strike. The embargo raises Rim hardship and drains the treasury.
 
-**Separatism** has two different sources. **Rim worlds** leave over hardship and corruption. Enfranchisement, abolition and relief cut those grievances, and an enfranchised Rim slowly settles back toward loyalty. **Corporate worlds** leave over how the guilds are treated: embargoes, the Trade Federation's break-up, trade taxes and poor relations with the guilds. Both kinds grow much faster once Dooku speaks on Raxus.
+**Separatism** has two different sources. **Rim worlds** (the Outer and Mid Rim) leave over hardship and corruption, and separatism there is the default: it grows whenever Rim hardship is above 20 or corruption is above 40, and the further above, the faster it grows. Below those lines it eases back slowly. Enfranchisement, abolition, relief, the Ethics Commission and peace talks hold it back, and an enfranchised Rim slowly settles back toward loyalty, but only bringing hardship and corruption down stops the growth for good. **Corporate worlds** leave over how the guilds are treated: embargoes, the Trade Federation's break-up, trade taxes and poor relations with the guilds. Both kinds grow much faster once Dooku speaks on Raxus.
 
-From then on, any region whose separatism is above 50 loses delegations every quarter. Each departure shrinks the Senate, raises fear, and leaves the Chancellor's bloc relatively larger. Secession brings the war sooner, but **Sidious runs both sides**: if nothing has started it by mid-22 BBY, the Confederacy is armed and the war begins anyway. Only the Federal Compact, or Rim enfranchisement together with real peace talks and a turned Count Dooku, can stop it. Reforms still decide how many worlds leave and how bad the war becomes.
+**The Rim radicalises.** Until Dooku's declaration, while hardship or corruption is over its line, news comes from the Rim every few turns: bread lines, strikes, scandals and bought votes, each told once, each with a crowd that has stopped asking Coruscant for anything. Each story raises separatism in its region (and a little in the other).
+
+**The Rim's politicians radicalise too.** Each year from 28 BBY in which the Caucus has done nothing about slavery (a campaign, the Senate report or abolition) and has not enfranchised the Rim, the Rim's own politicians move a step further from the Republic. First they lose patience: our Rimward wing grows restless and the Rimward Coalition cools toward us. Then the radicals take over: Jessa Corvane leads our wing, Tal Ardana the Coalition (and Mira Tandeth the Rim Freedom Caucus, if our wing has split away), and moderates struggle to unseat them. Last, they look for a way out: once Dooku declares, they are ready to go over to him whatever the Rim's separatism, and only the usual remedies stop it (see *Shifting blocs and defections*). Any of those measures halts the slide, and each year after it the Rim's politicians step back one stage.
+
+Once Dooku has spoken on Raxus, any region whose separatism is above 50 loses delegations every quarter. Each departure shrinks the Senate, raises fear, and leaves the Chancellor's bloc relatively larger. Secession brings the war sooner, but **Sidious runs both sides**: if nothing has started it by mid-22 BBY, the Confederacy is armed and the war begins anyway. Only the Federal Compact, or Rim enfranchisement together with real peace talks and a turned Count Dooku, can stop it. Reforms still decide how many worlds leave and how bad the war becomes.
 
 @lib_sys_powers
 is-special: true
@@ -631,11 +635,11 @@ go-to: menu
 
 **Four groups can change sides:**
 
-• *The Rimward Coalition* goes over to the Separatists when Ardana leads it and the Rim's separatism has passed 40; or, under any leader, when separatism has passed 55, its relations with us are cold and it is warm toward the Separatists.
+• *The Rimward Coalition* goes over to the Separatists when Ardana leads it and the Rim's separatism has passed 40 (or the Rim's politicians have reached the last stage of radicalisation); or, under any leader, when separatism has passed 55, its relations with us are cold and it is warm toward the Separatists.
 
-• *The Rim Freedom Caucus*, if our Rimward wing has split away, goes over to the Separatists under Tandeth or Corvane once separatism passes 45.
+• *The Rim Freedom Caucus*, if our Rimward wing has split away, goes over to the Separatists under Tandeth or Corvane once separatism passes 45, or at the last stage of radicalisation.
 
-• *Our own Rimward wing* goes over to the Separatists when Corvane leads it, its dissent is 35 or more and separatism has passed 50. Farr and Chuchi leave with it.
+• *Our own Rimward wing* goes over to the Separatists when Corvane leads it and either its dissent is 35 or more and separatism has passed 50, or the Rim's politicians have reached the last stage of radicalisation. Farr and Chuchi leave with it.
 
 • *The Security Bloc* folds into Palpatine's bloc when Tarkin leads it, its relations with us are cold and Palpatine is in power, fear is 45 or more, or his plan is well advanced. The Navy's loyalty to the Senate falls with it.
 
