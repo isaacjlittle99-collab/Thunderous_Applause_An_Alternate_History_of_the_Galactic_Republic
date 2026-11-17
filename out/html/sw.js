@@ -1671,7 +1671,7 @@
   };
   SW.MINISTRY_ACTS = {
     finance: [
-      {id: 'bank_audit', text: 'audited the Banking Clan', vec: {regulate: 0.8, oversight: 0.5}, ok: function (Q) { return !Q.banking_audit; },
+      {id: 'bank_audit', text: 'audited the Banking Clan', reform: 1, vec: {regulate: 0.8, oversight: 0.5}, ok: function (Q) { return !Q.banking_audit; },
         fx: function (Q) { Q.banking_audit = 1; Q.banking_reformed += 0.5; Q.evidence += 0.4; SW.guildPatience(Q, -4, 'an audit of the Banking Clan'); }},
       {id: 'deregulate', text: 'cut the guilds\' regulations', vec: {regulate: -1},
         fx: function (Q) { Q.guild_relation += 2; SW.guildPatience(Q, 5); Q.trade = (Q.trade || 60) + 3; Q.corruption += 1; Q.rim_hardship += 0.5; }},
@@ -1725,11 +1725,19 @@
     ]
   };
   // the act that best fits the ministry's bloc, or none if nothing fits
+  // The Core Moderates and the Independents put reforms forward only under their reforming wings.
+  SW.REFORMING_WINGS = {mod: ['fang_zar'], ind: ['satine']};
+  SW.blocReforms = function (Q, b) {
+    var w = SW.REFORMING_WINGS[b];
+    return !w || w.indexOf(Q[b + '_leader_id']) >= 0;
+  };
   SW.ministryChoice = function (Q, c) {
     var b = Q['chair_' + c], acts = SW.MINISTRY_ACTS[c] || [], ideo = SW.ideology(Q, b), best = null, bestS = 0.05;
+    var reforms = SW.blocReforms(Q, b);
     for (var i = 0; i < acts.length; i++) {
       var A = acts[i];
       if (A.ok && !A.ok(Q)) continue;
+      if ((A.bill || A.reform) && !reforms) continue;
       // a bill the Senate voted down waits a few years before it is tried again
       if ((Q['mfail_' + A.id] || 0) > Q.time) continue;
       var sc = 0;
