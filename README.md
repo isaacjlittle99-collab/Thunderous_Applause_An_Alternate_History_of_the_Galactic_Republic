@@ -53,6 +53,10 @@ artwork, music or footage is included; all images are original abstract art.*
   slavery, the syndicates and High Human Culture) each build to a lasting change: a Civil Service Act and the arrest of
   Mas Amedda, a Rim Assembly, a New Jedi Order, the freeing of Shmi Skywalker, the breaking of Black Sun.
 - **Guild money has strings.** Money from the guilds buys their veto over the reforms that would hurt them, until we break with them.
+- **The search for the Sith.** The Caucus does not know who the Sith Lord is. The search moves from rumours to a Sith presence,
+  a hidden hand behind the crises, a shortlist of suspects close to power (Mas Amedda, Sate Pestage, Orn Free Taa, Lott Dod) and,
+  once every one is cleared, a name. Then the hunt begins: an informant, frozen accounts, compromised officers named, the ways off Coruscant
+  watched, the Jedi told. Every move risks tipping him off, and a Caucus Chancellor can order his arrest.
 - **The threat** is mostly hidden. Corruption, fear and emergency powers feed the Sith Lord's plan.
   Evidence, Senate resolve and structural safeguards work against it.
 

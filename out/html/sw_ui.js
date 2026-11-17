@@ -184,7 +184,24 @@
   function shadowTab(Q) {
     var h = head('The shadow');
     h += row('In the corridors', SW.label('unease', Q.unease));
-    h += row('Our evidence', SW.label('evidence', Q.evidence)) + bar(Q.evidence, 12, 'good-fill');
+    // the search for the Sith: what the Caucus knows, and the proof it has
+    var stage = Q.sith_stage || 0;
+    h += row('The search for the Sith', (SW.STAGE_NAMES ? SW.STAGE_NAMES[stage] : '') || '');
+    h += row('Our proof', SW.label('evidence', Q.evidence)) + bar(Q.evidence, 12, 'good-fill');
+    if (stage === 3 && SW.SUSPECT_IDS) {
+      h += '<div class="sb-note">The shortlist:</div>';
+      for (var si = 0; si < SW.SUSPECT_IDS.length; si++) {
+        var sid = SW.SUSPECT_IDS[si], cleared = Q['suspect_' + sid];
+        h += '<div class="sb-check ' + (cleared ? 'on' : 'off') + '">' + (cleared ? '✔ ' : '○ ') + SW.SUSPECTS[sid].name + (cleared ? ' (cleared)' : '') + '</div>';
+      }
+    }
+    if (stage === 4 && !Q.sidious_defeated) {
+      h += row('The Sith Lord', '<b class="bad">' + (Q.pal_title || 'Palpatine') + '</b>' + (Q.sidious_known ? '' : ', known to the Caucus'));
+      h += row('His alarm', (Q.sith_alarm || 0) >= 5 ? '<b class="bad">' + SW.alarmWord(Q) + '</b>' : ((Q.sith_alarm || 0) >= 2 ? '<span class="warn">' + SW.alarmWord(Q) + '</span>' : SW.alarmWord(Q)));
+      var ops = [['hunt_informant', 'An informant inside'], ['hunt_frozen', 'His accounts frozen'], ['hunt_mapped', 'Compromised officers named'], ['hunt_chips', 'The clone order found'],
+        ['hunt_routes', 'The ways off Coruscant watched'], ['hunt_jedi', 'The Jedi know'], ['hunt_witnesses', 'The witnesses hidden']];
+      for (var oi = 0; oi < ops.length; oi++) if (Q[ops[oi][0]]) h += '<div class="sb-check on">✔ ' + ops[oi][1] + '</div>';
+    }
     h += row('Jedi suspicion', SW.label('resolve', Q.jedi_suspicion)) + bar(Q.jedi_suspicion, 10, 'good-fill');
     h += row('Senate resolve', SW.label('resolve', Q.senate_resolve)) + bar(Q.senate_resolve, 10, 'good-fill');
     h += row('Emergency powers', SW.label('powers', Q.emergency_powers)) + bar(Q.emergency_powers, 10, 'bad-fill');
@@ -192,7 +209,7 @@
       h += head('Recent misfortunes');
       for (var mf = Q.misfortunes.length - 1; mf >= 0; mf--) h += '<div class="sb-note">' + Q.misfortunes[mf] + '.</div>';
     }
-    if (Q.evidence >= 6 && Q.bureau_captured > 0) h += '<p class="sb-note warn">The bureaucracy\'s payroll leads to ' + (Q.pal_office || 'the Chancellery') + '.</p>';
+    if (Q.evidence >= 6 && Q.bureau_captured > 0) h += '<p class="sb-note warn">The bureaucracy\'s payroll leads to ' + (Q.sith_named ? (Q.pal_office || 'the Chancellery') : 'someone in the Senate\'s inner circle') + '.</p>';
     else if (Q.evidence >= 6) h += '<p class="sb-note">The bureaucracy\'s payroll leads to the Trade Federation, and through it to someone else.</p>';
     h += head('Safeguards');
     var reforms = [

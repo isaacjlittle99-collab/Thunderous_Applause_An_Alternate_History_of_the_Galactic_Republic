@@ -11,7 +11,8 @@
 //     in scenes that could fire then;
 //   - text treating the Chancellery as someone else's while the Caucus holds it;
 //   - Palpatine's bloc name used as if it were a person;
-//   - "Chancellor Palpatine" while he does not hold office.
+//   - "Chancellor Palpatine" while he does not hold office;
+//   - an investigation that names Palpatine before the Caucus has named him (the search for the Sith).
 // Exit status is 1 when anything is found. ALLOW lists institutional wording that is right in every state.
 'use strict';
 const fs = require('fs');
@@ -40,6 +41,8 @@ const GOVERNING = ['the Caucus holds the Chancellery', 'the Caucus in Palpatine\
 const OPPOSITION = /Chancellery's neglect|executive overreach|Warn of overreach|The Chancellery itself|Answer the Chancellor's|Confronting the Chancellery|no confidence in the Chancellor/i;
 const RAW = /\[\+|\?\]|\[\?|\bundefined\b|\bNaN\b/;
 const PERSON = /(Chommell Circle|Chancellor's Bloc) (as a|is a|who |praises|says)|(of|into|with|hand of) (Chommell Circle|Chancellor's Bloc)/;
+// investigations that point at Palpatine: only once the trail has reached him
+const HUNCH = /review of (Senator |Chancellor )?Palpatine's contacts|correspondence from Senator Palpatine's office|files on Palpatine's money|someone close to (the Chancellery|Palpatine's office)|visitors came to the Naboo delegation|look into (Senator |Chancellor )?Palpatine|heard things about Palpatine|Palpatine is the Sith|Palpatine's circle/i;
 const ALLOW = [
   /Entrench the Chancellor's term limit/, /under the Chancellor's authority/, /independence from the Chancellery/, /seizing control of the banks/,
   /answer to the Senate, not the Chancellor/, /Old Chancellery networks/, /holds the Chancellery/, /Chancellery district/
@@ -60,6 +63,8 @@ const VIEW_IF = {};
 function rulesOut(vif, gk, Q) {
   if (/not rc_in_govt/.test(vif) && GOVERNING.indexOf(gk) >= 0) return true;
   if (/not rc_chancellor/.test(vif) && Q.rc_chancellor) return true;
+  // a scene for after the name (the hunt) cannot fire before it
+  if (/(^|and |\()cardok_hunt|(^|and )sith_named/.test(vif) && !Q.sith_named) return true;
   // a scene that needs Palpatine (or his puppet) in office
   const needsPal = /(^|and )pal_chancellor( and|$)/.test(vif), needsPalOrPuppet = /(^|and )\(pal_chancellor or puppet_chancellor\)/.test(vif);
   if (needsPal && !Q.pal_chancellor) return true;
@@ -103,6 +108,10 @@ E.convertJSONToGame(fs.readFileSync(path.join(repo, 'out/game.json'), 'utf8'), (
       if (canFire && gk === 'the Caucus holds the Chancellery') {
         const m = text.match(/.{0,60}(the Chancellery's (orbit|payroll|finances|neglect|propaganda|people)|dining at the Chancellery|the Chancellor's allies).{0,40}/);
         if (m && !allowed(m[0])) add('the Chancellery treated as someone else\'s while the Caucus holds it', id + ': ' + m[0]);
+      }
+      if (canFire && !Q.sith_named) {
+        const hunch = opts.map(o => o.t + ' ' + o.s).concat([text]).find(s => HUNCH.test(s));
+        if (hunch) add('an investigation names Palpatine before the Caucus has', id + ' (' + gk + '): ' + (hunch.match(new RegExp('.{0,50}(' + HUNCH.source + ').{0,30}', 'i')) || [''])[0]);
       }
       if (canFire && PERSON.test(text)) add('a bloc name used as a person', id + ' (' + gk + '): ' + (text.match(/.{0,50}(Chommell Circle|Chancellor's Bloc).{0,40}/) || [''])[0]);
       if (canFire && !Q.pal_chancellor && /\bChancellor Palpatine\b/.test(text)) add('"Chancellor Palpatine" while he does not hold office', id + ' (' + gk + '): ' + (text.match(/.{0,50}Chancellor Palpatine.{0,40}/) || [''])[0]);

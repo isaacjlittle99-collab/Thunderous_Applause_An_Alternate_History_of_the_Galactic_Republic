@@ -58,6 +58,7 @@ The **Holocron** link at the top of the page explains the factions, blocs and sy
 - @htp_purse: The Republic's purse
 - @htp_reforms: Reforms, step by step
 - @htp_war: The Separatists and the war
+- @htp_sith: The search for the Sith
 - @htp_dangers: Dangers and warnings
 - @start_menu: Back
 
@@ -142,6 +143,25 @@ new-page: true
 **How the war stands.** The Forces tab sums up the war in a word: being won, in the balance, or being lost. It counts the fronts, the two sides' strength and the worlds already taken. An event warns you when the front gives way.
 
 **After Sidious.** Capturing or killing the Sith Lord does not end the war. If the war is being lost when the game ends, the Republic falls to the Confederacy, even with Sidious gone. A civil war fought while the war is being lost ends the same way. If Sidious is exposed, or beaten on Coruscant, while the war is going against the Republic, he may escape to the Confederacy and make it his own: then the Republic must be winning clearly to survive.
+
+- @how_to_play: Back to How to play
+
+@htp_sith
+new-page: true
+
+= The search for the Sith
+
+The Caucus does not know who the Sith Lord is. It has to find out. The Shadow tab shows how far the search has come.
+
+**Stages.** The search moves through five stages, each needing the one before: *rumours*; *a Sith presence* (the Jedi confirm one has returned); *a hidden hand* (one pattern behind the crises); *close to power* (the Sith Lord is on Coruscant, near the top); and *a name*. Evidence (shown as *Our proof*) moves the search on, but each stage also needs a clue: the Damask trail, Gunray's testimony, the Kamino payments, a Bureau intelligence review, the Labyrinth raid, the Jedi's growing suspicion.
+
+**The shortlist.** Close to power, the Caucus has four suspects: Mas Amedda, Sate Pestage, Orn Free Taa and Lott Dod. *Look into* each one (Shadow Investigation), use a Bureau intelligence review, arrest the Vice Chair or raid the Labyrinth to clear them. Each is guilty of something, but not of this. When the last is cleared, the Caucus has its name. A turned Count Dooku would name him at once.
+
+**Mas Amedda's files** can be leaked once he is cleared: he loses the gavel and the Senate's staff are pleased, but the Sith Lord learns how close we are.
+
+**Knowing is not proving.** With the name, the Caucus can lay charges, prepare a warrant and open *The Hunt for Darth Sidious*: turn an informant, freeze his money, name compromised officers, find the clone order, watch the ways off Coruscant, bring the Jedi in, hide the witnesses, tell Anakin, or build the public case. Each needs its groundwork, and the riskier ones raise **his alarm**. At *He knows we are close*, he brings his plans forward by a year. At *He is moving*, he strikes at once.
+
+**If the Caucus holds the Chancellery**, it can order his arrest. He may flee to the Confederacy (unless the ways off Coruscant are watched), be taken, or fight the arrest with everyone who still answers to him, forcing the final battle for Coruscant. The groundwork counts: a warrant, the Judicial Forces, the Jedi, conclusive proof, an informant, and Anakin above all.
 
 - @how_to_play: Back to How to play
 

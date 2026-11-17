@@ -106,8 +106,8 @@ go-to: el_campaign
 
 @el_back_pal
 view-if: el_has_pal
-subtitle: [? if evidence < 3 : He seems a decent, sensible man. ?][? if evidence >= 3 : We have heard things about Palpatine that make this very hard to justify. ?]
-on-arrival: {! SW.elBack(Q, 'pal'); Q.pal_relation += 8; Q.faith -= 1; if (Q.evidence >= 3) { Q.inst_dissent += 2; Q.pacifist_dissent += 4; } !}
+subtitle: [? if not sith_named : He seems a decent, sensible man. ?][? if sith_named : We know what he is. Endorsing him now would be unforgivable. ?]
+on-arrival: {! SW.elBack(Q, 'pal'); Q.pal_relation += 8; Q.faith -= 1; if (Q.sith_named) { Q.inst_dissent += 4; Q.pacifist_dissent += 8; Q.rimward_dissent += 4; } !}
 go-to: el_campaign
 
 @el_campaign

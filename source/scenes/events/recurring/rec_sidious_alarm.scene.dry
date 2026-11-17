@@ -1,0 +1,12 @@
+title: He Knows
+subtitle: The Sith Lord has seen us coming.
+tags: event
+view-if: sith_alarm_ready = 1 and not finale and not game_ending
+priority: 7
+new-page: true
+face-image: img/ev_shadow.svg
+on-arrival: sith_alarm_ready = 0
+
+= He Knows
+
+[? if not sith_moving : The signs are small, and they all point the same way. Two of our sources go quiet. A Bureau analyst is transferred to Mygeeto. Doors that were open in the Senate's back offices are closed now, and the people behind them are working late. [? if sith_named : [+ pal_title +] ?][? if not sith_named : Whoever the Sith Lord is, he ?] has seen the Caucus coming, and he will not wait to be found. ?][? if sith_moving : The last of our sources inside goes silent. Coded traffic floods out of the Senate district all night: to the Navy, to the Guard, to men in a dozen fleets. [? if sith_named : [+ pal_title +] ?][? if not sith_named : The Sith Lord ?] is not waiting any longer. Whatever he has planned, it begins now. ?]

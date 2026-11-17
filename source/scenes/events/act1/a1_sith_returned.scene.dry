@@ -5,7 +5,7 @@ view-if: naboo_free and date >= 19
 max-visits: 1
 new-page: true
 face-image: img/ev_jedi.svg
-on-arrival: sith_told = 1 if jedi_relation >= 55 or adv_organa = 1; evidence += 1 if sith_told
+on-arrival: sith_told = 1 if jedi_relation >= 55 or adv_organa = 1; evidence += 1 if sith_told; sith_presence = 1
 
 = "There Is Always a Master"
 

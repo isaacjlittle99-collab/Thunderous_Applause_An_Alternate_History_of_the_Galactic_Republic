@@ -85,6 +85,11 @@ function smartWeight(id, Q) {
     ...(Q.rim_threat ? [[/^ca_relations\.rim$/, 14]] : []), ...(Q.rfc_threat ? [[/^ca_relations\.rfc$/, 14]] : []),
     ...(Q.sec_threat ? [[/^ca_relations\.sec$/, 14]] : []),
     ...(threatContest ? [[/leadership\.(back_ch|adv_ch)$/, 14]] : []),
+    // the search for the Sith: clear the shortlist; once he is named, prepare carefully and keep him from noticing
+    [/^ca_investigate\.look_\w+$/, 12], [/^rec_amedda_files\.leak$/, (Q.sith_alarm || 0) < 3 ? 2 : 0.3], [/^rec_amedda_files\.quiet$/, 3],
+    [/^ca_hunt$/, 9], [/^ca_hunt\.(routes|witnesses)$/, 10], [/^ca_hunt\.informant$/, 9], [/^ca_hunt\.(freeze|officers|chips)$/, (Q.sith_alarm || 0) < 4 ? 8 : 2],
+    [/^ca_hunt\.jedi$/, 8], [/^ca_hunt\.anakin$/, Q.anakin_fall <= 4 ? 7 : 0.1], [/^ca_hunt\.case$/, Q.evidence < 10 ? 4 : 0.5],
+    [/^ca_hunt\.arrest$/, (Q.hunt_routes ? 2 : 0) + (Q.warrant ? 2 : 0) + (Q.hunt_informant ? 2 : 0) + (Q.anakin_fall <= 4 ? 3 : 0) + (Q.senate_jedi_pact ? 2 : 0) >= 7 ? 15 : 0.3],
     // the reform tracks: take the next step
     // (a careful player takes the next step whenever it holds the office and can afford it)
     [/\.civil_service$/, 12], [/\.amedda$/, 14], [/\.integrity$/, 12], [/\.hhc_investigate$/, 10], [/^sa_judiciary\.syndicates$/, 12],
@@ -254,6 +259,12 @@ const PREMISES = [
   [/^rec_threat_rim$/, Q => Q.parties.indexOf('rim') >= 0 && Q.dooku_movement, 'Rimward Coalition courted outside the crisis'],
   [/^rec_admirals_strike$/, Q => Q.sidious_defeated && !Q.hhc_discredited && Q.emergency_powers > 0, 'admirals strike without the conditions'],
   [/^rec_sidious_flees$/, Q => Q.war && !Q.sidious_defeated, 'Sith Lord flees without a war'],
+  // the search for the Sith: nothing names or accuses Palpatine before the trail reaches him
+  [/^(ca_hunt|rec_case_ready|ca_investigate\.charges)$/, Q => Q.sith_named, 'Palpatine hunted or accused before the Caucus has named him'],
+  [/^ca_hunt\.arrest$/, Q => Q.rc_chancellor, 'an arrest ordered by a Chancellor who is not ours'],
+  [/^rec_sith_named$/, Q => SW.openSuspects(Q).length === 0, 'a name before every suspect is cleared'],
+  [/^ca_investigate\.look_\w+$/, Q => Q.sith_stage === 3 || Q.sith_name_ready, 'a suspect looked into outside the shortlist stage'],
+  [/^rec_amedda_files$/, Q => Q.suspect_amedda && !Q.amedda_arrested, 'Amedda\'s files without clearing him by investigation'],
   // no opposition-style card or option while the Caucus holds the Chancellery or sits in its government
   [/^(ca_confront|rec_piracy\.blame|ca_media\.(overreach|counter)|ca_enemy\.overreach|adv_mothma\.mothma_vigilance)$/, Q => !Q.rc_chancellor && !Q.rc_in_govt, 'opposition-style option while the Caucus governs'],
   // the Last Days only draw on what was built

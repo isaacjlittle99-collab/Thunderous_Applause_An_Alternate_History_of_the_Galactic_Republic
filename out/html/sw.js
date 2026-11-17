@@ -47,7 +47,7 @@
   // Every card / event timer named here is decremented by one each turn.
   SW.TIMERS = [
     'advisor_action', 'shuffle', 'contributions', 'campaign', 'media', 'relations', 'platform',
-    'enemy', 'confront', 'pact', 'investigate', 'jedi', 'rim_outreach', 'peace', 'disunity',
+    'enemy', 'confront', 'pact', 'investigate', 'hunt', 'jedi', 'rim_outreach', 'peace', 'disunity',
     'civil', 'routine', 'leader_moment', 'bacta_crisis', 'tibanna_crisis', 'spice_crisis', 'banking_clan', 'debt_crisis', 'core_revolt', 'credits',
     'finance', 'judiciary', 'security', 'rimaffairs', 'constitution', 'diplomacy', 'clone_oversight',
     'coalition', 'shuffle_committees', 'emergency_measures',
@@ -308,6 +308,15 @@
     D.slavery_report = 0; D.slavery_enforced = 0; D.shmi_freed_now = 0;
     D.patrol_fleets = 0; D.pirates_crushed = 0; D.pirate_humiliation = 0; D.syndicates_broken = 0; D.syndicate_tries = 0; D.syndicates_ok = 0;
     D.navy_vetted = 0; D.evidence_secured = 0;
+    D.sith_presence = 0; D.sith_stage = 0; D.sith_stage_max = 0; D.sith_stage_name = 'Rumours'; D.sith_named = 0; D.sith_named_by = ''; D.sith_name_ready = 0;
+    D.suspect_amedda = 0; D.suspect_pestage = 0; D.suspect_free_taa = 0; D.suspect_dod = 0; D.suspects_open = 4;
+    D.suspect_last = ''; D.suspect_last_name = ''; D.suspect_last_finding = ''; D.kamino_traced = 0; D.valorum_networks_used = 0;
+    D.amedda_files_ready = 0; D.amedda_removed = 0; D.amedda_files_seen = 0;
+    D.sith_alarm = 0; D.sith_alarm_word = 'He suspects nothing'; D.sith_forward = 0; D.sith_moving = 0; D.sith_alarm_ready = 0; D.finale_date = 171;
+    D.hunt_informant = 0; D.hunt_frozen = 0; D.hunt_mapped = 0; D.hunt_chips = 0; D.hunt_routes = 0; D.hunt_jedi = 0; D.hunt_witnesses = 0;
+    D.hunt_anakin_told = 0; D.hunt_anakin_turned = 0; D.hunt_case_runs = 0; D.hunt_timer = 0; D.hunt_result = ''; D.hunt_alarmed = 0; D.intel_cleared = '';
+    D.suspects_open_text = '';
+    D.cha_arrest_done = 0; D.cha_arrest_result = ''; D.cha_arrest_score = 0; D.cha_arrest_missing = ''; D.cha_flee_odds = 0;
     D.as_vote = 0; D.cs_vote = 0; D.io_vote = 0; D.pr_vote = 0; D.ra_vote = 0; D.sc_vote = 0;
     D.sidious_escaped = 0; D.fell_divided = 0; D.war_turning_ready = 0; D.war_turning_armed = 0; D.war_turning_count = 0; D.war_state = ''; D.hutt_deal = 0; D.hutt_deal_seen = 0; D.hutt_deal_vote = 0; D.hutt_deal_forced = 0;
     D.pirates_ready = 0; D.pirate_next = 0; D.pirate_route = ''; D.pirate_gang = ''; D.pirate_raids = 0;
@@ -352,6 +361,7 @@
       for (var ti = 0; ti < SW.TIMERS.length; ti++) if (Q.timers.indexOf(SW.TIMERS[ti]) < 0) Q.timers.push(SW.TIMERS[ti]);
     }
     if (Q.pl_no_probe || Q.pledge_no_probe) { Q.pl_no_probe = 0; Q.pledge_no_probe = ''; Q.pledge_no_probe_name = ''; var pls = SW.pledgeList(Q); Q.pledge_count = pls.length; Q.pledge_text = pls.join('; '); }
+    if (Q.sith_named === undefined && (Q.evidence >= 8 || Q.finale || Q.sidious_known)) { Q.sith_named = 1; Q.sith_named_by = 'migrated'; for (var si = 0; si < SW.SUSPECT_IDS.length; si++) Q['suspect_' + SW.SUSPECT_IDS[si]] = 1; }
     var D = SW.DEFAULTS();
     for (var key in D) {
       if (Q[key] === undefined || Q[key] === null || (typeof D[key] === 'number' && typeof Q[key] === 'number' && isNaN(Q[key]))) {
@@ -2159,7 +2169,7 @@
     Q.scheme_pending = pick;
     Q.scheme_due = Q.time + 1;
     Q.scheme_countered = 0; Q.scheme_warned = 0;
-    Q.scheme_foreseen = (Q.jedi_suspicion >= 4 || Q.evidence >= 5 || (Q.time - (Q.investigated_at || -99)) <= 2) ? 1 : 0;
+    Q.scheme_foreseen = (Q.hunt_informant || Q.jedi_suspicion >= 4 || Q.evidence >= 5 || (Q.time - (Q.investigated_at || -99)) <= 2) ? 1 : 0;
     var fs = SW.SCHEMES[pick].foresee;
     Q.scheme_foresee = typeof fs === 'function' ? fs(Q) : fs;
     Q.scheme_counter = SW.SCHEMES[pick].counter;
@@ -2293,7 +2303,7 @@
     var live = !Q.finale && !Q.sidious_defeated;
     var reformVote = rcYes === 1 && topics.some(function (t) { return SW.REFORM_TOPICS.indexOf(t) >= 0; });
     // the Vice Chair controls the agenda: once a year he rules a Caucus reform out of order
-    if (!SW.off('gavel') && live && reformVote && !Q.rc_chancellor && !Q.amedda_arrested && (Q.pal_chancellor || Q.puppet_chancellor || (Q.govt_blocs || []).indexOf('pal') >= 0) &&
+    if (!SW.off('gavel') && live && reformVote && !Q.rc_chancellor && !Q.amedda_arrested && !Q.amedda_removed && (Q.pal_chancellor || Q.puppet_chancellor || (Q.govt_blocs || []).indexOf('pal') >= 0) &&
         Q.senate_resolve < 3 && !Q.senate_guard_reformed && Q.date - (Q.gavel_date === undefined ? -99 : Q.gavel_date) >= 24) {
       Q.gavel_date = Q.date; Q.vote_tabled = 1; SW._tabled = 1; Q.gavels = (Q.gavels || 0) + 1;
       Q.last_vote = 0;
@@ -2301,7 +2311,7 @@
     }
     // delegations on the Chancellery's payroll follow its line on powers and oversight
     var bought = 0;
-    if (!SW.off('bought') && live && !Q.integrity_office && topics.some(function (t) { return /powers|oversight/.test(t); })) {
+    if (!SW.off('bought') && live && !Q.integrity_office && !Q.hunt_frozen && topics.some(function (t) { return /powers|oversight/.test(t); })) {
       bought = SW.clamp((Q.corruption - 60) / 150 + Q.grand_plan / 600, 0, 0.2);
       if (bought >= 0.08) SW._notes.push('bought votes');
     }
@@ -3622,14 +3632,14 @@
       jedi: Q.jedi_strength * (0.5 + Q.jedi_standing / 200) * (Q.order66 ? 0.15 : 1),
       judicials: Q.judicial_forces,
       members: Q.member_forces * (Q.pact_formed ? 1 : 0.5),
-      guard: (Q.senate_guard_reformed || ours) ? 2 : (his ? 0 : 1),
+      guard: (Q.senate_guard_reformed || ours) ? 2 : (his ? (Q.hunt_mapped ? 1 : 0) : 1),
       clones: Q.clones * (Q.senate_command ? (chips ? 0.9 : 0.4) : (chips ? (oversight ? 0.8 : 0.6) : (oversight ? 0.15 : 0.05) + (Q.clone_trust || 0) * 0.02)),
       navy: Q.clones > 0 ? Q.navy_loyalty / 100 * 4 : 0,
       anakin: anakinGood ? 3 : 0
     };
     var sith = {
       clones: Q.clones * (Q.senate_command ? (chips ? 0.1 : 0.6) : (chips ? (oversight ? 0.2 : 0.4) : (oversight ? 0.85 : 0.95))),
-      guard: (Q.senate_guard_reformed || ours) ? 0 : (his ? 2 : 0.5),
+      guard: (Q.senate_guard_reformed || ours) ? 0 : (his ? (Q.hunt_mapped ? 1 : 2) : 0.5),
       navy: Q.clones > 0 ? (1 - Q.navy_loyalty / 100) * 4 : 0,
       governors: (Q.governors && his) ? 2 : 0,
       sith: 3 + (anakinBad ? 3 : 0),
@@ -3670,7 +3680,8 @@
       ((Q.date >= 108 || Q.war) && Q.jedi_reform < 3 && !Q.jedi_reformed) || (Q.anakin_found && Q.date >= 20 && Q.anakin_fall > 0.5) ||
       (Q.jedi_reform >= 3 && !Q.jedi_reformed) || (Q.jedi_reformed && Q.anakin_light && !Q.new_jedi_order);
     c.media = Q.corruption > 20 || Q.faith < 85 || (!Q.rc_chancellor && Q.senate_resolve < 10);
-    c.investigate = !Q.sidious_known && !Q.sidious_defeated && (Q.evidence < 11.5 || (Q.archive_gap_known && !Q.kamino_known));
+    c.investigate = !Q.sidious_known && !Q.sidious_defeated && (Q.evidence < 11.5 || (Q.archive_gap_known && !Q.kamino_known) || (Q.sith_stage === 3 && SW.openSuspects(Q).length > 0));
+    c.hunt = Q.sith_named && !Q.sidious_defeated && !Q.sidious_fled && !Q.finale;
     c.confront = !Q.rc_chancellor && !Q.rc_in_govt && Q.senate_resolve < 9.5;
     c.pact = !Q.pact_formed || Q.member_forces < 8;
     c.peace = !Q.federal_compact && !Q.peace_achieved && !Q.recognized_cis;
@@ -3720,8 +3731,9 @@
     SW.worldElectionCheck(Q);
     SW.referendumCheck(Q);
     SW.recallCheck(Q);
+    SW.updateSithStage(Q); Q.sith_alarm_word = SW.alarmWord(Q);
     var groundwork = (Q.warrant ? 1 : 0) + (Q.chair_judiciary === 'rc' ? 1 : 0) + (Q.dooku_turned ? 1 : 0) + ((Q.evidence_public || 0) >= 2 ? 1 : 0) + (Q.case_briefed ? 1 : 0);
-    Q.case_ready = (((Q.evidence >= 9 && groundwork >= 1) || (Q.evidence >= 8.5 && groundwork >= 2)) && !Q.sidious_known && !Q.finale && !Q.game_ending && !(Q.case_timer > 0) && Q.date >= 60 && !Q.sidious_defeated) ? 1 : 0;
+    Q.case_ready = (((Q.evidence >= 9 && groundwork >= 1) || (Q.evidence >= 8.5 && groundwork >= 2)) && Q.sith_named && !Q.sidious_known && !Q.finale && !Q.game_ending && !(Q.case_timer > 0) && Q.date >= 60 && !Q.sidious_defeated) ? 1 : 0;
     Q.mandate_ok = (Q.rc_chancellor && Q.mandate_term !== Q.elections_held && !Q.election_due && !Q.election_suspended && Q.next_election_date - Q.date > 12) ? 1 : 0;
     SW.factionAgendas(Q);
     SW.cardAvailability(Q);
@@ -4251,7 +4263,7 @@
   };
   // Black Sun's enforcers on Coruscant, for hire to a Sith Lord, for as long as the syndicates stand
   SW.blackSun = function (Q) {
-    if (!Q.finale || Q.syndicates_broken || Q.sidious_fled || SW.off('blacksun')) return 0;
+    if (!Q.finale || Q.syndicates_broken || Q.sidious_fled || Q.hunt_frozen || SW.off('blacksun')) return 0;
     return Math.max(0.4, 1 - 0.3 * SW.TRACKS.syndicates.level(Q));
   };
   SW.FLEE_SCORE = 0;          // a cornered Sith Lord escapes to the Confederacy when the war stands below this
@@ -4259,7 +4271,7 @@
   SW.FALL_SCORE = -2;         // with Sidious gone, the Republic still falls if the war stands this badly
   // Beaten on Coruscant, does he get away to a Confederacy that is winning its war?
   SW.sidiousEscapes = function (Q) {
-    if (!Q.war || Q.sidious_gone || Q.sidious_fled || SW.off('flee')) return false;
+    if (!Q.war || Q.sidious_gone || Q.sidious_fled || Q.hunt_routes || SW.off('flee')) return false;
     if (SW.warScore(Q) >= SW.FLEE_SCORE) return false;
     SW.sidiousFlees(Q); Q.sidious_escaped = 1;
     return true;
@@ -4271,6 +4283,128 @@
     Q.droid_armies += 1.5; Q.fear += 5;
     if (Q.finale) Q.finale_day = 13;
     SW.computeSupport(Q);
+  };
+
+  // ------------------------------------------------------------------ the search for the Sith
+  // The Caucus does not know who the Sith Lord is. What it knows moves through stages, each needing the one before:
+  // 0 rumours, 1 a Sith presence, 2 a hidden hand behind the crises, 3 close to power (a shortlist of suspects),
+  // 4 a name. Evidence is the weight of proof; the stage is what the Caucus knows. The search never goes backwards.
+  SW.STAGE_NAMES = ['Rumours', 'A Sith presence', 'A hidden hand', 'Close to power', 'A name'];
+  SW.SUSPECT_IDS = ['amedda', 'pestage', 'free_taa', 'dod'];
+  SW.SUSPECTS = {
+    amedda: {name: 'Mas Amedda', role: 'the Vice Chair of the Senate',
+      finding: 'He rigs the Senate\'s agenda for money, and he takes orders. He gives none.'},
+    pestage: {name: 'Sate Pestage', role: 'a fixer in the Senate\'s back offices',
+      finding: 'He sells appointments to anyone who can pay. His calendar shows meetings with someone he calls only "the client".'},
+    free_taa: {name: 'Orn Free Taa', role: 'the Senator of Ryloth',
+      finding: 'Spice money and bribes, from the bars of Coruscant to the slave pens of Ryloth, and nothing more.'},
+    dod: {name: 'Lott Dod', role: 'the Trade Federation\'s senator',
+      finding: 'The Damask money came to him, not from him. Someone paid the Trade Federation\'s senator for years.'}
+  };
+  SW.sithPresence = function (Q) { return !!(Q.sith_presence || Q.sith_told || Q.gunray_testified || Q.gunray_convicted || Q.jedi_suspicion >= 3 || Q.dooku_turned); };
+  SW.sithPattern = function (Q) { return !!(Q.damask_seen || Q.gunray_testified || Q.gunray_convicted || Q.tf_probe || Q.banking_audit || Q.ff_exposed); };
+  SW.sithCoruscant = function (Q) {
+    return !!(Q.labyrinth_seen || Q.kamino_traced || Q.intel_runs >= 1 || Q.valorum_networks_used || Q.gunray_result === 'talked' ||
+      (Q.geonosis_seen && Q.jedi_relation >= 50) || Q.jedi_suspicion >= 6);
+  };
+  SW.sithStage = function (Q) {
+    if (Q.sith_named) return 4;
+    var s = 0;
+    if (SW.sithPresence(Q)) s = 1;
+    if (s === 1 && Q.evidence >= 3 && SW.sithPattern(Q)) s = 2;
+    if (s === 2 && Q.evidence >= 5 && SW.sithCoruscant(Q)) s = 3;
+    return Math.max(s, Math.min(3, Q.sith_stage_max || 0));
+  };
+  SW.updateSithStage = function (Q) {
+    var s = SW.sithStage(Q);
+    Q.sith_stage = s; Q.sith_stage_max = Math.max(Q.sith_stage_max || 0, s);
+    Q.sith_stage_name = SW.STAGE_NAMES[s];
+    var open = SW.openSuspects(Q);
+    Q.suspects_open = open.length;
+    Q.suspects_open_text = open.map(function (id) { return SW.SUSPECTS[id].name + ', ' + SW.SUSPECTS[id].role; }).join('; ');
+    return s;
+  };
+  SW.openSuspects = function (Q) { return SW.SUSPECT_IDS.filter(function (s) { return !Q['suspect_' + s]; }); };
+  SW.nextOpenSuspect = function (Q) { return SW.openSuspects(Q)[0] || ''; };
+  // A suspect is cleared: guilty of something, but not of this. how: 'look', 'review', 'arrest' or 'raid'.
+  SW.clearSuspect = function (Q, s, how) {
+    if (!SW.SUSPECTS[s] || Q['suspect_' + s]) return false;
+    Q['suspect_' + s] = 1;
+    if (s === 'free_taa') { Q.evidence += 0.2; Q.corruption -= 1; } else Q.evidence += 0.4;
+    if (s === 'dod') Q.guild_relation -= 3;
+    Q.suspect_last = s; Q.suspect_last_name = SW.SUSPECTS[s].name; Q.suspect_last_finding = SW.SUSPECTS[s].finding;
+    // the Vice Chair's files: found by investigation, they can be leaked; an arrest is already public
+    if (s === 'amedda' && how !== 'arrest' && !Q.amedda_arrested && !Q.amedda_removed) Q.amedda_files_ready = 1;
+    if (!SW.openSuspects(Q).length && !Q.sith_named) Q.sith_name_ready = 1;
+    Q.suspects_open = SW.openSuspects(Q).length;
+    return true;
+  };
+  SW.nameSith = function (Q, how) {
+    Q.sith_named = 1; Q.sith_named_by = how || 'elimination'; Q.sith_name_ready = 0;
+    for (var i = 0; i < SW.SUSPECT_IDS.length; i++) Q['suspect_' + SW.SUSPECT_IDS[i]] = 1;
+    SW.updateSithStage(Q);
+  };
+
+  // ------------------------------------------------------------------ the hunt for Darth Sidious
+  // How much Sidious knows of the hunt (0-10). At 5 he brings his plans forward; at 8 he moves at once.
+  SW.FINALE_DATE = 171;
+  SW.raiseAlarm = function (Q, amt, atLeast) {
+    Q.sith_alarm = SW.clamp(Math.max((Q.sith_alarm || 0) + (amt || 0), atLeast || 0), 0, 10);
+    if (Q.sith_alarm >= 5 && !Q.sith_forward) {
+      Q.sith_forward = 1; Q.grand_plan += 8; Q.scheme_timer = 0;
+      Q.finale_date = Math.min(Q.finale_date || SW.FINALE_DATE, Math.max(Q.date + 12, 159));
+      Q.sith_alarm_ready = 1;
+    }
+    if (Q.sith_alarm >= 8 && !Q.sith_moving) {
+      Q.sith_moving = 1;
+      Q.finale_date = Math.min(Q.finale_date || SW.FINALE_DATE, Q.date + 1);
+      Q.sith_alarm_ready = 1;
+    }
+    Q.sith_alarm_word = SW.alarmWord(Q);
+  };
+  // a risky operation: raises his alarm by amt with probability p
+  SW.riskAlarm = function (Q, amt, p) { if (SW.rnd() < (p === undefined ? 1 : p)) { SW.raiseAlarm(Q, amt); return 1; } return 0; };
+  SW.alarmWord = function (Q) {
+    var a = Q.sith_alarm || 0;
+    return a >= 8 ? 'He is moving' : (a >= 5 ? 'He knows we are close' : (a >= 2 ? 'He is watchful' : 'He suspects nothing'));
+  };
+  // A Caucus Chancellor orders the Sith Lord's arrest. He may flee to a Confederacy at war with us, be taken,
+  // or turn his forces on the arrest and force the final showdown.
+  SW.chancellorArrest = function (Q) {
+    Q.cha_arrest_done = 1;
+    var fleeP = 0;
+    if (!Q.hunt_routes && Q.war && !SW.off('flee')) fleeP = SW.clamp(0.15 + (Q.sith_alarm || 0) * 0.05 + Math.max(0, -SW.warScore(Q)) * 0.05, 0, 0.7);
+    Q.cha_flee_odds = Math.round(fleeP * 100);
+    if (fleeP > 0 && SW.rnd() < fleeP) {
+      Q.cha_arrest_result = 'fled';
+      SW.sidiousFlees(Q); Q.sidious_escaped = 1; Q.sidious_known = 1; Q.evidence_public += 4;
+      return;
+    }
+    var s = 1.5 + 1, miss = [];
+    if (Q.warrant) s += 1; else miss.push('there was no warrant');
+    if (Q.judicial_forces >= 4) s += 1; else miss.push('the Judicial Forces were too weak');
+    if (Q.senate_jedi_pact || Q.jedi_relation >= 60) s += 1; else miss.push('the Jedi were not with us');
+    if (Q.evidence >= 10) s += 1;
+    if (Q.hunt_informant) s += 1;
+    if (Q.anakin_found && Q.anakin_fall <= 4) s += 3;
+    else if (Q.anakin_found && Q.anakin_fall >= 6.5) { s -= 3; miss.push('Anakin Skywalker had already gone over to him'); }
+    s -= (Q.sith_alarm || 0) * 0.3;
+    if (Q.grand_plan >= 80) s -= 1;
+    s += SW.rnd() * 1.5;
+    Q.cha_arrest_score = Math.round(s * 10) / 10;
+    Q.cha_arrest_missing = miss.length ? 'It went wrong from the start: ' + miss.join('; ') + '.' : 'Nothing was missing. He was simply ready for us.';
+    Q.finale = 1; Q.finale_day = 1; Q.months_per_turn = 0; Q.clear_hand = 1;
+    Q.sidious_known = 1; Q.evidence_public += 4; Q.gambit = 1;
+    if (s >= 3.5) {
+      Q.cha_arrest_result = 'arrested';
+      Q.gambit_kind = 'arrested'; Q.gambit_response_seen = 1; Q.gambit_resolved = 1;
+      Q.sidious_defeated = 1; Q.sidious_gone = 1; Q.sidious_method = 'trial'; Q.arrest_result = 'success';
+      if (Q.clones >= 3 && !Q.chips_removed && SW.rnd() < SW.clamp((Q.grand_plan - 70) / 60 - (Q.army_oversight ? 0.2 : 0), 0, 0.6)) Q.contingency = 1;
+    } else {
+      Q.cha_arrest_result = 'resisted';
+      Q.gambit_kind = 'resists'; Q.pal_reach_low = (Q.pal_office_months || 0) < 12 ? 1 : 0; Q.fear += 8;
+    }
+    SW.updateDate(Q);
   };
 
   // ------------------------------------------------------------------ the turn's checks for all of the above
@@ -4305,7 +4439,7 @@
     }
     // an exposed or escaped Sith Lord, with the Confederacy winning, goes to them
     var ws = SW.warStrength(Q);
-    if (live && Q.war && !Q.sidious_fled && !Q.finale && SW.warScore(Q) < SW.FLEE_SCORE && !SW.off('flee') && !Q.pal_chancellor && !Q.puppet_chancellor &&
+    if (live && Q.war && !Q.sidious_fled && !Q.finale && !Q.hunt_routes && SW.warScore(Q) < SW.FLEE_SCORE && !SW.off('flee') && !Q.pal_chancellor && !Q.puppet_chancellor &&
         (Q.sidious_free || (Q.sidious_known && Q.evidence_public >= 3) || (Q.premature_accusations >= 1 && Q.evidence_public >= 3))) Q.sidious_flee_ready = 1;
     // even with Palpatine gone, admirals with a navy that answers to them may take the Republic
     if (Q.finale && Q.sidious_defeated && !Q.game_ending && !Q.admirals_coup && Q.navy_loyalty < 50 && !Q.hhc_discredited &&

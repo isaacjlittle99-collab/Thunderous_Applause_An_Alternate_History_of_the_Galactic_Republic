@@ -21,6 +21,7 @@ is-special: true
 - @lib_schemes: Sidious's schemes
 - @lib_endings: How the game ends
 - @lib_war: The War Council
+- @lib_sith_search: The search for the Sith
 - @lib_separatists: The Separatist threat
 - @lib_defections: Shifting blocs and defections
 - @lib_purse: The Republic's purse
@@ -530,6 +531,63 @@ Some reforms permanently close doors that the Sith would otherwise walk through.
 Most of these need a seat in government and a Senate majority. Constitutional amendments need two-thirds.
 
 Several of these safeguards are the first step of a longer reform: see *Reforms in steps*.
+
+@lib_sith_search
+is-special: true
+new-page: true
+go-to: menu
+
+= The search for the Sith
+
+The Caucus does not know who the Sith Lord is. What it knows (*the search*) and what it can prove (*our proof*, the evidence) are kept apart. The search never goes backwards.
+
+**The stages.**
+
+• *Rumours.* Something is wrong in the Republic.
+
+• *A Sith presence.* The Jedi confirm a Sith Lord has returned (after Naboo), Gunray testifies, or the Jedi's suspicion reaches 3.
+
+• *A hidden hand.* Proof of 3 or more, and a clue to the pattern behind the crises: the Damask trail, Gunray naming Darth Sidious, the guild probe or the Banking Clan audit, or the false-flag bombing exposed.
+
+• *Close to power.* Proof of 5 or more, and a clue that leads to Coruscant: the Kamino payments, a Bureau intelligence review, Valorum's old networks, Gunray's word that Sidious knew the Senate's business, the Labyrinth raid, Dooku's warning at Geonosis passed on by friendly Jedi, or the Jedi's suspicion reaching 6.
+
+• *A name.* Every suspect cleared, or Count Dooku turned.
+
+**The shortlist.** Close to power, four people are suspected: Mas Amedda, the Vice Chair, who rigs the agenda for money and takes orders; Sate Pestage, a fixer who sells appointments to "the client"; Orn Free Taa of Ryloth, a crook; and Lott Dod of the Trade Federation, who took the Damask money.
+
+Each is cleared by *Look into* (Shadow Investigation, 1 capital), by a Bureau intelligence review (it clears the next one on the list), by arresting the Vice Chair (Civil Service track), or, for Free Taa and Dod, by a successful Labyrinth raid. Palpatine is never on the shortlist: he is the one man nobody suspects, and the Caucus cannot point its investigators at him until the trail reaches him. Before the name, investigations speak only of the people who profited, the Senate's inner circle, or the Sith.
+
+**Mas Amedda's files.** Cleared by investigation rather than by arrest, the Vice Chair's dealings can be leaked. He loses the gavel, and the Senate's staff, who resented him, warm to the Caucus. But the Sith Lord learns how close we are: his alarm rises to *He knows we are close*.
+
+**The name.** It opens the charges, the case and *The Hunt for Darth Sidious*, a Caucus Affairs card. Each operation runs once, apart from building the case:
+
+• *Turn Sate Pestage* (once he is cleared): every scheme is foreseen, and any arrest is likelier.
+
+• *Freeze the Damask accounts* (Finance chair or the banking audit): no more bought votes, Black Sun leaves him, and his plan slows.
+
+• *Map compromised officers* (Security chair): Navy loyalty rises, and an unreformed Senate Guard splits.
+
+• *Find the clone order* (the clone army, Kamino known): Order 66 is found, and the chips can be removed.
+
+• *Watch ways off Coruscant*: he cannot flee to the Confederacy, at any point.
+
+• *Bring the name to the Jedi* (relations 45+): their suspicion reaches 9, and they will act with the Senate.
+
+• *Protect the witnesses*: the proof stops wasting away, and no more investigators are assassinated.
+
+• *Tell Anakin the truth* (through Padmé or close Jedi friends): if he is still in the light, he stands with us; if he has slid far, he goes to Palpatine.
+
+• *Build the public case* (repeatable): more proof.
+
+**His alarm.** Risky operations, leaks and Amedda's fall raise it. At 5 (*He knows we are close*) his plan advances, his next scheme comes at once, and his final move comes a year sooner. At 8 (*He is moving*) he strikes the next month.
+
+**The Chancellor's arrest.** A Caucus Chancellor can order him arrested once.
+
+• *Flight.* If the Republic is at war with the Confederacy and the ways off Coruscant are not watched, he may flee to it. The chance rises with his alarm and with the Confederacy's success.
+
+• *The arrest itself.* For it count our Chancellery's Senate Guard, a warrant, Judicial Forces of 4+, the Jedi with us, conclusive proof, an informant, and Anakin in the light. Against it count a fallen Anakin, his alarm and a plan near completion.
+
+• *The outcome.* Taken, he stands trial, and the Last Days decide what comes after: the Restoration vote, the war, perhaps his contingency order. Failing that, he fights the arrest, and the battle for Coruscant is decided by the balance of forces, as in his coup from outside office.
 
 @lib_separatists
 is-special: true

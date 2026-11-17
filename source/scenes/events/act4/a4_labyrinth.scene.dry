@@ -22,7 +22,7 @@ unavailable-subtitle: The Judicial Forces are too weak to back a raid.
 subtitle: A chance at proof, or a trap.
 on-arrival: {!
 var ok = Math.random() < 0.4 + (Q.judicial_forces - 3) * 0.1 + (Q.evidence - 6) * 0.05;
-if (ok) { Q.labyrinth_result = 1; Q.evidence += 3; Q.jedi_suspicion += 1; }
+if (ok) { Q.labyrinth_result = 1; Q.evidence += 3; Q.jedi_suspicion += 1; SW.clearSuspect(Q, 'free_taa', 'raid'); SW.clearSuspect(Q, 'dod', 'raid'); }
 else { Q.labyrinth_result = 0; Q.investigators_lost += 1; Q.evidence -= 1; Q.judicial_forces -= 1; Q.fear += 2; }
 !}
 
