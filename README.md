@@ -64,6 +64,10 @@ artwork, music or footage is included; all images are original abstract art.*
   Outer Rim Affairs, Constitutional Affairs and Jedi Affairs. Every new government shares out the chairs afresh.
   Each chair is held by a named minister; the Caucus picks its own, and the committees it does not chair act on
   their bloc's ideology at the time.
+- **The Chancellery** is an office of its own, with its own screen. It gathers twelve named powers over the game, from
+  the gavel and the Senate Guard to emergency decrees, the Bureau of Intelligence and the HoloNet; reforms check them
+  for good. Our own Chancellor can rule by decree, at a price: the precedent wears away faith, serves the next
+  Palpatine, and can end the game as *The Hollow Crown*.
 - **Anakin falls unless something holds him**, as in the films: his freed mother, a reformed Jedi Order, or friends who
   warned him (the Jedi kept out of command, a warning about Palpatine that was heard, and action on slavery). Every
   arrest weighs the balance of forces, and a fallen Anakin betrays it.

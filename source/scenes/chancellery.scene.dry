@@ -1,0 +1,499 @@
+title: The Chancellery
+subtitle: The office of Supreme Chancellor and the powers it holds.
+is-pinned-card: true
+tags: advisor
+card-image: img/card_chancellery.svg
+view-if: started = 1 and not game_ending
+new-page: true
+on-arrival: {! SW.chancelleryStrings(Q); SW.decreeScan(Q, this); !}
+
+= The Chancellery
+
+[+ chan_office_html +]
+
+**The office's powers.**
+
+[+ chan_powers_html +]
+
+**The government.**
+
+[+ chan_govt_html +]
+
+[? if chan_record > 0 : [+ chan_record_html +] ?]
+
+[? if chan_can_decree : While the office holds emergency decrees, our Chancellor can rule by decree. Looking is free; a decree takes the turn. ?][? if rc_chancellor and not chan_can_decree : Our Chancellor holds no emergency decrees, but can still hand a power back to the Senate. ?]
+
+- @reform: Enact a reform by decree.
+- @d_arrest: The Guard arrests the corrupt.
+- @d_relief: The governors deliver relief.
+- @d_banks: Direct the Banking Clan.
+- @d_army: Order the Grand Army forward.
+- @d_address: Address the galaxy.
+- @d_rival: Turn the Bureau on a rival bloc.
+- @d_investigate: Set the Bureau to investigate.
+- @giveback: Return a power to the Senate.
+- @go_back: Back.
+
+@reform
+view-if: chan_can_decree
+subtitle: A committee's next step becomes law without a vote. Faith −3; the card's own cost applies.
+choose-if: dok_any = 1
+unavailable-subtitle: No step can be decreed now: the committees' own conditions are not met.
+
+= Reform by Decree
+
+Which reform will our Chancellor enact? The Senate will be told afterwards.
+
+- @dr_anticartel
+- @dr_breakup
+- @dr_independent
+- @dr_bonds
+- @dr_ethics
+- @dr_integrity
+- @dr_expel
+- @dr_civil_service
+- @dr_oversight_act
+- @dr_compor
+- @dr_army_oversight
+- @dr_command
+- @dr_guard
+- @dr_charter
+- @dr_relief_act
+- @dr_enfranchise
+- @dr_assembly
+- @dr_abolition
+- @dr_sunset
+- @dr_powers_review
+- @dr_terms
+- @dr_vonc
+- @dr_speaker
+- @dr_independence
+- @dr_service
+- @dr_compact
+- @go_back_page
+
+@dr_anticartel
+title: Anti-Cartel Legislation.
+subtitle: Finance & Commerce.
+view-if: dok_anticartel = 1
+on-arrival: {! SW.decreeBegin(Q, 'anticartel'); !}
+go-to: sa_finance.anticartel
+
+@dr_breakup
+title: Break up the Trade Federation.
+subtitle: Finance & Commerce.
+view-if: dok_breakup = 1
+on-arrival: {! SW.decreeBegin(Q, 'breakup'); !}
+go-to: sa_finance.breakup
+
+@dr_independent
+title: The Banking Clan's independence.
+subtitle: Finance & Commerce.
+view-if: dok_independent = 1
+on-arrival: {! SW.decreeBegin(Q, 'independent'); !}
+go-to: sa_finance.independent
+
+@dr_bonds
+title: Republic bonds.
+subtitle: Finance & Commerce.
+view-if: dok_bonds = 1
+on-arrival: {! SW.decreeBegin(Q, 'bonds'); !}
+go-to: sa_finance.bonds
+
+@dr_ethics
+title: The ethics law.
+subtitle: Judiciary & Intelligence.
+view-if: dok_ethics = 1
+on-arrival: {! SW.decreeBegin(Q, 'ethics'); !}
+go-to: sa_judiciary.ethics
+
+@dr_integrity
+title: The Office of Public Integrity.
+subtitle: Judiciary & Intelligence.
+view-if: dok_integrity = 1
+on-arrival: {! SW.decreeBegin(Q, 'integrity'); !}
+go-to: sa_judiciary.integrity
+
+@dr_expel
+title: Expel corrupt senators.
+subtitle: Judiciary & Intelligence.
+view-if: dok_expel = 1
+on-arrival: {! SW.decreeBegin(Q, 'expel'); !}
+go-to: sa_judiciary.expel
+
+@dr_civil_service
+title: The Civil Service Act.
+subtitle: Judiciary & Intelligence.
+view-if: dok_civil_service = 1
+on-arrival: {! SW.decreeBegin(Q, 'civil_service'); !}
+go-to: sa_judiciary.civil_service
+
+@dr_oversight_act
+title: The Intelligence Oversight Act.
+subtitle: Judiciary & Intelligence.
+view-if: dok_oversight_act = 1
+on-arrival: {! SW.decreeBegin(Q, 'oversight_act'); !}
+go-to: sa_judiciary.oversight_act
+
+@dr_compor
+title: The Commission for the Protection of the Republic.
+subtitle: Judiciary & Intelligence.
+view-if: dok_compor = 1
+on-arrival: {! SW.decreeBegin(Q, 'compor'); !}
+go-to: sa_judiciary.compor
+
+@dr_army_oversight
+title: Senate oversight of the army.
+subtitle: Security & Defence.
+view-if: dok_army_oversight = 1
+on-arrival: {! SW.decreeBegin(Q, 'army_oversight'); !}
+go-to: sa_security.oversight
+
+@dr_command
+title: The Senate Command Act.
+subtitle: Security & Defence.
+view-if: dok_command = 1
+on-arrival: {! SW.decreeBegin(Q, 'command'); !}
+go-to: sa_security.command
+
+@dr_guard
+title: The Guard returned to the Senate.
+subtitle: Security & Defence.
+view-if: dok_guard = 1
+on-arrival: {! SW.decreeBegin(Q, 'guard'); !}
+go-to: sa_security.guard
+
+@dr_charter
+title: The Judicial Forces Charter.
+subtitle: Security & Defence.
+view-if: dok_charter = 1
+on-arrival: {! SW.decreeBegin(Q, 'charter'); !}
+go-to: sa_security.charter
+
+@dr_relief_act
+title: The Rim Relief Act.
+subtitle: Outer Rim Affairs.
+view-if: dok_relief_act = 1
+on-arrival: {! SW.decreeBegin(Q, 'relief_act'); !}
+go-to: sa_rimaffairs.relief_act
+
+@dr_enfranchise
+title: Rim enfranchisement.
+subtitle: Outer Rim Affairs.
+view-if: dok_enfranchise = 1
+on-arrival: {! SW.decreeBegin(Q, 'enfranchise'); !}
+go-to: sa_rimaffairs.enfranchise
+
+@dr_assembly
+title: The Rim Assembly.
+subtitle: Outer Rim Affairs.
+view-if: dok_assembly = 1
+on-arrival: {! SW.decreeBegin(Q, 'assembly'); !}
+go-to: sa_rimaffairs.assembly
+
+@dr_abolition
+title: Abolition.
+subtitle: Outer Rim Affairs.
+view-if: dok_abolition = 1
+on-arrival: {! SW.decreeBegin(Q, 'abolition'); !}
+go-to: sa_rimaffairs.abolition
+
+@dr_sunset
+title: Sunset clauses.
+subtitle: Constitutional Affairs.
+view-if: dok_sunset = 1
+on-arrival: {! SW.decreeBegin(Q, 'sunset'); !}
+go-to: sa_constitution.sunset
+
+@dr_powers_review
+title: The Powers Review Act.
+subtitle: Constitutional Affairs.
+view-if: dok_powers_review = 1
+on-arrival: {! SW.decreeBegin(Q, 'powers_review'); !}
+go-to: sa_constitution.powers_review
+
+@dr_terms
+title: Term limits entrenched.
+subtitle: Constitutional Affairs.
+view-if: dok_terms = 1
+on-arrival: {! SW.decreeBegin(Q, 'terms'); !}
+go-to: sa_constitution.terms
+
+@dr_vonc
+title: A constructive vote of no confidence.
+subtitle: Constitutional Affairs.
+view-if: dok_vonc = 1
+on-arrival: {! SW.decreeBegin(Q, 'vonc'); !}
+go-to: sa_constitution.vonc
+
+@dr_speaker
+title: An independent Speaker.
+subtitle: Constitutional Affairs.
+view-if: dok_speaker = 1
+on-arrival: {! SW.decreeBegin(Q, 'speaker'); !}
+go-to: sa_constitution.speaker
+
+@dr_independence
+title: The Jedi Independence Amendment.
+subtitle: Jedi Affairs.
+view-if: dok_independence = 1
+on-arrival: {! SW.decreeBegin(Q, 'independence'); !}
+go-to: sa_jedi_affairs.independence
+
+@dr_service
+title: The Jedi Service Act.
+subtitle: Jedi Affairs.
+view-if: dok_service = 1
+on-arrival: {! SW.decreeBegin(Q, 'service'); !}
+go-to: sa_jedi_affairs.service
+
+@dr_compact
+title: A Senate–Jedi Compact.
+subtitle: Jedi Affairs.
+view-if: dok_compact = 1
+on-arrival: {! SW.decreeBegin(Q, 'compact'); !}
+go-to: sa_jedi_affairs.compact
+
+@go_back_page
+title: Back to the Chancellery.
+go-to: chancellery
+
+@d_arrest
+view-if: chan_can_decree and chp_guard_state = "held"
+subtitle: −1 political capital. Corruption −4, fear +3. Takes the turn.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! SW.decree(Q, 'arrest'); !}
+
+The Senate Guard moves at dawn. A dozen officials on the guilds' and the syndicates' payrolls are taken from their offices in front of the HoloNet's cameras. It is popular. It is also exactly what a Chancellor who answered to nobody would do.
+
+@d_relief
+view-if: chan_can_decree and chp_governors_state = "held"
+subtitle: −1 political capital. Rim hardship −3. Takes the turn.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! SW.decree(Q, 'relief'); !}
+
+The sector governors are ordered to open the Republic's stores. Food and medicine reach the Rim within weeks, without a single committee hearing.
+
+@d_banks
+view-if: chan_can_decree and chp_banks_state = "held"
+subtitle: −1 political capital. Debt −5. Takes the turn.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! SW.decree(Q, 'banks'); !}
+
+The Chancellery instructs the Banking Clan to write down the Republic's debts. The bankers comply. They also take note.
+
+@d_army
+view-if: chan_can_decree and chp_army_state = "held" and war
+subtitle: −1 political capital. The weakest front +1.5. Takes the turn.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! SW.decree(Q, 'army'); !}
+
+Our Chancellor orders the clone army forward on the weakest front, on the office's authority alone. The clones obey at once, as they were made to.
+
+@d_address
+view-if: chan_can_decree and chp_holonet_state = "held"
+subtitle: −1 political capital. The Caucus's momentum +1. Takes the turn.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! SW.decree(Q, 'address'); !}
+
+Every HoloNet channel carries our Chancellor's address. It is a good speech. The Office of Public Information makes sure nobody hears a reply.
+
+@d_rival
+view-if: chan_can_decree and chp_bureau_state = "held" and war_shadows_seen
+subtitle: −2 political capital. A rival bloc's support, its leader's hold on it and its relations with us all suffer. Takes the turn.
+choose-if: capital >= 2
+unavailable-subtitle: Not enough political capital.
+
+= The Bureau's Files
+
+The Bureau keeps files on every bloc in the Senate. Which one will it open?
+
+- @rv_mod
+- @rv_pal
+- @rv_guild
+- @rv_rim
+- @rv_sec
+- @rv_ind
+- @rv_rfc
+- @go_back_page
+
+@rv_mod
+title: [+ rv_mod_name +].
+view-if: rv_mod_ok = 1
+on-arrival: {! SW.decreeRival(Q, 'mod'); !}
+
+The Bureau's files on the [+ decree_rival_name +] find their way to the HoloNet, one at a time: a bribe here, a lie under oath there. Their senators spend the season answering questions instead of asking them. Everyone in the Senate knows where the files came from.
+
+@rv_pal
+title: [+ rv_pal_name +].
+view-if: rv_pal_ok = 1
+on-arrival: {! SW.decreeRival(Q, 'pal'); !}
+
+The Bureau's files on the [+ decree_rival_name +] find their way to the HoloNet, one at a time: a bribe here, a lie under oath there. Their senators spend the season answering questions instead of asking them. Everyone in the Senate knows where the files came from.
+
+@rv_guild
+title: [+ rv_guild_name +].
+view-if: rv_guild_ok = 1
+on-arrival: {! SW.decreeRival(Q, 'guild'); !}
+
+The Bureau's files on the [+ decree_rival_name +] find their way to the HoloNet, one at a time: a bribe here, a lie under oath there. Their senators spend the season answering questions instead of asking them. Everyone in the Senate knows where the files came from.
+
+@rv_rim
+title: [+ rv_rim_name +].
+view-if: rv_rim_ok = 1
+on-arrival: {! SW.decreeRival(Q, 'rim'); !}
+
+The Bureau's files on the [+ decree_rival_name +] find their way to the HoloNet, one at a time: a bribe here, a lie under oath there. Their senators spend the season answering questions instead of asking them. Everyone in the Senate knows where the files came from.
+
+@rv_sec
+title: [+ rv_sec_name +].
+view-if: rv_sec_ok = 1
+on-arrival: {! SW.decreeRival(Q, 'sec'); !}
+
+The Bureau's files on the [+ decree_rival_name +] find their way to the HoloNet, one at a time: a bribe here, a lie under oath there. Their senators spend the season answering questions instead of asking them. Everyone in the Senate knows where the files came from.
+
+@rv_ind
+title: [+ rv_ind_name +].
+view-if: rv_ind_ok = 1
+on-arrival: {! SW.decreeRival(Q, 'ind'); !}
+
+The Bureau's files on the [+ decree_rival_name +] find their way to the HoloNet, one at a time: a bribe here, a lie under oath there. Their senators spend the season answering questions instead of asking them. Everyone in the Senate knows where the files came from.
+
+@rv_rfc
+title: [+ rv_rfc_name +].
+view-if: rv_rfc_ok = 1
+on-arrival: {! SW.decreeRival(Q, 'rfc'); !}
+
+The Bureau's files on the [+ decree_rival_name +] find their way to the HoloNet, one at a time: a bribe here, a lie under oath there. Their senators spend the season answering questions instead of asking them. Everyone in the Senate knows where the files came from.
+
+@d_investigate
+view-if: chan_can_decree and chp_bureau_state = "held" and war_shadows_seen
+subtitle: −2 political capital. +1 evidence, and the search for the Sith Lord advances. Takes the turn.
+choose-if: capital >= 2
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! SW.decree(Q, 'investigate'); !}
+
+The loyal analysts of the Bureau of Intelligence are set loose on the questions the Caucus has been asking for years. Their reports come straight to our Chancellor's desk.
+
+@giveback
+view-if: rc_chancellor and chan_powers > 0
+subtitle: Hand one of the office's powers back to the Senate for good. Faith +3; the precedent falls by 1. Takes the turn.
+
+= Return a Power
+
+Which power will our Chancellor give back? Each is handed back for good: what checks it takes effect as if the Senate had passed it.
+
+- @gb_gavel
+- @gb_guard
+- @gb_staff
+- @gb_decrees
+- @gb_army
+- @gb_bureau
+- @gb_holonet
+- @gb_term
+- @gb_jedi
+- @gb_banks
+- @gb_security
+- @gb_governors
+- @go_back_page
+
+@gb_gavel
+title: The gavel.
+subtitle: As if the Senate had passed an independent Speaker.
+view-if: chp_gavel_state = "held"
+on-arrival: {! SW.returnPower(Q, 'gavel'); !}
+
+Our Chancellor returns [+ returned_name +] to the Senate. The Caucus's own senators are the most surprised: power is not usually given back. Faith in the Republic rises a little.
+
+@gb_guard
+title: The Senate Guard.
+subtitle: As if the Senate had passed the Guard returned to the Senate.
+view-if: chp_guard_state = "held"
+on-arrival: {! SW.returnPower(Q, 'guard'); !}
+
+Our Chancellor returns [+ returned_name +] to the Senate. The Caucus's own senators are the most surprised: power is not usually given back. Faith in the Republic rises a little.
+
+@gb_staff
+title: The Chancellor's staff.
+subtitle: As if the Senate had passed the Civil Service Act.
+view-if: chp_staff_state = "held"
+on-arrival: {! SW.returnPower(Q, 'staff'); !}
+
+Our Chancellor returns [+ returned_name +] to the Senate. The Caucus's own senators are the most surprised: power is not usually given back. Faith in the Republic rises a little.
+
+@gb_decrees
+title: Emergency decrees.
+subtitle: As if the Senate had passed the Powers Review Act.
+view-if: chp_decrees_state = "held"
+on-arrival: {! SW.returnPower(Q, 'decrees'); !}
+
+Our Chancellor returns [+ returned_name +] to the Senate. The Caucus's own senators are the most surprised: power is not usually given back. Faith in the Republic rises a little.
+
+@gb_army
+title: The Grand Army.
+subtitle: As if the Senate had passed Senate oversight of the army.
+view-if: chp_army_state = "held"
+on-arrival: {! SW.returnPower(Q, 'army'); !}
+
+Our Chancellor returns [+ returned_name +] to the Senate. The Caucus's own senators are the most surprised: power is not usually given back. Faith in the Republic rises a little.
+
+@gb_bureau
+title: The Bureau of Intelligence.
+subtitle: As if the Senate had passed the Intelligence Oversight Act.
+view-if: chp_bureau_state = "held"
+on-arrival: {! SW.returnPower(Q, 'bureau'); !}
+
+Our Chancellor returns [+ returned_name +] to the Senate. The Caucus's own senators are the most surprised: power is not usually given back. Faith in the Republic rises a little.
+
+@gb_holonet
+title: The HoloNet.
+subtitle: As if the Senate had passed a free press.
+view-if: chp_holonet_state = "held"
+on-arrival: {! SW.returnPower(Q, 'holonet'); !}
+
+Our Chancellor returns [+ returned_name +] to the Senate. The Caucus's own senators are the most surprised: power is not usually given back. Faith in the Republic rises a little.
+
+@gb_term
+title: Term without end.
+subtitle: As if the Senate had passed term limits entrenched.
+view-if: chp_term_state = "held"
+on-arrival: {! SW.returnPower(Q, 'term'); !}
+
+Our Chancellor returns [+ returned_name +] to the Senate. The Caucus's own senators are the most surprised: power is not usually given back. Faith in the Republic rises a little.
+
+@gb_jedi
+title: The Jedi Council.
+subtitle: As if the Senate had passed the Jedi Independence Amendment.
+view-if: chp_jedi_state = "held"
+on-arrival: {! SW.returnPower(Q, 'jedi'); !}
+
+Our Chancellor returns [+ returned_name +] to the Senate. The Caucus's own senators are the most surprised: power is not usually given back. Faith in the Republic rises a little.
+
+@gb_banks
+title: The banks.
+subtitle: As if the Senate had passed the Banking Clan's independence.
+view-if: chp_banks_state = "held"
+on-arrival: {! SW.returnPower(Q, 'banks'); !}
+
+Our Chancellor returns [+ returned_name +] to the Senate. The Caucus's own senators are the most surprised: power is not usually given back. Faith in the Republic rises a little.
+
+@gb_security
+title: The Security Act.
+subtitle: As if the Senate had passed the Judicial Forces Charter.
+view-if: chp_security_state = "held"
+on-arrival: {! SW.returnPower(Q, 'security'); !}
+
+Our Chancellor returns [+ returned_name +] to the Senate. The Caucus's own senators are the most surprised: power is not usually given back. Faith in the Republic rises a little.
+
+@gb_governors
+title: The sector governors.
+subtitle: As if the Senate had passed the Rim Assembly.
+view-if: chp_governors_state = "held"
+on-arrival: {! SW.returnPower(Q, 'governors'); !}
+
+Our Chancellor returns [+ returned_name +] to the Senate. The Caucus's own senators are the most surprised: power is not usually given back. Faith in the Republic rises a little.

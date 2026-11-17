@@ -338,6 +338,18 @@
     D.pirates_ready = 0; D.pirate_next = 0; D.pirate_route = ''; D.pirate_gang = ''; D.pirate_raids = 0;
     D.sentience_rights = 0; D.officer_corps = 0; D.hhc_investigated = 0; D.hhc_discredited = 0;
     D.hhc_ready = 0; D.hhc_next = 0; D.hhc_kind = 'core'; D.hhc_heat = 0; D.hhc_events = 0;
+    for (var cpd = 0; cpd < SW.CHANCELLERY_POWERS.length; cpd++) { var cpk = 'chp_' + SW.CHANCELLERY_POWERS[cpd].id; D[cpk] = 0; D[cpk + '_by'] = ''; D[cpk + '_state'] = 'none'; }
+    D.chan_powers = 0; D.chan_scale = 'First among equals'; D.chan_held_text = ''; D.chan_decrees = 0; D.chan_can_decree = 0; D.chan_holder = ''; D.chan_months = 0;
+    D.chan_bureau = 0; D.chan_holonet = 0; D.bureau_moves_ready = 0; D.bureau_moves_seen = 0; D.public_info_ready = 0; D.public_info_seen = 0;
+    D.war_shadows_seen = 0; D.war_shadows_choice = ''; D.bureau_moles = 1; D.bureau_moles_until = 9999;
+    D.decrees_used = 0; D.decrees_reform = 0; D.decree_mode = 0; D.decree_step = ''; D.decree_step_name = ''; D.decree_last = ''; D.decree_rival_name = '';
+    D.precedent_inherited = 0; D.powers_returned_by_us = 0; D.returned_name = ''; D.hc_decrees = 0;
+    D.by_decree_next = 0; D.by_decree_ready = 0; D.by_decree_heading = ''; D.by_decree_text = ''; D.by_decree_kind = ''; D.by_decrees = 0;
+    for (var dsi = 0; dsi < SW.DECREE_STEPS.length; dsi++) D['dok_' + SW.DECREE_STEPS[dsi][0]] = 0;
+    D.dok_any = 0;
+    D.chan_office_html = ''; D.chan_powers_html = ''; D.chan_govt_html = ''; D.chan_record_html = ''; D.chan_record = 0; D.war_shadows_ready = 0;
+    for (var rvb = 0; rvb < SW.BLOCS.length; rvb++) { D['rv_' + SW.BLOCS[rvb] + '_ok'] = 0; D['rv_' + SW.BLOCS[rvb] + '_name'] = ''; }
+    for (var scb = 0; scb < SW.BLOCS.length; scb++) D[SW.BLOCS[scb] + '_scandal'] = 0;
     D.guild_hold = 0; D.guild_breaks = 0; D.guild_leak = 0; D.el_chest_offer = 0; D.el_chest_taken = 0;
     D.timers = SW.TIMERS.slice();
     for (var t = 0; t < SW.TIMERS.length; t++) D[SW.TIMERS[t] + '_timer'] = 0;
@@ -1119,7 +1131,7 @@
       var inc = SW.LEADERS[incId];
       if (!inc) continue;
       var incAvail = !inc.available || inc.available(Q);
-      var hold = incAvail ? inc.rise(Q) + 0.15 : -1;
+      var hold = incAvail ? inc.rise(Q) + 0.15 - (Q[g + '_scandal'] || 0) : -1;
       var push = SW.hhcPush(Q);
       if (incAvail && inc.firm >= 0.7) hold += push;
       // a looming defection under a hardliner brings a challenge against them
@@ -1766,6 +1778,291 @@
     }
     if (lines.length) { Q.ministry_report = lines.join('<br>'); Q.ministry_report_ready = 1; }
     SW.computeSupport(Q);
+  };
+
+  // ------------------------------------------------------------------ the Chancellery
+  // The office of Supreme Chancellor, apart from the committees, and the powers it gathers. Each power is gained
+  // by time or by events, and checked for good by a reform (or by our own Chancellor handing it back to the Senate).
+  SW.CHANCELLERY_POWERS = [
+    {id: 'gavel', name: 'The gavel', what: 'The Chancellor presides over the Senate, and the Vice Chair decides what it debates.',
+      gained: function () { return true; },
+      checks: [[function (Q) { return Q.independent_speaker; }, 'an independent Speaker']],
+      ret: function (Q) { Q.independent_speaker = 1; }},
+    {id: 'guard', name: 'The Senate Guard', what: 'The Guard answers to the Chancellor, not to the Senate.',
+      gained: function () { return true; },
+      checks: [[function (Q) { return Q.senate_guard_reformed; }, 'the Guard returned to the Senate']],
+      ret: function (Q) { Q.senate_guard_reformed = 1; }},
+    {id: 'staff', name: 'The Chancellor\'s staff', what: 'The committees\' staff now work for the Chancellery, and the government\'s bills are drafted there.',
+      gained: function (Q) { return Q.bby <= (Q.bureau_captured === -1 ? 26 : 30); },
+      checks: [[function (Q) { return Q.bureau_reformed; }, 'the Civil Service Act']],
+      ret: function (Q) { Q.bureau_reviewed = 1; Q.bureau_reformed = 1; }},
+    {id: 'decrees', name: 'Emergency decrees', what: 'The Chancellor can rule by decree, without the Senate.',
+      gained: function (Q) { return Q.emergency_powers >= 1; },
+      suspended: [function (Q) { return Q.emergency_sunset; }, 'suspended by the sunset clauses'],
+      checks: [[function (Q) { return Q.powers_review; }, 'the Powers Review Act']],
+      ret: function (Q) { Q.emergency_sunset = 1; Q.powers_review = 1; }},
+    {id: 'army', name: 'The Grand Army', what: 'The clone army obeys the office.',
+      gained: function (Q) { return Q.clones > 0 && Q.kamino_army; },
+      checks: [[function (Q) { return Q.army_oversight; }, 'Senate oversight of the army'], [function (Q) { return Q.senate_command; }, 'the Senate Command Act']],
+      ret: function (Q) { Q.army_oversight = 1; }},
+    {id: 'bureau', name: 'The Bureau of Intelligence', what: 'The Republic\'s spies report to the Chancellor alone.',
+      gained: function (Q) { return Q.chan_bureau; },
+      checks: [[function (Q) { return Q.intel_oversight; }, 'the Intelligence Oversight Act']],
+      ret: function (Q) { Q.intel_oversight = 1; Q.intel_runs = Math.max(Q.intel_runs || 0, 1); }},
+    {id: 'holonet', name: 'The HoloNet', what: 'The Office of Public Information tells the galaxy what to think.',
+      gained: function (Q) { return Q.chan_holonet; },
+      checks: [[function (Q) { return (Q.free_press || 0) >= 1; }, 'a free press']],
+      ret: function (Q) { Q.free_press = Math.max(Q.free_press || 0, 1); Q.holonet_free = 1; }},
+    {id: 'term', name: 'Term without end', what: 'The Chancellor\'s term runs on past its limit.',
+      gained: function (Q) { return Q.term_extended || Q.election_suspended; },
+      checks: [[function (Q) { return Q.term_limits_protected; }, 'term limits entrenched']],
+      ret: function (Q) { Q.term_limits_protected = 1; Q.election_suspended = 0; if (Q.next_election_date >= 999) Q.next_election_date = Q.date + 12; }},
+    {id: 'jedi', name: 'The Jedi Council', what: 'The Chancellor\'s representative sits on the Jedi Council.',
+      gained: function (Q) { return Q.council_seat_seen && !Q.council_blocked; },
+      checks: [[function (Q) { return Q.jedi_independence; }, 'the Jedi Independence Amendment']],
+      ret: function (Q) { Q.jedi_independence = 1; }},
+    {id: 'banks', name: 'The banks', what: 'The Chancellery directs the Banking Clan.',
+      gained: function (Q) { return Q.banks_seized; },
+      checks: [[function (Q) { return Q.banking_independent; }, 'the Banking Clan\'s independence'], [function (Q) { return Q.republic_bonds; }, 'Republic bonds']],
+      ret: function (Q) { Q.banking_independent = 1; }},
+    {id: 'security', name: 'The Security Act', what: 'Senators can be detained on the Chancellery\'s word.',
+      gained: function (Q) { return Q.security_act; },
+      checks: [[function (Q) { return Q.judicial_charter; }, 'the Judicial Forces Charter']],
+      ret: function (Q) { Q.judicial_charter = 1; }},
+    {id: 'governors', name: 'The sector governors', what: 'Governors appointed by the Chancellor rule the sectors.',
+      gained: function (Q) { return Q.governors; },
+      checks: [[function (Q) { return Q.rim_assembly; }, 'the Rim Assembly'], [function (Q) { return Q.rim_enfranchised; }, 'the Rim\'s constitutional seats']],
+      ret: function (Q) { Q.rim_enfranchised = 1; }}
+  ];
+  SW.CHAN_POWER = {};
+  for (var cpi = 0; cpi < SW.CHANCELLERY_POWERS.length; cpi++) SW.CHAN_POWER[SW.CHANCELLERY_POWERS[cpi].id] = SW.CHANCELLERY_POWERS[cpi];
+  SW.CHAN_SCALE = [[0, 'First among equals'], [3, 'A strong executive'], [5, 'A war cabinet'], [7, 'An imperial presidency'], [10, 'The throne in all but name']];
+  SW.chanScale = function (n) { var w = SW.CHAN_SCALE[0][1]; for (var i = 0; i < SW.CHAN_SCALE.length; i++) if (n >= SW.CHAN_SCALE[i][0]) w = SW.CHAN_SCALE[i][1]; return w; };
+  // Work out which powers the office holds now. A check, once made, is for good.
+  SW.chancellery = function (Q) {
+    var n = 0, held = [];
+    for (var i = 0; i < SW.CHANCELLERY_POWERS.length; i++) {
+      var P = SW.CHANCELLERY_POWERS[i], k = 'chp_' + P.id;
+      if (!Q[k]) for (var j = 0; j < P.checks.length; j++) if (P.checks[j][0](Q)) { Q[k] = 1; Q[k + '_by'] = P.checks[j][1]; break; }
+      var st = 'none';
+      if (Q[k]) st = 'checked';
+      else if (P.gained(Q)) st = (P.suspended && P.suspended[0](Q)) ? 'suspended' : 'held';
+      Q[k + '_state'] = st;
+      if (st === 'held') { n++; held.push(P.name); }
+    }
+    Q.chan_powers = n; Q.chan_scale = SW.chanScale(n); Q.chan_held_text = held.join(', ');
+    Q.chan_decrees = Q.chp_decrees_state === 'held' ? 1 : 0;
+    Q.chan_can_decree = (Q.rc_chancellor && Q.chan_decrees && !Q.game_ending) ? 1 : 0;
+    return n;
+  };
+  // The weight of the office behind the government's own bills: ours while our Chancellor holds it,
+  // and his bills for more power while Palpatine (or his man) does.
+  SW.officeWeight = function (Q, rcYes, topics) {
+    if (!Q.chan_powers) return 0;
+    var ours = Q.rc_chancellor && rcYes === 1;
+    var his = (Q.pal_chancellor || Q.puppet_chancellor) && topics.indexOf('powers') >= 0;
+    if (!ours && !his) return 0;
+    return Q.chan_powers + (Q.chp_staff_state === 'held' ? 3 : 0);
+  };
+  SW.hollowCrownDecrees = function (Q) {
+    SW.chancellery(Q);
+    return !!(Q.rc_chancellor && (Q.decrees_used || 0) >= 5 && Q.chan_powers >= 6);
+  };
+  // Each quarter: the office's pull, the Bureau's hidden network, the HoloNet, and other Chancellors' decrees.
+  SW.chancelleryTurn = function (Q) {
+    if (Q.game_ending) return;
+    SW.chancellery(Q);
+    if (Q.chancellor !== Q.chan_holder) { Q.chan_holder = Q.chancellor; Q.chan_months = 0; }
+    else Q.chan_months = (Q.chan_months || 0) + (Q.months_per_turn > 0 ? Q.months_per_turn : 0);
+    var his = Q.pal_chancellor || Q.puppet_chancellor, free = !Q.sidious_defeated && !Q.sidious_fled;
+    if (his && free) {
+      Q.grand_plan += 0.1 * Q.chan_powers;
+      // he inherits every precedent our Chancellor set
+      if ((Q.decrees_used || 0) > 0 && !Q.precedent_inherited) { Q.precedent_inherited = 1; Q.grand_plan += 2 * Q.decrees_used; }
+    }
+    if ((Q.decrees_used || 0) > 0) Q.faith -= 0.05 * Q.decrees_used;
+    // the Bureau's darker network feeds its master, under him, or under us while it is left alone
+    if (Q.chp_bureau_state === 'held' && free) {
+      var moles = his || (Q.rc_chancellor && Q.bureau_moles && Q.time < (Q.bureau_moles_until || 9999));
+      if (moles) SW.raiseAlarm(Q, 0.15);
+      if (his) Q.evidence = Math.max(0, Q.evidence - 0.1);
+    }
+    if (Q.chp_holonet_state === 'held') {
+      if (Q.rc_chancellor) SW.momentum(Q, 0.15);
+      else if (Q.chancellor_bloc && Q.chancellor_bloc !== 'rc') for (var r = 0; r < SW.REGIONS.length; r++) Q[SW.REGIONS[r] + '_' + Q.chancellor_bloc] *= 1.006;
+      Q.faith -= 0.1;
+    }
+    for (var s = 0; s < (Q.parties || []).length; s++) { var sk = Q.parties[s] + '_scandal'; if (Q[sk]) Q[sk] = Q[sk] < 0.02 ? 0 : Q[sk] * 0.8; }
+    // events the office brings
+    if (!Q.finale && Q.months_per_turn > 0) {
+      if (!Q.chan_bureau && !Q.chp_bureau && !Q.bureau_moves_seen && (Q.emergency_powers >= 2 || (Q.war && (Q.war_turns || 0) >= 8))) Q.bureau_moves_ready = 1;
+      if (!Q.chan_holonet && !Q.chp_holonet && !Q.public_info_seen && Q.emergency_powers >= 3) Q.public_info_ready = 1;
+      if (Q.chan_decrees && !Q.rc_chancellor && free) {
+        if (!Q.by_decree_next) Q.by_decree_next = Q.time + 2;
+        if (Q.time >= Q.by_decree_next) { Q.by_decree_next = Q.time + 4; SW.byDecree(Q); }
+      }
+    }
+  };
+  // War in the Shadows waits until our Chancellor holds an office that holds the Bureau.
+  SW.shadowsReady = function (Q) {
+    return !!(Q.rc_chancellor && Q.chp_bureau_state === 'held' && !Q.war_shadows_seen && !Q.finale && !Q.game_ending);
+  };
+  // Another Chancellor rules by decree: one act a season, drawn from the powers the office holds.
+  SW.BY_DECREE = [
+    {id: 'arrest', need: 'guard', heading: 'A Senator Detained',
+      text: 'Senate Guards in blue robes arrive at a Caucus senator\'s apartment before dawn, on the Chancellor\'s warrant alone. The senator is released a week later without charge. The Caucus\'s other senators notice who is watching.',
+      fx: function (Q) { Q.capital = Math.max(0, Q.capital - 1); Q.fear += 2; for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_rc'] *= 0.98; }},
+    {id: 'holonet', need: 'holonet', heading: 'The Chancellor\'s Hour',
+      text: 'Every HoloNet channel carries the Chancellor\'s address on the same evening, followed by a week of commentators explaining why the Chancellor is right.',
+      fx: function (Q) { var b = Q.chancellor_bloc; if (b && b !== 'rc') for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_' + b] *= 1.03; Q.faith -= 0.5; }},
+    {id: 'governors', need: 'governors', heading: 'Order in the Sectors',
+      text: 'A sector governor breaks up a protest on a Rim world with troops, under a decree from the Chancellery. The protesters\' grievances were real; now so is their anger.',
+      fx: function (Q) { Q.rim_hardship += 1; Q.outer_sep += 2; Q.midrim_sep += 1; Q.fear += 1; }},
+    {id: 'bureau', need: 'bureau', heading: 'Watched',
+      text: 'An analyst in the Caucus\'s inquiry team is reassigned overnight; a file goes missing; a contact stops answering. The Bureau of Intelligence is watching the Caucus, on the Chancellor\'s orders.',
+      fx: function (Q) { Q.evidence = Math.max(0, Q.evidence - 0.3); if (!Q.sidious_defeated) SW.raiseAlarm(Q, 0.3); }},
+    {id: 'powers', need: '', heading: 'Another Emergency',
+      text: 'A decree from the Chancellery takes one more power "for the duration of the emergency". The Senate is informed afterwards.',
+      fx: function (Q) { Q.emergency_powers += 1; Q.faith -= 1; }}
+  ];
+  SW.byDecree = function (Q) {
+    var pool = SW.BY_DECREE.filter(function (D) { return !D.need || Q['chp_' + D.need + '_state'] === 'held'; });
+    if (!pool.length) return;
+    var D = pool[Math.floor(SW.rnd() * pool.length) % pool.length];
+    D.fx(Q);
+    Q.grand_plan += (Q.pal_chancellor || Q.puppet_chancellor) ? 1 : 0.5;
+    Q.by_decree_heading = D.heading; Q.by_decree_text = D.text; Q.by_decree_kind = D.id; Q.by_decree_ready = 1;
+    Q.by_decrees = (Q.by_decrees || 0) + 1;
+    SW.chancellery(Q);
+  };
+
+  // Our Chancellor's decrees. Each costs political capital, takes the turn and adds to the office's precedent.
+  SW.DECREES = {
+    arrest: {need: 'guard', cost: 1, fx: function (Q) { Q.corruption -= 4; Q.fear += 3; }},
+    relief: {need: 'governors', cost: 1, fx: function (Q) { Q.rim_hardship = Math.max(0, Q.rim_hardship - 3); }},
+    banks: {need: 'banks', cost: 1, fx: function (Q) { Q.debt = Math.max(0, (Q.debt || 0) - 5); }},
+    army: {need: 'army', cost: 1, ok: function (Q) { return Q.war; }, fx: function (Q) { SW.pushFront(Q, SW.weakestFront(Q), 1.5); }},
+    address: {need: 'holonet', cost: 1, fx: function (Q) { SW.momentum(Q, 1, 'the Chancellor\'s address'); }},
+    investigate: {need: 'bureau', cost: 2, ok: function (Q) { return Q.war_shadows_seen; },
+      fx: function (Q) { Q.evidence += 1; Q.jedi_suspicion += 0.5; SW.updateSithStage(Q); }}
+  };
+  SW.decreeOk = function (Q, id) {
+    var D = SW.DECREES[id];
+    return !!(Q.chan_can_decree && D && Q['chp_' + D.need + '_state'] === 'held' && (!D.ok || D.ok(Q)) && Q.capital >= D.cost);
+  };
+  SW.decree = function (Q, id) {
+    var D = SW.DECREES[id];
+    if (!SW.decreeOk(Q, id)) return 0;
+    Q.capital -= D.cost; D.fx(Q);
+    Q.decrees_used = (Q.decrees_used || 0) + 1; Q.turn_actions += 1; Q.decree_last = id;
+    SW.chancellery(Q);
+    return 1;
+  };
+  // Turn the Bureau on a rival bloc: its support, its leader's hold on it, and its view of us all suffer.
+  SW.decreeRival = function (Q, b) {
+    if (!Q.chan_can_decree || Q.chp_bureau_state !== 'held' || !Q.war_shadows_seen || Q.capital < 2 || b === 'rc' || b === 'cis' || (Q.parties || []).indexOf(b) < 0) return 0;
+    Q.capital -= 2;
+    for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_' + b] *= 0.93;
+    Q[b + '_relation'] = (Q[b + '_relation'] || 0) - 6;
+    Q[b + '_grudge'] = (Q[b + '_grudge'] || 0) + 1;
+    Q[b + '_scandal'] = (Q[b + '_scandal'] || 0) + 0.3;
+    Q.decrees_used = (Q.decrees_used || 0) + 1; Q.turn_actions += 1; Q.decree_last = 'rival'; Q.decree_rival_name = SW.name(Q, b);
+    SW.computeSupport(Q); SW.chancellery(Q);
+    return 1;
+  };
+  // Hand a power back to the Senate: its check takes effect as if passed.
+  SW.returnPower = function (Q, id) {
+    var P = SW.CHAN_POWER[id];
+    if (!P || !Q.rc_chancellor || Q.game_ending || Q['chp_' + id + '_state'] !== 'held') return 0;
+    P.ret(Q);
+    Q['chp_' + id] = 1; Q['chp_' + id + '_by'] = 'returned to the Senate by our Chancellor';
+    Q.decrees_used = Math.max(0, (Q.decrees_used || 0) - 1); Q.faith += 3; Q.turn_actions += 1;
+    Q.powers_returned_by_us = (Q.powers_returned_by_us || 0) + 1; Q.returned_name = P.name;
+    SW.chancellery(Q);
+    return 1;
+  };
+  // The Chancellery screen: the office, its powers, the government and the decrees' record.
+  SW.chancelleryStrings = function (Q) {
+    SW.chancellery(Q);
+    var esc = function (s) { return String(s === undefined ? '' : s); };
+    var who = Q.rc_chancellor ? 'one of ours' : SW.name(Q, Q.chancellor_bloc);
+    var months = Q.chan_months || 0;
+    var tenure = months < 12 ? 'less than a year' : (Math.floor(months / 12) === 1 ? 'a year' : Math.floor(months / 12) + ' years');
+    var term;
+    if (Q.election_suspended || Q.next_election_date >= 999) term = 'No election is in sight.';
+    else if (Q.next_election_date > Q.date) { var m = Q.next_election_date - Q.date; term = 'The next elections are ' + (m <= 3 ? 'weeks away' : (m < 12 ? 'months away' : 'about ' + Math.round(m / 12) + ' year' + (Math.round(m / 12) === 1 ? '' : 's') + ' away')) + '.'; }
+    else term = 'Elections are due.';
+    Q.chan_office_html = '<p><b>Supreme Chancellor ' + esc(Q.chancellor) + '</b> (' + who + ') has held the office for ' + tenure + '. ' +
+      'The Vice Chair is ' + esc(Q.vice_chair) + '. ' + term + '</p>';
+    var rows = '';
+    for (var i = 0; i < SW.CHANCELLERY_POWERS.length; i++) {
+      var P = SW.CHANCELLERY_POWERS[i], st = Q['chp_' + P.id + '_state'], cell;
+      if (st === 'held') cell = '<span class="bad">held</span>';
+      else if (st === 'checked') cell = '<span class="good">\u2714 ' + esc(Q['chp_' + P.id + '_by']) + '</span>';
+      else if (st === 'suspended') cell = '<span class="warn">' + P.suspended[1] + '</span>';
+      else cell = '<span class="sb-dim">not yet</span>';
+      rows += '<tr><td><b>' + P.name + '</b>' + (st === 'held' ? '<br><span class="sb-note">' + P.what + '</span>' : '') + '</td><td class="st">' + cell + '</td></tr>';
+    }
+    Q.chan_powers_html = '<p class="chan-scale">' + Q.chan_scale + ' <span class="sb-dim">(' + Q.chan_powers + ' of ' + SW.CHANCELLERY_POWERS.length + ' powers held)</span></p>' +
+      '<table class="chan">' + rows + '</table>';
+    var g = '';
+    for (var c = 0; c < SW.COMMITTEES.length; c++) {
+      var cm = SW.COMMITTEES[c], b = Q['chair_' + cm];
+      var act = b && b !== 'rc' && Q['ministry_act_by_' + cm] === b ? Q['ministry_act_' + cm] : '';
+      g += '<tr><td><b>' + SW.COMMITTEE_NAMES[cm] + '</b><br><span class="sb-note">' + (b ? esc(Q['minister_' + cm + '_name']) + ', ' + SW.name(Q, b) : 'vacant') +
+        (act ? '. Lately, it ' + act + '.' : '') + '</span></td></tr>';
+    }
+    Q.chan_govt_html = '<table class="chan">' + g + '</table>';
+    var rec = [];
+    if (Q.decrees_used > 0) rec.push('Our Chancellors\u2019 decrees have set a precedent of <b>' + Q.decrees_used + '</b>. Each one weighs on faith in the Republic, makes the Restoration harder, and will serve whoever holds the office next.');
+    if (Q.powers_returned_by_us > 0) rec.push('Our Chancellors have returned ' + Q.powers_returned_by_us + ' power' + (Q.powers_returned_by_us === 1 ? '' : 's') + ' to the Senate.');
+    if (Q.by_decrees > 0 && !Q.rc_chancellor) rec.push('The office has ruled by decree ' + Q.by_decrees + ' time' + (Q.by_decrees === 1 ? '' : 's') + '.');
+    Q.chan_record_html = rec.length ? '<p>' + rec.join(' ') + '</p>' : '';
+    Q.chan_record = rec.length;
+    for (var p = 0; p < SW.BLOCS.length; p++) {
+      var rb = SW.BLOCS[p];
+      Q['rv_' + rb + '_ok'] = (rb !== 'rc' && rb !== 'cis' && (Q.parties || []).indexOf(rb) >= 0) ? 1 : 0;
+      Q['rv_' + rb + '_name'] = SW.name(Q, rb);
+    }
+  };
+  // Reform by decree: a committee step that would go to the Senate passes without a vote.
+  // Only steps decided by a vote; the card's own conditions and costs still apply.
+  SW.DECREE_STEPS = [
+    ['anticartel', 'sa_finance.anticartel', 'Anti-Cartel Legislation'], ['breakup', 'sa_finance.breakup', 'Break up the Trade Federation'],
+    ['independent', 'sa_finance.independent', 'The Banking Clan\'s independence'], ['bonds', 'sa_finance.bonds', 'Republic bonds'],
+    ['ethics', 'sa_judiciary.ethics', 'The ethics law'], ['integrity', 'sa_judiciary.integrity', 'The Office of Public Integrity'], ['expel', 'sa_judiciary.expel', 'Expel corrupt senators'],
+    ['civil_service', 'sa_judiciary.civil_service', 'The Civil Service Act'], ['oversight_act', 'sa_judiciary.oversight_act', 'The Intelligence Oversight Act'],
+    ['compor', 'sa_judiciary.compor', 'The Commission for the Protection of the Republic'],
+    ['army_oversight', 'sa_security.oversight', 'Senate oversight of the army'], ['command', 'sa_security.command', 'The Senate Command Act'],
+    ['guard', 'sa_security.guard', 'The Guard returned to the Senate'], ['charter', 'sa_security.charter', 'The Judicial Forces Charter'],
+    ['relief_act', 'sa_rimaffairs.relief_act', 'The Rim Relief Act'], ['enfranchise', 'sa_rimaffairs.enfranchise', 'Rim enfranchisement'], ['assembly', 'sa_rimaffairs.assembly', 'The Rim Assembly'],
+    ['abolition', 'sa_rimaffairs.abolition', 'Abolition'],
+    ['sunset', 'sa_constitution.sunset', 'Sunset clauses'], ['powers_review', 'sa_constitution.powers_review', 'The Powers Review Act'],
+    ['terms', 'sa_constitution.terms', 'Term limits entrenched'], ['vonc', 'sa_constitution.vonc', 'A constructive vote of no confidence'], ['speaker', 'sa_constitution.speaker', 'An independent Speaker'],
+    ['independence', 'sa_jedi_affairs.independence', 'The Jedi Independence Amendment'], ['service', 'sa_jedi_affairs.service', 'The Jedi Service Act'], ['compact', 'sa_jedi_affairs.compact', 'A Senate–Jedi Compact']
+  ];
+  // Which steps can be decreed now: the card option's own view-if and choose-if must pass.
+  SW.decreeScan = function (Q, engine) {
+    var any = 0;
+    for (var i = 0; i < SW.DECREE_STEPS.length; i++) {
+      var S = SW.DECREE_STEPS[i], sc = engine && engine.game && engine.game.scenes[S[1]], ok = 0;
+      if (Q.chan_can_decree && sc) {
+        try {
+          ok = (!sc.viewIf || sc.viewIf.call(engine, engine.state, Q)) && (!sc.chooseIf || sc.chooseIf.call(engine, engine.state, Q)) ? 1 : 0;
+        } catch (e) { ok = 0; }
+      }
+      Q['dok_' + S[0]] = ok; any += ok;
+    }
+    Q.dok_any = any ? 1 : 0;
+    return any;
+  };
+  SW.decreeBegin = function (Q, id) {
+    var S = null;
+    for (var i = 0; i < SW.DECREE_STEPS.length; i++) if (SW.DECREE_STEPS[i][0] === id) S = SW.DECREE_STEPS[i];
+    if (!S || !Q.chan_can_decree) return 0;
+    Q.decree_mode = 1; Q.decree_step = id; Q.decree_step_name = S[2];
+    Q.decrees_used = (Q.decrees_used || 0) + 1; Q.decrees_reform = (Q.decrees_reform || 0) + 1; Q.turn_actions += 1; Q.faith -= 3; Q.decree_last = 'reform';
+    return 1;
   };
 
   // ------------------------------------------------------------------ chancellor elections
@@ -2573,7 +2870,9 @@
     var yes = 0, total = 0;
     if (rcYes === undefined) rcYes = 0.5;
     var topics = topic ? [].concat(topic) : [];
-    SW._notes = []; SW._tabled = 0; Q.vote_tabled = 0;
+    SW._notes = []; SW._tabled = 0; SW._decreed = 0; Q.vote_tabled = 0;
+    // a step enacted by our Chancellor's decree never reaches the floor
+    if (Q.decree_mode) { Q.decree_mode = 0; SW._decreed = 1; Q.last_vote = 100; return 100; }
     var live = !Q.finale && !Q.sidious_defeated;
     var reformVote = rcYes === 1 && topics.some(function (t) { return SW.REFORM_TOPICS.indexOf(t) >= 0; });
     // the Vice Chair controls the agenda: once a year he rules a Caucus reform out of order
@@ -2625,6 +2924,8 @@
       share = SW.round1(Math.max(0, share - 3));
       SW._notes.push('\u22123, lost in committee');
     }
+    var weight = live ? SW.officeWeight(Q, rcYes, topics) : 0;
+    if (weight > 0) { share = SW.round1(Math.min(100, share + weight)); SW._notes.push('+' + weight + ', the Chancellery\u2019s weight'); }
     Q.last_vote = share;
     return share;
   };
@@ -2647,6 +2948,10 @@
   // HTML banner for a Senate vote result.
   SW.voteBanner = function (label, share, threshold) {
     threshold = threshold || 50;
+    if (SW._decreed) {
+      SW._decreed = 0; SW._notes = [];
+      return '<div class="vote vote-pass">' + label + ': <b>enacted by decree</b>. The Senate is not asked.</div>';
+    }
     if (SW._tabled) {
       SW._tabled = 0;
       return '<div class="vote vote-fail">' + label + ': <b>ruled out of order</b> by the Vice Chair. The bill never reaches the floor. <i>(Mas Amedda can do this once every two years while the Chancellery controls the agenda. Senate resolve of 3 or more, or a reformed Senate Guard, stops him.)</i></div>';
@@ -4048,6 +4353,9 @@
     SW.computeSupport(Q);
     SW.recomputeGovt(Q);
     SW.syncMinisters(Q);
+    Q.decree_mode = 0;
+    SW.chancellery(Q);
+    Q.war_shadows_ready = SW.shadowsReady(Q) ? 1 : 0;
     SW.palStrings(Q);
     SW.econStrings(Q);
     SW.leaderMomentCheck(Q);
@@ -4150,6 +4458,7 @@
     SW.secession(Q);
     SW.threatsTurn(Q);
     SW.ministryTurn(Q);
+    SW.chancelleryTurn(Q);
     if (Q.months_per_turn > 0 || !Q.finale) {
       SW.computeSupport(Q);
       var rec = {t: Q.date};
@@ -4942,6 +5251,8 @@
     }
     if (Q.empire_declared && Q.civil_war_result !== 'won') return 'empire';
     if (Q.jedi_coup) return 'protectorate';
+    // our Chancellor ruled by decree and kept the office's powers: we became what we fought
+    if (!Q.hollow_crown && SW.hollowCrownDecrees(Q)) { Q.hollow_crown = 1; Q.hc_decrees = 1; }
     if (Q.hollow_crown) return 'hollow_crown';
     // a war still raging at the end decides the ending, unless Sidious has fallen and the front holds
     var score = SW.warScore(Q);

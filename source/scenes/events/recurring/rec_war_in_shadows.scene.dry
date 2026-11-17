@@ -1,0 +1,41 @@
+title: War in the Shadows
+subtitle: The Bureau of Intelligence is at war with itself.
+tags: event
+view-if: war_shadows_ready = 1 and not finale and not game_ending
+max-visits: 1
+priority: 6
+new-page: true
+face-image: img/ev_shadow.svg
+on-arrival: {! Q.war_shadows_ready = 0; Q.war_shadows_seen = 1; !}
+
+= War in the Shadows
+
+Our Chancellor has the Bureau of Intelligence, and the Bureau is not what it seemed.
+
+An old analyst asks to see the Chancellor alone. The Bureau, she says, is split. Most of its agents are loyal to the Republic. But for years a second network has grown inside it, answering to someone else: files have vanished from sealed archives, agents who asked the wrong questions were posted to the Rim or not seen again, and the network's reports go somewhere the analyst cannot follow. She does not know who its master is. She knows only that the network has someone in the Chancellor's own outer office.
+
+The loyal agents are fighting back, quietly and badly outnumbered in the places that matter. They want to know whose side our Chancellor is on.
+
+- @purge: Purge the Bureau.
+- @back: Back the loyal agents.
+- @leave: Leave it be.
+
+@purge
+subtitle: −1 political capital and −0.5 evidence; the Senate's bureaucrats are angered. The hidden network loses its reach at once.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! Q.capital -= 1; Q.evidence = Math.max(0, Q.evidence - 0.5); Q.bureau_relation -= 10; Q.bureau_moles = 0; Q.war_shadows_choice = 'purge'; !}
+
+Our Chancellor orders a purge. Every agent with an unexplained posting, a missing report or a friend in the wrong office is suspended pending review. Good agents go with the bad, and years of files are sealed while the reviews grind on. But the outer office is cleared, and whatever the hidden network was, it is cut off.
+
+@back
+subtitle: +0.3 evidence. The loyal agents win, in time; until then the network still reports to its master.
+on-arrival: {! Q.evidence += 0.3; Q.bureau_moles_until = Q.time + 6; Q.war_shadows_choice = 'back'; !}
+
+Our Chancellor gives the loyal agents what they ask for: authority, a secure channel, and a promise. They will not win quickly. For a season or two the network keeps its ears in the Chancellery. But one by one its agents are found out.
+
+@leave
+subtitle: Nothing is lost now. The Bureau keeps its secrets, all of them.
+on-arrival: {! Q.war_shadows_choice = 'leave'; !}
+
+Our Chancellor thanks the analyst and does nothing. A war between spies is not a war the Caucus came to power to fight. The analyst leaves without a word. Somewhere, someone learns that she came.

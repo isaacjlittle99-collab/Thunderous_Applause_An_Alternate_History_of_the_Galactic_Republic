@@ -104,6 +104,10 @@ function smartWeight(id, Q) {
     [/^ca_contributions\.guilds$/, 0.4], [/^ca_contributions\.break$/, (Q.guild_hold || 0) > 0 ? 5 : 0], [/\.el_chest$/, 0.3],
     // the Hutts: deal only when the war is being lost
     [/^rec_hutt_deal\.deal$/, (Q.war_ratio || 2) < 0.6 ? 4 : 0.5], [/^rec_hutt_deal\.refuse$/, (Q.war_ratio || 2) < 0.6 ? 1 : 4],
+    // the Chancellery: decree sometimes, hand powers back sometimes
+    [/^chancellery\.reform$/, 6], [/^chancellery\.dr_/, 5], [/^chancellery\.d_/, 2], [/^chancellery\.rv_/, 1],
+    [/^chancellery\.giveback$/, 3], [/^chancellery\.gb_/, 1], [/^chancellery\.go_back_page$/, 0.2],
+    [/^rec_war_in_shadows\.(purge|back|leave)$/, 2],
     // never waste a foreseen scheme or a warning
     [/counter_adv$/, Q.advisor_action_timer <= 0 ? 9 : 0], [/counter$/, Q.capital >= 2 ? 8 : 3],
     [/tame$/, 8], [/\.rally$/, Q.capital >= 2 ? 7 : 2], [/\.sunset$/, 9], [/\.purge$/, 7], [/reassure$/, 5],
@@ -290,6 +294,7 @@ const PREMISE_HITS = {};
 const STEP_SEEN = {};
 const STEP_RE = /\.(bureau_reform|civil_service|amedda|ethics|integrity|hhc_investigate|syndicates|relief_act|enfranchise|assembly|slavery_report|abolition|enforce|sentience|sunset|powers_review|oversight|command|patrols|pirate_campaign|officers|reform|attachment|new_order|judicials|navy|train|exercise|break|guilds|el_chest)$/;
 let lastGovt = [];
+const DECREES_TAKEN = {};
 function checkPremises(id, Q, game, out) {
   const g = (Q.govt_blocs || []).slice();
   const added = g.filter(b => lastGovt.indexOf(b) < 0);
@@ -315,6 +320,15 @@ function checkPremises(id, Q, game, out) {
       if (m) seen[m] = 1;
       if (b === 'rc' && Q['ministry_act_' + c] && Q['ministry_act_by_' + c] === 'rc') out['a ministry act by a committee the Caucus holds'] = (out['a ministry act by a committee the Caucus holds'] || 0) + 1;
     }
+  }
+  // the Chancellery: a checked power is never held, and the count is the powers held
+  if (id === 'post_event' && SW.CHANCELLERY_POWERS) {
+    let held = 0;
+    for (const P of SW.CHANCELLERY_POWERS) {
+      if (Q['chp_' + P.id] && Q['chp_' + P.id + '_state'] === 'held') out['a checked power still held'] = (out['a checked power still held'] || 0) + 1;
+      if (Q['chp_' + P.id + '_state'] === 'held') held++;
+    }
+    if (held !== Q.chan_powers) out['the power count is wrong'] = (out['the power count is wrong'] || 0) + 1;
   }
   // the turn processor has just run every-visit: with nothing to hold him, Anakin is never below the rising line
   if (id === 'post_event' && Q.anakin_found && !Q.anakin_fallen && Q.anakin_fall < SW.anakinFloor(Q) - 1e-6) out['Anakin below the line with nothing to hold him'] = (out['Anakin below the line with nothing to hold him'] || 0) + 1;
@@ -359,7 +373,8 @@ function playOne(gameIndex) {
           const hand = eng.state.currentHands[eng.state.sceneId] || [];
           const decks = (eng.getCurrentChoices() || []).filter(c => game.scenes[c.id].isDeck && c.canChoose);
           const pinned = (eng.getCurrentChoices() || []).filter(c => game.scenes[c.id].isPinnedCard);
-          const usablePinned = pinned.filter(c => (c.id.indexOf('shuffle') >= 0) ? Math.random() < (POLICY === 'smart' && (Q.n_advisors || 0) < 3 ? 0.6 : 0.15) : Q.advisor_action_timer <= 0);
+          const usablePinned = pinned.filter(c => c.id === 'chancellery' ? (Q.rc_chancellor && Q.chan_powers > 0 && Math.random() < (POLICY === 'smart' ? 0.25 : 0.15)) :
+            ((c.id.indexOf('shuffle') >= 0) ? Math.random() < (POLICY === 'smart' && (Q.n_advisors || 0) < 3 ? 0.6 : 0.15) : Q.advisor_action_timer <= 0));
           if (usablePinned.length && Math.random() < (POLICY === 'passive' ? 0 : (POLICY === 'smart' ? 0.8 : 0.35))) { eng.playPinnedCard(pick(usablePinned, c => c.id).id); continue; }
           if (hand.length < sc.maxCards && decks.length && (hand.length === 0 || Math.random() < 0.6)) {
             const d = pick(decks, c => c.id);
@@ -384,6 +399,12 @@ function playOne(gameIndex) {
         let pool = choices.filter(x => x.c.id !== 'easy_discard' && x.c.id !== 'go_back');
         if (!pool.length) pool = choices;
         const ch = pick(pool, x => x.c.id);
+        {
+          const m = /^chancellery\.(d_|dr_|rv_)(\w+)$/.exec(ch.c.id);
+          if (m && !Q.chan_can_decree) PREMISE_HITS['a decree without emergency decrees'] = (PREMISE_HITS['a decree without emergency decrees'] || 0) + 1;
+          if (m && m[1] === 'dr_' && Q['dok_' + m[2]] !== 1) PREMISE_HITS['a reform decreed when its step is not open'] = (PREMISE_HITS['a reform decreed when its step is not open'] || 0) + 1;
+          if (m) DECREES_TAKEN[m[1]] = (DECREES_TAKEN[m[1]] || 0) + 1;
+        }
         if (process.env.STEPS) { const m = STEP_RE.exec(ch.c.id); if (m) STEP_SEEN[m[0].replace(/^\./, '')].took++; }
         eng.choose(ch.i);
       }
@@ -533,6 +554,7 @@ function playOne(gameIndex) {
   origLog('stuck', JSON.stringify(stucks));
   origLog('NaN qualities', JSON.stringify(nanKeys));
   origLog('premise violations', JSON.stringify(PREMISE_HITS));
+  origLog('audit: decrees taken by our Chancellors', JSON.stringify(DECREES_TAKEN));
   origLog('stats', JSON.stringify(Object.assign(stats, {turns: (stats.turns / GAMES).toFixed(1), reforms: (stats.reforms / GAMES).toFixed(2)})));
   const errCount = {};
   for (const e of errors) { const k = e.slice(0, 160); errCount[k] = (errCount[k] || 0) + 1; }

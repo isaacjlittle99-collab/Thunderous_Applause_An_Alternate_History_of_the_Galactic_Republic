@@ -1,0 +1,14 @@
+title: By Decree
+subtitle: The Chancellery acts without the Senate.
+tags: event
+view-if: by_decree_ready = 1 and not finale and not game_ending
+priority: 2
+new-page: true
+face-image: img/ev_chancellery.svg
+on-arrival: by_decree_ready = 0
+
+= [+ by_decree_heading +]
+
+[+ by_decree_text +]
+
+Chancellor [+ chancellor +] rules by decree now. The Senate meets, debates, and is told.

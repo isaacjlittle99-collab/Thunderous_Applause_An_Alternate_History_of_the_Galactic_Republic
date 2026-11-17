@@ -1,0 +1,15 @@
+title: The Office of Public Information
+subtitle: The Chancellery takes the HoloNet in hand.
+tags: event
+view-if: public_info_ready = 1 and not finale and not game_ending
+max-visits: 1
+priority: 3
+new-page: true
+face-image: img/ev_holonet.svg
+on-arrival: {! Q.public_info_ready = 0; Q.public_info_seen = 1; Q.chan_holonet = 1; Q.holonet_free = 0; Q.faith -= 1; SW.chancellery(Q); !}
+
+= The Office of Public Information
+
+Under the emergency powers, the Chancellery founds an Office of Public Information to "counter enemy propaganda". Within a season it licenses every HoloNet channel in the Core. Channels that keep their licences carry the Chancellery's briefings word for word. The others go dark.
+
+[? if rc_chancellor : The order bears our Chancellor's seal. The Caucus's own newsfeeds have never been so well received, and the Caucus's oldest friends in the press have never been so quiet. ?][? if not rc_chancellor : The Caucus's statements now reach the galaxy only where the Office allows them to. ?] No free press stands in the way: the HoloNet's independent foundations were never built.

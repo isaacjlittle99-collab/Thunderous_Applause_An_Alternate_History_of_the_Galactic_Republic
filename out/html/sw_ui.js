@@ -353,7 +353,7 @@
   }
 
   function chancelleryTab(Q) {
-    var h = head('The Chancellery');
+    var h = head('The office');
     h += '<div class="figure"><div class="figure-name" style="color:' + SW.textColor(Q.chancellor_bloc) + '">' + Q.chancellor_title + ' ' + Q.chancellor + '</div>';
     h += '<div class="figure-sub">' + SW.name(Q, Q.chancellor_bloc) + '</div></div>';
     h += row('Vice Chair', Q.vice_chair);
