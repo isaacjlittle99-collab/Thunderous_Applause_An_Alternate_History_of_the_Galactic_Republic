@@ -43,6 +43,16 @@ artwork, music or footage is included; all images are original abstract art.*
   coalition partners who name their price, world elections from Naboo to Corellia, secession referendums,
   rallies that need protecting, recalls, and confidence votes. A map of the galaxy in the Polls tab (and at every Senate
   session and Chancellor election) shades each region by its leading bloc; hover over a region for its delegations.
+- **The Separatists are a real threat.** Their cause grows every year unless the Caucus addresses the Rim; the Rimward
+  Coalition, the Rim Freedom Caucus and our own Rimward wing can go over to them, and a weak Republic loses named loyalist
+  worlds. They can win, even after Sidious falls, or with Sidious at their head.
+- **Shifting blocs.** The Core Moderates and the Independents lose about half their support over the game, to the Caucus or
+  to Palpatine. Palpatine subverts the Security Bloc, and under Tarkin it can fold into his bloc. Defections are stopped only
+  through ordinary politics: relations, reforms and leadership challenges.
+- **Reforms in steps.** Nine reform tracks (the bureaucracy, the Rim, corruption, emergency powers, the military, the Jedi,
+  slavery, the syndicates and High Human Culture) each build to a lasting change: a Civil Service Act and the arrest of
+  Mas Amedda, a Rim Assembly, a New Jedi Order, the freeing of Shmi Skywalker, the breaking of Black Sun.
+- **Guild money has strings.** Money from the guilds buys their veto over the reforms that would hurt them, until we break with them.
 - **The threat** is mostly hidden. Corruption, fear and emergency powers feed the Sith Lord's plan.
   Evidence, Senate resolve and structural safeguards work against it.
 
@@ -60,7 +70,7 @@ artwork, music or footage is included; all images are original abstract art.*
 
 Each route has its own risks.
 
-### Ten endings
+### Thirteen endings
 
 - **The Republic Reborn**, with three variants.
 - **The Republic Endures**
@@ -70,6 +80,9 @@ Each route has its own risks.
 - **The Admirals' Republic**
 - **The Hollow Crown**
 - **Confederacy Triumphant**
+- **The Sith Confederacy**
+- **The Fall of the Republic**
+- **The Endless War**
 - **A Republic Dissolved**
 - **The Galactic Empire**
 

@@ -1,0 +1,15 @@
+title: A Mother's Freedom
+subtitle: Shmi Skywalker is free.
+tags: event
+view-if: shmi_freed_now = 1 and not game_ending
+priority: 5
+new-page: true
+face-image: img/ev_rim.svg
+on-arrival: shmi_freed_now = 0; anakin_fall -= 2
+achievement: shmi_free
+
+= A Mother's Freedom
+
+Among the thousands freed when the abolition orders reach Tatooine is a woman named Shmi Skywalker, a moisture farmer's wife who was once a slave in Mos Espa. Judicial officers bring her to Coruscant.
+
+When the Temple tells young Anakin, he goes to meet her ship alone. For an afternoon, the Chosen One is only a son.

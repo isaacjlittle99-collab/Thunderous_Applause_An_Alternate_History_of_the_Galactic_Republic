@@ -1,0 +1,11 @@
+title: The Rim Freedom Caucus Decides
+tags: event
+view-if: threat_due_ready = 1 and threat_due_id = "rfc" and not game_ending
+priority: 4
+new-page: true
+face-image: img/ev_separatist.svg
+on-arrival: {! SW.threatResolve(Q); !}
+
+= The Rim Freedom Caucus Decides
+
+[? if threat_how = "leader" : [+ threat_leader +] has taken the party's leadership from [+ threat_old_leader +], and the talks with Raxus end. ?][? if threat_how = "reform" : The Senate's new law for the Rim gives the party's worlds a reason to stay. The talks with Raxus end. ?][? if threat_how = "relations" : Old friendships hold. The party's senators will not walk away from the Caucus that raised them. ?][? if threat_how = "cooled" : The moment passes. The party's senators stay in their seats, for now. ?][? if not threat_averted : The [+ rfc_name +] goes over to the Separatists. [? if threat_left_senate : Its delegations leave the Senate with their worlds. ?][? if not threat_left_senate : Its senators join the Separatist Caucus. ?] The Rim has fewer friends in the Republic tonight. ?]

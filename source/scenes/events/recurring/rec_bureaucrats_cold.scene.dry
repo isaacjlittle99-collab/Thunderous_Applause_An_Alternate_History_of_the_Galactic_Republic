@@ -1,7 +1,7 @@
 title: Lost in Committee
 subtitle: The bureaucrats are slow-walking our bills.
 tags: event
-view-if: bureau_relation < 25 and (rc_in_govt or rc_chairs > 0) and not bureau_warn_cold and not finale and not game_ending
+view-if: bureau_relation < 25 and (rc_in_govt or rc_chairs > 0) and not bureau_warn_cold and not finale and not game_ending and not bureau_reformed
 priority: 2
 new-page: true
 face-image: img/ev_chancellery.svg

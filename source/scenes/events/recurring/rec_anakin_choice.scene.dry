@@ -1,0 +1,14 @@
+title: Anakin's Choice
+subtitle: A young Jedi comes to a decision.
+tags: event
+view-if: anakin_found and not anakin_fallen and anakin_fall <= 2 and jedi_reformed and not anakin_light and not anakin_choice_seen and date >= 108 and not finale and not game_ending and not sidious_defeated
+priority: 3
+new-page: true
+face-image: img/ev_jedi.svg
+on-arrival: anakin_choice_seen = 1; anakin_light = 1; anakin_fall = 0; jedi_relation += 4; pal_relation -= 3
+
+= Anakin's Choice
+
+Anakin Skywalker asks to address the Jedi Council. He tells them everything: his marriage, his nightmares, the Chancellor's long and flattering friendship, and the things the Chancellor has begun to say to him about power. Then he asks the Council what it wants him to be.
+
+The Masters are silent for a long time. Then Obi-Wan Kenobi stands beside his old apprentice. Whatever the Order becomes now, Anakin will help to make it, and he has chosen the light to do it.

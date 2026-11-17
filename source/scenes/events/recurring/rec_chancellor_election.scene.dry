@@ -125,6 +125,7 @@ The Caucus is backing **[+ el_backing_name +]**. Before the Senate votes, we can
 - @el_court_rim: Court the Rimward Coalition.
 - @el_court_sec: Court the Security Bloc.
 - @el_court_guild: Court the Commerce Guilds.
+- @el_chest: Accept the guilds' war chest.
 - @el_pledge: Make a policy pledge.
 - @el_expose: Expose the money behind Palpatine.
 - @el_attack_pal: Attack Palpatine's record.
@@ -194,7 +195,7 @@ The Caucus lays out the money trail: shell companies on Muunilinst, donations ro
 - @el_campaign: Continue the campaign.
 
 @el_court_mod
-view-if: el_backing != "mod" and not el_courted_mod
+view-if: el_backing != "mod" and not el_courted_mod and parties_has_mod
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 subtitle: −1 political capital.
@@ -202,7 +203,7 @@ on-arrival: {! Q.capital -= 1; Q.el_courted_mod = 1; Q['bonus_mod_for_' + Q.el_b
 go-to: el_campaign
 
 @el_court_ind
-view-if: not el_courted_ind
+view-if: not el_courted_ind and parties_has_ind
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 subtitle: −1 political capital.
@@ -210,7 +211,7 @@ on-arrival: {! Q.capital -= 1; Q.el_courted_ind = 1; Q['bonus_ind_for_' + Q.el_b
 go-to: el_campaign
 
 @el_court_rim
-view-if: el_backing != "rim" and not el_courted_rim
+view-if: el_backing != "rim" and not el_courted_rim and parties_has_rim
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 subtitle: −1 political capital. Promises to the Rim make the Institutionalists nervous.
@@ -218,7 +219,7 @@ on-arrival: {! Q.capital -= 1; Q.el_courted_rim = 1; Q.inst_dissent += 2; Q['bon
 go-to: el_campaign
 
 @el_court_sec
-view-if: el_backing != "sec" and not el_courted_sec
+view-if: el_backing != "sec" and not el_courted_sec and parties_has_sec
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 subtitle: −1 political capital. The Pacifists will grumble.
@@ -226,11 +227,17 @@ on-arrival: {! Q.capital -= 1; Q.el_courted_sec = 1; Q.pacifist_dissent += 3; Q[
 go-to: el_campaign
 
 @el_court_guild
-view-if: not el_courted_guild
+view-if: not el_courted_guild and parties_has_guild
 choose-if: capital >= 2
 unavailable-subtitle: The guilds are expensive. We need 2 political capital.
 subtitle: −2 political capital. The Rimward wing will be furious.
 on-arrival: {! Q.capital -= 2; Q.el_courted_guild = 1; Q.rimward_dissent += 8; Q.guild_relation += 5; Q['bonus_guild_for_' + Q.el_backing] = (Q['bonus_guild_for_' + Q.el_backing] || 0) + 16 + Q.guild_relation / 10; !}
+go-to: el_campaign
+
+@el_chest
+view-if: el_chest_offer and not el_chest_taken and not integrity_office
+subtitle: +1 political capital and the guilds' votes. The guilds will expect something in return.
+on-arrival: {! Q.el_chest_taken = 1; Q.capital += 1; Q.corruption += 1; Q.guild_hold += 1; Q.guild_money += 1; Q['bonus_guild_for_' + Q.el_backing] = (Q['bonus_guild_for_' + Q.el_backing] || 0) + 8; Q['bonus_ind_for_' + Q.el_backing] = (Q['bonus_ind_for_' + Q.el_backing] || 0) + 3; Q.rimward_dissent += 4; !}
 go-to: el_campaign
 
 @el_attack_pal

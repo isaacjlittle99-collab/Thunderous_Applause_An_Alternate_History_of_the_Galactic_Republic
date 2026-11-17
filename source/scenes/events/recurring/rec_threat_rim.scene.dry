@@ -1,0 +1,12 @@
+title: Envoys from Raxus
+subtitle: The Rimward Coalition is talking to the Separatists.
+tags: event
+view-if: threat_warn_ready = 1 and threat_warn_id = "rim" and not finale and not game_ending
+priority: 4
+new-page: true
+face-image: img/ev_separatist.svg
+on-arrival: {! SW.threatBegin(Q); !}
+
+= Envoys from Raxus
+
+[+ threat_leader +] of the Rimward Coalition has been meeting envoys from Raxus. The Coalition's worlds have waited generations for the Core to listen to them, and Count Dooku is listening now. In the corridors, Coalition senators talk openly of crossing the floor to the Separatist Caucus.

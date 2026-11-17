@@ -1,0 +1,12 @@
+title: Tarkin's Terms
+subtitle: The Security Bloc is drifting into the Chancellery's orbit.
+tags: event
+view-if: threat_warn_ready = 1 and threat_warn_id = "sec" and not finale and not game_ending
+priority: 4
+new-page: true
+face-image: img/ev_chancellery.svg
+on-arrival: {! SW.threatBegin(Q); !}
+
+= Tarkin's Terms
+
+Wilhuff Tarkin has been dining at the Chancellery. The Security Bloc's hawks, who have little use for the Caucus, are being offered something better: a place at the right hand of [+ pal_name +], and a war run by people who mean to win it. If nothing changes, the Security Bloc will fold into Palpatine's following.

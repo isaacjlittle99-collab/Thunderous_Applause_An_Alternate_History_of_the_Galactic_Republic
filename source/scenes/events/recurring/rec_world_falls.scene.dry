@@ -1,0 +1,14 @@
+title: A World Falls
+subtitle: The Separatists break through.
+tags: event
+view-if: world_fall_ready = 1 and war and not game_ending
+priority: 6
+new-page: true
+face-image: img/ev_war.svg
+on-arrival: {! SW.worldFalls(Q); !}
+
+= [+ world_fall_name +] Falls
+
+The droid armies have broken through on [+ world_fall_front_name +]. [+ world_fall_name +], loyal to the Republic for a thousand years, is under Separatist occupation, and its senators have fled to Coruscant. The HoloNet shows the refugee ships, and asks where the Jedi were.
+
+[? if coruscant_falls : With Alderaan lost, nothing stands between the Confederacy's fleets and Coruscant. ?]

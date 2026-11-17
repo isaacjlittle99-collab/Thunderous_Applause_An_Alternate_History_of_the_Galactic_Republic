@@ -1,0 +1,12 @@
+title: Corvane's Envoys
+subtitle: Our own Rimward wing is talking to the Separatists.
+tags: event
+view-if: threat_warn_ready = 1 and threat_warn_id = "rimward" and not finale and not game_ending
+priority: 4
+new-page: true
+face-image: img/ev_separatist.svg
+on-arrival: {! SW.threatBegin(Q); !}
+
+= Corvane's Envoys
+
+[+ threat_leader +], who leads our Rimward wing, has been receiving Count Dooku's emissaries. They do not come to her with threats. They come with a question: what has the Caucus ever delivered for the Rim? Some of our own senators no longer have an answer.

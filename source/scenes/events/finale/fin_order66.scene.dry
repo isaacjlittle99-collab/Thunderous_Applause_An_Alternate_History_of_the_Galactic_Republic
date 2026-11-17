@@ -9,7 +9,7 @@ face-image: img/ev_clones.svg
 on-arrival: {!
 Q.order66_seen = 1;
 if (Q.clones >= 3 && !Q.chips_removed) {
-    var survive = Q.army_oversight ? 0.25 : 0;
+    var survive = (Q.army_oversight ? 0.25 : 0) + (Q.senate_command ? 0.25 : 0) + (Q.new_jedi_order ? 0.2 : 0);
     Q.order66 = 1; Q.jedi_strength = 1 + survive * 6 + Q.clone_trust * 0.2; Q.jedi_standing -= 30;
 } else {
     Q.order66_failed = 1;

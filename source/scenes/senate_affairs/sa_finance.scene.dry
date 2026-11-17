@@ -24,6 +24,8 @@ The Caucus chairs the Finance & Commerce Committee. The treasury holds [+ treasu
 @regulate
 view-if: corruption > 25 and guild_relation > 5
 subtitle: Less corruption; the guilds retaliate.
+choose-if: guild_hold = 0
+unavailable-subtitle: The guilds whose money we took will not allow it.
 on-arrival: {! Q.guild_relation -= 8; Q.corruption -= 1.5; Q.guild_embargo += 1; Q.corporate_sep += 2; Q.rim_hardship -= 1; Q.guild_regulations += 1; SW.guildPatience(Q, -8, 'guild regulation'); !}
 
 New disclosure rules for guild lobbying pass in committee. The guilds call it persecution.
@@ -31,8 +33,8 @@ New disclosure rules for guild lobbying pass in committee. The guilds call it pe
 @breakup
 view-if: not tf_broken_up and (gunray_convicted or evidence >= 4 or naboo_free)
 subtitle: −2 political capital. A historic blow to the guilds, and a provocation to the corporate worlds.
-choose-if: capital >= 2 and rc_in_govt
-unavailable-subtitle: Needs 2 political capital and a seat in government.
+choose-if: capital >= 2 and rc_in_govt and guild_hold = 0
+unavailable-subtitle: [? if guild_hold > 0 : The guilds whose money we took will not allow it. ?][? if guild_hold = 0 : Needs 2 political capital and a seat in government. ?]
 on-arrival: {!
 Q.capital -= 2;
 var st = SW.stance(Q, {mod: 0.55, guild: 0, rim: 0.85, sec: 0.45, ind: 0.55, pal: 0.35, cis: 0}, true);
@@ -56,8 +58,8 @@ The audit of the Banking Clan's Coruscant branch turns up loans to the Trade Fed
 @independent
 view-if: not banking_independent and date >= 120
 subtitle: Blocks the Chancellery from seizing control of the banks in wartime.
-choose-if: capital >= 1
-unavailable-subtitle: Not enough political capital.
+choose-if: capital >= 1 and guild_hold = 0
+unavailable-subtitle: [? if guild_hold > 0 : The guilds whose money we took will not allow it. ?][? if guild_hold = 0 : Not enough political capital. ?]
 on-arrival: {!
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.6, guild: 0.75, rim: 0.5, sec: 0.35, ind: 0.55, pal: 0.15, cis: 0.6}, true);

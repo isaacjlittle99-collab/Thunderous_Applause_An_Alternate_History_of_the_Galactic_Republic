@@ -111,7 +111,17 @@
       else if (led) h += '<div class="sb-note">' + led + '</div>';
     }
     if (Q.hawks_split) h += '<p class="sb-note">The Hawks have broken away to the Security Bloc.</p>';
-    if (Q.rimward_split) h += '<p class="sb-note">The Rimward wing has split off as the Rim Freedom Caucus.</p>';
+    if (Q.rimward_defected) h += '<p class="sb-note warn">Our Rimward wing has gone over to the Separatists.</p>';
+    else if (Q.rimward_split) h += '<p class="sb-note">The Rimward wing has split off' + (Q.rfc_kind === 'rimward' ? ' as the ' + (Q.rfc_name || 'Rim Freedom Caucus') : ' to the Rimward Coalition') + '.</p>';
+    if (SW.TRACKS) {
+      h += head('Reforms');
+      for (var tk in SW.TRACKS) {
+        var T = SW.TRACKS[tk], lv = T.level(Q);
+        var v = lv > 0 ? '<span class="good">' + T.steps[lv - 1] + '</span>' : '<span class="sb-dim">not begun</span>';
+        h += row(T.name, v + ' · ' + lv + '/' + T.steps.length);
+      }
+      if (Q.hutt_deal) h += '<p class="sb-note">The Hutt treaty puts the syndicates beyond the law.</p>';
+    }
     return h;
   }
 
@@ -125,6 +135,9 @@
       h += row(bloc(Q, b) + mark, (Q[b + '_r'] || 0).toFixed(1) + '%');
     }
     h += '<p class="sb-note">★ in the governing coalition (' + Q.govt_seats + '%).</p>';
+    if (Q.merged_sec === 'pal') h += '<p class="sb-note warn">The Security Bloc has folded into the ' + SW.name(Q, 'pal') + '.</p>';
+    if (Q.merged_rim === 'cis') h += '<p class="sb-note warn">The Rimward Coalition has gone over to the Separatists.</p>';
+    if (Q.merged_rfc === 'cis') h += '<p class="sb-note warn">The ' + (Q.rfc_name || 'breakaway party') + ' has gone over to the Separatists.</p>';
     h += head('Our relations');
     for (var k = 0; k < Q.parties.length; k++) {
       var bb = Q.parties[k];
@@ -219,6 +232,14 @@
       h += row('Strategy set by', SW.warCommand && SW.warCommand(Q) ? '<span class="good">the Caucus</span>' : 'the Chancellor\'s War Council');
       h += row('War-weariness', SW.label('level', Q.war_weariness)) + bar(Q.war_weariness, 100, 'bad-fill');
     }
+    if (Q.war) {
+      var ws = Q.war_state || (SW.warStateWord ? SW.warStateWord(Q) : '');
+      if (ws) h += row('How the war stands', ws === 'won' ? '<span class="good">being won</span>' : (ws === 'lost' ? '<b class="bad">being lost</b>' : '<span class="warn">in the balance</span>'));
+      h += row('Republic against Confederacy', SW.label('ratio', Q.war_ratio));
+      if (Q.worlds_lost_list) h += row('Worlds held by the Separatists', '<span class="bad">' + Q.worlds_lost_list + '</span>');
+    }
+    if (Q.date >= 24 && !Q.war_won && !Q.federal_compact) h += row('The Separatist cause', Q.sep_growing ? '<span class="warn">gathering strength</span>' : '<span class="good">held back</span>');
+    if (Q.sidious_fled) h += row('The Confederacy\'s master', '<b class="bad">Darth Sidious</b>');
     h += row('Outer Rim separatism', SW.label('sep', Q.outer_sep));
     h += row('Mid Rim separatism', SW.label('sep', Q.midrim_sep));
     h += row('Corporate separatism', SW.label('sep', Q.corporate_sep));
@@ -245,6 +266,7 @@
     h += head('Who pays, and who pays back');
     var gp = Q.guild_patience === undefined ? 60 : Q.guild_patience;
     h += row('The guilds\' patience', SW.guildPatienceLabel(gp)) + bar(gp, 100, gp < 35 ? 'bad-fill' : 'good-fill');
+    if (Q.guild_hold > 0) h += row('Debts to guild donors', '<span class="warn">' + Q.guild_hold + '</span>');
     if (gp < 60 && Q.guild_patience_why) h += '<div class="sb-note' + (gp < 35 ? ' bad' : ' warn') + '">Angered by ' + Q.guild_patience_why + '. ' + SW.guildNextStep(Q) + (Q.guild_lobby ? ' Guild lobbyists are working against our bills.' : '') + '</div>';
     var pg = Q.patrons_goodwill === undefined ? 60 : Q.patrons_goodwill;
     h += row('Our Core patrons', SW.patronsLabel(pg) + (Q.patron_adj ? ' · ' + (Q.patron_adj > 0 ? '+' : '') + Q.patron_adj + ' capital a year' : ''));
@@ -344,6 +366,8 @@
     ['ending_confederacy', 'Confederacy Triumphant', 'Lose the Clone Wars.'],
     ['ending_endless_war', 'The Endless War', 'End the game with the Clone Wars still raging and neither side able to win.'],
     ['ending_dissolved', 'A Republic Dissolved', 'Let the Separatists go in peace.'],
+    ['ending_sith_confederacy', 'The Sith Confederacy', 'Let the Sith Lord escape to a Confederacy strong enough to win.'],
+    ['ending_republic_falls', 'The Fall of the Republic', 'Lose the Republic to the Separatist armies.'],
     ['ending_empire', 'The Galactic Empire', 'So this is how liberty dies.'],
     ['caucus_chancellor', 'A Reformer in the Chair', 'Elect a Caucus Supreme Chancellor.'],
     ['term_limit_held', 'Two Terms Means Two Terms', 'Stop the Chancellor\'s term from being extended.'],
@@ -355,7 +379,12 @@
     ['gunray_convicted', 'Justice for Naboo', 'Convict Nute Gunray.'],
     ['trust_buster', 'Trust Buster', 'Break up the Trade Federation.'],
     ['abolition', 'No More Chains', 'Abolish slavery in Hutt space.'],
-    ['shmi_free', 'A Mother\'s Freedom', 'Free Shmi Skywalker.'],
+    ['shmi_free', 'A Mother\'s Freedom', 'Free Shmi Skywalker by enforcing abolition.'],
+    ['assembly', 'A Parliament for the Rim', 'Found the Rim Assembly.'],
+    ['amedda', 'Out of Order', 'Arrest Vice Chair Mas Amedda.'],
+    ['syndicates', 'The End of an Age', 'Break the syndicates.'],
+    ['hhc', 'All Sentient Beings', 'Discredit High Human Culture.'],
+    ['new_jedi_order', 'A New Jedi Order', 'Help the Jedi remake their Order around Anakin Skywalker.'],
     ['enfranchised', 'A Voice for the Rim', 'Give the Outer Rim full representation.'],
     ['defence_pact', 'Free Worlds', 'Found the Free Worlds Defence Pact.'],
     ['citizens', 'Brothers and Citizens', 'Grant citizenship to the clone troopers.'],
