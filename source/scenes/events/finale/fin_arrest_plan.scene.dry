@@ -13,7 +13,6 @@ on-arrival: arrest_plan_seen = 1
 Master Windu and three Jedi Masters intend to arrest the Chancellor today. Windu wants the Senate with him. [? if warrant : The sealed warrant prepared by the Judiciary Committee is ready. ?][? if not warrant : There is no warrant. The Jedi would be acting on their own authority. ?]
 
 - @warrant: Arrest him with the Senate's warrant.
-- @emergency_warrant: Rush an emergency warrant through the Supreme Court.
 - @expose: Expose him before the full Senate first.
 - @jedi: Let the Jedi act alone, now, before he can react.
 
@@ -24,14 +23,6 @@ on-arrival: arrest_mode = "warrant"; arrest_planned = 1
 
 The Jedi go to the Chancellor's office with a warrant signed by the Supreme Court and the Senate.
 
-@emergency_warrant
-view-if: not warrant
-subtitle: −2 political capital. Needs compelling evidence; costs precious time.
-choose-if: capital >= 2 and evidence >= 7
-unavailable-subtitle: Needs 2 political capital and strong evidence (7+).
-on-arrival: capital -= 2; warrant = 1; arrest_mode = "warrant"; arrest_planned = 1; arrest_delay = 1
-
-Three justices are woken in the night. By morning, the Jedi have a warrant, and the Chancellor may have had time to prepare.
 
 @expose
 view-if: evidence >= 10

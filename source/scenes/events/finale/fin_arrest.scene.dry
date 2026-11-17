@@ -11,7 +11,7 @@ Q.arrest_seen = 1;
 // an unprepared raid fails, as Windu's did: the arrest has to be earned
 var s = 1.5, miss = [];
 if (Q.anakin_fall <= 4) s += 3; else if (Q.anakin_fall >= 6.5) { s -= 3; miss.push('Anakin Skywalker had already fallen'); }
-if (Q.senate_guard_reformed) s += 1; else if (Q.guard_turned) s += 0.5; else miss.push('the Senate Guard still answered to the Chancellor');
+if (Q.senate_guard_reformed) s += 1; else miss.push('the Senate Guard still answered to the Chancellor');
 if (Q.warrant) s += 1; else miss.push('there was no Senate warrant');
 if (Q.judicial_forces >= 4) s += 1; else miss.push('the Judicial Forces were too weak to back the Jedi');
 if (Q.arrest_mode === 'exposed') s += 2;

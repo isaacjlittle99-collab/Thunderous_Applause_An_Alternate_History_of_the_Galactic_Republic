@@ -34,6 +34,7 @@ on-arrival: pacifist_dissent -= 8; midrim_sep -= 2; advisor_action_timer = 5
 Mothma reminds the Caucus why it exists: to keep the peace by keeping faith with every member world.
 
 @mothma_vigilance
+view-if: not rc_chancellor and not rc_in_govt
 subtitle: +0.5 Senate resolve (only credible once there are emergency powers or some evidence).
 choose-if: advisor_action_timer <= 0
 unavailable-subtitle: Our advisors have already acted recently.

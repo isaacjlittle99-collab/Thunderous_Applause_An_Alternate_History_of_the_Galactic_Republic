@@ -20,7 +20,7 @@ If the charges stick, his allies will desert him and he will have to show his ha
 subtitle: −1 political capital. [? if case_odds >= 80 : The case is conclusive. ?][? if case_odds >= 55 and case_odds < 80 : The case is strong. It will probably hold, but not certainly. ?][? if case_odds < 55 : The case is not yet strong enough; it will probably fail. ?]
 choose-if: capital >= 1
 unavailable-subtitle: Needs 1 political capital.
-on-arrival: {! Q.capital -= 1; SW.breakPledge(Q, 'no_probe', 'the Caucus laid charges before the Senate'); !}
+on-arrival: {! Q.capital -= 1; !}
 go-to: fin_charges
 
 @wait

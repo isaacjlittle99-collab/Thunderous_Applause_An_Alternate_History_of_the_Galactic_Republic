@@ -11,24 +11,24 @@ on-arrival: grand_plan += 3 if pal_chancellor; capital += 2 if rc_chancellor; fa
 
 [? if pal_chancellor : Supreme Chancellor Palpatine's first months are a triumph. He clears years of procedural backlog, pushes through modest anti-corruption measures, and speaks to the Senate with patience and humility. He appoints the Chagrian **Mas Amedda** as Vice Chair and a silent, pale aide named **Sly Moore** as his chief of staff. Requests for "administrative efficiency" quietly move dozens of committee staff into the Chancellor's office. ?][? if rc_chancellor : Chancellor [+ chancellor +]'s first months are a whirlwind. For the first time in a generation, reformers hold the Republic's highest office. The Caucus's patrons are delighted, and the old guilds are frightened. ?][? if not pal_chancellor and not rc_chancellor : Chancellor [+ chancellor +] takes office promising stability. Senator Palpatine, defeated but gracious, offers his "full cooperation" to the new administration. ?]
 
-- @cooperate: [? if pal_chancellor : Cooperate with his reforms. ?][? if not pal_chancellor : Work constructively with the new government. ?]
-- @scrutinise: [? if pal_chancellor : Scrutinise his appointments. ?][? if not pal_chancellor : Keep a close watch on Palpatine's circle. ?]
-- @agenda: Focus on our own agenda.
+- @cooperate: [? if rc_chancellor : Throw the Caucus behind our Chancellor's first reforms. ?][? if pal_chancellor and rc_in_govt : Help pass his first reforms from inside the government. ?][? if pal_chancellor and not rc_in_govt : Cooperate with his reforms. ?][? if not pal_chancellor and not rc_chancellor and rc_in_govt : Help our coalition's first reforms through the Senate. ?][? if not pal_chancellor and not rc_chancellor and not rc_in_govt : Work constructively with the new government. ?]
+- @scrutinise: [? if rc_chancellor : Use the Chancellery's files to look into Palpatine's circle. ?][? if pal_chancellor and rc_in_govt : Watch his appointments from inside the government. ?][? if pal_chancellor and not rc_in_govt : Scrutinise his appointments. ?][? if not pal_chancellor and not rc_chancellor : Keep a close watch on Palpatine's circle. ?]
+- @agenda: [? if rc_chancellor : Spend the first months on the Caucus's own agenda. ?][? if not rc_chancellor : Focus on our own agenda. ?]
 
 @cooperate
 subtitle: Good relations, and some real progress.
 on-arrival: pal_relation += 5 if pal_chancellor; corruption -= 1; faith += 1; grand_plan += 1 if pal_chancellor; mod_relation += 2
 
-[? if pal_chancellor : The Caucus helps pass the Chancellor's first reforms. They are genuinely useful. That is the clever part. ?][? if rc_chancellor : The whole Caucus throws itself behind our Chancellor's first reforms, and the Senate notices how much gets done. ?][? if not pal_chancellor and not rc_chancellor : The Caucus helps pass the new government's first reforms. They are modest, but they are real, and the Caucus shares the credit. ?]
+[? if pal_chancellor and rc_in_govt : The Caucus's ministers help steer the Chancellor's first reforms through the Senate. They are genuinely useful. That is the clever part. ?][? if pal_chancellor and not rc_in_govt : The Caucus helps pass the Chancellor's first reforms. They are genuinely useful. That is the clever part. ?][? if rc_chancellor : The whole Caucus throws itself behind our Chancellor's first reforms, and the Senate notices how much gets done. ?][? if not pal_chancellor and not rc_chancellor and rc_in_govt : The coalition's first reforms pass with the Caucus's votes and the Caucus's ministers behind them. They are modest, but they are real, and the Caucus shares the credit. ?][? if not pal_chancellor and not rc_chancellor and not rc_in_govt : The Caucus helps pass the new government's first reforms. They are modest, but they are real, and the Caucus shares the credit. ?]
 
 @scrutinise
 subtitle: A little evidence; a little friction.
 on-arrival: evidence += 0.4; pal_relation -= 5; senate_resolve += 0.2
 
-Caucus researchers start a quiet file on everyone in [+ pal_title +]'s circle. Most of them have no past to speak of, which is itself a little strange.
+[? if rc_chancellor : The Chancellery's own records give the Caucus a head start. ?][? if pal_chancellor and rc_in_govt : From inside the government, Caucus ministers see more of his appointments than anyone outside it. ?] Caucus researchers start a quiet file on everyone in [+ pal_title +]'s circle. Most of them have no past to speak of, which is itself a little strange.
 
 @agenda
 subtitle: +1 political capital.
 on-arrival: capital += 1
 
-The Caucus gets on with its own work.
+[? if rc_chancellor : The Caucus spends its first months in power on its own programme. ?][? if not rc_chancellor : The Caucus gets on with its own work. ?]

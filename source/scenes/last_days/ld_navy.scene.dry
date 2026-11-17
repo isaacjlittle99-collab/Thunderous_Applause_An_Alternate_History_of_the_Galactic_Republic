@@ -1,20 +1,20 @@
 title: Appeal to the Navy
-subtitle: Remind the Navy whom it serves.
+subtitle: Call on the officers the Caucus has stood by.
 is-card: true
 tags: last_days
 card-image: img/card_forces.svg
-view-if: finale and clones > 0 and not ld_navy_used_today
+view-if: finale and clones > 0 and (navy_vetted >= 1 or officer_corps or senate_command) and not ld_navy_used_today
 on-arrival: turn_actions += 1; ld_navy_used_today = 1; last_card_timer = ""
 new-page: true
 
 = Appeal to the Navy
 
-The Republic Navy's officers took an oath to the constitution.
+[? if navy_vetted >= 1 : The officers the Security & Defence Committee confirmed for their loyalty to the constitution still hold their commands. ?][? if officer_corps : The officers the Republic once passed over for not being human now captain its cruisers, and they know who opened the door. ?][? if senate_command : Under the Senate Command Act, the fleet's orders already run through the Senate. ?]
 
 - @do: Appeal to the Navy.
 - @easy_discard
 
 @do
-on-arrival: navy_loyalty += 10
+on-arrival: {! Q.navy_loyalty += Math.min(15, 5 * (Math.min(2, Q.navy_vetted || 0) + (Q.officer_corps ? 1 : 0) + (Q.senate_command ? 1 : 0))); !}
 
-Admirals receive personal messages from the senators of their home worlds. Some reply. Most do not. But a few cruisers change their patrol routes.
+Admirals receive personal messages from the senators who stood by them. Some reply. A few cruisers change their patrol routes.

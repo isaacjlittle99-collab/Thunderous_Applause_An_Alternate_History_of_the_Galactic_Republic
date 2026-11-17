@@ -1,5 +1,5 @@
 title: The Sunset Review
-subtitle: The Chancellor's emergency powers are up for renewal.
+subtitle: The emergency powers are up for renewal.
 tags: event
 view-if: emergency_sunset and emergency_powers >= 1 and sunset_timer <= 0 and new_session_seen != bby and not finale
 new-page: true
@@ -14,7 +14,7 @@ Q.renew_st = renew;
 
 = The Sunset Review
 
-Under the Sunset Amendment, the Chancellor's emergency powers expire unless the Senate renews them each year. The Chancellor's allies say the crisis demands it. Others say it is time to give the Senate its authority back.
+Under the Sunset Amendment, the Chancellor's emergency powers expire unless the Senate renews them each year. [? if rc_chancellor : The powers sit with our own Chancellor now. The Security Bloc says the crisis demands them; the Caucus's own reformers say it is time to give the Senate its authority back. ?][? if not rc_chancellor : The Chancellor's allies say the crisis demands it. Others say it is time to give the Senate its authority back. ?]
 
 - @lapse: Vote to let the powers lapse.
 - @renew: Vote to renew them.

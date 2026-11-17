@@ -118,7 +118,9 @@
     hhc_investigated: 'The human-first groups are investigated', hhc_discredited: 'High Human Culture is discredited',
     hhc_events: 'High Human Culture events so far', pirate_raids: 'Pirate raids so far',
     // guild money
-    guild_hold: 'Debts to the guilds (they block reforms that hurt them)', guild_breaks: 'Times the Caucus broke with the guilds'
+    guild_hold: 'Debts to the guilds (they block reforms that hurt them)', guild_breaks: 'Times the Caucus broke with the guilds',
+    // the Last Days
+    navy_vetted: 'Times the Caucus vetted Navy officers for loyalty', evidence_secured: 'Our evidence is secured for the Last Days'
   };
   ['bureau', 'rim', 'corruption', 'powers', 'military', 'jedi', 'slavery', 'syndicates', 'hhc'].forEach(function (t) {
     NAMES['track_' + t] = 'Reform track level: ' + ({bureau: 'the bureaucracy', rim: 'the Rim', corruption: 'corruption', powers: 'emergency powers',

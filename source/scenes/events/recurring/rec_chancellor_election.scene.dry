@@ -453,7 +453,7 @@ SW.assignChairs(Q);
 
 @el_join
 view-if: el_invited
-subtitle: [? if el_pal_won : Palpatine's coalition gives us chairs and access, but ties our name to his. ?][? if not el_pal_won : Committee chairs, and a share of responsibility. ?] [+ el_join_bureau +] [+ el_join_price +]
+subtitle: [? if el_pal_won : Palpatine's coalition gives us chairs and access, but ties our name to his. ?][? if not el_pal_won : Committee chairs, and a share of responsibility. ?] [+ el_join_bureau +]
 on-arrival: {! SW.joinGovernment(Q); if (Q.el_pal_won) { Q.pacifist_dissent += 4; Q.pal_relation += 5; } !}
 go-to: el_chairs
 

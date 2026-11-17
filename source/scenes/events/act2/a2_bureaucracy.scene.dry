@@ -1,16 +1,16 @@
 title: The Chancellery Grows
 subtitle: Power is quietly moving to the Chancellor's office.
 tags: event
-view-if: date >= 30 and (pal_chancellor or pal_r >= 8)
+view-if: date >= 30 and (pal_chancellor or puppet_chancellor) and not rc_chancellor
 max-visits: 1
 new-page: true
 face-image: img/ev_chancellery.svg
 
 = The Chancellery Grows
 
-[? if pal_chancellor : In the name of efficiency, the Chancellor's office has absorbed the staff of six Senate committees, the Senate Bureau of Intelligence's liaison office, and the Senate Guard's command. Each step was small and reasonable. Together they amount to a second government, answerable to one man. ?][? if not pal_chancellor : Senator Palpatine's circle keeps growing. His protégés fill committee staff positions across the Senate, and his advice is sought on everything. Nobody can quite say how it happened. ?]
+In the name of efficiency, the Chancellor's office has absorbed the staff of six Senate committees, the Senate Bureau of Intelligence's liaison office, and the Senate Guard's command. Each step was small and reasonable. Together they amount to a second government, answerable to [? if pal_chancellor : one man ?][? if not pal_chancellor : one man, and he is not the Chancellor ?]. [? if rc_in_govt : The Caucus sits in this government. Whatever it says now, it says from inside the cabinet room. ?]
 
-- @resist: Resist the transfers in committee.
+- @resist: [? if rc_in_govt : Object inside the cabinet. ?][? if not rc_in_govt : Resist the transfers in committee. ?]
 - @accept: Accept them. The Senate does need to work better.
 - @transparency: Demand full transparency about who works for whom.
 
@@ -20,7 +20,7 @@ choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 on-arrival: capital -= 1; grand_plan -= 2; pal_relation -= 6; senate_resolve += 0.3; bureau_captured = -1
 
-The Caucus forces several transfers to be reversed. The Chancellor's office thanks the Caucus for its "vigilance".
+[? if rc_in_govt : The Caucus's ministers refuse to sign the transfer orders, and several are quietly reversed. The Chancellor's office thanks its coalition partners for their "vigilance". ?][? if not rc_in_govt : The Caucus forces several transfers to be reversed. The Chancellor's office thanks the Caucus for its "vigilance". ?]
 
 @accept
 subtitle: Less gridlock, more power in one office.
