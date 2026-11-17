@@ -101,7 +101,7 @@ choose-if: (padme_alive and (padme_married or adv_amidala)) or jedi_relation >= 
 unavailable-subtitle: Nobody close to him would carry the message.
 on-arrival: {!
 Q.hunt_anakin_told = 1;
-if (Q.anakin_fall <= 4) { Q.anakin_fall = Math.max(0, Q.anakin_fall - 2); Q.hunt_anakin_turned = 0; }
+if (Q.anakin_fall <= 4) { Q.anakin_fall = Math.max(0, Q.anakin_fall - 2); Q.hunt_anakin_turned = 0; Q.anakin_warned = 1; }
 else { Q.anakin_fall += 2; Q.hunt_anakin_turned = 1; SW.raiseAlarm(Q, 0, 8); }
 !}
 
