@@ -1,0 +1,37 @@
+title: A New Chair
+subtitle: The Caucus must choose who chairs one of its committees.
+tags: event
+view-if: appoint_ready = 1 and not finale and not game_ending
+priority: 2
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {! SW.appointOpen(Q); !}
+
+= Who Chairs [+ ap_com_name +]?
+
+The Caucus holds the chair of the [+ ap_com_name +] Committee. Whoever sits in it will decide what the committee puts to the Senate, and the Caucus's factions each want one of their own there.
+
+- @a: [+ ap_a_name +] of [+ ap_a_world +].
+- @b: [+ ap_b_name +] of [+ ap_b_world +].
+- @c: [+ ap_c_name +] of [+ ap_c_world +].
+
+@a
+view-if: ap_a_ok
+subtitle: [+ ap_a_faction +]. Their faction will be pleased.
+on-arrival: {! SW.appointChoose(Q, 'a'); !}
+
+[+ ap_chosen_name +] takes the chair of the [+ ap_com_name +] Committee. The [+ ap_chosen_faction +] are pleased to see one of their own in it.
+
+@b
+view-if: ap_b_ok
+subtitle: [+ ap_b_faction +]. Their faction will be pleased.
+on-arrival: {! SW.appointChoose(Q, 'b'); !}
+
+[+ ap_chosen_name +] takes the chair of the [+ ap_com_name +] Committee. The [+ ap_chosen_faction +] are pleased to see one of their own in it.
+
+@c
+view-if: ap_c_ok
+subtitle: [+ ap_c_faction +]. Their faction will be pleased.
+on-arrival: {! SW.appointChoose(Q, 'c'); !}
+
+[+ ap_chosen_name +] takes the chair of the [+ ap_com_name +] Committee. The [+ ap_chosen_faction +] are pleased to see one of their own in it.

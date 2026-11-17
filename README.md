@@ -62,6 +62,8 @@ artwork, music or footage is included; all images are original abstract art.*
   enfranchisement, radicals take over our Rimward wing and the Rimward Coalition and make ready to defect.
 - **Six committees**, each with its own reform paths: Finance & Commerce, Judiciary & Intelligence, Security & Defence,
   Outer Rim Affairs, Constitutional Affairs and Jedi Affairs. Every new government shares out the chairs afresh.
+  Each chair is held by a named minister; the Caucus picks its own, and the committees it does not chair act on
+  their bloc's ideology at the time.
 - **Anakin falls unless something holds him**, as in the films: his freed mother, a reformed Jedi Order, or friends who
   warned him (the Jedi kept out of command, a warning about Palpatine that was heard, and action on slavery). Every
   arrest weighs the balance of forces, and a fallen Anakin betrays it.
