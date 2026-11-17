@@ -20,6 +20,9 @@ The Caucus chairs the Judiciary & Intelligence Committee: the Republic's courts,
 - @civil_service: Put the Civil Service Act to the Senate.
 - @amedda: Arrest Vice Chair Mas Amedda.
 - @integrity: Create an Office of Public Integrity.
+- @expel: Move to expel the Senate's most corrupt members.
+- @oversight_act: Put the Intelligence Oversight Act to the Senate.
+- @compor: Found the Commission for the Protection of the Republic.
 - @hhc_investigate: Investigate the human-first groups.
 - @syndicates: Break the syndicates.
 - @easy_discard
@@ -61,6 +64,62 @@ if (Math.random() < 0.15 + Q.grand_plan / 500) Q.leak_pending = 1;
 !}
 
 [? if sith_stage <= 2 : The Bureau's analysts map everyone who profited from the Republic's crises. A disturbing number of them lead to people who later died, disappeared or became very rich, and the money always seems to end up on Coruscant. ?][? if sith_stage = 3 and intel_cleared : The Bureau's analysts take the Senate's inner circle apart, one office at a time. [+ suspect_last_finding +] [+ intel_cleared +] is not the Sith Lord. ?][? if sith_stage = 3 and not intel_cleared : The Bureau's analysts go over the Senate's inner circle once more. Nothing new. ?][? if sith_stage = 4 : The Bureau's analysts map [+ pal_title +]'s contacts. A disturbing number of them lead to people who later died, disappeared or became very rich. ?]
+
+@expel
+view-if: integrity_office and not senators_expelled
+subtitle: −2 political capital. The Office's files name the worst. The blocs that lose them will not forgive it.
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: {!
+Q.capital -= 2; Q.judiciary_timer = 1;
+var st = SW.stance(Q, {mod: 0.6, guild: 0.2, rim: 0.55, sec: 0.45, ind: 0.65, pal: 0.2, cis: 0.4}, true);
+Q.ex_vote = SW.vote(Q, st, 1, 'regulate');
+Q.vote_html = SW.voteBanner('Expulsion Resolution', Q.ex_vote);
+if (Q.ex_vote >= 50) {
+    Q.senators_expelled = 1; Q.corruption -= 10; Q.faith += 3;
+    Q.guild_relation -= 8; Q.pal_relation -= 6; Q.rim_relation -= 4;
+    for (var i = 0; i < SW.REGIONS.length; i++) { Q[SW.REGIONS[i] + '_guild'] *= 0.92; Q[SW.REGIONS[i] + '_pal'] *= 0.95; }
+    SW.computeSupport(Q);
+}
+!}
+
+[+ vote_html +]
+
+[? if senators_expelled : For the first time since the Ruusan Reformation, the Senate expels its own. Eleven senators are escorted from the rotunda by the Senate Guard, among them two guild delegates and a member of the Chancellor's own bloc. Their worlds will send new senators. Their former colleagues will remember who brought the motion. ?][? if not senators_expelled : The motion fails. The accused senators vote on their own expulsion, and so do their friends. ?]
+
+@oversight_act
+view-if: intel_runs >= 1 and not intel_oversight
+subtitle: −1 political capital. The Bureau of Intelligence would answer to the Senate's committee, not the Chancellery.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {!
+Q.capital -= 1; Q.judiciary_timer = 1;
+var st = SW.stance(Q, {mod: 0.6, guild: 0.45, rim: 0.6, sec: 0.3, ind: 0.65, pal: 0.1, cis: 0.5}, true);
+Q.io_act_vote = SW.vote(Q, st, 1, 'oversight');
+Q.vote_html = SW.voteBanner('Intelligence Oversight Act', Q.io_act_vote);
+if (Q.io_act_vote >= 50) { Q.intel_oversight = 1; Q.evidence += 0.5; Q.bureau_relation += 5; }
+!}
+
+[+ vote_html +]
+
+[? if intel_oversight : The Senate Bureau of Intelligence will report to the Judiciary & Intelligence Committee, and its director will testify to it in closed session every quarter. ?][? if not intel_oversight : The act fails. ?]
+
+@compor
+view-if: intel_oversight and not compor
+subtitle: −2 political capital. A Senate commission against subversion: schemes foreseen, proof kept safe, investigators protected.
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: {!
+Q.capital -= 2; Q.judiciary_timer = 1;
+var st = SW.stance(Q, {mod: 0.6, guild: 0.4, rim: 0.55, sec: 0.5, ind: 0.6, pal: 0.2, cis: 0.3}, true);
+Q.cp_vote = SW.vote(Q, st, 1, 'oversight');
+Q.vote_html = SW.voteBanner('Commission for the Protection of the Republic', Q.cp_vote);
+if (Q.cp_vote >= 50) { Q.compor = 1; Q.evidence_secured = 1; Q.senate_resolve += 0.5; }
+!}
+
+[+ vote_html +]
+
+[? if compor : The Commission for the Protection of the Republic opens its offices beside the Bureau's. Its investigators answer to a cross-bench panel of senators, and its first act is to put every witness and analyst of the Senate's inquiries under its protection. ?][? if not compor : The commission is voted down. ?]
 
 @gunray
 view-if: gunray_stage >= 1 and gunray_stage <= 4 and not gunray_convicted

@@ -14,6 +14,7 @@ The Caucus chairs the Security & Defence Committee.
 - @judicials: Expand the Judicial Forces.
 - @oversight: Bring the army under Senate oversight.
 - @guard: Return the Senate Guard to the Senate's command.
+- @charter: Put the Judicial Forces Charter to the Senate.
 - @navy: Shape the Navy's officer appointments.
 - @audit: Audit defence procurement.
 - @command: Put the Senate Command Act to the Senate.
@@ -66,6 +67,23 @@ if (Q.sg_vote >= 50) { Q.senate_guard_reformed = 1; Q.pal_relation -= 10; }
 [+ vote_html +]
 
 [? if senate_guard_reformed : The Senate Guard returns to its ancient blue robes and to the command of the Senate itself. ?][? if not senate_guard_reformed : The Guard remains under the Chancellor's office. ?]
+
+@charter
+view-if: senate_guard_reformed and not judicial_charter
+subtitle: −1 political capital. The Judicial Forces would answer to the courts, and the Chancellery could not commandeer them.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {!
+Q.capital -= 1; Q.security_timer = 1;
+var st = SW.stance(Q, {mod: 0.6, guild: 0.45, rim: 0.6, sec: 0.3, ind: 0.6, pal: 0.15, cis: 0.5}, true);
+Q.jc_charter_vote = SW.vote(Q, st, 1, 'oversight');
+Q.vote_html = SW.voteBanner('Judicial Forces Charter', Q.jc_charter_vote);
+if (Q.jc_charter_vote >= 50) { Q.judicial_charter = 1; Q.judicial_forces += 2; Q.faith += 1; }
+!}
+
+[+ vote_html +]
+
+[? if judicial_charter : The Judicial Forces are chartered to the Supreme Court and the Senate. Their commanders take a new oath, to the law rather than to any office, and two new divisions are raised to go with it. ?][? if not judicial_charter : The charter fails. ?]
 
 @navy
 view-if: clones > 0 and navy_loyalty < 90

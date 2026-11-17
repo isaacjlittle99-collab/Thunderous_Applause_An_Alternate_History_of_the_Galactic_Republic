@@ -542,7 +542,7 @@ go-to: menu
 
 Some reforms permanently close doors that the Sith would otherwise walk through.
 
-**Sunset clauses** (Constitutional Reform): emergency powers expire unless renewed each year. **Term limits entrenched** (Constitutional Reform): no Chancellor can have his term extended. **Senate oversight of the army** (Security & Defence, or at Kamino and Geonosis): the clones answer to the Senate too. Disbanding the clone army at Kamino counts as this safeguard: with no army there is nothing to oversee, no chips to remove and no Order 66, but the war must then be fought with the Judicial Forces and the member worlds. **Senate Guard reformed** (Security & Defence): the Red Guards stop answering to the Chancellor alone. **Jedi independence** (Constitutional Reform): the Chancellor cannot place the Council under his authority. **Banking independence** (Finance & Commerce): the Chancellery cannot seize the banks. **Rim enfranchisement** (Outer Rim Affairs or Constitutional Reform): a lasting cure for separatism. **Ethics Commission** (Judiciary & Intelligence): a lasting check on corruption. **Inhibitor chips removed** (Clone Army Oversight, once found): Order 66 will fail.
+**Sunset clauses** (Constitutional Affairs): emergency powers expire unless renewed each year. **Term limits entrenched** (Constitutional Affairs): no Chancellor can have his term extended. **Senate oversight of the army** (Security & Defence, or at Kamino and Geonosis): the clones answer to the Senate too. Disbanding the clone army at Kamino counts as this safeguard: with no army there is nothing to oversee, no chips to remove and no Order 66, but the war must then be fought with the Judicial Forces and the member worlds. **Senate Guard reformed** (Security & Defence): the Red Guards stop answering to the Chancellor alone. **Jedi independence** (Jedi Affairs): the Chancellor cannot place the Council under his authority. **Banking independence** (Finance & Commerce): the Chancellery cannot seize the banks. **Rim enfranchisement** (Outer Rim Affairs or Constitutional Affairs): a lasting cure for separatism. **Ethics Commission** (Judiciary & Intelligence): a lasting check on corruption. **Inhibitor chips removed** (Clone Army Oversight, once found): Order 66 will fail.
 
 Most of these need a seat in government and a Senate majority. Constitutional amendments need two-thirds.
 
@@ -662,19 +662,31 @@ go-to: menu
 
 = Reforms in steps
 
-Many reforms come in steps. Each step needs the one before it and the right office, and most need a Senate vote. A step taken brings its card back after a single turn. The offices are the committee chairs: **the Rim office** is Outer Rim Affairs, **the military office** Security & Defence, **the investigation office** Judiciary & Intelligence. Constitutional steps need Constitutional Reform.
+Many reforms come in steps. Each step needs the one before it and the right committee chair, and most need a Senate vote. A step taken brings its card back after a single turn. There are six committees: **Finance & Commerce**, **Judiciary & Intelligence** (the investigation office), **Security & Defence** (the military office), **Outer Rim Affairs** (the Rim office), **Constitutional Affairs** and **Jedi Affairs**. Every new government shares the chairs out afresh: each partner insists on at least one, and the Caucus buys the rest with leverage from its seats (Finance 20; Judiciary, Security and the Rim office 10 each; Constitutional and Jedi Affairs 5 each).
+
+• **The guilds** (Finance & Commerce). 1: regulate the trade guilds. 2: the **Anti-Cartel Act**. 3: **break up the Trade Federation**: the guilds' bloc loses half its support, and their escalation, embargo and threats end for good. The committee can also **cut regulation**, as often as it likes: 1 from the treasury and support on the Rim for a large gain with the guilds and in trade, and each time corporate donors give the Caucus 2 political capital, with a little more corruption. After three rounds, the Caucus can **call on corporate security** in the Last Days, which adds to our side of the balance of forces.
+
+• **The banks** (Finance & Commerce). 1: an audit of the Banking Clan. 2: the Banking Clan's **independence** from the Chancellery. 3: **Republic bonds**: the Republic's interest falls by nearly a third.
 
 • **The bureaucracy** (investigation office). 1: reform the Senate bureaucracy. 2: the **Civil Service Act**. After it, the bureaucrats no longer build cases against us, purge our allies or lose our bills in committee, and the Caucus can **arrest Mas Amedda** (with some evidence): more evidence, more support everywhere, and an end to the Vice Chair's gavel.
 
 • **The Rim** (Rim office). 1: the **Rim Relief Act**. 2: enfranchisement (or a constitutional amendment). 3: a **Rim Assembly**, which needs warm relations with the Rimward Coalition and halts the Separatists' growth.
 
-• **Corruption** (investigation office). 1: the Ethics Commission. 2: the **Office of Public Integrity**: corruption falls faster and votes can no longer be bought.
+• **Corruption** (investigation office). 1: the Ethics Commission. 2: the **Office of Public Integrity**: corruption falls faster and votes can no longer be bought. 3: **expel the Senate's most corrupt members**: corruption falls sharply and faith rises, but the guilds, Palpatine's bloc and the Rimward Coalition lose senators and resent it.
 
-• **Emergency powers** (Constitutional Reform). 1: sunset clauses. 2: the **Powers Review Amendment**: every year the Senate takes one power back.
+• **Intelligence** (investigation office). 1: an intelligence review. 2: the **Intelligence Oversight Act**: the Bureau of Intelligence answers to the Senate's committee. 3: the **Commission for the Protection of the Republic**: schemes are foreseen, proof stops wasting away, and no more investigators are assassinated.
+
+• **Emergency powers** (Constitutional Affairs). 1: sunset clauses. 2: the **Powers Review Amendment**: every year the Senate takes one power back.
+
+• **The office of Chancellor** (Constitutional Affairs). Entrenched term limits and a constructive vote of no confidence, in either order, then an **independent Speaker**: the Chancellor no longer presides over the Senate, and the Vice Chair's gavel can no longer table our bills.
 
 • **The military** (military office). 1: Senate oversight of the army. 2: the **Senate Command Act**, once the Senate Guard is reformed: the clones and the Navy look to the Senate. It does not rule out the admirals.
 
-• **The Jedi** (Jedi Relations). 1: speak for reform, three times. 2: the Council accepts attachment (or blesses Anakin's marriage). 3: **a New Jedi Order** of families, Knights who come as adults, no Jedi generals and an open Council. It needs Anakin to choose the light (once found, if he has not slid far toward the dark and the Council has accepted attachment) and close relations with the Order. Anakin can then no longer fall.
+• **The Senate's guard** (military office). 1: return the Senate Guard to the Senate. 2: the **Judicial Forces Charter**: two more divisions of Judicial Forces, answering to the courts.
+
+• **The Order's future** (Jedi Affairs). 1: speak for reform, three times (the Caucus's Jedi card can do it too). 2: the Council accepts attachment (or blesses Anakin's marriage). 3: **a New Jedi Order** of families, Knights who come as adults, no Jedi generals and an open Council. It needs Anakin to choose the light (once found, if he has not slid far toward the dark and the Council has accepted attachment) and close relations with the Order. Anakin can then no longer fall.
+
+• **The Order's independence** (Jedi Affairs). 1: the **Jedi Independence Amendment**: the Chancellor can never place the Council under his authority. 2: the **Jedi Service Act**: the Jedi serve as peacekeepers and advisers, never as generals; the Order recovers, and the war is harder. 3: a **Senate–Jedi Compact**: the Council and the Senate act together.
 
 • **Slavery** (Rim office). 1: a **Senate report on slavery**. 2: abolition. 3: **enforcing abolition**, once the syndicates are broken, which frees Shmi Skywalker if she still lives. Every step raises Caucus support (most in the Rim) and draws Anakin back from the dark.
 

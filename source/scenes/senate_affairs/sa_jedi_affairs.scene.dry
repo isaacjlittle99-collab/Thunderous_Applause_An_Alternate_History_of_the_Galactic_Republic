@@ -1,0 +1,103 @@
+title: Jedi Affairs
+subtitle: The Jedi Order's place in the Republic, and its future.
+is-card: true
+tags: senate_affairs
+card-image: img/card_jedi.svg
+view-if: jedi_affairs_timer <= 0 and chair_jedi = "rc" and cardok_jediaffairs
+on-arrival: amend_threshold = 66.7 if faith < 60; amend_threshold = 60 if faith >= 60; turn_actions += 1; jedi_affairs_timer = 3; last_card_timer = "jedi_affairs"
+new-page: true
+
+= Jedi Affairs Committee
+
+The Caucus chairs the Senate's Jedi Affairs Committee, which answers for the Order's place in the Republic: its charter, its independence, and what the Senate may ask of it. Our relations with the Order are [+ jedi_relation : relationships +], and public trust in the Jedi is [+ jedi_standing : level +]. [? if jedi_generals : Jedi Knights command the Republic's armies. ?]
+
+- @reform: Hold hearings on reforming the Order.
+- @attachment: Ask the Council to accept attachment.
+- @new_order: Help the Jedi found a new Order.
+- @independence: Guarantee the independence of the Jedi Order.
+- @service: Put the Jedi Service Act to the Senate.
+- @compact: Propose a Senate–Jedi Compact.
+- @easy_discard
+
+@reform
+view-if: (date >= 108 or war) and jedi_reform < 3 and not jedi_reformed
+subtitle: Hearings on the Code, in public. The Order resents it, but a less rigid Order might keep its troubled Knights.
+on-arrival: jedi_reform += 1; jedi_relation -= 4; anakin_fall -= 0.7; jedi_standing += 1; jedi_affairs_timer = 1
+
+The committee hears from Knights who left the Order, from parents whose children were taken to the Temple as infants, and from Masters who defend the Code. Some younger Jedi watch the hearings closely.
+
+@attachment
+view-if: jedi_reform >= 3 and not jedi_reformed
+subtitle: −1 political capital. The Code's rule against attachment is the one that matters most.
+choose-if: capital >= 1 and jedi_relation >= 60
+unavailable-subtitle: [? if jedi_relation < 60 : The Council does not trust us enough. ?][? if jedi_relation >= 60 : Needs 1 political capital. ?]
+on-arrival: capital -= 1; jedi_reformed = 1; anakin_fall -= 1.5; jedi_relation -= 3; jedi_standing += 2; jedi_affairs_timer = 1
+
+After three years of argument the Council relents: a Jedi may love, and marry, and remain a Jedi. Master Yoda is said to have laughed when the vote was taken. Master Windu is said not to have.
+
+@new_order
+view-if: jedi_reformed and anakin_light and not new_jedi_order
+subtitle: −1 political capital. Families, Knights trained as adults, no more Jedi generals, an open Council.
+choose-if: capital >= 1 and jedi_relation >= 70
+unavailable-subtitle: [? if jedi_relation < 70 : The Council does not trust us enough. ?][? if jedi_relation >= 70 : Needs 1 political capital. ?]
+on-arrival: capital -= 1; new_jedi_order = 1; jedi_standing += 10; jedi_strength += 1; jedi_relation += 5; anakin_fall = 0; jedi_affairs_timer = 1
+achievement: new_jedi_order
+
+The Order that emerges is smaller at first, and stranger. Its Knights may have families. It takes students who come to it as adults, by choice, not infants taken from their cribs. It will advise the Republic's armies, but it will not command them. And its Council meets in the open, with a seat for a young Knight from Tatooine whom the old Masters once feared. The holocrons call it the New Jedi Order.
+
+@independence
+view-if: not jedi_independence
+subtitle: The Jedi Council could never be placed under the Chancellor's authority.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {!
+Q.capital -= 1;
+var st = SW.stance(Q, {mod: 0.6, guild: 0.4, rim: 0.55, sec: 0.25, ind: 0.6, pal: 0.15, cis: 0.4}, true);
+st.mod += (Q.jedi_standing - 50) / 200; st.ind += (Q.jedi_standing - 50) / 200;
+Q.cr_vote = SW.vote(Q, st, 1, 'oversight');
+Q.vote_html = SW.voteBanner('Jedi Independence Amendment', Q.cr_vote, Q.amend_threshold);
+if (Q.cr_vote >= Q.amend_threshold) { Q.jedi_independence = 1; Q.jedi_relation += 10; }
+!}
+
+[+ vote_html +]
+
+[? if jedi_independence : The Order's independence is written into the constitution. No Chancellor may appoint its Council or direct its Knights. ?][? if not jedi_independence : The amendment fails. ?]
+
+@service
+view-if: jedi_independence and not jedi_service_act
+subtitle: −1 political capital. The Jedi would serve as peacekeepers and advisers, never as generals.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {!
+Q.jedi_affairs_timer = 1;
+Q.capital -= 1;
+var st = SW.stance(Q, {mod: 0.55, guild: 0.4, rim: 0.6, sec: 0.15, ind: 0.65, pal: 0.15, cis: 0.6}, true);
+Q.js_vote = SW.vote(Q, st, 1, 'peace');
+Q.vote_html = SW.voteBanner('Jedi Service Act', Q.js_vote);
+if (Q.js_vote >= 50) {
+    Q.jedi_service_act = 1; Q.jedi_generals = 0; Q.jedi_strength += 1; Q.jedi_relation += 6; Q.jedi_standing += 3; Q.hawk_dissent += 4;
+    if (Q.war) Q.war_balance -= 1;
+}
+!}
+
+[+ vote_html +]
+
+[? if jedi_service_act : The Jedi hand their commands to clone and Navy officers. They will scout, negotiate, protect civilians and advise, but never again lead the Republic's armies. The Council is quietly relieved. [? if war : The generals' staffs are not. ?] ?][? if not jedi_service_act : The act fails. The Security Bloc says the Republic cannot fight a war with one hand tied. ?]
+
+@compact
+view-if: jedi_service_act and not jedi_compact
+subtitle: −1 political capital. The Council and the Senate would act together, and share what each of them knows.
+choose-if: capital >= 1 and jedi_relation >= 50
+unavailable-subtitle: [? if jedi_relation < 50 : The Council does not trust us enough. ?][? if jedi_relation >= 50 : Needs 1 political capital. ?]
+on-arrival: {!
+Q.jedi_affairs_timer = 1;
+Q.capital -= 1;
+var st = SW.stance(Q, {mod: 0.6, guild: 0.45, rim: 0.6, sec: 0.3, ind: 0.6, pal: 0.15, cis: 0.5}, true);
+Q.jc_vote = SW.vote(Q, st, 1, 'oversight');
+Q.vote_html = SW.voteBanner('Senate–Jedi Compact', Q.jc_vote);
+if (Q.jc_vote >= 50) { Q.jedi_compact = 1; Q.senate_jedi_pact = 1; Q.jedi_suspicion += 1; Q.jedi_relation += 5; }
+!}
+
+[+ vote_html +]
+
+[? if jedi_compact : Master Yoda and the Senate's leaders sign the Compact in the Temple's great hall. The Council will bring its warnings to the Senate, and the Senate its evidence to the Council. Neither will act against the Republic's enemies alone again. ?][? if not jedi_compact : The Compact fails. ?]

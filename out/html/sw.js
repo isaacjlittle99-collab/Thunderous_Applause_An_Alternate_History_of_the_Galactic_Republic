@@ -37,19 +37,21 @@
   SW.FACTIONS = ['inst', 'rimward', 'pacifist', 'hawk'];
   SW.FACTION_NAMES = {inst: 'Institutionalists', rimward: 'Rimward', pacifist: 'Pacifists', hawk: 'Hawks'};
 
-  SW.COMMITTEES = ['finance', 'judiciary', 'security', 'rimaffairs'];
+  SW.COMMITTEES = ['finance', 'judiciary', 'security', 'rimaffairs', 'constitution', 'jedi'];
   SW.COMMITTEE_NAMES = {
     finance: 'Finance & Commerce', judiciary: 'Judiciary & Intelligence',
-    security: 'Security & Defence', rimaffairs: 'Outer Rim Affairs'
+    security: 'Security & Defence', rimaffairs: 'Outer Rim Affairs',
+    constitution: 'Constitutional Affairs', jedi: 'Jedi Affairs'
   };
-  SW.COMMITTEE_COST = {finance: 10, judiciary: 10, security: 12, rimaffairs: 5};
+  // what each chair is worth in leverage when a government shares them out
+  SW.COMMITTEE_COST = {finance: 20, judiciary: 10, security: 10, rimaffairs: 10, constitution: 5, jedi: 5};
 
   // Every card / event timer named here is decremented by one each turn.
   SW.TIMERS = [
     'advisor_action', 'shuffle', 'contributions', 'campaign', 'media', 'relations', 'platform',
     'enemy', 'confront', 'pact', 'investigate', 'hunt', 'jedi', 'rim_outreach', 'peace', 'disunity',
     'civil', 'routine', 'leader_moment', 'bacta_crisis', 'tibanna_crisis', 'spice_crisis', 'banking_clan', 'debt_crisis', 'core_revolt', 'credits',
-    'finance', 'judiciary', 'security', 'rimaffairs', 'constitution', 'diplomacy', 'clone_oversight',
+    'finance', 'judiciary', 'security', 'rimaffairs', 'constitution', 'jedi_affairs', 'diplomacy', 'clone_oversight',
     'coalition', 'shuffle_committees', 'emergency_measures',
     'corruption_scandal', 'piracy', 'famine', 'embargo', 'secession', 'profiteering', 'protest',
     'assassination', 'leak', 'unease', 'sunset', 'battle', 'gunray', 'pal_media', 'faction_crisis',
@@ -111,7 +113,7 @@
       cis_formed: 0, rfc_formed: 0,
       govt_blocs: ['mod', 'guild', 'sec', 'ind'], coalition_name: 'Commerce Coalition',
       rc_in_govt: 0, rc_toleration: 0, coalition_dissent: 0, minority_govt: 0,
-      chair_finance: 'guild', chair_judiciary: 'mod', chair_security: 'sec', chair_rimaffairs: 'ind',
+      chair_finance: 'guild', chair_judiciary: 'mod', chair_security: 'sec', chair_rimaffairs: 'ind', chair_constitution: 'mod', chair_jedi: 'ind',
       leverage: 0, election_due: 0, next_election_date: 0, elections_held: 0,
       seceded_total: 0,
 
@@ -247,7 +249,7 @@
     D.free_ryloth = 0; D.citadel = 0; D.fleet_levy = 0; D.mandalore_pressed = 0; D.krell_backed = 0; D.trade = 60; D.bacta = 10; D.tibanna = 10; D.spice = 15; D.debt = 10; D.leaders_html = '';
     D.lm_ready = 0; D.lm_group = ''; D.lm_ultimatum = 0; D.lm_leader = ''; D.lm_group_name = ''; D.lm_reason = ''; D.lm_motive = ''; D.lm_title = ''; D.lm_ask = ''; D.lm_label = ''; D.lm_cost = 0; D.lm_accept_sub = ''; D.lm_refuse_sub = ''; D.lm_offer = '';
     D.leader_moment_timer = 8; D.ultimatums_met = 0; D.ultimatums_refused = 0; D.guild_regulations = 0; D.sanctions_lifted = 0; D.tariff_ban_until = -99;
-    D.pal_title = 'Senator Palpatine'; D.pal_office = 'Palpatine\'s office'; D.pal_people = 'Palpatine\'s people'; D.chair_cap = 4; D.chair_partners = 0; D.walkout_bloc = ''; D.walkout_until = -99; D.cc_dropped = 0; D.cc_kept = 0; D.el_walkout_blocks = 0; D.walkout_name = ''; D.govt_fell_now = 0; D.fall_reason = ''; D.war_name = 'Clone Wars';
+    D.pal_title = 'Senator Palpatine'; D.pal_office = 'Palpatine\'s office'; D.pal_people = 'Palpatine\'s people'; D.chair_cap = 6; D.chair_partners = 0; D.walkout_bloc = ''; D.walkout_until = -99; D.cc_dropped = 0; D.cc_kept = 0; D.el_walkout_blocks = 0; D.walkout_name = ''; D.govt_fell_now = 0; D.fall_reason = ''; D.war_name = 'Clone Wars';
     D.trial_cleanup = 0; D.force_war = SW.off('war') ? 0 : 1; D.amend_threshold = 66.7; D.gavel_date = -99; D.gavels = 0; D.vote_tabled = 0;
     D.scheme_pending = ''; D.scheme_due = 0; D.scheme_countered = 0; D.scheme_warned = 0; D.scheme_foreseen = 0;
     D.scheme_foresee = ''; D.scheme_counter = ''; D.scheme_text = ''; D.scheme_was_foiled = 0; D.schemes_total = 0; D.schemes_foiled = 0;
@@ -317,6 +319,10 @@
     D.hunt_anakin_told = 0; D.hunt_anakin_turned = 0; D.hunt_case_runs = 0; D.hunt_timer = 0; D.hunt_result = ''; D.hunt_alarmed = 0; D.intel_cleared = '';
     D.suspects_open_text = '';
     D.cha_arrest_done = 0; D.cha_arrest_result = ''; D.cha_arrest_score = 0; D.cha_arrest_missing = ''; D.cha_flee_odds = 0;
+    D.anti_cartel = 0; D.republic_bonds = 0; D.senators_expelled = 0; D.intel_oversight = 0; D.compor = 0; D.judicial_charter = 0;
+    D.independent_speaker = 0; D.jedi_service_act = 0; D.jedi_compact = 0;
+    D.ac_vote = 0; D.rb_vote = 0; D.ex_vote = 0; D.io_act_vote = 0; D.cp_vote = 0; D.jc_charter_vote = 0; D.sp_vote = 0; D.js_vote = 0; D.jc_vote = 0;
+    D.dereg_count = 0; D.corp_donors_ready = 0; D.corporate_security = 0; D.corporate_forces = 0; D.ld_corporate_used_today = 0;
     D.rim_story_ready = 0; D.rim_story = ''; D.rim_story_heading = ''; D.rim_story_region = ''; D.rim_story_cause = ''; D.rim_story_next = 0; D.rim_stories = 0;
     for (var rsid in SW.RIM_STORIES) D['rim_story_done_' + rsid] = 0;
     D.rim_radical = 0; D.rim_radical_ready = 0; D.rim_radical_word = ''; D.rr_level = 0; D.rr_heading = ''; D.rr_wing = 0; D.rr_coalition = 0; D.rr_rfc = 0;
@@ -367,10 +373,20 @@
     }
     if (Q.pl_no_probe || Q.pledge_no_probe) { Q.pl_no_probe = 0; Q.pledge_no_probe = ''; Q.pledge_no_probe_name = ''; var pls = SW.pledgeList(Q); Q.pledge_count = pls.length; Q.pledge_text = pls.join('; '); }
     if (Q.sith_named === undefined && (Q.evidence >= 8 || Q.finale || Q.sidious_known)) { Q.sith_named = 1; Q.sith_named_by = 'migrated'; for (var si = 0; si < SW.SUSPECT_IDS.length; si++) Q['suspect_' + SW.SUSPECT_IDS[si]] = 1; }
+    var newChairs = SW.COMMITTEES.filter(function (c) { return Q['chair_' + c] === undefined; });
     var D = SW.DEFAULTS();
     for (var key in D) {
       if (Q[key] === undefined || Q[key] === null || (typeof D[key] === 'number' && typeof Q[key] === 'number' && isNaN(Q[key]))) {
         Q[key] = D[key];
+      }
+    }
+    // committees an old save never had go to the government partner that wants them most
+    if (newChairs.length && Q.govt_blocs) {
+      var ps = Q.govt_blocs.filter(function (b) { return b !== 'rc'; });
+      for (var nc = 0; nc < newChairs.length; nc++) {
+        var pl = SW.CHAIR_PREFS[newChairs[nc]], pick = ps[0] || 'ind';
+        for (var pk = 0; pk < pl.length; pk++) if (ps.indexOf(pl[pk]) >= 0) { pick = pl[pk]; break; }
+        Q['chair_' + newChairs[nc]] = pick;
       }
     }
     Q.save_version = SW.SAVE_VERSION;
@@ -1482,11 +1498,14 @@
   };
 
   // Hand out committee chairs that the player did not take.
+  // which partner each committee goes to, in order of preference
+  SW.CHAIR_PREFS = {finance: ['guild', 'mod', 'ind', 'pal', 'sec', 'rim'], judiciary: ['mod', 'pal', 'ind', 'sec', 'rim', 'guild'],
+    security: ['sec', 'pal', 'mod', 'ind', 'guild', 'rim'], rimaffairs: ['rim', 'ind', 'mod', 'pal', 'guild', 'sec'],
+    constitution: ['mod', 'ind', 'pal', 'sec', 'guild', 'rim'], jedi: ['mod', 'ind', 'rim', 'sec', 'pal', 'guild']};
   SW.assignChairs = function (Q) {
     var partners = Q.govt_blocs.filter(function (b) { return b !== 'rc'; });
     if (!partners.length) partners = ['ind'];
-    var prefs = {finance: ['guild', 'mod', 'ind', 'pal', 'sec', 'rim'], judiciary: ['mod', 'pal', 'ind', 'sec', 'rim', 'guild'],
-      security: ['sec', 'pal', 'mod', 'ind', 'guild', 'rim'], rimaffairs: ['rim', 'ind', 'mod', 'pal', 'guild', 'sec']};
+    var prefs = SW.CHAIR_PREFS;
     for (var i = 0; i < SW.COMMITTEES.length; i++) {
       var c = SW.COMMITTEES[i];
       if (Q['chair_' + c] === 'rc' && Q.rc_in_govt) continue;
@@ -1909,7 +1928,7 @@
   // a finalist will give up a chair it can spare, but never the one it most needs
   SW.dealChair = function (Q, cand) {
     var keep = {pal: 'judiciary', guild: 'finance', sec: 'security', rim: 'rimaffairs', mod: 'finance'}[cand];
-    var want = ['judiciary', 'security', 'finance', 'rimaffairs'];
+    var want = ['judiciary', 'security', 'finance', 'rimaffairs', 'constitution', 'jedi'];
     for (var i = 0; i < want.length; i++) if (want[i] !== keep) return want[i];
     return 'rimaffairs';
   };
@@ -1961,7 +1980,7 @@
   };
 
   // ---- coalition talks: every partner names its price
-  SW.PRICE_CHAIR = {guild: 'finance', mod: 'judiciary', rim: 'rimaffairs', sec: 'security', pal: 'judiciary', rfc: 'rimaffairs'};
+  SW.PRICE_CHAIR = {guild: 'finance', mod: 'judiciary', rim: 'rimaffairs', sec: 'security', pal: 'judiciary', rfc: 'rimaffairs', ind: 'constitution'};
   // Partners ask for committee chairs, never for promises: the only promises that bind the Caucus are the
   // ones it makes itself in the Chancellor race. A firm leader insists on the chair; a flexible one settles for less.
   SW.partnerPrice = function (Q, b) {
@@ -2175,7 +2194,7 @@
     Q.scheme_pending = pick;
     Q.scheme_due = Q.time + 1;
     Q.scheme_countered = 0; Q.scheme_warned = 0;
-    Q.scheme_foreseen = (Q.hunt_informant || Q.jedi_suspicion >= 4 || Q.evidence >= 5 || (Q.time - (Q.investigated_at || -99)) <= 2) ? 1 : 0;
+    Q.scheme_foreseen = (Q.hunt_informant || Q.compor || Q.jedi_suspicion >= 4 || Q.evidence >= 5 || (Q.time - (Q.investigated_at || -99)) <= 2) ? 1 : 0;
     var fs = SW.SCHEMES[pick].foresee;
     Q.scheme_foresee = typeof fs === 'function' ? fs(Q) : fs;
     Q.scheme_counter = SW.SCHEMES[pick].counter;
@@ -2220,7 +2239,8 @@
   // the later steps of the reform tracks (each 0 or 1)
   SW.NEW_REFORMS = ['bureau_reformed', 'rim_relief_act', 'rim_assembly', 'integrity_office', 'powers_review', 'senate_command', 'new_jedi_order',
     'slavery_report', 'slavery_enforced', 'patrol_fleets', 'pirates_crushed', 'syndicates_broken', 'sentience_rights', 'officer_corps',
-    'hhc_investigated', 'hhc_discredited'];
+    'hhc_investigated', 'hhc_discredited', 'anti_cartel', 'republic_bonds', 'senators_expelled', 'intel_oversight', 'compor',
+    'judicial_charter', 'independent_speaker', 'jedi_service_act', 'jedi_compact'];
   SW.newReforms = function (Q) {
     var n = 0;
     for (var i = 0; i < SW.NEW_REFORMS.length; i++) n += Q[SW.NEW_REFORMS[i]] ? 1 : 0;
@@ -2309,7 +2329,7 @@
     var live = !Q.finale && !Q.sidious_defeated;
     var reformVote = rcYes === 1 && topics.some(function (t) { return SW.REFORM_TOPICS.indexOf(t) >= 0; });
     // the Vice Chair controls the agenda: once a year he rules a Caucus reform out of order
-    if (!SW.off('gavel') && live && reformVote && !Q.rc_chancellor && !Q.amedda_arrested && !Q.amedda_removed && (Q.pal_chancellor || Q.puppet_chancellor || (Q.govt_blocs || []).indexOf('pal') >= 0) &&
+    if (!SW.off('gavel') && live && reformVote && !Q.rc_chancellor && !Q.amedda_arrested && !Q.amedda_removed && !Q.independent_speaker && (Q.pal_chancellor || Q.puppet_chancellor || (Q.govt_blocs || []).indexOf('pal') >= 0) &&
         Q.senate_resolve < 3 && !Q.senate_guard_reformed && Q.date - (Q.gavel_date === undefined ? -99 : Q.gavel_date) >= 24) {
       Q.gavel_date = Q.date; Q.vote_tabled = 1; SW._tabled = 1; Q.gavels = (Q.gavels || 0) + 1;
       Q.last_vote = 0;
@@ -2445,7 +2465,7 @@
     }
 
     // evidence goes stale above 'circumstantial': witnesses vanish, records are wiped
-    if (Q.evidence > 5 && !Q.evidence_secured) Q.evidence -= f * (0.12 + Q.grand_plan / 800) * (Q.free_press ? 0.7 : 1);
+    if (Q.evidence > 5 && !Q.evidence_secured && !Q.compor) Q.evidence -= f * (0.12 + Q.grand_plan / 800) * (Q.free_press ? 0.7 : 1);
 
     // Sidious's hidden progress
     var palInPower = Q.pal_chancellor || Q.puppet_chancellor;
@@ -2552,7 +2572,7 @@
     Q.rim_grievance = SW.clamp((Q.rim_hardship - SW.SEP_HARDSHIP_LINE) / 30 + (Q.corruption - SW.SEP_CORRUPTION_LINE) / 45 - Q.rim_enfranchised * 0.8 -
       Q.slavery_abolished * 0.2 - Math.min(Q.rim_relief, 3) * 0.1 - Q.anti_corruption * 0.2 - Q.federal_compact +
       SW.leaderSum(Q, 'rimGriev', ['rim', 'rfc']), 0, 1.6);
-    Q.guild_grievance = SW.clamp(Q.guild_embargo * 0.12 + (Q.tf_broken_up ? 0.5 : 0) + (Q.trade_tax ? 0.2 : 0) +
+    Q.guild_grievance = SW.clamp(Q.guild_embargo * 0.12 + (Q.trade_tax ? 0.2 : 0) +
       (40 - Q.guild_relation) / 50 + (Q.corruption - 50) / 80 + SW.leaderSum(Q, 'guildGriev', ['guild']) +
       Math.max(0, 60 - (Q.guild_patience === undefined ? 60 : Q.guild_patience)) / 120, 0, 1.6);
   };
@@ -2937,7 +2957,21 @@
     Q.guild_patience = SW.clamp(p + delta, 0, 100);
     if (delta < 0) { Q.guild_hurt_turn = Q.time; if (why) Q.guild_patience_why = why; }
   };
+  // Cutting regulation: the guilds are delighted, the Rim pays, and grateful donors open their purses.
+  // Three rounds of it and the guilds' security forces will answer the Caucus in the Last Days.
+  SW.cutRegulation = function (Q) {
+    Q.treasury -= 1;
+    Q.outer_rc -= 1; Q.midrim_rc -= 1; Q.rim_relation -= 4;
+    Q.guild_relation += 10; SW.guildPatience(Q, 15);
+    Q.trade = (Q.trade || 60) + 6;
+    Q.dereg_count = (Q.dereg_count || 0) + 1;
+    Q.corp_donors_ready = 1;
+    if (Q.dereg_count >= 3) Q.corporate_security = 1;
+    SW.computeSupport(Q);
+  };
   SW.guildTick = function (Q, f) {
+    // with the Trade Federation broken up, the guilds can no longer threaten the Republic: no escalation, no embargo, no lobby
+    if (Q.tf_broken_up) { Q.guild_step_ready = 0; Q.guild_lobby = 0; Q.guild_embargo = 0; return; }
     var p = Q.guild_patience;
     // patience returns when the pressure stops; a pleased guild slowly forgets its gratitude
     if (Q.guild_hurt_turn !== Q.time) {
@@ -3526,7 +3560,7 @@
     Q.el_warchest = notes.length ? 1 : 0;
   };
   SW.interestRate = function (Q) {
-    return (0.05 + (Q.debt || 0) / 600) * (Q.banking_independent ? 0.5 : 1) * (Q.debt_refinanced ? 0.8 : 1) * (Q.debt_premium_until > Q.date ? 1.3 : 1);
+    return (0.05 + (Q.debt || 0) / 600) * (Q.banking_independent ? 0.5 : 1) * (Q.debt_refinanced ? 0.8 : 1) * (Q.republic_bonds ? 0.7 : 1) * (Q.debt_premium_until > Q.date ? 1.3 : 1);
   };
   SW.interestDue = function (Q) { return SW.round1((Q.debt || 0) * SW.interestRate(Q)); };
   // the fixed cost of running the Republic and keeping its forces
@@ -3675,7 +3709,8 @@
       guard: (Q.senate_guard_reformed || ours) ? 2 : (his ? (Q.hunt_mapped ? 1 : 0) : 1),
       clones: Q.clones * (Q.senate_command ? (chips ? 0.9 : 0.4) : (chips ? (oversight ? 0.8 : 0.6) : (oversight ? 0.15 : 0.05) + (Q.clone_trust || 0) * 0.02)),
       navy: Q.clones > 0 ? Q.navy_loyalty / 100 * 4 : 0,
-      anakin: anakinGood ? 3 : 0
+      anakin: anakinGood ? 3 : 0,
+      corporate: Q.corporate_forces || 0
     };
     var sith = {
       clones: Q.clones * (Q.senate_command ? (chips ? 0.1 : 0.6) : (chips ? (oversight ? 0.2 : 0.4) : (oversight ? 0.85 : 0.95))),
@@ -3717,8 +3752,11 @@
     var c = {};
     c.rim = (Q.rim_hardship > 15) || (!Q.slavery_abolished && Q.slavery_campaign < 2) || Q.outer_sep > 12 || (Q.dooku_movement && Q.outer_sep > 20);
     c.jedi = Q.jedi_relation < 85 || (Q.date >= 18 && Q.jedi_suspicion < 9 && !Q.sidious_known) || Q.jedi_standing < 85 ||
-      ((Q.date >= 108 || Q.war) && Q.jedi_reform < 3 && !Q.jedi_reformed) || (Q.anakin_found && Q.date >= 20 && Q.anakin_fall > 0.5) ||
-      (Q.jedi_reform >= 3 && !Q.jedi_reformed) || (Q.jedi_reformed && Q.anakin_light && !Q.new_jedi_order);
+      ((Q.date >= 108 || Q.war) && Q.jedi_reform < 3 && !Q.jedi_reformed) || (Q.anakin_found && Q.date >= 20 && Q.anakin_fall > 0.5);
+    // the Order's institutional reforms belong to the Jedi Affairs committee
+    c.jediaffairs = ((Q.date >= 108 || Q.war) && Q.jedi_reform < 3 && !Q.jedi_reformed) || (Q.jedi_reform >= 3 && !Q.jedi_reformed) ||
+      (Q.jedi_reformed && Q.anakin_light && !Q.new_jedi_order) || !Q.jedi_independence || (Q.jedi_independence && !Q.jedi_service_act) ||
+      (Q.jedi_service_act && !Q.jedi_compact);
     c.media = Q.corruption > 20 || Q.faith < 85 || (!Q.rc_chancellor && Q.senate_resolve < 10);
     c.investigate = !Q.sidious_known && !Q.sidious_defeated && (Q.evidence < 11.5 || (Q.archive_gap_known && !Q.kamino_known) || (Q.sith_stage === 3 && SW.openSuspects(Q).length > 0));
     c.hunt = Q.sith_named && !Q.sidious_defeated && !Q.sidious_fled && !Q.finale;
@@ -3727,17 +3765,19 @@
     c.peace = !Q.federal_compact && !Q.peace_achieved && !Q.recognized_cis;
     c.civil = Q.faith < 85 || Q.free_press < 3 || (Q.clones > 0 && Q.clone_trust < 8);
     c.finance = (Q.corruption > 25 && Q.guild_relation > 5) || (!Q.tf_broken_up && (Q.gunray_convicted || Q.evidence >= 4 || Q.naboo_free)) ||
-      !Q.banking_audit || (!Q.banking_independent && Q.date >= 120) || Q.treasury < 6;
+      !Q.banking_audit || (!Q.banking_independent && Q.date >= 120) || Q.treasury < 6 ||
+      ((Q.guild_regulations || 0) >= 1 && !Q.anti_cartel) || (Q.banking_independent && !Q.republic_bonds) || true; // cutting regulation is always on offer
     c.judiciary = (Q.bureau_relation < 70 && Q.bureau_reform_timer <= 0) || Q.corruption > 20 || !Q.anti_corruption || Q.intel_runs < 3 || (Q.gunray_stage >= 1 && Q.gunray_stage <= 4 && !Q.gunray_convicted) ||
       (Q.evidence >= 7 && !Q.warrant) || (Q.bureau_reviewed && !Q.bureau_reformed) || (Q.bureau_reformed && !Q.amedda_arrested && !Q.sidious_defeated) ||
-      (Q.anti_corruption && !Q.integrity_office) || !Q.hhc_investigated || (Q.pirates_crushed && !Q.syndicates_broken && !Q.hutt_deal);
+      (Q.anti_corruption && !Q.integrity_office) || !Q.hhc_investigated || (Q.pirates_crushed && !Q.syndicates_broken && !Q.hutt_deal) ||
+      (Q.integrity_office && !Q.senators_expelled) || ((Q.intel_runs || 0) >= 1 && !Q.intel_oversight) || (Q.intel_oversight && !Q.compor);
     c.security = Q.judicial_forces < 8 || (!Q.army_oversight && (Q.clones > 0 || Q.kamino_known)) || !Q.senate_guard_reformed ||
       (Q.clones > 0 && Q.navy_loyalty < 90) || Q.security_audits < 3 || (Q.army_oversight && !Q.senate_command) ||
-      (!Q.pirates_crushed && !Q.hutt_deal) || !Q.officer_corps;
+      (!Q.pirates_crushed && !Q.hutt_deal) || !Q.officer_corps || (Q.senate_guard_reformed && !Q.judicial_charter);
     c.rimaffairs = Q.rim_hardship > 15 || !Q.slavery_report || (Q.slavery_report && !Q.slavery_abolished) || !Q.rim_enfranchised || !Q.rim_relief_act ||
       (Q.rim_enfranchised && !Q.rim_assembly) || (Q.slavery_abolished && !Q.slavery_enforced) || !Q.sentience_rights;
-    c.constitution = !Q.emergency_sunset || !Q.term_limits_protected || !Q.constructive_vonc || !Q.jedi_independence || !Q.rim_enfranchised ||
-      (Q.emergency_sunset && !Q.powers_review);
+    c.constitution = !Q.emergency_sunset || !Q.term_limits_protected || !Q.constructive_vonc || !Q.rim_enfranchised ||
+      (Q.emergency_sunset && !Q.powers_review) || (Q.constructive_vonc && !Q.independent_speaker);
     c.clones = !Q.chips_found || (Q.chips_found && !Q.chips_removed) || (Q.clones > 0 && !Q.clone_citizenship) || Q.clones > 6;
     for (var k in c) Q['cardok_' + k] = c[k] ? 1 : 0;
   };
@@ -3785,6 +3825,9 @@
     Q.inst_split_ready = (Q.inst_dissent >= SW.splitAt(Q, 'inst') && !Q.inst_crisis) ? 1 : 0;
     // a Jedi Order remade around him: Anakin will not fall. Without anything to hold him, the dark side rises under him.
     if (Q.new_jedi_order) Q.anakin_fall = 0;
+    // laws that hold whatever else happens: no guild embargo after the break-up, no Jedi generals under the Service Act
+    if (Q.tf_broken_up) Q.guild_embargo = 0;
+    if (Q.jedi_service_act) Q.jedi_generals = 0;
     SW.anakinTick(Q);
     Q.rim_radical_word = SW.RADICAL_WORDS[Q.rim_radical || 0] || '';
     var fb = SW.forces(Q);
@@ -3898,24 +3941,39 @@
   // ------------------------------------------------------------------ reform tracks
   // A track is a series of decisions, each a bigger and more lasting change. Its level is read from the
   // flags those decisions set, so the existing reforms keep working as the first steps of their tracks.
+  // Each committee's reform paths. committee: the committee whose card passes it ('' = across the committees).
   SW.TRACKS = {
-    bureau: {name: 'The bureaucracy', steps: ['A civil service review', 'The Civil Service Act'],
+    guilds: {name: 'The guilds', committee: 'finance', steps: ['Regulating the trade guilds', 'Anti-Cartel Legislation', 'Breaking up the Trade Federation'],
+      level: function (Q) { return Q.tf_broken_up ? 3 : (Q.anti_cartel ? 2 : ((Q.guild_regulations || 0) >= 1 ? 1 : 0)); }},
+    banks: {name: 'The banks', committee: 'finance', steps: ['An audit of the Banking Clan', 'The Banking Clan\'s independence', 'Republic bonds'],
+      level: function (Q) { return Q.republic_bonds ? 3 : (Q.banking_independent ? 2 : (Q.banking_audit ? 1 : 0)); }},
+    corruption: {name: 'Corruption', committee: 'judiciary', steps: ['The ethics law', 'The Office of Public Integrity', 'Expelling corrupt senators'],
+      level: function (Q) { return Q.senators_expelled ? 3 : (Q.integrity_office ? 2 : (Q.anti_corruption ? 1 : 0)); }},
+    bureau: {name: 'The bureaucracy', committee: 'judiciary', steps: ['A civil service review', 'The Civil Service Act'],
       level: function (Q) { return Q.bureau_reformed ? 2 : (Q.bureau_reviewed ? 1 : 0); }},
-    rim: {name: 'The Rim', steps: ['The Rim Relief Act', 'Rim enfranchisement', 'The Rim Assembly'],
-      level: function (Q) { return Q.rim_assembly ? 3 : (Q.rim_enfranchised ? 2 : (Q.rim_relief_act ? 1 : 0)); }},
-    corruption: {name: 'Corruption', steps: ['The ethics law', 'The Office of Public Integrity'],
-      level: function (Q) { return Q.integrity_office ? 2 : (Q.anti_corruption ? 1 : 0); }},
-    powers: {name: 'Emergency powers', steps: ['Sunset clauses', 'The Powers Review Act'],
-      level: function (Q) { return Q.powers_review ? 2 : (Q.emergency_sunset ? 1 : 0); }},
-    military: {name: 'The military', steps: ['Senate oversight of the army', 'The Senate Command Act'],
+    intelligence: {name: 'Intelligence', committee: 'judiciary', steps: ['An intelligence review', 'The Intelligence Oversight Act', 'The Commission for the Protection of the Republic'],
+      level: function (Q) { return Q.compor ? 3 : (Q.intel_oversight ? 2 : ((Q.intel_runs || 0) >= 1 ? 1 : 0)); }},
+    military: {name: 'Command of the army', committee: 'security', steps: ['Senate oversight of the army', 'The Senate Command Act'],
       level: function (Q) { return Q.senate_command ? 2 : (Q.army_oversight ? 1 : 0); }},
-    jedi: {name: 'The Jedi', steps: ['A campaign for reform', 'The Council accepts attachment', 'A New Jedi Order'],
-      level: function (Q) { return Q.new_jedi_order ? 3 : (Q.jedi_reformed ? 2 : ((Q.jedi_reform || 0) >= 3 ? 1 : 0)); }},
-    slavery: {name: 'Slavery', steps: ['A Senate report on slavery', 'Abolition', 'Enforcing abolition'],
-      level: function (Q) { return Q.slavery_enforced ? 3 : (Q.slavery_abolished ? 2 : (Q.slavery_report ? 1 : 0)); }},
-    syndicates: {name: 'The syndicates', steps: ['Patrol fleets in the Rim', 'The campaign against the pirate fleets', 'Breaking the syndicates'],
+    guard: {name: 'The Senate\'s guard', committee: 'security', steps: ['The Senate Guard returned to the Senate', 'The Judicial Forces Charter'],
+      level: function (Q) { return Q.judicial_charter ? 2 : (Q.senate_guard_reformed ? 1 : 0); }},
+    syndicates: {name: 'The syndicates', committee: 'security', steps: ['Patrol fleets in the Rim', 'The campaign against the pirate fleets', 'Breaking the syndicates'],
       level: function (Q) { return Q.syndicates_broken ? 3 : (Q.pirates_crushed ? 2 : (Q.patrol_fleets ? 1 : 0)); }},
-    hhc: {name: 'High Human Culture', steps: ['The Rights of Sentience', 'A diverse officer corps', 'Human-first groups investigated', 'High Human Culture discredited'],
+    rim: {name: 'The Rim', committee: 'rimaffairs', steps: ['The Rim Relief Act', 'Rim enfranchisement', 'The Rim Assembly'],
+      level: function (Q) { return Q.rim_assembly ? 3 : (Q.rim_enfranchised ? 2 : (Q.rim_relief_act ? 1 : 0)); }},
+    slavery: {name: 'Slavery', committee: 'rimaffairs', steps: ['A Senate report on slavery', 'Abolition', 'Enforcing abolition'],
+      level: function (Q) { return Q.slavery_enforced ? 3 : (Q.slavery_abolished ? 2 : (Q.slavery_report ? 1 : 0)); }},
+    powers: {name: 'Emergency powers', committee: 'constitution', steps: ['Sunset clauses', 'The Powers Review Act'],
+      level: function (Q) { return Q.powers_review ? 2 : (Q.emergency_sunset ? 1 : 0); }},
+    office: {name: 'The office of Chancellor', committee: 'constitution', steps: ['Term limits entrenched', 'A constructive vote of no confidence', 'An independent Speaker'],
+      level: function (Q) { return (Q.term_limits_protected ? 1 : 0) + (Q.constructive_vonc ? 1 : 0) + (Q.independent_speaker ? 1 : 0); },
+      // its first two steps can pass in either order: name the latest one actually passed
+      label: function (Q) { return Q.independent_speaker ? 'An independent Speaker' : (Q.constructive_vonc ? 'A constructive vote of no confidence' : 'Term limits entrenched'); }},
+    jedi: {name: 'The Order\'s future', committee: 'jedi', steps: ['A campaign for reform', 'The Council accepts attachment', 'A New Jedi Order'],
+      level: function (Q) { return Q.new_jedi_order ? 3 : (Q.jedi_reformed ? 2 : ((Q.jedi_reform || 0) >= 3 ? 1 : 0)); }},
+    jedi_independence: {name: 'The Order\'s independence', committee: 'jedi', steps: ['The Jedi Independence Amendment', 'The Jedi Service Act', 'A Senate–Jedi Compact'],
+      level: function (Q) { return Q.jedi_compact ? 3 : (Q.jedi_service_act ? 2 : (Q.jedi_independence ? 1 : 0)); }},
+    hhc: {name: 'High Human Culture', committee: '', steps: ['The Rights of Sentience', 'A diverse officer corps', 'Human-first groups investigated', 'High Human Culture discredited'],
       level: function (Q) { return Q.hhc_discredited ? 4 : ((Q.sentience_rights ? 1 : 0) + (Q.officer_corps ? 1 : 0) + (Q.hhc_investigated ? 1 : 0)); }}
   };
   SW.trackSteps = function (Q, ids) {

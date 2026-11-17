@@ -1,0 +1,14 @@
+title: Corporate Donors
+subtitle: The guilds remember their friends.
+tags: event
+view-if: corp_donors_ready = 1 and not game_ending
+priority: 2
+new-page: true
+face-image: img/ev_trade.svg
+on-arrival: corp_donors_ready = 0; capital += 2; corruption += 2
+
+= Corporate Donors
+
+A week after the committee's vote, the Caucus's treasurer finds the accounts unexpectedly healthy. Shipping concerns, mining consortia and a Corellian freight line have all discovered a sudden enthusiasm for the Caucus's work. None of them asks for anything in return. None of them has to.
+
+[? if dereg_count >= 3 : At a reception on the Corporate Sector's embassy level, a Commerce Guild executive mentions, quite casually, that the guilds' security forces are at the Senate's disposal "should the Republic ever need friends in a hurry". ?]

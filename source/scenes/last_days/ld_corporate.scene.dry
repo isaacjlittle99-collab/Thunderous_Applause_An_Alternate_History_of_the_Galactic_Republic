@@ -1,0 +1,20 @@
+title: Call on Corporate Security
+subtitle: The guilds offered their security forces. Now is the time to ask.
+is-card: true
+tags: last_days
+card-image: img/card_credits.svg
+view-if: finale and corporate_security and not ld_corporate_used_today
+on-arrival: turn_actions += 1; ld_corporate_used_today = 1; last_card_timer = ""
+new-page: true
+
+= Call on Corporate Security
+
+The Commerce Guilds keep security forces on every world where they do business: armoured guards, patrol craft, and droid squads that answer to their employers, not to the Chancellery. The Caucus has been a good friend to the guilds. It can ask them to return the favour.
+
+- @do: Call on corporate security.
+- @easy_discard
+
+@do
+on-arrival: corporate_forces += 2; corruption += 1
+
+Within hours the guilds' security forces take up positions around the Senate district, the spaceports and the Caucus's own offices. They are not an army, and nobody would call them loyal to the Republic. But tonight they are loyal to their contracts, and their contracts say the Caucus.
