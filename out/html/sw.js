@@ -307,6 +307,7 @@
     D.new_jedi_order = 0; D.anakin_light = 0; D.anakin_choice_seen = 0;
     D.slavery_report = 0; D.slavery_enforced = 0; D.shmi_freed_now = 0;
     D.patrol_fleets = 0; D.pirates_crushed = 0; D.pirate_humiliation = 0; D.syndicates_broken = 0; D.syndicate_tries = 0; D.syndicates_ok = 0;
+    D.navy_vetted = 0; D.evidence_secured = 0;
     D.as_vote = 0; D.cs_vote = 0; D.io_vote = 0; D.pr_vote = 0; D.ra_vote = 0; D.sc_vote = 0;
     D.sidious_escaped = 0; D.fell_divided = 0; D.war_turning_ready = 0; D.war_turning_armed = 0; D.war_turning_count = 0; D.war_state = ''; D.hutt_deal = 0; D.hutt_deal_seen = 0; D.hutt_deal_vote = 0; D.hutt_deal_forced = 0;
     D.pirates_ready = 0; D.pirate_next = 0; D.pirate_route = ''; D.pirate_gang = ''; D.pirate_raids = 0;
@@ -350,6 +351,7 @@
     if (Q.timers && Q.timers.length !== undefined) {
       for (var ti = 0; ti < SW.TIMERS.length; ti++) if (Q.timers.indexOf(SW.TIMERS[ti]) < 0) Q.timers.push(SW.TIMERS[ti]);
     }
+    if (Q.pl_no_probe || Q.pledge_no_probe) { Q.pl_no_probe = 0; Q.pledge_no_probe = ''; Q.pledge_no_probe_name = ''; var pls = SW.pledgeList(Q); Q.pledge_count = pls.length; Q.pledge_text = pls.join('; '); }
     var D = SW.DEFAULTS();
     for (var key in D) {
       if (Q[key] === undefined || Q[key] === null || (typeof D[key] === 'number' && typeof Q[key] === 'number' && isNaN(Q[key]))) {
@@ -1571,7 +1573,6 @@
     SW.setGovt(Q, blocs, Q.coalition_name);
     SW.bureauJoin(Q, blocs);
     SW.openChairs(Q, Math.round(Q.rc_r * 0.8));
-    if (Q.el_join_pledge) SW.makePledge(Q, Q.el_join_pledge, Q.chancellor_bloc);
     Q.el_join_pledge = '';
     // a kingmaker's reward: the chair the new Chancellor promised between the ballots
     if (Q.el_deal_won && Q.el_deal_chair) { Q['chair_' + Q.el_deal_chair] = 'rc'; Q.el_deal_won = 0; SW.recomputeGovt(Q); }
@@ -1772,8 +1773,7 @@
     no_levy: {bloc: 'mod', name: 'no levy on the Core', label: 'Promise the Moderates no levy on the Core'},
     rim_relief: {bloc: 'rim', name: 'Rim relief in every budget', label: 'Promise the Rim relief in every budget'},
     defence: {bloc: 'sec', name: 'defence spending in every budget', label: 'Promise the Security Bloc defence spending in every budget'},
-    no_powers: {bloc: 'ind', name: 'no new emergency powers', label: 'Promise the Independents no new emergency powers'},
-    no_probe: {bloc: 'pal', name: 'no investigations of the Chancellery', label: ''}
+    no_powers: {bloc: 'ind', name: 'no new emergency powers', label: 'Promise the Independents no new emergency powers'}
   };
   SW.PLEDGE_CLASH = {rim_relief: 'defence', defence: 'rim_relief'};
   SW.pledgeBloc = function (Q, id) {
@@ -1946,48 +1946,33 @@
 
   // ---- coalition talks: every partner names its price
   SW.PRICE_CHAIR = {guild: 'finance', mod: 'judiciary', rim: 'rimaffairs', sec: 'security', pal: 'judiciary', rfc: 'rimaffairs'};
-  SW.PRICE_PLEDGE = {guild: 'no_tariffs', mod: 'no_levy', rim: 'rim_relief', sec: 'defence', ind: 'no_powers', rfc: 'rim_relief', pal: 'no_probe'};
+  // Partners ask for committee chairs, never for promises: the only promises that bind the Caucus are the
+  // ones it makes itself in the Chancellor race. A firm leader insists on the chair; a flexible one settles for less.
   SW.partnerPrice = function (Q, b) {
-    var f = SW.firm(Q, b), chair = SW.PRICE_CHAIR[b] || '', pledge = SW.PRICE_PLEDGE[b] || '';
-    if (f >= 0.62) return {chair: chair, pledge: pledge};
-    if (f >= 0.45) return chair ? {chair: chair, pledge: ''} : {chair: '', pledge: pledge};
-    return pledge ? {chair: '', pledge: pledge} : {chair: chair, pledge: ''};
+    var f = SW.firm(Q, b), chair = SW.PRICE_CHAIR[b] || '';
+    return {chair: f >= 0.45 ? chair : '', pledge: ''};
   };
   SW.coalitionPrices = function (Q, blocs) {
-    var chairs = {}, pledges = {};
+    var chairs = {};
     for (var i = 0; i < blocs.length; i++) {
       var b = blocs[i];
       if (b === 'rc') continue;
       var p = SW.partnerPrice(Q, b);
-      if (p.chair && chairs[p.chair]) { if (!p.pledge) p.pledge = SW.PRICE_PLEDGE[b] || ''; p.chair = ''; }
-      // a budget has one priority: no partner may ask for relief and defence both
-      if (p.pledge && SW.PLEDGE_CLASH[p.pledge] && (pledges[SW.PLEDGE_CLASH[p.pledge]] || Q['pl_' + SW.PLEDGE_CLASH[p.pledge]])) {
-        p.pledge = '';
-        if (!p.chair && SW.PRICE_CHAIR[b] && !chairs[SW.PRICE_CHAIR[b]]) p.chair = SW.PRICE_CHAIR[b];
-      }
-      if (p.chair) chairs[p.chair] = b;
-      if (p.pledge && !pledges[p.pledge] && !Q['pl_' + p.pledge]) pledges[p.pledge] = b;
+      if (p.chair && !chairs[p.chair]) chairs[p.chair] = b;
     }
-    return {chairs: chairs, pledges: pledges};
+    return {chairs: chairs, pledges: {}};
   };
   SW.priceText = function (Q, blocs) {
     var pr = SW.coalitionPrices(Q, blocs), bits = [];
     for (var c in pr.chairs) bits.push('the ' + SW.COMMITTEE_NAMES[c] + ' chair for the ' + SW.name(Q, pr.chairs[c]));
-    for (var p in pr.pledges) bits.push(SW.PLEDGES[p].name + ' (for the ' + SW.name(Q, pr.pledges[p]) + ')');
     return bits.length ? 'Their price: ' + bits.join('; ') + '.' : 'No price beyond a fair share.';
   };
   SW.acceptPrices = function (Q, blocs) {
     var pr = SW.coalitionPrices(Q, blocs);
     for (var c in pr.chairs) { Q['chair_' + c] = pr.chairs[c]; Q['chair_res_' + c] = 1; Q['chair_res_' + c + '_name'] = SW.name(Q, pr.chairs[c]); }
-    for (var p in pr.pledges) SW.makePledge(Q, p, pr.pledges[p]);
   };
-  // joining someone else's government: the Chancellor's bloc names its own price
-  SW.juniorPrice = function (Q) {
-    var b = Q.el_winner || Q.chancellor_bloc, p = SW.PRICE_PLEDGE[b] || '';
-    if (p && (Q['pl_' + p] || (SW.PLEDGE_CLASH[p] && Q['pl_' + SW.PLEDGE_CLASH[p]]))) p = '';
-    Q.el_join_pledge = p;
-    Q.el_join_price = p ? 'In return, the ' + SW.name(Q, b) + ' ask for ' + SW.PLEDGES[p].name + '.' : '';
-  };
+  // joining someone else's government asks no promise of the Caucus
+  SW.juniorPrice = function (Q) { Q.el_join_pledge = ''; Q.el_join_price = ''; };
 
   // ------------------------------------------------------------------ faction splits
   // A faction that breaks takes its senators with it: it joins the nearest bloc, or, under a firm
@@ -2443,7 +2428,7 @@
     }
 
     // evidence goes stale above 'circumstantial': witnesses vanish, records are wiped
-    if (Q.evidence > 5) Q.evidence -= f * (0.12 + Q.grand_plan / 800) * (Q.free_press ? 0.7 : 1);
+    if (Q.evidence > 5 && !Q.evidence_secured) Q.evidence -= f * (0.12 + Q.grand_plan / 800) * (Q.free_press ? 0.7 : 1);
 
     // Sidious's hidden progress
     var palInPower = Q.pal_chancellor || Q.puppet_chancellor;
@@ -3637,14 +3622,14 @@
       jedi: Q.jedi_strength * (0.5 + Q.jedi_standing / 200) * (Q.order66 ? 0.15 : 1),
       judicials: Q.judicial_forces,
       members: Q.member_forces * (Q.pact_formed ? 1 : 0.5),
-      guard: (Q.senate_guard_reformed || ours) ? 2 : (his ? (Q.guard_turned ? 1 : 0) : 1),
+      guard: (Q.senate_guard_reformed || ours) ? 2 : (his ? 0 : 1),
       clones: Q.clones * (Q.senate_command ? (chips ? 0.9 : 0.4) : (chips ? (oversight ? 0.8 : 0.6) : (oversight ? 0.15 : 0.05) + (Q.clone_trust || 0) * 0.02)),
       navy: Q.clones > 0 ? Q.navy_loyalty / 100 * 4 : 0,
       anakin: anakinGood ? 3 : 0
     };
     var sith = {
       clones: Q.clones * (Q.senate_command ? (chips ? 0.1 : 0.6) : (chips ? (oversight ? 0.2 : 0.4) : (oversight ? 0.85 : 0.95))),
-      guard: (Q.senate_guard_reformed || ours) ? 0 : (his ? (Q.guard_turned ? 1 : 2) : 0.5),
+      guard: (Q.senate_guard_reformed || ours) ? 0 : (his ? 2 : 0.5),
       navy: Q.clones > 0 ? (1 - Q.navy_loyalty / 100) * 4 : 0,
       governors: (Q.governors && his) ? 2 : 0,
       sith: 3 + (anakinBad ? 3 : 0),
@@ -3686,7 +3671,7 @@
       (Q.jedi_reform >= 3 && !Q.jedi_reformed) || (Q.jedi_reformed && Q.anakin_light && !Q.new_jedi_order);
     c.media = Q.corruption > 20 || Q.faith < 85 || (!Q.rc_chancellor && Q.senate_resolve < 10);
     c.investigate = !Q.sidious_known && !Q.sidious_defeated && (Q.evidence < 11.5 || (Q.archive_gap_known && !Q.kamino_known));
-    c.confront = !Q.rc_chancellor && Q.senate_resolve < 9.5;
+    c.confront = !Q.rc_chancellor && !Q.rc_in_govt && Q.senate_resolve < 9.5;
     c.pact = !Q.pact_formed || Q.member_forces < 8;
     c.peace = !Q.federal_compact && !Q.peace_achieved && !Q.recognized_cis;
     c.civil = Q.faith < 85 || Q.free_press < 3 || (Q.clones > 0 && Q.clone_trust < 8);

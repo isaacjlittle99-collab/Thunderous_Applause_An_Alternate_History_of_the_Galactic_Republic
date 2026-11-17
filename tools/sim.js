@@ -43,7 +43,7 @@ StubUI.prototype.displayGameOver = function () { this.over = true; };
 const REFORM_PREFS = [
   ['oversight', 6], ['sunset', 6], ['terms', 5], ['guard', 4], ['investigate', 4], ['money', 3], ['slicer', 2], ['share', 3],
   ['pact', 4], ['form', 4], ['train', 3], ['enfranchise', 5], ['rim', 3], ['abolition', 4], ['slavery', 3], ['shmi', 5], ['relief', 3],
-  ['ethics', 4], ['warrant', 5], ['emergency_warrant', 4], ['expose', 4], ['shelter', 6], ['chips', 6], ['citizenship', 3], ['inspect', 3],
+  ['ethics', 4], ['warrant', 5], ['expose', 4], ['shelter', 6], ['chips', 6], ['citizenship', 3], ['inspect', 3],
   ['crossbloc', 3], ['alarm', 2], ['vonc', 1], ['jedi', 2], ['hunt', 3], ['visit', 2], ['anakin', 4], ['restore', 6], ['standdown', 6],
   ['walkout', 6], ['powers_no', 3], ['judicials', 2], ['channel', 2], ['talks', 2], ['compact', 4], ['trial', 3], ['prosecute', 2],
   ['run', 4], ['court_mod', 3], ['court_ind', 3], ['el_join', 4], ['el_chair', 4], ['el_coal', 3], ['confront', 3], ['campaign', 2],
@@ -104,7 +104,7 @@ function smartWeight(id, Q) {
     [/bureau_reform$/, Q.bureau_relation < 45 ? 9 : 1], [/valorum_bureaucracy$|organa_bureau$|antilles_bureau$/, Q.bureau_relation < 35 ? 9 : 0.5],
     [/soothe$/, Q.capital >= 2 ? 5 : 1], [/truce$/, (Q.bureau_relation < 8 || Q.bureau_dossier >= 3) ? 6 : 1], [/valorum_way$/, Q.capital >= 3 ? 4 : 0.5],
     // the arrest plan
-    [/\.expose$/, 10], [/\.warrant$/, 9], [/emergency_warrant$/, 6], [/fin_arrest_plan\.jedi$/, 0.3],
+    [/\.expose$/, 10], [/\.warrant$/, 9], [/fin_arrest_plan\.jedi$/, 0.3],
     // build the case
     [/^ca_investigate$/, Q.evidence < 10 ? 6 : 1], [/^sa_judiciary$/, 7], [/^sa_constitution$/, Q.senate_resolve >= 3 ? 7 : 3],
     [/^sa_security$/, 6], [/^sa_clones$/, 5], [/^ca_contributions$/, Q.capital <= 1 ? 7 : 1], [/^ca_routine$/, Q.capital <= 0 ? 4 : 0.5],
@@ -176,7 +176,6 @@ function smartWeight(id, Q) {
     const m = /^rec_budget\.(rev|pri)_(\w+)$/.exec(id);
     if (m && (m[1] === 'rev' ? Q['bd_brkn_rev_' + m[2]] : Q['bd_brkn_' + m[2]])) return w * 0.05;
     if (/^rec_budget\.support$/.test(id) && Q.bd_gov_breaks_n) return w * 0.05;
-    if (/^ca_investigate\.(money|slicer)$/.test(id) && Q.pl_no_probe) return w * 0.3;
     if (Q.pl_no_powers && /(powers_yes|^sa_emergency\.(request|martial))$/.test(id)) return w * 0.05;
     return w;
   }
@@ -255,6 +254,17 @@ const PREMISES = [
   [/^rec_threat_rim$/, Q => Q.parties.indexOf('rim') >= 0 && Q.dooku_movement, 'Rimward Coalition courted outside the crisis'],
   [/^rec_admirals_strike$/, Q => Q.sidious_defeated && !Q.hhc_discredited && Q.emergency_powers > 0, 'admirals strike without the conditions'],
   [/^rec_sidious_flees$/, Q => Q.war && !Q.sidious_defeated, 'Sith Lord flees without a war'],
+  // no opposition-style card or option while the Caucus holds the Chancellery or sits in its government
+  [/^(ca_confront|rec_piracy\.blame|ca_media\.(overreach|counter)|ca_enemy\.overreach|adv_mothma\.mothma_vigilance)$/, Q => !Q.rc_chancellor && !Q.rc_in_govt, 'opposition-style option while the Caucus governs'],
+  // the Last Days only draw on what was built
+  [/^ld_forces$/, Q => Q.pact_formed, 'Free Worlds mobilised without a Defence Pact'],
+  [/^ld_navy$/, Q => Q.navy_vetted >= 1 || Q.officer_corps || Q.senate_command, 'Navy appealed to without earlier work'],
+  [/^ld_delegation$/, Q => Q.delegation_formed, 'Delegation rallied without a Delegation'],
+  [/^ld_evidence$/, Q => Q.evidence >= 3, 'evidence secured without a case'],
+  [/^ld_jedi$/, Q => Q.jedi_relation >= 60, 'Jedi coordinated with without close relations'],
+  [/^ld_anakin$/, Q => (Q.padme_alive && (Q.padme_married || Q.adv_amidala)) || Q.jedi_relation >= 60 || Q.quigon_alive, 'Anakin reached without anyone close to him'],
+  [/^fin_gambit_response\.pact$/, Q => Q.pact_formed, 'Defence Pact mobilised without a Pact'],
+  [/^fin_gambit_response\.army$/, Q => Q.army_oversight || Q.chips_removed || Q.senate_command, 'army called on without Senate command'],
 ];
 const PREMISE_HITS = {};
 const STEP_SEEN = {};
@@ -268,6 +278,7 @@ function checkPremises(id, Q, game, out) {
     if (Q.govt_bad_pair && added.length) out['government formed with a pair below the bar'] = (out['government formed with a pair below the bar'] || 0) + 1;
     lastGovt = g;
   }
+  if (id.indexOf('.') >= 0) { for (const [re, ok, label] of PREMISES) if (re.source.indexOf('\\.') >= 0 && re.test(id) && !ok(Q)) out[label] = (out[label] || 0) + 1; }
   if (id.indexOf('.') < 0) {
     for (const [re, ok, label] of PREMISES) if (re.test(id) && !ok(Q)) out[label] = (out[label] || 0) + 1;
     const sc = game.scenes[id];

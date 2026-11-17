@@ -3,7 +3,7 @@ subtitle: Decide how seriously the Caucus takes the growth of the Chancellor's p
 is-card: true
 tags: caucus_affairs
 card-image: img/card_confront.svg
-view-if: confront_timer <= 0 and date >= 21 and (emergency_powers >= 1 or evidence >= 2 or grand_plan >= 35 or pal_chancellor) and not rc_chancellor and cardok_confront
+view-if: confront_timer <= 0 and date >= 21 and (emergency_powers >= 1 or evidence >= 2 or grand_plan >= 35 or pal_chancellor) and not rc_chancellor and not rc_in_govt and cardok_confront
 on-arrival: turn_actions += 1; confront_timer = 3; last_card_timer = "confront"
 new-page: true
 

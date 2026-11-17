@@ -1,7 +1,7 @@
 title: The Loyalist Committee
 subtitle: The Chancellor wants the Caucus close.
 tags: event
-view-if: war and war_begins_seen and pal_chancellor and not rc_chancellor and not loyalist_seen and not finale and not game_ending
+view-if: war and war_begins_seen and pal_chancellor and not rc_chancellor and not rc_in_govt and not loyalist_seen and not finale and not game_ending
 max-visits: 1
 new-page: true
 face-image: img/ev_chancellery.svg

@@ -36,14 +36,14 @@ on-arrival: capital -= 1; faith += 2; fear -= 1
 The Caucus sponsors a series on the Ruusan Reformation: a thousand years of peace, built by people who refused to give up on the Senate.
 
 @overreach
-view-if: not rc_chancellor and senate_resolve < 10
+view-if: not rc_chancellor and not rc_in_govt and senate_resolve < 10
 subtitle: [? if emergency_powers >= 1 or evidence >= 3 : Credible: the threat is visible. ?][? if emergency_powers < 1 and evidence < 3 : Nobody sees the threat yet. This may look like alarmism. ?]
 on-arrival: senate_resolve += 0.7 if emergency_powers >= 1 or evidence >= 3; faith -= 1 if emergency_powers < 1 and evidence < 3; pal_relation -= 3
 
 [? if emergency_powers >= 1 or evidence >= 3 : The Caucus's warnings strike a nerve. Senators who voted for the emergency measures begin to ask how they will ever be undone. ?][? if emergency_powers < 1 and evidence < 3 : The HoloNet pundits laugh at "the Caucus's phantom tyrant". A gentle, wounded denial arrives from [+ pal_office +]. ?]
 
 @counter
-view-if: pal_chancellor and grand_plan >= 35
+view-if: pal_chancellor and grand_plan >= 35 and not rc_in_govt
 subtitle: −1 political capital. Weakens the Chancellor's bloc a little.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.

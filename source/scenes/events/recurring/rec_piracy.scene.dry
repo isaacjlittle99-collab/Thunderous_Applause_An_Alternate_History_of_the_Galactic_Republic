@@ -29,6 +29,7 @@ on-arrival: capital -= 1; rim_hardship -= 2; outer_rc += 1.5; outer_sep -= 1.5
 Caucus relief reaches the survivors within days.
 
 @blame
+view-if: not rc_chancellor and not rc_in_govt
 subtitle: Hurts the government, helps us, and fuels Rim anger.
 on-arrival: rc_momentum += 0.6; outer_sep += 1; faith -= 0.5
 

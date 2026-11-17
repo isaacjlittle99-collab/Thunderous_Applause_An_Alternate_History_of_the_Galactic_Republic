@@ -40,7 +40,7 @@ artwork, music or footage is included; all images are original abstract art.*
   coalitions in order of relationship; and a Senate that cannot form a majority drives voters toward Palpatine and the separatists.
 - **Elections and campaigns.** Momentum, campaigns whose gains in a region last for years, messages that fit (or backfire on) the moment, election-season
   debates and endorsements, a Chancellor race with nominees, a whip count, pledges and bargaining between ballots,
-  coalition partners who name their price, world elections from Naboo to Corellia, secession referendums,
+  coalition partners who ask for committee chairs, world elections from Naboo to Corellia, secession referendums,
   rallies that need protecting, recalls, and confidence votes. A map of the galaxy in the Polls tab (and at every Senate
   session and Chancellor election) shades each region by its leading bloc; hover over a region for its delegations.
 - **The Separatists are a real threat.** Their cause grows every year unless the Caucus addresses the Rim; the Rimward
@@ -243,6 +243,19 @@ Build first, then run the tools from the repository root.
 
    ```bash
    node tools/editor_smoke.js "$PWD" /tmp/editor-shots
+   ```
+
+6. Wording sweep: renders every card and event with the Caucus as Chancellor, in Palpatine's government, in another
+   bloc's government, and in opposition to each. It reports what a player should never read in that state:
+   - opposition-style options (blaming or warning about the Chancellery) while the Caucus governs;
+   - Palpatine's bloc name used as if it were a person;
+   - "Chancellor Palpatine" while he is out of office;
+   - leftover template text.
+
+   It exits with status 1 if it finds anything.
+
+   ```bash
+   node tools/state_sweep.js "$PWD"
    ```
 
 ## Adding music
