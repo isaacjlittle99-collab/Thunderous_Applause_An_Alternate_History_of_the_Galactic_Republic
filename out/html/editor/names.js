@@ -120,7 +120,18 @@
     // guild money
     guild_hold: 'Debts to the guilds (they block reforms that hurt them)', guild_breaks: 'Times the Caucus broke with the guilds',
     // the Last Days
-    navy_vetted: 'Times the Caucus vetted Navy officers for loyalty', evidence_secured: 'Our evidence is secured for the Last Days'
+    navy_vetted: 'Times the Caucus vetted Navy officers for loyalty', evidence_secured: 'Our evidence is secured for the Last Days',
+    // the search for the Sith
+    sith_stage: 'The search for the Sith (0 rumours, 1 a presence, 2 a hidden hand, 3 close to power, 4 a name)',
+    sith_presence: 'The Jedi have confirmed a Sith presence', sith_named: 'The Caucus knows the Sith Lord is Palpatine',
+    suspect_amedda: 'Suspect cleared: Mas Amedda', suspect_pestage: 'Suspect cleared: Sate Pestage', suspect_free_taa: 'Suspect cleared: Orn Free Taa', suspect_dod: 'Suspect cleared: Lott Dod',
+    kamino_traced: 'The Kamino payments were traced', valorum_networks_used: "Valorum's old networks were used",
+    amedda_removed: "Mas Amedda's dealings were leaked and he lost the gavel",
+    sith_alarm: "The Sith Lord's alarm (5: he brings his plans forward; 8: he moves at once)", finale_date: 'Month the Last Days or his gambit begin',
+    hunt_informant: 'Hunt: Sate Pestage is our informant', hunt_frozen: 'Hunt: the Damask accounts are frozen', hunt_mapped: 'Hunt: compromised officers named',
+    hunt_chips: 'Hunt: the clone order was found', hunt_routes: 'Hunt: the ways off Coruscant are watched', hunt_jedi: 'Hunt: the Jedi know the name',
+    hunt_witnesses: 'Hunt: the witnesses are hidden', hunt_anakin_told: 'Hunt: Anakin was told the truth',
+    cha_arrest_result: "Our Chancellor's arrest order: fled, arrested or resisted"
   };
   ['bureau', 'rim', 'corruption', 'powers', 'military', 'jedi', 'slavery', 'syndicates', 'hhc'].forEach(function (t) {
     NAMES['track_' + t] = 'Reform track level: ' + ({bureau: 'the bureaucracy', rim: 'the Rim', corruption: 'corruption', powers: 'emergency powers',

@@ -1,0 +1,16 @@
+title: A Name
+subtitle: The shortlist is empty.
+tags: event
+view-if: sith_name_ready = 1 and not sith_named and not game_ending
+priority: 6
+new-page: true
+face-image: img/ev_shadow.svg
+on-arrival: {! SW.nameSith(Q, 'elimination'); !}
+
+= A Name
+
+Every suspect on the Caucus's shortlist has been cleared. Mas Amedda takes orders, but gives none. Sate Pestage's "client" pays him through the same Muun bank as the Damask money. Orn Free Taa is a crook and nothing worse. The Trade Federation's money came from somewhere else, and somewhere else, it turns out, is the one office nobody thought to look at.
+
+Bail Organa lays the files side by side and says the name aloud for the first time: **[+ pal_title +]**.
+
+Nobody in the room argues. Nobody in the room can prove it, either. Knowing is not proving, and if he learns what we know before we are ready, he will not wait for us.

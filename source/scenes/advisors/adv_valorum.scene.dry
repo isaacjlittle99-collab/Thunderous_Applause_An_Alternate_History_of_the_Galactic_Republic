@@ -21,9 +21,9 @@ Brought down by the Naboo crisis, Valorum has had time to think about who arrang
 subtitle: +1 evidence (less each time).
 choose-if: advisor_action_timer <= 0
 unavailable-subtitle: Our advisors have already acted recently.
-on-arrival: evidence += 1 / (1 + valorum_leads); valorum_leads += 1; advisor_action_timer = 5
+on-arrival: evidence += 1 / (1 + valorum_leads); valorum_leads += 1; advisor_action_timer = 5; valorum_networks_used = 1
 
-Valorum still has friends in the Chancellery’s offices. They remember which visitors came to the Naboo delegation late at night.
+Valorum still has friends in the Chancellery’s offices. [? if sith_named : They remember which visitors came to the Naboo delegation late at night. ?][? if not sith_named : They remember who came and went late at night, and which doors on the Senate's upper floors were always locked. ?]
 
 @valorum_elder
 subtitle: +6 relations with the Core Moderates.

@@ -1,7 +1,7 @@
 title: Sidious's Last Gambit
 subtitle: The Sith Lord moves to seize the Republic.
 tags: event
-view-if: date >= 171 and not finale and not sidious_defeated and not sidious_fled and not game_ending and not (war and pal_chancellor)
+view-if: date >= finale_date and not finale and not sidious_defeated and not sidious_fled and not game_ending and not (war and pal_chancellor)
 max-visits: 1
 priority: 20
 new-page: true
@@ -10,7 +10,7 @@ on-arrival: {!
 Q.finale = 1; Q.finale_day = 1; Q.months_per_turn = 0; Q.clear_hand = 1; Q.gambit = 1;
 Q.gambit_kind = Q.pal_chancellor ? 'decree' : 'coup';
 Q.pal_reach_low = (Q.pal_office_months || 0) < 12 ? 1 : 0;
-Q.sidious_known = (Q.evidence >= 6 || Q.jedi_suspicion >= 6) ? 1 : 0;
+Q.sidious_known = (Q.sith_named || Q.jedi_suspicion >= 6) ? 1 : 0;
 Q.fear += 8;
 SW.updateDate(Q);
 !}

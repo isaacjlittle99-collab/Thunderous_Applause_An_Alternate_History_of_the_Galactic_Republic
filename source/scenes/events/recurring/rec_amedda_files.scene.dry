@@ -1,0 +1,33 @@
+title: The Vice Chair's Files
+subtitle: What the Caucus found on Mas Amedda.
+tags: event
+view-if: amedda_files_ready = 1 and not amedda_files_seen and not amedda_arrested and not finale and not game_ending
+priority: 5
+new-page: true
+face-image: img/ev_shadow.svg
+on-arrival: amedda_files_ready = 0; amedda_files_seen = 1
+
+= The Vice Chair's Files
+
+Mas Amedda is not the Sith Lord. But the files the Caucus now holds on him would end any career in the Senate: bills ruled out of order for money, appointments sold from the Vice Chair's office, and a private line to someone he will not name.
+
+- @leak: Leak his dealings to the HoloNet.
+- @quiet: Keep it quiet.
+
+@leak
+subtitle: He falls, and the Senate's staff breathe easier. But someone will learn how close we are.
+on-arrival: {!
+Q.amedda_removed = 1; Q.vice_chair = 'Ask Aak';
+Q.bureau_relation += 10; Q.faith += 1;
+SW.momentum(Q, 0.4, 'the fall of Mas Amedda');
+SW.raiseAlarm(Q, 0, 5);
+!}
+
+Within a day the files are on every HoloNet feed. Mas Amedda resigns the gavel before the Senate can take it from him, and Ask Aak of Malastare is elected Vice Chair. The Senate's permanent staff, who spent years watching their work sold, are quietly delighted.
+
+Somewhere in the Senate, someone reads the same feeds, and understands exactly how much the Caucus knows.
+
+@quiet
+subtitle: He stays in place, and nobody learns what we know.
+
+The files go into the safe with the rest. Mas Amedda keeps the gavel, and the Caucus keeps its secret.

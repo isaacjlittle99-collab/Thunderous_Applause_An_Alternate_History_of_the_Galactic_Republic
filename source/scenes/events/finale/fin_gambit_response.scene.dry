@@ -10,7 +10,7 @@ on-arrival: gambit_response_seen = 1; gambit_bonus = 0
 
 = The Senate Under Siege
 
-[? if gambit_kind = "exposed" : Exposed, Palpatine has abandoned all pretence. ?][? if gambit_kind = "decree" : The Chancellor's decree is hours old. ?][? if gambit_kind = "coup" : The coup is under way. ?] Loyal and disloyal forces are moving all over Coruscant. The Caucus has time for one great effort.
+[? if gambit_kind = "exposed" : Exposed, Palpatine has abandoned all pretence. ?][? if gambit_kind = "decree" : The Chancellor's decree is hours old. ?][? if gambit_kind = "coup" : The coup is under way. ?][? if gambit_kind = "resists" : The arrest has failed. Palpatine has thrown off every pretence and called out everyone who still answers to him. ?] Loyal and disloyal forces are moving all over Coruscant. The Caucus has time for one great effort.
 
 - @senate: Rally the Senate to stand together.
 - @jedi: Call on the Jedi Order.

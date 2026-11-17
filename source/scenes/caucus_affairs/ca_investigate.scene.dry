@@ -9,10 +9,14 @@ new-page: true
 
 = Shadow Investigation
 
-Too many of the Republic's crises seem to serve someone. Our evidence is **[+ evidence : evidence +]**. Investigations carry risks: the people behind these events do not like being looked at.
+[? if sith_stage = 0 : Too many of the Republic's crises seem to serve someone. ?][? if sith_stage = 1 : The Jedi say a Sith Lord has returned. If he has, the Republic's crises may be his work, and someone, somewhere, is serving him. ?][? if sith_stage = 2 : One hidden hand is behind the Republic's crises: the same money, the same timing, the same people profiting. It belongs to a Sith Lord[? if gunray_testified or gunray_convicted : the Trade Federation knew as Darth Sidious ?]. ?][? if sith_stage = 3 : The trail leads to Coruscant, and close to power. The Caucus has a shortlist: [+ suspects_open_text +]. ?][? if sith_stage = 4 : Every other door has closed. The Sith Lord is [+ pal_title +]. Knowing it is not proving it. ?] Our proof is **[+ evidence : evidence +]**. Investigations carry risks: the people behind these events do not like being looked at.
 
 [? if investigators_lost > 0 : We have already lost [+ investigators_lost +] investigator(s). ?]
 
+- @look_amedda: Look into Mas Amedda.
+- @look_pestage: Look into Sate Pestage.
+- @look_free_taa: Look into Orn Free Taa.
+- @look_dod: Look into Lott Dod.
 - @money: Follow the money.
 - @slicer: Hire a slicer to break into sealed records.
 - @share: Share our findings with the Jedi Council.
@@ -21,6 +25,42 @@ Too many of the Republic's crises seem to serve someone. Our evidence is **[+ ev
 - @charges: Lay charges before the Senate.
 - @records: Comb through public records.
 - @easy_discard
+
+@look_amedda
+view-if: sith_stage = 3 and not suspect_amedda
+subtitle: −1 political capital. The Vice Chair controls the Senate's agenda, and nobody knows who controls him.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! Q.capital -= 1; SW.clearSuspect(Q, 'amedda', 'look'); !}
+go-to: look_result
+
+@look_pestage
+view-if: sith_stage = 3 and not suspect_pestage
+subtitle: −1 political capital. Half the Senate's appointments pass through his hands.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! Q.capital -= 1; SW.clearSuspect(Q, 'pestage', 'look'); !}
+go-to: look_result
+
+@look_free_taa
+view-if: sith_stage = 3 and not suspect_free_taa
+subtitle: −1 political capital. Rich, unscrupulous, and everywhere the money is.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! Q.capital -= 1; SW.clearSuspect(Q, 'free_taa', 'look'); !}
+go-to: look_result
+
+@look_dod
+view-if: sith_stage = 3 and not suspect_dod
+subtitle: −1 political capital. The Trade Federation's man, and the Damask money ran through the Federation.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! Q.capital -= 1; SW.clearSuspect(Q, 'dod', 'look'); !}
+go-to: look_result
+
+@look_result
+
+Weeks of quiet work on [+ suspect_last_name +]. [+ suspect_last_finding +] Whatever [+ suspect_last_name +] is, it is not the Sith Lord. [? if suspects_open > 0 : The shortlist is shorter. ?][? if suspects_open = 0 : The shortlist is empty, and the Caucus is left looking at the one man nobody thought to suspect. ?]
 
 @money
 subtitle: −1 political capital. Slow but fairly safe.
@@ -43,7 +83,9 @@ unavailable-subtitle: Needs 2 political capital.
 on-arrival: {!
 Q.capital -= 2;
 Q.evidence += 0.8 + (Q.chair_judiciary === 'rc' ? 0.3 : 0);
-Q.inv_result = 'Our slicer cracks a sealed archive of ' + (Q.chancellor_bloc === 'pal' ? 'Chancellery correspondence' : 'correspondence from Senator Palpatine\'s office') + '. Most of it is dull. A little of it is chilling.';
+var target = Q.sith_named ? (Q.chancellor_bloc === 'pal' ? 'Chancellery correspondence' : 'correspondence from Senator Palpatine\'s office') :
+  (Q.sith_stage >= 3 ? 'sealed records from the Senate\'s inner circle' : 'sealed records from the companies that profited from the crises');
+Q.inv_result = 'Our slicer cracks an archive of ' + target + '. Most of it is dull. A little of it is chilling.';
 if (Math.random() < 0.2 + Q.grand_plan / 400) { Q.leak_pending = 1; Q.inv_result += ' Then the slicer stops answering her comlink.'; }
 !}
 
@@ -75,7 +117,7 @@ on-arrival: capital -= 1; case_briefed = 1; senate_resolve += 0.3
 Bail Organa invites a handful of senators and two Supreme Court justices to a quiet dinner and shows them part of the file. Nobody says anything aloud. Everybody understands.
 
 @charges
-view-if: evidence >= 7 and not sidious_known and not finale
+view-if: sith_named and evidence >= 7 and not sidious_known and not finale
 subtitle: [? if dooku_turned or evidence >= 10 : Our case is conclusive. This is the moment. ?][? if not dooku_turned and evidence >= 9 and evidence < 10 : Our case is strong. It will probably hold, but not certainly. ?][? if not dooku_turned and evidence < 9 : Our case is not yet strong enough; it will probably fail, and if it fails, the Caucus may not survive. ?]
 choose-if: capital >= 2
 unavailable-subtitle: Needs 2 political capital.

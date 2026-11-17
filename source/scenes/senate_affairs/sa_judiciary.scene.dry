@@ -13,7 +13,7 @@ The Caucus chairs the Judiciary & Intelligence Committee: the Republic's courts,
 
 - @prosecute: Prosecute corruption.
 - @ethics: Establish a Senate Ethics Commission.
-- @intel: Order an intelligence review of Palpatine's contacts.
+- @intel: [? if sith_stage <= 2 : Order an intelligence review of the people who profited from the crises. ?][? if sith_stage = 3 : Order an intelligence review of the Senate's inner circle. ?][? if sith_stage = 4 : Order an intelligence review of [+ pal_title +]'s contacts. ?]
 - @gunray: Press the case against Nute Gunray.
 - @warrant: Prepare a Senate warrant for the Sith Lord.
 - @bureau_reform: Reform the Senate bureaucracy.
@@ -51,10 +51,16 @@ if (Q.eth_vote >= 50) { Q.anti_corruption = 1; Q.corruption -= 4; Q.faith += 2; 
 
 @intel
 view-if: intel_runs < 3
-subtitle: +1 evidence. Palpatine's people may notice.
-on-arrival: {! Q.evidence += 1; Q.intel_runs += 1; if (Math.random() < 0.15 + Q.grand_plan / 500) Q.leak_pending = 1; !}
+subtitle: [? if sith_stage <= 2 : +1 evidence. Whoever is behind them may notice. ?][? if sith_stage = 3 : +1 evidence, and one name off the shortlist. ?][? if sith_stage = 4 : +1 evidence. His people may notice, and so may he. ?]
+on-arrival: {!
+Q.evidence += 1; Q.intel_runs += 1;
+Q.intel_cleared = '';
+if (Q.sith_stage === 3) { var nx = SW.nextOpenSuspect(Q); if (nx) { SW.clearSuspect(Q, nx, 'review'); Q.intel_cleared = Q.suspect_last_name; } }
+if (Q.sith_stage === 4) SW.riskAlarm(Q, 1, 0.4);
+if (Math.random() < 0.15 + Q.grand_plan / 500) Q.leak_pending = 1;
+!}
 
-The Bureau's analysts map [+ pal_title +]'s contacts. A disturbing number of them lead to people who later died, disappeared or became very rich.
+[? if sith_stage <= 2 : The Bureau's analysts map everyone who profited from the Republic's crises. A disturbing number of them lead to people who later died, disappeared or became very rich, and the money always seems to end up on Coruscant. ?][? if sith_stage = 3 and intel_cleared : The Bureau's analysts take the Senate's inner circle apart, one office at a time. [+ suspect_last_finding +] [+ intel_cleared +] is not the Sith Lord. ?][? if sith_stage = 3 and not intel_cleared : The Bureau's analysts go over the Senate's inner circle once more. Nothing new. ?][? if sith_stage = 4 : The Bureau's analysts map [+ pal_title +]'s contacts. A disturbing number of them lead to people who later died, disappeared or became very rich. ?]
 
 @gunray
 view-if: gunray_stage >= 1 and gunray_stage <= 4 and not gunray_convicted
@@ -100,7 +106,7 @@ if (Q.cs_vote >= 50) { Q.bureau_reformed = 1; Q.bureau_relation = Math.max(Q.bur
 [? if bureau_reformed : The Civil Service Act passes. Appointments to the Senate's permanent staff will be made on merit and reviewed in public, and no official may take a fee from a bloc or a guild. The men and women who ran the Republic from its back offices now answer to it. ?][? if not bureau_reformed : The bill dies on the floor. The back offices of the Senate go on as before, and they will remember who tried. ?]
 
 @amedda
-view-if: bureau_reformed and not amedda_arrested and not sidious_defeated and not sidious_fled
+view-if: bureau_reformed and not amedda_arrested and not amedda_removed and not sidious_defeated and not sidious_fled
 subtitle: −1 political capital. The new civil service has opened the Vice Chair's files.
 choose-if: capital >= 1 and evidence >= 3
 unavailable-subtitle: [? if evidence < 3 : We need more evidence before we can move against him. ?][? if evidence >= 3 : Needs 1 political capital. ?]
@@ -111,6 +117,7 @@ Q.evidence += 1.5; Q.grand_plan -= 2; Q.pal_relation -= 10; Q.senate_resolve += 
 for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_rc'] += 2;
 SW.momentum(Q, 0.6, 'the arrest of Mas Amedda');
 Q.scheme_timer = 0;
+SW.clearSuspect(Q, 'amedda', 'arrest');
 SW.computeSupport(Q);
 !}
 achievement: amedda

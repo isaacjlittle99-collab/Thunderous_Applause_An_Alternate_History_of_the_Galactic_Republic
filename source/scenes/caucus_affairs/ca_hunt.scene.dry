@@ -1,0 +1,116 @@
+title: The Hunt for Darth Sidious
+subtitle: We know who he is. Now we must stop him.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_shadow.svg
+view-if: hunt_timer <= 0 and cardok_hunt
+on-arrival: turn_actions += 1; hunt_timer = 2; last_card_timer = "hunt"
+new-page: true
+
+= The Hunt for Darth Sidious
+
+[+ pal_title +] is the Sith Lord. A handful of people know it, and every one of them is in danger. Every move against him is a move he might see. [? if sith_alarm >= 5 : He knows we are close. ?][? if sith_alarm >= 2 and sith_alarm < 5 : He is watchful. ?]
+
+- @arrest: Order the arrest of [+ pal_title +].
+- @informant: Turn Sate Pestage.
+- @freeze: Freeze the Damask accounts.
+- @officers: Map compromised officers in the Guard and the Navy.
+- @chips: Find the clone order.
+- @routes: Watch ways off Coruscant.
+- @jedi: Bring the name to the Jedi.
+- @witnesses: Protect the witnesses.
+- @anakin: Tell Anakin Skywalker the truth.
+- @case: Build the public case.
+- @easy_discard
+
+@arrest
+view-if: rc_chancellor and not cha_arrest_done
+subtitle: −2 political capital. Our Chancellor can give the order. Whether it holds is another matter.
+choose-if: capital >= 2
+unavailable-subtitle: Needs 2 political capital.
+on-arrival: {! Q.capital -= 2; SW.chancellorArrest(Q); !}
+go-to: rec_chancellor_arrest
+
+@informant
+view-if: suspect_pestage and not hunt_informant
+subtitle: −1 political capital. Pestage has a price, and a client he is afraid of. He may notice.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! Q.capital -= 1; Q.hunt_informant = 1; Q.hunt_alarmed = SW.riskAlarm(Q, 1, 0.3); !}
+
+Sate Pestage meets a Caucus aide in a noodle bar on the lower levels and names his price: immunity, a new name, and a world far from Coruscant. In return, he will tell us where his client goes, whom he meets, and what he asks for. [? if hunt_alarmed : Two days later Pestage misses a meeting, and turns up at the next one shaking. Someone has asked him questions. ?]
+
+@freeze
+view-if: not hunt_frozen
+subtitle: −2 political capital. Stop the money that buys his votes and his enforcers. He will notice.
+choose-if: capital >= 2 and (chair_finance = "rc" or banking_audit)
+unavailable-subtitle: [? if chair_finance != "rc" and not banking_audit : Needs the Finance & Commerce chair or the Banking Clan audit. ?][? if chair_finance = "rc" or banking_audit : Needs 2 political capital. ?]
+on-arrival: {! Q.capital -= 2; Q.hunt_frozen = 1; Q.grand_plan -= 5; SW.raiseAlarm(Q, 2); !}
+
+The accounts of Damask Holdings and two dozen companies that grew from it are frozen in a single morning, on a Banking Clan auditor's signature. Senators who have voted his way for years find their accounts empty, and Black Sun's paymasters stop paying. [+ pal_title +] says nothing in public. In private, someone is furious.
+
+@officers
+view-if: not hunt_mapped
+subtitle: −1 political capital. Name the men in the Guard and the Navy who answer to him. He may notice.
+choose-if: capital >= 1 and chair_security = "rc"
+unavailable-subtitle: [? if chair_security != "rc" : Needs the Security & Defence chair. ?][? if chair_security = "rc" : Needs 1 political capital. ?]
+on-arrival: {! Q.capital -= 1; Q.hunt_mapped = 1; Q.navy_loyalty += 10; SW.raiseAlarm(Q, 1); !}
+
+The Security & Defence Committee's staff work through service records, postings and promotions until a pattern appears: a few dozen officers, in the Red Guard and the fleet, whose careers were made by one office. Quietly, the most loyal commanders are told who they are. When the time comes, the Guard will not be his alone.
+
+@chips
+view-if: kamino_army and kamino_known and not chips_found and not hunt_chips
+subtitle: −1 political capital. Somewhere in the Kaminoan contract is the order he means to give. He may notice.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! Q.capital -= 1; Q.hunt_chips = 1; Q.chips_found = 1; SW.raiseAlarm(Q, 1); !}
+
+Sifo-Dyas's files and the original Kaminoan contract, read side by side, describe a "behavioural modification chip" in every clone and a list of contingency orders. One of them, Order Sixty-Six, declares the Jedi enemies of the Republic. The Clone Oversight Committee can have the chips removed.
+
+@routes
+view-if: not hunt_routes
+subtitle: −1 political capital. Cover every way off Coruscant he could take. Quiet work.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; hunt_routes = 1
+
+The Caucus's friends in the Coruscant traffic authority, the Judicial Forces and two shipyards watch his private dock, his couriers and every ship he has ever chartered. If he runs, he will not get far.
+
+@jedi
+view-if: not hunt_jedi
+subtitle: The Jedi will act with the Senate. They may not be discreet about it.
+choose-if: jedi_relation >= 45
+unavailable-subtitle: The Jedi do not trust us enough yet.
+on-arrival: {! Q.hunt_jedi = 1; Q.jedi_suspicion = Math.max(Q.jedi_suspicion, 9); Q.senate_jedi_pact = 1; Q.jedi_relation += 3; Q.hunt_alarmed = SW.riskAlarm(Q, 1, 0.5); !}
+
+Bail Organa brings the name to Master Windu himself. Windu reads the files twice. "We have sensed him for years," he says. "We never thought to look so close." The Council agrees: when the moment comes, the Jedi will act with the Senate. [? if hunt_alarmed : The next day, the Chancellery asks the Council why three Masters have been seen near 500 Republica. ?]
+
+@witnesses
+view-if: not hunt_witnesses
+subtitle: −1 political capital. Hide the people who can testify. Quiet work.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: capital -= 1; hunt_witnesses = 1; evidence_secured = 1
+
+Nute Gunray, our slicers and the Bureau analysts who know too much disappear into safe houses on Alderaan, Chandrila and Mon Cala. Copies of every file go with them. Whatever happens to the Caucus on Coruscant, the case will survive.
+
+@anakin
+view-if: anakin_found and not hunt_anakin_told and not anakin_fallen
+subtitle: [? if anakin_fall <= 4 : He trusts us, and he deserves to know. ?][? if anakin_fall > 4 : He is close to Palpatine. He may not believe us, and he may tell him. ?]
+choose-if: (padme_alive and (padme_married or adv_amidala)) or jedi_relation >= 60
+unavailable-subtitle: Nobody close to him would carry the message.
+on-arrival: {!
+Q.hunt_anakin_told = 1;
+if (Q.anakin_fall <= 4) { Q.anakin_fall = Math.max(0, Q.anakin_fall - 2); Q.hunt_anakin_turned = 0; }
+else { Q.anakin_fall += 2; Q.hunt_anakin_turned = 1; SW.raiseAlarm(Q, 0, 8); }
+!}
+
+[? if not hunt_anakin_turned : [? if padme_alive : Padmé ?][? if not padme_alive : Obi-Wan Kenobi ?] tells Anakin everything. He is silent for a long time. Then he asks what he can do, and says he will stand with the Senate. ?][? if hunt_anakin_turned : Anakin listens, and does not believe a word. He goes straight to [+ pal_title +], who thanks him for his loyalty and tells him the Jedi and the Senate are plotting against them both. ?]
+
+@case
+subtitle: −1 political capital. More proof for the charges. Every subpoena is a risk.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! Q.capital -= 1; Q.evidence += 0.6; Q.hunt_case_runs = (Q.hunt_case_runs || 0) + 1; SW.raiseAlarm(Q, 0.5); !}
+
+Caucus lawyers take depositions from the people who will talk and subpoenas to the people who will not. The case grows a little stronger, and a little louder.
