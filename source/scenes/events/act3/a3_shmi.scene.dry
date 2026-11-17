@@ -5,7 +5,7 @@ view-if: date >= 134 and anakin_found and not shmi_freed and not shmi_dead
 max-visits: 1
 new-page: true
 face-image: img/ev_jedi.svg
-on-arrival: shmi_dead = 1; anakin_fall += 2
+on-arrival: {! Q.shmi_dead = 1; Q.anakin_fall += 2 - (Q.slavery_campaign >= 1 ? 0.5 : 0) - (Q.slavery_abolished ? 0.5 : 0); !}
 
 = A Mother's Death
 
@@ -13,4 +13,4 @@ Anakin Skywalker's nightmares were true. On Tatooine, his mother Shmi was taken 
 
 The Jedi Council knows only that the young man came back from Tatooine changed. The Chancellor knows more. He always does.
 
-[? if slavery_campaign >= 1 : The Caucus's anti-slavery campaign came too late for Shmi Skywalker. ?]
+[? if slavery_campaign >= 1 : The Caucus's anti-slavery campaign came too late for Shmi Skywalker. Anakin knows, at least, that someone in the Senate tried. ?]

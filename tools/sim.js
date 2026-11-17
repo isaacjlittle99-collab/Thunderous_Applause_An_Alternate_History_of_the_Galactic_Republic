@@ -105,7 +105,7 @@ function smartWeight(id, Q) {
     // build the case
     [/^ca_investigate$/, Q.evidence < 10 ? 6 : 1], [/^sa_judiciary$/, 7], [/^sa_constitution$/, Q.senate_resolve >= 3 ? 7 : 3],
     [/^sa_security$/, 6], [/^sa_clones$/, 5], [/^ca_contributions$/, Q.capital <= 1 ? 7 : 1], [/^ca_routine$/, Q.capital <= 0 ? 4 : 0.5],
-    [/^ca_rim$/, Q.rim_hardship > 35 ? 5 : 2], [/^ca_jedi$/, 4], [/^ca_confront$/, 3], [/^ca_pact$/, Q.dooku_movement ? 5 : 2],
+    [/^ca_rim$/, Q.rim_hardship > 35 ? 5 : 2], [/^ca_jedi$/, 4], [/^ca_confront$/, 3], [/^ca_pact$/, (Q.war && (Q.war_ratio || 2) < 0.9) ? 8 : (Q.dooku_movement ? 5 : 2)],
     [/^ca_peace$/, Q.war ? 5 : 1], [/^ca_relations$/, 3], [/^ca_media$/, 3], [/^sa_rimaffairs$/, 5], [/^sa_finance$/, 4],
     [/^sa_diplomacy$/, Q.war ? 6 : 3],
     // advisors and leadership
@@ -250,6 +250,8 @@ const PREMISES = [
   [/^rec_sidious_flees$/, Q => Q.war && !Q.sidious_defeated, 'Sith Lord flees without a war'],
 ];
 const PREMISE_HITS = {};
+const STEP_SEEN = {};
+const STEP_RE = /\.(bureau_reform|civil_service|amedda|ethics|integrity|hhc_investigate|syndicates|relief_act|enfranchise|assembly|slavery_report|abolition|enforce|sentience|sunset|powers_review|oversight|command|patrols|pirate_campaign|officers|reform|attachment|new_order|judicials|navy|train|exercise|break|guilds|el_chest)$/;
 let lastGovt = [];
 function checkPremises(id, Q, game, out) {
   const g = (Q.govt_blocs || []).slice();
@@ -294,6 +296,9 @@ function playOne(gameIndex) {
         if (Q.chancellor !== lastChancellor) { trace.chancellors.push(Q.bby + ':' + Q.chancellor_bloc + (process.env.TRACE ? '[fell' + (Q.govt_fell||0) + ' rc' + Q.rc_r + ' pal' + Q.pal_r + ' mod' + Q.mod_r + ' faith' + Math.round(Q.faith) + ' corr' + Math.round(Q.corruption) + ']' : '')); lastChancellor = Q.chancellor; }
         if (Q.rim_enfranchised && trace.enfranchisedAt === null) trace.enfranchisedAt = Q.date;
         if (Q.time !== trace._lt) { trace._lt = Q.time; if (Q.rc_has_access) trace.access = (trace.access || 0) + 1; }
+        if (Q.time !== trace._lt2) { trace._lt2 = Q.time; trace.chairs = trace.chairs || {}; for (const c of SW.COMMITTEES) if (Q['chair_' + c] === 'rc') trace.chairs[c] = (trace.chairs[c] || 0) + 1; if (Q.rc_in_govt) trace.govt = (trace.govt || 0) + 1; }
+        if (Q.finale && trace.afFinale === undefined) { trace.afFinale = Q.anakin_fall; trace.forces = SW.forces(Q); trace.navy = Q.navy_loyalty; trace.palV = Q.pal_r; trace.corr = Q.corruption; }
+        if (Q.war && Q.time !== trace._lt3) { trace._lt3 = Q.time; const ws = SW.warStrength(Q); trace.warTurns = (trace.warTurns || 0) + 1; if (ws.ratio < 1) trace.warWeak = (trace.warWeak || 0) + 1; trace.ratioSum = (trace.ratioSum || 0) + Math.min(3, ws.ratio); trace.balSum = (trace.balSum || 0) + Q.war_balance; trace.minBal = Math.min(trace.minBal === undefined ? 9 : trace.minBal, Q.war_balance); }
         trace.maxDissent = Math.max(trace.maxDissent, Q.inst_dissent || 0, Q.rimward_dissent || 0, Q.pacifist_dissent || 0, Q.hawk_dissent || 0);
         if (game.scenes[eng.state.sceneId] && game.scenes[eng.state.sceneId].isCard) trace.cardPlays[eng.state.sceneId] = (trace.cardPlays[eng.state.sceneId] || 0) + 1;
         if (Q.time === lastTime) sameTimeSteps++; else { sameTimeSteps = 0; lastTime = Q.time; }
@@ -320,12 +325,14 @@ function playOne(gameIndex) {
           resolve({stuck: 'empty hand, no decks at ' + eng.state.sceneId, Q, steps, visits});
           return;
         }
+        if (process.env.STEPS) for (const c of (eng.getCurrentChoices() || [])) { const m = STEP_RE.exec(c.id); if (m) { const k = m[0].replace(/^\./, ''); const o = STEP_SEEN[k] = STEP_SEEN[k] || {seen: 0, can: 0, took: 0}; o.seen++; if (c.canChoose) o.can++; } }
         const choices = (eng.getCurrentChoices() || []).map((c, i) => ({c, i})).filter(x => x.c.canChoose);
         if (!choices.length) { resolve({stuck: 'no choices at ' + eng.state.sceneId, Q, steps, visits}); return; }
         // avoid undo and back in automated play
         let pool = choices.filter(x => x.c.id !== 'easy_discard' && x.c.id !== 'go_back');
         if (!pool.length) pool = choices;
         const ch = pick(pool, x => x.c.id);
+        if (process.env.STEPS) { const m = STEP_RE.exec(ch.c.id); if (m) STEP_SEEN[m[0].replace(/^\./, '')].took++; }
         eng.choose(ch.i);
       }
       resolve({stuck: eng.isGameOver() ? null : 'step limit at ' + eng.state.sceneId, Q, steps, visits, trace});
@@ -374,6 +381,22 @@ function playOne(gameIndex) {
       if (t.enfranchisedAt !== null && t.enfranchisedAt < 132) { audit.enf++; audit.enfSeceded.push(Q.seceded_total); if (Q.geonosis_seen) audit.enfWar++; audit.enfWhere = audit.enfWhere || {}; const w = (Q.secession_where || 'none') + ' o' + Math.round(Q.outer_sep) + ' m' + Math.round(Q.midrim_sep) + ' c' + Math.round(Q.corporate_sep); audit.enfWhere[w] = 1; }
       if (process.env.TRACE && ch.length && ch[0].indexOf(':rc') >= 0) origLog('trace', g, JSON.stringify(t.chancellors));
       audit.maxDissent.push(t.maxDissent);
+      audit.an = audit.an || {af: [], good: 0, bad: 0, shmiFree: 0, shmiDead: 0, chairs: {}, govt: [], ratio: [], rep: [], sith: [], found: 0};
+      if (t.afFinale !== undefined) { audit.an.af.push(t.afFinale); if (t.afFinale <= 4) audit.an.good++; if (t.afFinale >= 6.5) audit.an.bad++; audit.an.ratio.push(t.forces.ratio); audit.an.rep.push(t.forces.rep); audit.an.sith.push(t.forces.sith); }
+      if (Q.shmi_freed) audit.an.shmiFree++; if (Q.shmi_dead) audit.an.shmiDead++; if (Q.anakin_found) audit.an.found++;
+      for (const c of SW.COMMITTEES) audit.an.chairs[c] = (audit.an.chairs[c] || 0) + ((t.chairs || {})[c] || 0);
+      audit.an.govt.push(t.govt || 0);
+      if (t.forces) { audit.an.fparts = audit.an.fparts || {n: 0}; audit.an.fparts.n++; for (const k in t.forces.repParts) audit.an.fparts['our ' + k] = (audit.an.fparts['our ' + k] || 0) + t.forces.repParts[k];
+        for (const k in t.forces.sithParts) audit.an.fparts['his ' + k] = (audit.an.fparts['his ' + k] || 0) + t.forces.sithParts[k]; audit.an.fparts.navy = (audit.an.fparts.navy || 0) + (t.navy || 0); audit.an.fparts.palV = (audit.an.fparts.palV || 0) + (t.palV || 0); audit.an.fparts.corr = (audit.an.fparts.corr || 0) + (t.corr || 0); }
+      audit.wr = audit.wr || {turns: 0, weak: 0, ratio: 0, bal: 0, minBal: [], endBal: [], droid: [], clones: [], sec: [], atWarEnd: 0};
+      audit.wr.turns += t.warTurns || 0; audit.wr.weak += t.warWeak || 0; audit.wr.ratio += t.ratioSum || 0; audit.wr.bal += t.balSum || 0;
+      if (t.minBal !== undefined) audit.wr.minBal.push(t.minBal); if (Q.war) { audit.wr.atWarEnd++; audit.wr.endBal.push(Q.war_balance); }
+      audit.wr.droid.push(Q.droid_armies || 0); audit.wr.clones.push(Q.clones || 0); audit.wr.sec.push(Q.seceded_total || 0);
+      audit.wr.hist = audit.wr.hist || {}; audit.wr.wl = audit.wr.wl || {}; audit.wr.secR = audit.wr.secR || [];
+      if (Q.war) { const rr = SW.warStrength(Q).ratio; const bk = rr < 0.6 ? '<0.6' : rr < 0.8 ? '0.6-0.8' : rr < 1 ? '0.8-1' : rr < 1.25 ? '1-1.25' : '1.25+'; audit.wr.hist[bk] = (audit.wr.hist[bk] || 0) + 1;
+        if (Q.sidious_defeated) audit.wr.hist['beaten ' + bk] = (audit.wr.hist['beaten ' + bk] || 0) + 1; }
+      if (Q.war) { const sc = SW.warScore(Q), sb = sc <= -3 ? '<=-3' : sc < 0 ? '-3..0' : sc < 2 ? '0..2' : sc < 4 ? '2..4' : '4+'; audit.wr.score = audit.wr.score || {}; audit.wr.score[(Q.sidious_defeated ? 'beaten ' : '') + sb] = (audit.wr.score[(Q.sidious_defeated ? 'beaten ' : '') + sb] || 0) + 1; }
+      const wl = Q.worlds_lost || 0; audit.wr.wl[wl >= 6 ? '6+' : wl] = (audit.wr.wl[wl >= 6 ? '6+' : wl] || 0) + 1; audit.wr.secR.push(Q.sec_r || 0);
       for (const c in t.cardPlays) if (t.cardPlays[c] >= 6) audit.repeatCards[c] = (audit.repeatCards[c] || 0) + 1;
       // leaders
       audit.contests.push(Q.leadership_contests || 0);
@@ -495,6 +518,13 @@ function playOne(gameIndex) {
       '; Caucus at end: support ' + avg(c.rcVotes) + '%, seats ' + avg(c.rcSeats) + '%'); }
   if (audit.rel) { const r = audit.rel;
     origLog('audit: relations: broken-system swings ' + r.swings + ' (minority governments ' + r.minority + ', collapses ' + r.collapse + ', bureaucrats ' + r.bureau + '); every Caucus coalition blocked ' + r.blocked + 'x; deliveries ' + r.delivered + ', pledges kept ' + r.kept + '; government size at end avg ' + avg(r.size) + '; end relations mod-rim ' + avg(r.modRim) + ', guild-mod ' + avg(r.guildMod) + ', rim-sec ' + avg(r.rimSec) + ', pal-sec ' + avg(r.palSec)); }
+  if (audit.an) { const e = audit.an; origLog('audit: anakin: found ' + e.found + ', fall at the finale avg ' + avg(e.af) + ' (4 or less in ' + e.good + ', 6.5 or more in ' + e.bad + '); Shmi freed ' + e.shmiFree + ', died ' + e.shmiDead +
+    '; forces at the finale: ours avg ' + avg(e.rep) + ', his avg ' + avg(e.sith) + ', ratio avg ' + (e.ratio.length ? (e.ratio.reduce((x, y) => x + y, 0) / e.ratio.length).toFixed(2) : '-') +
+    '; turns in government avg ' + avg(e.govt) + '; chair-turns per game ' + SW.COMMITTEES.map(c => c + ' ' + (e.chairs[c] / GAMES).toFixed(1)).join(', ')); }
+  if (audit.wr) { const e = audit.wr; origLog('audit: war: turns per game ' + (e.turns / GAMES).toFixed(1) + ', share of them with the Confederacy stronger ' + Math.round(100 * e.weak / Math.max(1, e.turns)) + '%, ratio avg ' + (e.ratio / Math.max(1, e.turns)).toFixed(2) +
+    ', balance avg ' + (e.bal / Math.max(1, e.turns)).toFixed(1) + ', lowest balance avg ' + avg(e.minBal) + '; still at war at the end in ' + e.atWarEnd + ' (balance avg ' + avg(e.endBal) + '); droid armies at end avg ' + avg(e.droid) + ', clones avg ' + avg(e.clones) + ', seceded avg ' + avg(e.sec) + '%; ratio at the end ' + JSON.stringify(e.hist) + '; war score at the end ' + JSON.stringify(e.score || {}) + '; worlds lost per game ' + JSON.stringify(e.wl) + '; Security Bloc seats at end avg ' + avg(e.secR)); }
+  if (audit.an && audit.an.fparts) { const fp = audit.an.fparts; origLog('audit: forces at the finale by part: ' + Object.keys(fp).filter(k => k !== 'n').map(k => k + ' ' + (fp[k] / fp.n).toFixed(1)).join(', ')); }
+  if (process.env.STEPS) origLog('audit: steps offered/affordable/taken: ' + Object.keys(STEP_SEEN).sort().map(k => k + ' ' + STEP_SEEN[k].seen + '/' + STEP_SEEN[k].can + '/' + STEP_SEEN[k].took).join(', '));
   origLog('audit: bureaucrat purges ' + audit.purges + ' (in ' + audit.purgeGames + ' games), Vice Chair gavels ' + audit.gavels);
   origLog('audit: leaders at the end: ' + Object.entries(audit.endLeaders).sort().map(([k, v]) => k + '=' + v).join(' '));
   origLog('audit: avg peak faction dissent ' + avg(audit.maxDissent) + '; cards played 6+ times (games): ' + JSON.stringify(audit.repeatCards));

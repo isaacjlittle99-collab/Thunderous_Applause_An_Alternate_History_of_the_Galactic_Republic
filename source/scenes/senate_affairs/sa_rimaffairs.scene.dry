@@ -53,7 +53,7 @@ st.rim += Q.slavery_campaign * 0.05; st.mod += Q.slavery_campaign * 0.05;
 Q.ab_vote = SW.vote(Q, st, 1, 'rim');
 Q.vote_html = SW.voteBanner('Abolition of Slavery Act', Q.ab_vote);
 if (Q.ab_vote >= 50) {
-    Q.slavery_abolished = 1; Q.rim_hardship += 2; Q.rim_relation += 6; Q.faith += 2; Q.anakin_fall -= 0.5;
+    Q.slavery_abolished = 1; Q.rim_hardship += 2; Q.rim_relation += 6; Q.faith += 2; Q.anakin_fall -= 1;
     Q.outer_rc += 1.5; Q.midrim_rc += 1.5; Q.colonies_rc += 0.5; SW.computeSupport(Q);
     this.achieve('abolition');
 }
@@ -128,7 +128,7 @@ view-if: not slavery_report
 subtitle: −1 political capital. The Senate's own record of the slave trade.
 choose-if: capital >= 1
 unavailable-subtitle: Needs 1 political capital.
-on-arrival: {! Q.capital -= 1; Q.slavery_report = 1; Q.slavery_campaign += 0.5; Q.anakin_fall -= 0.5; Q.outer_rc += 1.5; Q.midrim_rc += 1.5; Q.colonies_rc += 0.5; SW.computeSupport(Q); !}
+on-arrival: {! Q.capital -= 1; Q.slavery_report = 1; Q.slavery_campaign += 0.5; Q.anakin_fall -= 1; Q.outer_rc += 1.5; Q.midrim_rc += 1.5; Q.colonies_rc += 0.5; SW.computeSupport(Q); !}
 
 The committee's report runs to four thousand pages: the slave markets of Tatooine and Nar Shaddaa, the Zygerrian slavers, the shipping lines that carry their cargo and the senators who look away. It is read into the record, page by page, and the HoloNet broadcasts every word. [? if anakin_found : Somewhere in the Temple, a young Jedi reads it all. ?]
 

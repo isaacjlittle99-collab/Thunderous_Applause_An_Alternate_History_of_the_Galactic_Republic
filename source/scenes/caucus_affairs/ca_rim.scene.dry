@@ -31,7 +31,7 @@ view-if: not slavery_abolished and slavery_campaign < 2
 subtitle: −2 political capital. Builds the case for abolition; the Hutts will retaliate.
 choose-if: capital >= 2
 unavailable-subtitle: Needs 2 political capital.
-on-arrival: capital -= 2; slavery_campaign += 1; rimward_strength += 3; rimward_dissent -= 4; rim_hardship += 1; outer_rc += 1
+on-arrival: capital -= 2; slavery_campaign += 1; rimward_strength += 3; rimward_dissent -= 4; rim_hardship += 1; outer_rc += 1; anakin_fall -= 0.3
 
 Caucus observers document the slave markets of Nar Shaddaa and Tatooine. The footage shocks the Core. [? if slavery_campaign >= 2 : The case for an abolition bill is now overwhelming. ?]
 
