@@ -1,0 +1,15 @@
+title: The Bureau Moves to the Chancellery
+subtitle: The Republic's spies will report to one office.
+tags: event
+view-if: bureau_moves_ready = 1 and not finale and not game_ending
+max-visits: 1
+priority: 3
+new-page: true
+face-image: img/ev_chancellery.svg
+on-arrival: {! Q.bureau_moves_ready = 0; Q.bureau_moves_seen = 1; Q.chan_bureau = 1; SW.chancellery(Q); Q.war_shadows_ready = SW.shadowsReady(Q) ? 1 : 0; !}
+
+= The Bureau Moves to the Chancellery
+
+Citing the emergency, an order from the Chancellery places the Bureau of Intelligence under the Supreme Chancellor's office. Its directors will report there, and only there. The Senate's intelligence committee learns of it from the HoloNet.
+
+[? if pal_chancellor : Within a month the Caucus's few sources inside the Bureau have gone quiet. One is posted to a listening station in the Unknown Regions; another simply stops answering. Whatever the Bureau learns about the Caucus now goes straight to Palpatine's desk. ?][? if puppet_chancellor : Within a month the Caucus's few sources inside the Bureau have gone quiet. Whatever the Bureau learns about the Caucus now goes to the Chancellor's office, and from there, the Caucus suspects, to Palpatine. ?][? if rc_chancellor : It was our Chancellor's own order, signed for good reasons in a hard season. The Bureau's directors arrive with their files, and with them, it soon becomes clear, come problems of their own. ?][? if not rc_chancellor and not pal_chancellor and not puppet_chancellor : Chancellor [+ chancellor +] signed the order in a hard season, for reasons that sounded good at the time. ?]

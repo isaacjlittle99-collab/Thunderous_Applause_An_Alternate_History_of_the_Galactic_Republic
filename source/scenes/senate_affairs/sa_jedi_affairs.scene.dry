@@ -17,6 +17,7 @@ The Caucus chairs the Senate's Jedi Affairs Committee, which answers for the Ord
 - @independence: Guarantee the independence of the Jedi Order.
 - @service: Put the Jedi Service Act to the Senate.
 - @compact: Propose a Senate–Jedi Compact.
+- @testimony: Hear the Order's own account of its work.
 - @easy_discard
 
 @reform
@@ -101,3 +102,9 @@ if (Q.jc_vote >= 50) { Q.jedi_compact = 1; Q.senate_jedi_pact = 1; Q.jedi_suspic
 [+ vote_html +]
 
 [? if jedi_compact : Master Yoda and the Senate's leaders sign the Compact in the Temple's great hall. The Council will bring its warnings to the Senate, and the Senate its evidence to the Council. Neither will act against the Republic's enemies alone again. ?][? if not jedi_compact : The Compact fails. ?]
+
+@testimony
+subtitle: Free. The Order's standing and its relations with the Caucus improve a little.
+on-arrival: jedi_standing += 1; jedi_relation += 2
+
+The committee invites Jedi Masters to describe their work in their own words: the missions the HoloNet never covers, the worlds they have kept from war. For once the Senate listens without being asked to vote, and the Masters leave a little less wary of it.

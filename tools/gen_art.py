@@ -312,6 +312,7 @@ CARDS = {
     'card_pact': 'shield', 'card_shadow': 'eclipse', 'card_jedi': 'temple', 'card_rim': 'twin_suns',
     'card_peace': 'laurel', 'card_disunity': 'split', 'card_civil': 'people', 'card_law': 'scales',
     'card_forces': 'chevron', 'card_clones': 'figures', 'card_senate': 'rotunda', 'card_shuffle': 'arrows',
+    'card_chancellery': 'spire',
 }
 for name, em in CARDS.items():
     write(name + '.svg', tile(240, 300, em))

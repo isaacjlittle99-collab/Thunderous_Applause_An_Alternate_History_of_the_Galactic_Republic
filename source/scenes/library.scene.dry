@@ -26,6 +26,7 @@ is-special: true
 - @lib_defections: Shifting blocs and defections
 - @lib_purse: The Republic's purse
 - @lib_elections: Elections and campaigns
+- @lib_chancellery: The Chancellery and its powers
 - @lib_reforms: Safeguards and how to win them
 - @lib_tracks: Reforms in steps
 - @lib_shadows: Guild money, the syndicates and High Human Culture
@@ -434,7 +435,7 @@ go-to: lib_sys_menu
 
 **Emergency powers** (0 to 10) measure how much authority the Senate has handed the Chancellor. Most steps are Senate votes you can contest: the term extension (24 BBY), Geonosis (22 BBY), powers "for the duration", the security act, the Banking Clan takeover, the sector governors, and Anakin's seat on the Council. Safeguards block steps outright. Entrenched term limits stop the extensions, banking independence protects the banks, Jedi independence protects the Council, and sunset clauses can stop the governors.
 
-Each power adds corruption and lowers faith. Powers held by anyone but your own Chancellor also speed the Sith's plan, and at 4 or more they anger the Pacifists. A failed yearly sunset review takes two away, and after Sidious falls the Restoration Act can repeal them all. If 8 or more remain at the end, the Empire is born. If 5 or more survive Sidious's fall unrepealed, the admirals keep them. If your own Chancellor keeps them, the result is the Hollow Crown.
+Each power adds corruption and lowers faith. Powers held by anyone but your own Chancellor also speed the Sith's plan, and at 4 or more they anger the Pacifists. A failed yearly sunset review takes two away, and after Sidious falls the Restoration Act can repeal them all. If 8 or more remain at the end, the Empire is born. If 5 or more survive Sidious's fall unrepealed, the admirals keep them. If your own Chancellor keeps them, the result is the Hollow Crown, and so it is if a Chancellor of ours has issued 5 or more decrees and the office still holds 6 or more of its powers at the end (see *The Chancellery and its powers*).
 
 **The Sith's plan** is hidden. Only *In the corridors*, on the Shadow tab, hints at it, and the hint changes every 20 points. It grows with corruption, fear, the war and other people's emergency powers, and much faster while Palpatine is Chancellor. It grows more slowly when he is out of office, and slowest of all under a Caucus Chancellor. Evidence, Senate resolve and a suspicious Jedi Council slow it. Decommissioning the clones or putting them under oversight sets it back.
 
@@ -518,7 +519,7 @@ go-to: lib_sys_menu
 
 **The front** runs from −10 to +10. Sidious wants a long war, so while he rules the Republic, the front drifts toward a slow Republic advance if nobody pushes. Out of office, he no longer holds the droid armies back; once he is gone, the two sides' strength alone decides. Funding the front, Jedi generals and a turned Dooku push it forward. Every quarter of war drains the treasury, adds corruption, Rim hardship and war-weariness, and wears down the Jedi. The war ends with the Federal Compact, with victory at +9, or with a Treaty of Separation if the front is behind or weariness reaches 60. At −9.5, the Confederacy wins. If the game ends with the war still raging, the war as a whole decides: see *How the game ends*.
 
-**Anakin falls unless something holds him.** Left alone, he goes the way he went in the films: from month 96 the dark side rises under him, and by month 168 he is as good as Palpatine's. Padmé, honesty from the Jedi, *Reach Out to Anakin* and every step against slavery still pull him back, but never below that rising line. Only three things lift it, and *The Chancellery* panel shows which one holds him, under Persons of interest:
+**Anakin falls unless something holds him.** Left alone, he goes the way he went in the films: from month 96 the dark side rises under him, and by month 168 he is as good as Palpatine's. Padmé, honesty from the Jedi, *Reach Out to Anakin* and every step against slavery still pull him back, but never below that rising line. Only three things lift it, and the *People* panel shows which one holds him, under Persons of interest:
 
 • *His mother, free.* Enforcing abolition before Shmi's death in month 134 frees her.
 
@@ -533,6 +534,51 @@ Once something holds him, he can be kept in the light, and an Anakin who chooses
 **The arrest has to be earned.** In its favour: Anakin in the light (+1.5), a reformed Senate Guard, a Senate warrant, Judicial Forces of 4+, conclusive evidence, a Jedi Order not worn down by the war (+1 each), exposing him first (+2), the Senate–Jedi pact (+0.5) and an informant (+1). Against it: a fallen Anakin (−2), a delay, and his plan. **The balance of forces counts too**: matching or outnumbering everyone who would answer to him gives +1; if he has a third more than us, −1; twice as much, −2; three times, −3. It needs 3.5, and a little luck plays its part. A raid without the groundwork usually fails, as Windu's did.
 
 **The final reckoning.** If it comes to a fight, the game weighs everyone loyal to the Senate against everyone who would obey the Sith Lord. The Senate side has the Jedi (scaled by public trust), the Judicial Forces, the Defence Pact, the Senate Guard (if it was reformed or the Chancellery is yours), unchipped clones, a loyal Navy and Anakin. The Sith side has chipped clones, the Guard and the sector governors if his camp holds the Chancellery, a disloyal Navy, the Security Bloc's men, Black Sun's enforcers while the syndicates stand, and Vader. Clearly stronger means victory, roughly even means a long civil war, and much weaker means the Empire. Acting without a Senate warrant risks a Jedi Protectorate, even in victory.
+
+@lib_chancellery
+is-special: true
+new-page: true
+go-to: menu
+
+= The Chancellery and its powers
+
+The office of Supreme Chancellor stands apart from the six committees. It holds the Chancellor, the Vice Chair and whatever powers the office has gathered. The pinned *The Chancellery* card shows them all; looking is free.
+
+**The twelve powers**, how each is gained, and the reform that checks it for good:
+• *The gavel:* held from the start; the Vice Chair controls the agenda. Checked by an independent Speaker.
+• *The Senate Guard:* held from the start; the Guard answers to the Chancellor. Checked by returning the Guard to the Senate.
+• *The Chancellor's staff:* from 30 BBY, as the committees' staff move into the Chancellery (from 26 BBY if the Caucus resisted the transfers in *The Chancellery Grows*). Checked by the Civil Service Act.
+• *Emergency decrees:* with the first emergency power. Sunset clauses suspend it; the Powers Review Act ends it.
+• *The Grand Army:* once there is a clone army. Checked by Senate oversight of the army, or the Senate Command Act.
+• *The Bureau of Intelligence:* *The Bureau Moves to the Chancellery*, at 2 or more emergency powers or after two years of war. Checked by the Intelligence Oversight Act, which also stops the move.
+• *The HoloNet:* *The Office of Public Information*, at 3 or more emergency powers. Checked by a free press (an independent HoloNet foundation, from the Civil Society card), which also stops it.
+• *Term without end:* the term extension or an indefinite term. Checked by entrenched term limits.
+• *The Jedi Council:* the Chancellor's representative on the Council. Checked by the Jedi Independence Amendment.
+• *The banks:* the Banking Clan's seizure. Checked by its independence, or Republic bonds.
+• *The Security Act.* Checked by the Judicial Forces Charter.
+• *The sector governors.* Checked by the Rim's constitutional seats, or the Rim Assembly.
+
+**The scale.** 0 to 2 powers: *First among equals*. 3 to 4: *A strong executive*. 5 to 6: *A war cabinet*. 7 to 9: *An imperial presidency*. 10 or more: *The throne in all but name*.
+
+**What the powers do.** Whoever holds the office, its own bills gain 1 point in every Senate vote for each power held, and 3 more while it holds the committees' staff. For our Chancellor these are the Caucus's bills; for Palpatine or his man, his bills for more power. Under Palpatine, his plan also gains 0.1 a quarter for each power. A Bureau in his hands wears away 0.1 of our evidence a quarter and raises his alarm.
+
+**War in the Shadows.** When our Chancellor holds an office that holds the Bureau, the Bureau turns out to be split between loyal agents and a hidden network that answers to a darker master. *Purge* it (−1 political capital, −0.5 evidence, the bureaucrats angered) and the network is cut off at once. *Back the loyal agents* (+0.3 evidence) and it is rooted out over the next five quarters. *Leave it be* and it goes on raising the Sith Lord's alarm for as long as we hold the Bureau. Either way, the Bureau is ours to use afterwards.
+
+**Rule by decree.** While our Chancellor holds the office and the office holds emergency decrees, each of these takes the turn:
+• *Enact a reform by decree:* any committee step that would go to a Senate vote passes without one, if its card's own conditions are met. It costs what the card's option costs, and 3 faith.
+• *The Guard arrests the corrupt* (the Senate Guard; −1 capital): corruption −4, fear +3.
+• *The governors deliver relief* (the sector governors; −1 capital): Rim hardship −3.
+• *Direct the Banking Clan* (the banks; −1 capital): debt −5.
+• *Order the Grand Army forward* (the Grand Army, in wartime; −1 capital): the weakest front +1.5.
+• *Address the galaxy* (the HoloNet; −1 capital): the Caucus's momentum +1.
+• *Turn the Bureau on a rival bloc* (after *War in the Shadows*; −2 capital): the bloc's support falls 7% in every region, its relations with us fall by 6 and it holds a grudge, and its leader's hold on it weakens for a while.
+• *Set the Bureau to investigate* (after *War in the Shadows*; −2 capital): +1 evidence and +0.5 to the Jedi's suspicion.
+
+**The price of decrees.** Each decree adds 1 to the office's precedent. Each quarter, faith falls by 0.05 for each point. The Restoration Act loses about 2 points of support for each point. If Palpatine or his man later takes the office, his plan gains 2 for each point, once. And if, when the game ends, our Chancellor holds the office with a precedent of 5 or more and 6 or more powers still held, the ending is *The Hollow Crown*.
+
+**Returning a power.** Our Chancellor can hand any held power back to the Senate (it takes the turn): the reform that checks it takes effect as if passed, faith rises by 3, and the precedent falls by 1.
+
+**Other Chancellors** with emergency decrees rule by decree every four quarters, drawing on the powers the office holds: the Guard detains a Caucus senator, the HoloNet campaigns for the Chancellor's bloc, a governor breaks up a Rim protest, the Bureau watches the Caucus, or a decree takes one more emergency power. Each advances the Sith's plan, by 1 under Palpatine or his man and by 0.5 under anyone else.
 
 @lib_reforms
 is-special: true

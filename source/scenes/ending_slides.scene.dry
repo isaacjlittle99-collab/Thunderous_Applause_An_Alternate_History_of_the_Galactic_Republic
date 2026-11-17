@@ -82,7 +82,7 @@ go-to: legacy
 
 = The Hollow Crown
 
-Our Chancellor keeps the emergency powers "for now", to rebuild, to keep order, to make sure the Sith never return. The Caucus tells itself that this is different, because we are the good ones.
+[? if not hc_decrees : Our Chancellor keeps the emergency powers "for now", to rebuild, to keep order, to make sure the Sith never return. ?][? if hc_decrees : Our Chancellor ruled by decree, a little more each year: a reform the Senate was too slow to pass, an arrest that could not wait, a speech nobody was allowed to answer. The office ends the struggle holding powers no Chancellor before Palpatine dreamed of, and nobody in the Caucus can say when that happened. ?] The Caucus tells itself that this is different, because we are the good ones.
 
 A year passes, then five. The powers are never returned. The Caucus's own reformers become the Chancellery's loyalists, and the next generation of reformers learns to fear us. In the end the Sith did not need to win. We did it for them.
 

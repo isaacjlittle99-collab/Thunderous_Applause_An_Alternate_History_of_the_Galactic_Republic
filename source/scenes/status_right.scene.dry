@@ -1,4 +1,4 @@
-title: The Chancellery
+title: People
 is-special: true
 on-arrival: {! Q.sb_html = (typeof SW !== 'undefined' && SW.statusHTML) ? SW.statusHTML(Q, 'chancellery') : ''; !}
 

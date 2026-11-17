@@ -27,7 +27,7 @@ new-page: true
 
 You lead the **Ruusan Caucus**: a loose alliance of reform-minded senators from worlds like Alderaan, Chandrila, Corellia and Rodia. History says that over the next fourteen years the Republic will vote itself into an Empire, with thunderous applause. Your task is to stop that from happening, and to leave the Republic stronger than you found it.
 
-**Turns.** Each turn you play **one card** from your hand. Draw cards from the *Caucus Affairs* deck (your own bloc's work) and, once you hold a seat in the governing coalition or a committee chair, from the *Senate Affairs* deck. Your **advisors** are pinned cards. Each can act once every few turns without using up your turn. Most turns cover a quarter of a year. During crises they shrink to months, and in the final hours to days.
+**Turns.** Each turn you play **one card** from your hand. Draw cards from the *Caucus Affairs* deck (your own bloc's work) and, once you hold a seat in the governing coalition or a committee chair, from the *Senate Affairs* deck. Your **advisors** are pinned cards. Each can act once every few turns without using up your turn. Beside them, *The Chancellery* shows the Chancellor's office and its powers. Most turns cover a quarter of a year. During crises they shrink to months, and in the final hours to days.
 
 **Events.** Between turns, the galaxy moves. Events fire on historical dates and in response to the state of the Republic. Many of them let you choose how the Caucus responds.
 
@@ -189,6 +189,10 @@ The Senate's work is done in **six committees**, and whoever chairs one decides 
 
 **Ministers.** Every chair is held by a named senator. When the Caucus takes a chair, it chooses who sits in it from its own senators, and the faction that senator belongs to is pleased. The committees the Caucus does not chair are not idle: every few turns each one acts on the course of the bloc that holds it, as that bloc's leader sees things at the time. A guild-friendly Finance committee cuts regulation, a Rimward one sends relief, and one in Palpatine's hands quietly smooths his way. Some of those acts are reforms put to the Senate, though the Core Moderates and the Independents only put reforms forward when their reforming wings lead them. *The Committees Report* tells you what they did, and the Senate tab shows who chairs each committee.
 
+**The Chancellery.** The Chancellor's office is not a committee: it is an office of its own, and it gathers powers. It starts with the gavel and the Senate Guard, takes over the committees' staff in time, and gains more with each emergency: decrees, the Grand Army, the Bureau of Intelligence, the HoloNet, the banks, the sector governors and others. A reform can check each power for good. The more powers the office holds, the more weight its holder's own bills carry, and under Palpatine every power feeds his plan. The pinned *The Chancellery* card shows the office, its powers and the government; looking costs nothing.
+
+**Rule by decree.** While our own Chancellor holds the office and it holds emergency decrees, the Chancellery card can enact a committee's next reform without a Senate vote, or use one of the office's powers. Each decree takes the turn and sets a precedent: faith in the Republic slowly falls, the Restoration grows harder, and a later Palpatine inherits it all. Rule by decree often enough while the office keeps its powers, and the game ends as *The Hollow Crown*. Our Chancellor can also hand a power back to the Senate for good. Other Chancellors with emergency decrees rule by decree on their own every so often.
+
 - @how_to_play: Back to How to play
 
 @htp_reforms
@@ -237,7 +241,7 @@ new-page: true
 
 • **The Rim's politicians radicalise.** Each year from 28 BBY without action on slavery or Rim enfranchisement, our Rimward wing and the Rimward Coalition move a step closer to Dooku. At the last step, radicals lead both, and they are ready to defect as soon as he declares.
 
-• **Anakin falls unless something holds him.** From month 96 the dark side rises under him, and by month 168 nothing pulls him back. Only three things stop it: freeing his mother; a Jedi Order reformed to accept attachment; or all of keeping the Jedi out of command, a warning about Palpatine that was heard, and action on slavery. *The Chancellery* panel shows what holds him, under Persons of interest. A fallen Anakin betrays the arrest and fights for the Sith Lord.
+• **Anakin falls unless something holds him.** From month 96 the dark side rises under him, and by month 168 nothing pulls him back. Only three things stop it: freeing his mother; a Jedi Order reformed to accept attachment; or all of keeping the Jedi out of command, a warning about Palpatine that was heard, and action on slavery. The *People* panel shows what holds him, under Persons of interest. A fallen Anakin betrays the arrest and fights for the Sith Lord.
 
 • **The arrest weighs the forces.** Everyone who would answer to him is set against everyone who would answer to us. If he is clearly stronger, even a well-prepared arrest can fail.
 
