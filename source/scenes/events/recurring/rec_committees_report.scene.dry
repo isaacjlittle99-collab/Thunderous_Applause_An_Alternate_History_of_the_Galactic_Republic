@@ -1,0 +1,14 @@
+title: The Committees Report
+subtitle: What the committees we do not chair have been doing.
+tags: event
+view-if: ministry_report_ready = 1 and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: ministry_report_ready = 0
+
+= The Committees Report
+
+The Caucus's staff go through the season's committee records. The committees the Caucus does not chair have been busy, each on its own bloc's course.
+
+[+ ministry_report +]

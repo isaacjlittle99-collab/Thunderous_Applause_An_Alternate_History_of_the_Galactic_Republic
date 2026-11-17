@@ -322,6 +322,11 @@
     D.anti_cartel = 0; D.republic_bonds = 0; D.senators_expelled = 0; D.intel_oversight = 0; D.compor = 0; D.judicial_charter = 0;
     D.independent_speaker = 0; D.jedi_service_act = 0; D.jedi_compact = 0;
     D.ac_vote = 0; D.rb_vote = 0; D.ex_vote = 0; D.io_act_vote = 0; D.cp_vote = 0; D.jc_charter_vote = 0; D.sp_vote = 0; D.js_vote = 0; D.jc_vote = 0;
+    for (var mc = 0; mc < SW.COMMITTEES.length; mc++) { var mk = SW.COMMITTEES[mc]; D['minister_' + mk] = ''; D['minister_' + mk + '_name'] = ''; D['minister_' + mk + '_bloc'] = ''; D['ministry_act_' + mk] = ''; D['ministry_act_by_' + mk] = ''; }
+    D.appoint_queue = ''; D.appoint_ready = 0; D.reappoint_all = 0; D.ap_com = ''; D.ap_com_name = ''; D.ap_chosen_name = ''; D.ap_chosen_faction = '';
+    D.ap_a = ''; D.ap_b = ''; D.ap_c = ''; D.ap_c_name = ''; D.ap_c_ok = 0; D.ap_a_ok = 0; D.ap_b_ok = 0; D.ap_a_name = ''; D.ap_b_name = ''; D.ap_a_world = ''; D.ap_b_world = ''; D.ap_c_world = ''; D.ap_a_faction = ''; D.ap_b_faction = ''; D.ap_c_faction = '';
+    D.ministry_next = 0; D.ministry_report = ''; D.ministry_report_ready = 0; D.ministry_acts_total = 0;
+    for (var mcm in SW.MINISTRY_ACTS) for (var mai = 0; mai < SW.MINISTRY_ACTS[mcm].length; mai++) D['mfail_' + SW.MINISTRY_ACTS[mcm][mai].id] = 0;
     D.dereg_count = 0; D.corp_donors_ready = 0; D.corporate_security = 0; D.corporate_forces = 0; D.ld_corporate_used_today = 0;
     D.rim_story_ready = 0; D.rim_story = ''; D.rim_story_heading = ''; D.rim_story_region = ''; D.rim_story_cause = ''; D.rim_story_next = 0; D.rim_stories = 0;
     for (var rsid in SW.RIM_STORIES) D['rim_story_done_' + rsid] = 0;
@@ -1519,6 +1524,249 @@
     SW.recomputeGovt(Q);
   };
 
+
+  // ------------------------------------------------------------------ ministers
+  // Each committee chair is held by a named senator of the bloc that holds it. The Caucus chooses its own;
+  // other blocs appoint the first of theirs not already chairing a committee.
+  SW.MINISTERS = {
+    // the Caucus's own
+    organa: {name: 'Bail Organa', world: 'Alderaan', bloc: 'rc', faction: 'inst'},
+    amidala: {name: 'Padmé Amidala', world: 'Naboo', bloc: 'rc', faction: 'inst'},
+    breemu: {name: 'Bana Breemu', world: 'Humbarine', bloc: 'rc', faction: 'inst'},
+    mothma: {name: 'Mon Mothma', world: 'Chandrila', bloc: 'rc', faction: 'pacifist'},
+    darsana: {name: 'Darsana', world: 'Glee Anselm', bloc: 'rc', faction: 'pacifist'},
+    chuchi: {name: 'Riyo Chuchi', world: 'Pantora', bloc: 'rc', faction: 'rimward'},
+    ashe: {name: 'Jorin Ashe', world: 'Christophsis', bloc: 'rc', faction: 'rimward'},
+    bel_iblis: {name: 'Garm Bel Iblis', world: 'Corellia', bloc: 'rc', faction: 'hawk'},
+    holt: {name: 'Aren Holt', world: 'Commenor', bloc: 'rc', faction: 'hawk'},
+    // the Core Moderates
+    tessane: {name: 'Ivra Tessane', world: 'Corulag', bloc: 'mod'},
+    bastel: {name: 'Lorne Bastel', world: 'Brentaal', bloc: 'mod'},
+    marchant: {name: 'Sela Marchant', world: 'Coruscant', bloc: 'mod'},
+    // the Commerce Guilds
+    argente: {name: 'Passel Argente', world: 'Kooriva', bloc: 'guild'},
+    po_nudo: {name: 'Po Nudo', world: 'Ando', bloc: 'guild'},
+    toora: {name: 'Toonbuck Toora', world: 'Sy Myrth', bloc: 'guild'},
+    // Palpatine's bloc
+    greejatus: {name: 'Janus Greejatus', world: 'Kuat', bloc: 'pal'},
+    sauro: {name: 'Sano Sauro', world: 'Coruscant', bloc: 'pal'},
+    burtoni: {name: 'Halle Burtoni', world: 'Kamino', bloc: 'pal'},
+    // the Rimward Coalition
+    bar_gane: {name: 'Edcel Bar Gane', world: 'Roona', bloc: 'rim'},
+    tikkes: {name: 'Tikkes', world: 'Mon Calamari', bloc: 'rim'},
+    dorr: {name: 'Vena Dorr', world: 'Ryloth', bloc: 'rim'},
+    // the Security Bloc
+    rhee: {name: 'Cassel Rhee', world: 'Anaxes', bloc: 'sec'},
+    vorne: {name: 'Hadrian Vorne', world: 'Eriadu', bloc: 'sec'},
+    kintis: {name: 'Mara Kintis', world: 'Kuat', bloc: 'sec'},
+    // the Independents
+    valk: {name: 'Oren Valk', world: 'Bothawui', bloc: 'ind'},
+    vandar: {name: 'Siri Vandar', world: 'Alsakan', bloc: 'ind'},
+    dowmeia: {name: 'Tundra Dowmeia', world: 'Mon Calamari', bloc: 'ind'},
+    // the Rim Freedom Caucus
+    varo: {name: 'Kesh Varo', world: 'Ord Biniir', bloc: 'rfc'},
+    tor: {name: 'Lissa Tor', world: 'Malastare', bloc: 'rfc'}
+  };
+  SW.pickMinister = function (Q, b, used, c) {
+    for (var id in SW.MINISTERS) if (SW.MINISTERS[id].bloc === b && !used[id]) return id;
+    return 'gen_' + b + '_' + c;   // a bloc with more chairs than named senators
+  };
+  SW.ministerName = function (Q, id) {
+    if (SW.MINISTERS[id]) return SW.MINISTERS[id].name;
+    var b = (id || '').split('_')[1] || '';
+    return b ? 'a senator of the ' + SW.name(Q, b) : '';
+  };
+  // Keep every chair's minister in step with the bloc that holds it. A chair the Caucus gains gets a
+  // minister at once, and the Caucus is asked whom it wants.
+  SW.syncMinisters = function (Q) {
+    var used = {}, queue = (Q.appoint_queue || '').split(',').filter(function (x) { return x; });
+    for (var i = 0; i < SW.COMMITTEES.length; i++) {
+      var c = SW.COMMITTEES[i], b = Q['chair_' + c], m = Q['minister_' + c];
+      if (b && m && Q['minister_' + c + '_bloc'] === b && !used[m]) used[m] = c;
+      else if (m) Q['minister_' + c] = '';
+    }
+    for (var j = 0; j < SW.COMMITTEES.length; j++) {
+      var cc = SW.COMMITTEES[j], bb = Q['chair_' + cc];
+      if (!bb) { Q['minister_' + cc] = ''; Q['minister_' + cc + '_name'] = ''; Q['minister_' + cc + '_bloc'] = ''; continue; }
+      var reappoint = bb === 'rc' && Q.reappoint_all;
+      if (Q['minister_' + cc] && !reappoint) continue;
+      if (!Q['minister_' + cc]) {
+        var id = SW.pickMinister(Q, bb, used, cc);
+        used[id] = cc;
+        Q['minister_' + cc] = id; Q['minister_' + cc + '_name'] = SW.ministerName(Q, id); Q['minister_' + cc + '_bloc'] = bb;
+        // a new bloc in the chair starts with a clean record
+        if (Q['ministry_act_by_' + cc] !== bb) { Q['ministry_act_' + cc] = ''; Q['ministry_act_by_' + cc] = ''; }
+      }
+      if (bb === 'rc' && queue.indexOf(cc) < 0) queue.push(cc);
+    }
+    Q.reappoint_all = 0;
+    // only chairs still ours wait for a choice
+    queue = queue.filter(function (x) { return Q['chair_' + x] === 'rc'; });
+    Q.appoint_queue = queue.join(',');
+    Q.appoint_ready = (queue.length && !Q.finale && !Q.game_ending) ? 1 : 0;
+  };
+  // The appointment: up to three Caucus figures not chairing another committee (the current one among them).
+  SW.appointOpen = function (Q) {
+    var queue = (Q.appoint_queue || '').split(',').filter(function (x) { return x; });
+    var c = queue[0] || '';
+    Q.ap_com = c; Q.ap_com_name = SW.COMMITTEE_NAMES[c] || '';
+    var busy = {};
+    for (var i = 0; i < SW.COMMITTEES.length; i++) if (SW.COMMITTEES[i] !== c && Q['minister_' + SW.COMMITTEES[i]]) busy[Q['minister_' + SW.COMMITTEES[i]]] = 1;
+    var free = [], seenFaction = {};
+    for (var id in SW.MINISTERS) if (SW.MINISTERS[id].bloc === 'rc' && !busy[id]) free.push(id);
+    // the sitting minister first, then one of each faction, the most restless factions first, then anyone
+    var order = Object.keys(SW.MINISTERS);
+    var restless = function (id) { return Q[SW.MINISTERS[id].faction + '_dissent'] || 0; };
+    free.sort(function (a, b) {
+      var sit = (b === Q['minister_' + c] ? 1 : 0) - (a === Q['minister_' + c] ? 1 : 0);
+      return sit || (restless(b) - restless(a)) || (order.indexOf(a) - order.indexOf(b));
+    });
+    var picks = [];
+    for (var k = 0; k < free.length && picks.length < 3; k++) {
+      var f = SW.MINISTERS[free[k]].faction;
+      if (free[k] === Q['minister_' + c] || !seenFaction[f]) { picks.push(free[k]); seenFaction[f] = 1; }
+    }
+    for (var k2 = 0; k2 < free.length && picks.length < 3; k2++) if (picks.indexOf(free[k2]) < 0) picks.push(free[k2]);
+    var slots = ['a', 'b', 'c'];
+    for (var s = 0; s < 3; s++) {
+      var pid = picks[s] || '', M = SW.MINISTERS[pid];
+      Q['ap_' + slots[s]] = pid; Q['ap_' + slots[s] + '_ok'] = pid ? 1 : 0;
+      Q['ap_' + slots[s] + '_name'] = M ? M.name : ''; Q['ap_' + slots[s] + '_world'] = M ? M.world : '';
+      Q['ap_' + slots[s] + '_faction'] = M ? SW.FACTION_NAMES[M.faction] : '';
+    }
+  };
+  SW.appointChoose = function (Q, slot) {
+    var c = Q.ap_com, id = Q['ap_' + slot];
+    if (c && id && Q['chair_' + c] === 'rc') {
+      Q['minister_' + c] = id; Q['minister_' + c + '_name'] = SW.MINISTERS[id].name; Q['minister_' + c + '_bloc'] = 'rc';
+      var f = SW.MINISTERS[id].faction;
+      if (f) Q[f + '_dissent'] = (Q[f + '_dissent'] || 0) - 4;
+      Q.ap_chosen_name = SW.MINISTERS[id].name; Q.ap_chosen_faction = SW.FACTION_NAMES[f] || '';
+    }
+    Q.appoint_queue = (Q.appoint_queue || '').split(',').filter(function (x) { return x && x !== c; }).join(',');
+    Q.appoint_ready = 0;
+  };
+
+  // ------------------------------------------------------------------ ministries at work
+  // A ministry the Caucus does not hold acts every few turns on its bloc's ideology at the time:
+  // the bloc's baseline plus its current leader's views.
+  SW.BLOC_IDEOLOGY = {
+    mod: {oversight: 0.1, regulate: 0.05},
+    guild: {regulate: -0.3, army: 0.05},
+    pal: {powers: 0.3, army: 0.2, oversight: -0.3, peace: -0.1},
+    rim: {rim: 0.3, regulate: 0.1, peace: 0.05},
+    rfc: {rim: 0.35, regulate: 0.15, peace: 0.1},
+    sec: {army: 0.3, powers: 0.1, peace: -0.2},
+    ind: {peace: 0.2, oversight: 0.1}
+  };
+  SW.ideology = function (Q, b) {
+    var v = {}, base = SW.BLOC_IDEOLOGY[b] || {}, L = SW.leader(Q, b).views || {}, k;
+    for (k in base) v[k] = (v[k] || 0) + base[k];
+    for (k in L) v[k] = (v[k] || 0) + L[k];
+    return v;
+  };
+  // a reform a ministry puts to the Senate: the Caucus is not its sponsor
+  SW.ministryVote = function (Q, stance, topic) {
+    return SW.vote(Q, SW.stance(Q, stance, true), 0.5, topic) >= 50;
+  };
+  SW.MINISTRY_ACTS = {
+    finance: [
+      {id: 'bank_audit', text: 'audited the Banking Clan', reform: 1, vec: {regulate: 0.8, oversight: 0.5}, ok: function (Q) { return !Q.banking_audit; },
+        fx: function (Q) { Q.banking_audit = 1; Q.banking_reformed += 0.5; Q.evidence += 0.4; SW.guildPatience(Q, -4, 'an audit of the Banking Clan'); }},
+      {id: 'deregulate', text: 'cut the guilds\' regulations', vec: {regulate: -1},
+        fx: function (Q) { Q.guild_relation += 2; SW.guildPatience(Q, 5); Q.trade = (Q.trade || 60) + 3; Q.corruption += 1; Q.rim_hardship += 0.5; }},
+      {id: 'audit', text: 'audited the guilds', vec: {regulate: 1}, ok: function (Q) { return !Q.tf_broken_up; },
+        fx: function (Q) { Q.corruption -= 1; SW.guildPatience(Q, -5, 'a committee audit'); Q.trade = (Q.trade || 60) - 1; }},
+      {id: 'relief', text: 'paid for relief on the Rim', vec: {rim: 1}, ok: function (Q) { return Q.treasury >= 1; },
+        fx: function (Q) { Q.treasury -= 1; Q.rim_hardship -= 1.5; }},
+      {id: 'war', text: 'paid for the war', vec: {army: 1, peace: -0.5}, ok: function (Q) { return Q.war && Q.treasury >= 1; },
+        fx: function (Q) { Q.treasury -= 1; Q.war_balance += 0.4; }}
+    ],
+    judiciary: [
+      {id: 'ethics', text: 'passed an Ethics Commission', bill: 'the Ethics Commission Act', vec: {regulate: 0.6, oversight: 0.6}, ok: function (Q) { return !Q.anti_corruption; },
+        vote: function (Q) { return SW.ministryVote(Q, {mod: 0.55, guild: 0.15, rim: 0.7, sec: 0.45, ind: 0.55, pal: 0.45, cis: 0.3}, ['oversight', 'regulate']); },
+        fx: function (Q) { Q.anti_corruption = 1; Q.corruption -= 4; Q.faith += 2; }},
+      {id: 'prosecute', text: 'prosecuted corruption', vec: {regulate: 0.5, oversight: 0.5}, fx: function (Q) { Q.corruption -= 2; }},
+      {id: 'look_away', text: 'looked the other way', vec: {regulate: -0.6, oversight: -0.4}, fx: function (Q) { Q.corruption += 1.5; }},
+      {id: 'critics', text: 'investigated the government\'s critics', vec: {powers: 1, oversight: -0.5},
+        fx: function (Q) { Q.grand_plan += 1; if (!Q.evidence_secured && !Q.compor) Q.evidence = Math.max(0, Q.evidence - 0.3); }}
+    ],
+    security: [
+      {id: 'oversight', text: 'brought the army under Senate oversight', bill: 'the Grand Army Oversight Act', vec: {oversight: 1, powers: -0.5}, ok: function (Q) { return !Q.army_oversight && (Q.clones > 0 || Q.kamino_known); },
+        vote: function (Q) { return SW.ministryVote(Q, {mod: 0.6, guild: 0.4, rim: 0.6, sec: 0.25, ind: 0.55, pal: 0.1, cis: 0.5}, 'oversight'); },
+        fx: function (Q) { Q.army_oversight = 1; Q.navy_loyalty += 10; }},
+      {id: 'expand', text: 'expanded the army', vec: {army: 1, powers: 0.5}, fx: function (Q, b) { Q.fear += 1.5; if (b === 'pal') Q.grand_plan += 1; }},
+      {id: 'navy', text: 'built up the Navy', vec: {army: 0.8, peace: -0.3}, fx: function (Q) { Q.mil_invest = (Q.mil_invest || 0) + 1; Q.navy_loyalty -= 2; }},
+      {id: 'cut', text: 'cut the defence budget', vec: {peace: 1, army: -1}, fx: function (Q) { Q.treasury += 1; if (Q.war) Q.war_balance -= 0.3; }}
+    ],
+    rimaffairs: [
+      {id: 'relief_act', text: 'passed the Rim Relief Act', bill: 'the Rim Relief Act', vec: {rim: 1, regulate: 0.3}, ok: function (Q) { return !Q.rim_relief_act; },
+        vote: function (Q) { return SW.ministryVote(Q, {mod: 0.5, guild: 0.35, rim: 0.9, sec: 0.35, ind: 0.6, pal: 0.4, cis: 0.7}, 'rim'); },
+        fx: function (Q) { Q.rim_relief_act = 1; Q.rim_relief += 1; Q.rim_hardship -= 3; Q.rim_relation += 4; Q.outer_sep -= 2; Q.midrim_sep -= 1; }},
+      {id: 'relief', text: 'sent relief to the Rim', vec: {rim: 1}, fx: function (Q) { Q.rim_hardship -= 2; Q.treasury -= 0.5; }},
+      {id: 'hutt', text: 'protected the Hutt trade', vec: {regulate: -0.8, rim: -0.5}, fx: function (Q) { Q.guild_relation += 2; Q.rim_hardship += 1; }},
+      {id: 'crackdown', text: 'cracked down on unrest in the Rim', vec: {army: 0.7, rim: -1}, fx: function (Q) { Q.fear += 1; Q.rim_relation -= 3; Q.outer_sep += 1; }}
+    ],
+    constitution: [
+      {id: 'sunset', text: 'passed sunset clauses on the emergency powers', bill: 'the Sunset Amendment', vec: {oversight: 1, powers: -1}, ok: function (Q) { return !Q.emergency_sunset; },
+        vote: function (Q) { return SW.vote(Q, SW.stance(Q, {mod: 0.6, guild: 0.55, rim: 0.65, sec: 0.25, ind: 0.6, pal: 0.15 + (Q.emergency_powers < 1 ? 0.25 : 0), cis: 0.6}, true), 0.5, 'oversight') >= 66.7; },
+        fx: function (Q) { Q.emergency_sunset = 1; Q.faith += 1; }},
+      {id: 'ease', text: 'eased the emergency powers\' passage', vec: {powers: 1, oversight: -0.5}, fx: function (Q) { Q.grand_plan += 1.5; Q.senate_resolve -= 0.3; }},
+      {id: 'defend', text: 'defended the constitution', vec: {oversight: 1, powers: -1}, fx: function (Q) { Q.senate_resolve += 0.3; Q.faith += 0.5; }}
+    ],
+    jedi: [
+      {id: 'independence', text: 'guaranteed the Jedi Order\'s independence', bill: 'the Jedi Independence Amendment', vec: {oversight: 0.8, powers: -0.8}, ok: function (Q) { return !Q.jedi_independence; },
+        vote: function (Q) { return SW.vote(Q, SW.stance(Q, {mod: 0.6, guild: 0.4, rim: 0.55, sec: 0.25, ind: 0.6, pal: 0.15, cis: 0.4}, true), 0.5, 'oversight') >= 66.7; },
+        fx: function (Q) { Q.jedi_independence = 1; Q.jedi_relation += 5; }},
+      {id: 'press', text: 'pressed the Jedi into command', vec: {army: 1, peace: -0.8}, ok: function (Q) { return Q.war && !Q.jedi_service_act && !Q.jedi_generals; },
+        fx: function (Q) { Q.jedi_generals = 1; Q.jedi_standing -= 2; Q.war_balance += 0.3; }},
+      {id: 'protect', text: 'protected the Order', vec: {oversight: 0.5, peace: 0.5}, fx: function (Q) { Q.jedi_standing += 2; }},
+      {id: 'scrutinise', text: 'scrutinised the Jedi', vec: {powers: 1, oversight: -0.5}, fx: function (Q) { Q.jedi_standing -= 3; Q.jedi_relation -= 2; }}
+    ]
+  };
+  // the act that best fits the ministry's bloc, or none if nothing fits
+  // The Core Moderates and the Independents put reforms forward only under their reforming wings.
+  SW.REFORMING_WINGS = {mod: ['fang_zar'], ind: ['satine']};
+  SW.blocReforms = function (Q, b) {
+    var w = SW.REFORMING_WINGS[b];
+    return !w || w.indexOf(Q[b + '_leader_id']) >= 0;
+  };
+  SW.ministryChoice = function (Q, c) {
+    var b = Q['chair_' + c], acts = SW.MINISTRY_ACTS[c] || [], ideo = SW.ideology(Q, b), best = null, bestS = 0.05;
+    var reforms = SW.blocReforms(Q, b);
+    for (var i = 0; i < acts.length; i++) {
+      var A = acts[i];
+      if (A.ok && !A.ok(Q)) continue;
+      if ((A.bill || A.reform) && !reforms) continue;
+      // a bill the Senate voted down waits a few years before it is tried again
+      if ((Q['mfail_' + A.id] || 0) > Q.time) continue;
+      var sc = 0;
+      for (var k in A.vec) sc += A.vec[k] * (ideo[k] || 0);
+      if (sc > bestS + 1e-9) { best = A; bestS = sc; }
+    }
+    return best;
+  };
+  SW.ministryTurn = function (Q) {
+    if (Q.finale || Q.game_ending || !(Q.months_per_turn > 0) || SW.off('ministries')) return;
+    if (!Q.ministry_next) Q.ministry_next = Q.time + 3;
+    if (Q.time < Q.ministry_next) return;
+    Q.ministry_next = Q.time + 3;
+    var lines = [];
+    for (var i = 0; i < SW.COMMITTEES.length; i++) {
+      var c = SW.COMMITTEES[i], b = Q['chair_' + c];
+      if (!b || b === 'rc' || b === 'cis') continue;
+      var A = SW.ministryChoice(Q, c);
+      if (!A) continue;
+      var passed = A.vote ? A.vote(Q) : true;
+      if (passed) A.fx(Q, b); else Q['mfail_' + A.id] = Q.time + 12;
+      var did = passed ? A.text : 'put ' + A.bill + ' to the Senate, which voted it down';
+      Q['ministry_act_' + c] = did; Q['ministry_act_by_' + c] = b;
+      Q.ministry_acts_total = (Q.ministry_acts_total || 0) + 1;
+      lines.push('<b>' + SW.COMMITTEE_NAMES[c] + '</b> (' + (Q['minister_' + c + '_name'] || SW.name(Q, b)) + ', ' + SW.name(Q, b) + ') ' + did + '.');
+    }
+    if (lines.length) { Q.ministry_report = lines.join('<br>'); Q.ministry_report_ready = 1; }
+    SW.computeSupport(Q);
+  };
 
   // ------------------------------------------------------------------ chancellor elections
   SW.candidateName = function (Q, b) {
@@ -3799,6 +4047,7 @@
     if (Q.bureau_relation >= 20 && (Q.bureau_dossier || 0) < 2) Q.bureau_warn_hostile = 0;
     SW.computeSupport(Q);
     SW.recomputeGovt(Q);
+    SW.syncMinisters(Q);
     SW.palStrings(Q);
     SW.econStrings(Q);
     SW.leaderMomentCheck(Q);
@@ -3900,6 +4149,7 @@
     SW.drift(Q);
     SW.secession(Q);
     SW.threatsTurn(Q);
+    SW.ministryTurn(Q);
     if (Q.months_per_turn > 0 || !Q.finale) {
       SW.computeSupport(Q);
       var rec = {t: Q.date};

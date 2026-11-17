@@ -305,6 +305,17 @@ function checkPremises(id, Q, game, out) {
     if (sc && (sc.tags || []).indexOf('event') >= 0 && Q.sidious_defeated && !Q.finale) out['event after Sidious fell'] = (out['event after Sidious fell'] || 0) + 1;
   }
   if (Q.clones > 0 && !Q.kamino_army) out['clones without an army'] = (out['clones without an army'] || 0) + 1;
+  // after every-visit, each chair has a minister of its own bloc, and nobody chairs two committees
+  if (id === 'post_event') {
+    const seen = {};
+    for (const c of SW.COMMITTEES) {
+      const b = Q['chair_' + c], m = Q['minister_' + c];
+      if (b && (!m || Q['minister_' + c + '_bloc'] !== b)) out['a chair without a minister of its bloc'] = (out['a chair without a minister of its bloc'] || 0) + 1;
+      if (m && seen[m]) out['one minister chairing two committees'] = (out['one minister chairing two committees'] || 0) + 1;
+      if (m) seen[m] = 1;
+      if (b === 'rc' && Q['ministry_act_' + c] && Q['ministry_act_by_' + c] === 'rc') out['a ministry act by a committee the Caucus holds'] = (out['a ministry act by a committee the Caucus holds'] || 0) + 1;
+    }
+  }
   // the turn processor has just run every-visit: with nothing to hold him, Anakin is never below the rising line
   if (id === 'post_event' && Q.anakin_found && !Q.anakin_fallen && Q.anakin_fall < SW.anakinFloor(Q) - 1e-6) out['Anakin below the line with nothing to hold him'] = (out['Anakin below the line with nothing to hold him'] || 0) + 1;
   if (Q.pal_name === 'Chancellor\'s Bloc' && Q.chancellor_bloc !== 'pal') out['Palpatine\'s bloc named for an office it does not hold'] = (out['Palpatine\'s bloc named for an office it does not hold'] || 0) + 1;

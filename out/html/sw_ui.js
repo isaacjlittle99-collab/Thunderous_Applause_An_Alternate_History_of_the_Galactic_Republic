@@ -183,6 +183,8 @@
     for (var c = 0; c < SW.COMMITTEES.length; c++) {
       var cm = SW.COMMITTEES[c];
       h += row(SW.COMMITTEE_NAMES[cm], bloc(Q, Q['chair_' + cm]) + (Q['chair_res_' + cm] ? ' <span class="sb-tag">promised</span>' : ''));
+      var mn = Q['minister_' + cm + '_name'], act = Q['chair_' + cm] !== 'rc' && Q['ministry_act_by_' + cm] === Q['chair_' + cm] ? Q['ministry_act_' + cm] : '';
+      if (mn) h += '<div class="sb-note">Chaired by ' + mn + (act ? '. Lately, it ' + act : '') + '.</div>';
     }
     var pls = SW.pledgeList ? SW.pledgeList(Q) : [];
     h += head('Our pledges');
