@@ -514,7 +514,19 @@ go-to: lib_sys_menu
 
 **The front** runs from −10 to +10. Sidious wants a long war, so while he rules the Republic, the front drifts toward a slow Republic advance if nobody pushes. Out of office, he no longer holds the droid armies back; once he is gone, the two sides' strength alone decides. Funding the front, Jedi generals and a turned Dooku push it forward. Every quarter of war drains the treasury, adds corruption, Rim hardship and war-weariness, and wears down the Jedi. The war ends with the Federal Compact, with victory at +9, or with a Treaty of Separation if the front is behind or weariness reaches 60. At −9.5, the Confederacy wins. If the game ends with the war still raging, the war as a whole decides: see *How the game ends*.
 
-**Anakin** is hidden too. Palpatine's grip on him tightens with Shmi's death, Qui-Gon's death, Palpatine's mentorship, the Council seat and every quarter of war. Every step against slavery (and enforcing abolition, which frees Shmi), the Jedi reforms, an honest marriage accepted by a reformed Council, Padmé and honesty from the Jedi pull him back. An Anakin who chooses the light can help found a New Jedi Order, and then he will not fall. At the arrest, an Anakin still in the light helps Windu; one far gone strikes Windu down. **The arrest has to be earned**: a Senate warrant, a reformed Senate Guard, strong Judicial Forces, conclusive evidence and a Jedi Order not worn down by the war each make it likelier. A raid without them usually fails, as Windu's did.
+**Anakin falls unless something holds him.** Left alone, he goes the way he went in the films: from month 96 the dark side rises under him, and by month 168 he is as good as Palpatine's. Padmé, honesty from the Jedi, *Reach Out to Anakin* and every step against slavery still pull him back, but never below that rising line. Only three things lift it, and *The Chancellery* panel shows which one holds him, under Persons of interest:
+
+• *His mother, free.* Enforcing abolition before Shmi's death in month 134 frees her.
+
+• *A reformed Order.* The Council accepts attachment, or accepts his marriage when he is honest about it.
+
+• *Friends who warned him*, which needs all three: the Jedi kept out of command (never made generals, or withdrawn when they are overstretched), a warning about Palpatine that was heard (*Palpatine's Protégé* when the Jedi trust us, *Ask about young Skywalker*, or telling him the truth while he still listens), and action on slavery (a campaign, the Senate report, the Zygerria rescue or abolition).
+
+Once something holds him, he can be kept in the light, and an Anakin who chooses the light can help found a New Jedi Order, after which he will not fall. Shmi's death, Qui-Gon's death, Palpatine's mentorship, the Council seat and the war still push him toward the dark side.
+
+**In the Last Days**, as in the film, Palpatine tells him the truth and Anakin goes to Windu, unless he already went over to Palpatine when the Caucus told him. At the arrest, an Anakin still in the light helps Windu; a fallen one strikes Windu down.
+
+**The arrest has to be earned.** In its favour: Anakin in the light (+1.5), a reformed Senate Guard, a Senate warrant, Judicial Forces of 4+, conclusive evidence, a Jedi Order not worn down by the war (+1 each), exposing him first (+2), the Senate–Jedi pact (+0.5) and an informant (+1). Against it: a fallen Anakin (−2), a delay, and his plan. **The balance of forces counts too**: matching or outnumbering everyone who would answer to him gives +1; if he has a third more than us, −1; twice as much, −2; three times, −3. It needs 3.5, and a little luck plays its part. A raid without the groundwork usually fails, as Windu's did.
 
 **The final reckoning.** If it comes to a fight, the game weighs everyone loyal to the Senate against everyone who would obey the Sith Lord. The Senate side has the Jedi (scaled by public trust), the Judicial Forces, the Defence Pact, the Senate Guard (if it was reformed or the Chancellery is yours), unchipped clones, a loyal Navy and Anakin. The Sith side has chipped clones, the Guard and the sector governors if his camp holds the Chancellery, a disloyal Navy, the Security Bloc's men, Black Sun's enforcers while the syndicates stand, and Vader. Clearly stronger means victory, roughly even means a long civil war, and much weaker means the Empire. Acting without a Senate warrant risks a Jedi Protectorate, even in victory.
 
@@ -575,7 +587,7 @@ Each is cleared by *Look into* (Shadow Investigation, 1 capital), by a Bureau in
 
 • *Protect the witnesses*: the proof stops wasting away, and no more investigators are assassinated.
 
-• *Tell Anakin the truth* (through Padmé or close Jedi friends): if he is still in the light, he stands with us; if he has slid far, he goes to Palpatine.
+• *Tell Anakin the truth* (through Padmé or close Jedi friends): if he is still in the light, he stands with us, and it counts as a warning that was heard; if he has slid far, he goes to Palpatine.
 
 • *Build the public case* (repeatable): more proof.
 
@@ -585,7 +597,7 @@ Each is cleared by *Look into* (Shadow Investigation, 1 capital), by a Bureau in
 
 • *Flight.* If the Republic is at war with the Confederacy and the ways off Coruscant are not watched, he may flee to it. The chance rises with his alarm and with the Confederacy's success.
 
-• *The arrest itself.* For it count our Chancellery's Senate Guard, a warrant, Judicial Forces of 4+, the Jedi with us, conclusive proof, an informant, and Anakin in the light. Against it count a fallen Anakin, his alarm and a plan near completion.
+• *The arrest itself.* For it count our Chancellery's Senate Guard, a warrant, Judicial Forces of 4+, the Jedi with us, conclusive proof, an informant, and Anakin in the light (+1.5). Against it count a fallen Anakin (−2), his alarm and a plan near completion. The balance of forces counts as at the Last Days arrest: +1 if we match him, down to −3 if he has three times our strength.
 
 • *The outcome.* Taken, he stands trial, and the Last Days decide what comes after: the Restoration vote, the war, perhaps his contingency order. Failing that, he fights the arrest, and the battle for Coruscant is decided by the balance of forces, as in his coup from outside office.
 

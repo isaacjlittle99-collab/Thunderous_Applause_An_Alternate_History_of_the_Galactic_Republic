@@ -364,6 +364,7 @@
     if (Q.anakin_found) {
       h += head('Persons of interest');
       h += row('Anakin Skywalker', Q.anakin_jedi ? (Q.padme_married ? 'Jedi Knight (secretly married)' : 'Jedi') : 'Padawan');
+      if (!Q.anakin_fallen) h += row('What holds him', Q.anakin_anchor ? Q.anakin_anchor_name : '<span class="warn">' + (Q.anakin_anchor_name || 'Nothing') + '</span>');
       if (Q.dooku_left && !Q.dooku_dead) h += row('Count Dooku', Q.dooku_movement ? 'Head of the Confederacy' : 'Former Jedi, Count of Serenno');
       if (Q.quigon_alive) h += row('Qui-Gon Jinn', 'Jedi Master');
     }

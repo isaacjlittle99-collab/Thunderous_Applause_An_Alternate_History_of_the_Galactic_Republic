@@ -17,7 +17,7 @@ Anakin Skywalker, now a teenage Padawan, has become a frequent guest of [? if pa
 
 @warn
 subtitle: [? if jedi_relation >= 55 : The Jedi trust us enough to listen. ?][? if jedi_relation < 55 : The Jedi may not listen. ?]
-on-arrival: jedi_relation += 2; anakin_fall -= 0.8 if jedi_relation >= 55; jedi_suspicion += 0.3
+on-arrival: jedi_relation += 2; anakin_fall -= 0.8 if jedi_relation >= 55; anakin_warned = 1 if jedi_relation >= 55; jedi_suspicion += 0.3
 
 [? if jedi_relation >= 55 : Obi-Wan Kenobi thanks us, and makes sure his apprentice spends more time at the Temple. ?][? if jedi_relation < 55 : The Council thanks us politely, and does nothing. ?]
 

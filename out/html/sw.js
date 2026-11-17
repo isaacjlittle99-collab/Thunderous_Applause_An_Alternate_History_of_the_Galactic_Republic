@@ -317,6 +317,7 @@
     D.hunt_anakin_told = 0; D.hunt_anakin_turned = 0; D.hunt_case_runs = 0; D.hunt_timer = 0; D.hunt_result = ''; D.hunt_alarmed = 0; D.intel_cleared = '';
     D.suspects_open_text = '';
     D.cha_arrest_done = 0; D.cha_arrest_result = ''; D.cha_arrest_score = 0; D.cha_arrest_missing = ''; D.cha_flee_odds = 0;
+    D.anakin_anchor = ''; D.anakin_anchor_name = 'Nothing'; D.anakin_warned = 0; D.anakin_floor = 0; D.arrest_forces_score = 0; D.arrest_forces_note = '';
     D.as_vote = 0; D.cs_vote = 0; D.io_vote = 0; D.pr_vote = 0; D.ra_vote = 0; D.sc_vote = 0;
     D.sidious_escaped = 0; D.fell_divided = 0; D.war_turning_ready = 0; D.war_turning_armed = 0; D.war_turning_count = 0; D.war_state = ''; D.hutt_deal = 0; D.hutt_deal_seen = 0; D.hutt_deal_vote = 0; D.hutt_deal_forced = 0;
     D.pirates_ready = 0; D.pirate_next = 0; D.pirate_route = ''; D.pirate_gang = ''; D.pirate_raids = 0;
@@ -2768,7 +2769,7 @@
     jedi_stretch: {title: 'The Jedi Are Overstretched', when: function (Q) { return Q.jedi_generals && Q.jedi_strength < 7; },
       text: 'A tenth of the Jedi Order has died in command. The Council asks to withdraw its Knights from the front lines and return to keeping the peace.',
       def: 'b', options: {
-        a: ['Let them withdraw.', 'The Order survives; the war goes harder.', function (Q) { Q.jedi_strength += 0.5; Q.war_balance -= 0.7; Q.jedi_relation += 5; Q.anakin_fall -= 0.3; },
+        a: ['Let them withdraw.', 'The Order survives; the war goes harder.', function (Q) { Q.jedi_generals = 0; Q.jedi_strength += 0.5; Q.war_balance -= 0.7; Q.jedi_relation += 5; Q.anakin_fall -= 0.3; },
           'Jedi Masters hand their commands to clone officers. The Order begins, slowly, to remember what it was.'],
         b: ['Keep them at the front.', 'The war goes better; the Order bleeds, and Anakin grows darker.', function (Q) { Q.war_balance += 0.5; Q.jedi_strength -= 0.5; Q.jedi_standing -= 3; Q.anakin_fall += 0.3; },
           'The Jedi stay at the front. The war needs them, the Senate says. Fewer come back each season.']}},
@@ -3621,6 +3622,30 @@
   };
 
   // ------------------------------------------------------------------ forces
+  // ------------------------------------------------------------------ Anakin
+  // Anakin falls unless something holds him: his mother saved, a reformed Order, or friends who warned him
+  // (the Jedi kept out of command, a warning about Palpatine that was heard, and action on slavery, all three).
+  SW.anakinAnchor = function (Q) {
+    if (Q.shmi_freed) return 'mother';
+    if (Q.jedi_reformed || Q.new_jedi_order) return 'order';
+    var slavery = (Q.slavery_campaign || 0) > 0 || Q.slavery_report || Q.slavery_abolished;
+    if (!Q.jedi_generals && Q.anakin_warned && slavery) return 'friends';
+    return '';
+  };
+  SW.ANCHOR_NAMES = {mother: 'His mother, free', order: 'A reformed Order', friends: 'Friends who warned him', '': 'Nothing'};
+  // Without an anchor, the dark side rises under him: his slide cannot go below a line that climbs from month 96 to 8 by month 168.
+  SW.anakinFloor = function (Q) {
+    if (SW.anakinAnchor(Q)) return 0;
+    return SW.clamp((Q.date - 96) / 9, 0, 8);
+  };
+  SW.anakinTick = function (Q) {
+    Q.anakin_anchor = SW.anakinAnchor(Q);
+    Q.anakin_anchor_name = SW.ANCHOR_NAMES[Q.anakin_anchor];
+    var fl = (Q.anakin_found && !Q.anakin_fallen) ? SW.anakinFloor(Q) : 0;
+    Q.anakin_floor = Math.round(fl * 10) / 10;
+    if (Q.anakin_fall < fl) Q.anakin_fall = fl;
+  };
+
   SW.forces = function (Q) {
     var chips = Q.chips_removed ? 1 : 0;
     var ours = Q.rc_chancellor ? 1 : 0;
@@ -3743,6 +3768,9 @@
     Q.rimward_split_ready = (Q.rimward_dissent >= SW.splitAt(Q, 'rimward') && !Q.rimward_split) ? 1 : 0;
     Q.pacifist_split_ready = (Q.pacifist_dissent >= SW.splitAt(Q, 'pacifist') && !Q.pacifists_resigned) ? 1 : 0;
     Q.inst_split_ready = (Q.inst_dissent >= SW.splitAt(Q, 'inst') && !Q.inst_crisis) ? 1 : 0;
+    // a Jedi Order remade around him: Anakin will not fall. Without anything to hold him, the dark side rises under him.
+    if (Q.new_jedi_order) Q.anakin_fall = 0;
+    SW.anakinTick(Q);
     var fb = SW.forces(Q);
     Q.force_rep = fb.rep; Q.force_sith = fb.sith; Q.force_ratio = fb.ratio;
     SW.trackLevels(Q);
@@ -3750,8 +3778,6 @@
     Q.war_rep = SW.round1(ws.rep); Q.war_cis = SW.round1(ws.cis); Q.war_ratio = Math.round(ws.ratio * 100) / 100;
     Q.war_state = Q.war ? SW.warStateWord(Q) : '';
     Q.rim_addressed = Math.round(SW.rimAddressed(Q) * 100);
-    // a Jedi Order remade around him: Anakin will not fall
-    if (Q.new_jedi_order) Q.anakin_fall = 0;
     Q.unease = Math.floor(Q.grand_plan / 20);
     for (var pb = 0; pb < SW.BLOCS.length; pb++) Q['parties_has_' + SW.BLOCS[pb]] = Q.parties.indexOf(SW.BLOCS[pb]) >= 0 ? 1 : 0;
     Q.pal_display = SW.name(Q, 'pal');
@@ -4368,6 +4394,17 @@
     var a = Q.sith_alarm || 0;
     return a >= 8 ? 'He is moving' : (a >= 5 ? 'He knows we are close' : (a >= 2 ? 'He is watchful' : 'He suspects nothing'));
   };
+  // How the balance of forces weighs on an arrest: everyone who would answer to him against everyone who would answer to us.
+  SW.arrestForces = function (Q) {
+    var r = SW.forces(Q).ratio, sc, note = '';
+    if (r >= 1) sc = 1;
+    else if (r >= 0.75) sc = 0;
+    else if (r >= 0.5) { sc = -1; note = 'his forces outnumbered ours'; }
+    else if (r >= 0.33) { sc = -2; note = 'his forces outnumbered ours two to one'; }
+    else { sc = -3; note = 'his forces outnumbered ours three to one'; }
+    Q.arrest_forces_score = sc; Q.arrest_forces_note = note;
+    return {score: sc, note: note, ratio: r};
+  };
   // A Caucus Chancellor orders the Sith Lord's arrest. He may flee to a Confederacy at war with us, be taken,
   // or turn his forces on the arrest and force the final showdown.
   SW.chancellorArrest = function (Q) {
@@ -4380,20 +4417,23 @@
       SW.sidiousFlees(Q); Q.sidious_escaped = 1; Q.sidious_known = 1; Q.evidence_public += 4;
       return;
     }
+    // the Last Days begin with the order: everyone who still answers to him, Black Sun included, is called out
+    Q.finale = 1; Q.finale_day = 1; Q.months_per_turn = 0; Q.clear_hand = 1;
     var s = 1.5 + 1, miss = [];
     if (Q.warrant) s += 1; else miss.push('there was no warrant');
     if (Q.judicial_forces >= 4) s += 1; else miss.push('the Judicial Forces were too weak');
     if (Q.senate_jedi_pact || Q.jedi_relation >= 60) s += 1; else miss.push('the Jedi were not with us');
     if (Q.evidence >= 10) s += 1;
     if (Q.hunt_informant) s += 1;
-    if (Q.anakin_found && Q.anakin_fall <= 4) s += 3;
-    else if (Q.anakin_found && Q.anakin_fall >= 6.5) { s -= 3; miss.push('Anakin Skywalker had already gone over to him'); }
+    if (Q.anakin_found && Q.anakin_fall <= 4) s += 1.5;
+    else if (Q.anakin_found && Q.anakin_fall >= 6.5) { s -= 2; miss.push('Anakin Skywalker had already gone over to him'); }
+    var af = SW.arrestForces(Q);
+    s += af.score; if (af.note) miss.push(af.note);
     s -= (Q.sith_alarm || 0) * 0.3;
     if (Q.grand_plan >= 80) s -= 1;
     s += SW.rnd() * 1.5;
     Q.cha_arrest_score = Math.round(s * 10) / 10;
     Q.cha_arrest_missing = miss.length ? 'It went wrong from the start: ' + miss.join('; ') + '.' : 'Nothing was missing. He was simply ready for us.';
-    Q.finale = 1; Q.finale_day = 1; Q.months_per_turn = 0; Q.clear_hand = 1;
     Q.sidious_known = 1; Q.evidence_public += 4; Q.gambit = 1;
     if (s >= 3.5) {
       Q.cha_arrest_result = 'arrested';

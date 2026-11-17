@@ -55,7 +55,7 @@ view-if: anakin_found and date >= 20 and anakin_fall > 0.5
 subtitle: [? if jedi_relation >= 60 : The Council may confide in us. ?][? if jedi_relation < 60 : The Council is protective of its own. ?]
 choose-if: jedi_relation >= 60
 unavailable-subtitle: Our relations with the Jedi are not close enough.
-on-arrival: anakin_fall -= 0.6; jedi_relation -= 1
+on-arrival: anakin_fall -= 0.6; jedi_relation -= 1; anakin_warned = 1
 
 Obi-Wan Kenobi admits he worries about his apprentice: the boy is brilliant, angry and far too fond of [+ pal_title +]'s company. The Caucus gently suggests that someone at the Temple should spend more time with him than Palpatine does.
 

@@ -296,6 +296,8 @@ function checkPremises(id, Q, game, out) {
     if (sc && (sc.tags || []).indexOf('event') >= 0 && Q.sidious_defeated && !Q.finale) out['event after Sidious fell'] = (out['event after Sidious fell'] || 0) + 1;
   }
   if (Q.clones > 0 && !Q.kamino_army) out['clones without an army'] = (out['clones without an army'] || 0) + 1;
+  // the turn processor has just run every-visit: with nothing to hold him, Anakin is never below the rising line
+  if (id === 'post_event' && Q.anakin_found && !Q.anakin_fallen && Q.anakin_fall < SW.anakinFloor(Q) - 1e-6) out['Anakin below the line with nothing to hold him'] = (out['Anakin below the line with nothing to hold him'] || 0) + 1;
   if (Q.pal_name === 'Chancellor\'s Bloc' && Q.chancellor_bloc !== 'pal') out['Palpatine\'s bloc named for an office it does not hold'] = (out['Palpatine\'s bloc named for an office it does not hold'] || 0) + 1;
   for (const b of (Q.govt_blocs || [])) if (Q.parties.indexOf(b) < 0) out['a bloc outside the Senate in government'] = (out['a bloc outside the Senate in government'] || 0) + 1;
   for (const b of SW.BLOCS) if (Q['merged_' + b] && Q.parties.indexOf(b) >= 0) out['a merged bloc back in the Senate'] = (out['a merged bloc back in the Senate'] || 0) + 1;
