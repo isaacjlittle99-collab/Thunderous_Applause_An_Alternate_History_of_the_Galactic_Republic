@@ -12,9 +12,12 @@ new-page: true
 The Caucus chairs the Finance & Commerce Committee. The treasury holds [+ treasury_txt +]; the Republic owes the Banking Clan [+ debt_txt +] ([+ debt_label +]). Trade along the hyperlanes is [+ trade_label +]. As chair, the Caucus also writes the yearly budget.
 
 - @regulate: Regulate the trade guilds.
+- @anticartel: Pass Anti-Cartel Legislation.
 - @breakup: Break up the Trade Federation.
+- @deregulate: Cut regulation.
 - @audit: Audit the InterGalactic Banking Clan.
 - @independent: Guarantee the Banking Clan's independence from the Chancellery.
+- @bonds: Issue Republic bonds.
 - @books: Balance the Republic's books.
 - @patrols: Fund patrols on the hyperlanes.
 - @stockpile: Stockpile bacta against the next shortage.
@@ -30,9 +33,27 @@ on-arrival: {! Q.guild_relation -= 8; Q.corruption -= 1.5; Q.guild_embargo += 1;
 
 New disclosure rules for guild lobbying pass in committee. The guilds call it persecution.
 
+@anticartel
+view-if: guild_regulations >= 1 and not anti_cartel
+subtitle: −1 political capital. No guild may control more than a share of any trade lane.
+choose-if: capital >= 1 and guild_hold = 0
+unavailable-subtitle: [? if guild_hold > 0 : The guilds whose money we took will not allow it. ?][? if guild_hold = 0 : Not enough political capital. ?]
+on-arrival: {!
+Q.capital -= 1;
+var st = SW.stance(Q, {mod: 0.55, guild: 0.05, rim: 0.75, sec: 0.45, ind: 0.55, pal: 0.35, cis: 0.1}, true);
+Q.ac_vote = SW.vote(Q, st, 1, 'regulate');
+Q.vote_html = SW.voteBanner('Anti-Cartel Act', Q.ac_vote);
+if (Q.ac_vote >= 50) { Q.anti_cartel = 1; Q.trade += 5; Q.corruption -= 1.5; Q.rim_hardship -= 1; SW.guildPatience(Q, -12, 'the Anti-Cartel Act'); }
+else { Q.guild_relation -= 3; }
+!}
+
+[+ vote_html +]
+
+[? if anti_cartel : The Anti-Cartel Act passes. The guilds must sell off their stakes in any trade lane they dominate, and independent haulers start bidding for routes the Trade Federation has held for a century. ?][? if not anti_cartel : The guilds' friends close ranks, and the act fails. ?]
+
 @breakup
-view-if: not tf_broken_up and (gunray_convicted or evidence >= 4 or naboo_free)
-subtitle: −2 political capital. A historic blow to the guilds, and a provocation to the corporate worlds.
+view-if: not tf_broken_up and anti_cartel and (gunray_convicted or evidence >= 4 or naboo_free)
+subtitle: −2 political capital. A historic blow to the guilds: their bloc weakened, and their threats ended for good.
 choose-if: capital >= 2 and rc_in_govt and guild_hold = 0
 unavailable-subtitle: [? if guild_hold > 0 : The guilds whose money we took will not allow it. ?][? if guild_hold = 0 : Needs 2 political capital and a seat in government. ?]
 on-arrival: {!
@@ -40,13 +61,25 @@ Q.capital -= 2;
 var st = SW.stance(Q, {mod: 0.55, guild: 0, rim: 0.85, sec: 0.45, ind: 0.55, pal: 0.35, cis: 0}, true);
 Q.tfb_vote = SW.vote(Q, st, 1, 'regulate');
 Q.vote_html = SW.voteBanner('Trade Federation Dissolution Act', Q.tfb_vote);
-if (Q.tfb_vote >= 50) { SW.guildPatience(Q, -25, 'the break-up of the Trade Federation'); Q.tf_broken_up = 1; Q.corporate_guild -= 12; Q.guild_embargo += 3; Q.corporate_sep += 6; Q.corruption -= 3; Q.rim_relation += 6; this.achieve('trust_buster'); }
+if (Q.tfb_vote >= 50) {
+    Q.tf_broken_up = 1; Q.guild_embargo = 0; Q.guild_step_ready = 0; Q.guild_lobby = 0; Q.corruption -= 3; Q.rim_relation += 6;
+    // the guilds' bloc loses half its support everywhere, and the Trade Federation's worlds most of all
+    for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_guild'] *= 0.5;
+    Q.corporate_guild -= 6; SW.computeSupport(Q);
+    this.achieve('trust_buster');
+}
 else { Q.guild_relation -= 6; }
 !}
 
 [+ vote_html +]
 
-[? if tf_broken_up : The Trade Federation is to be broken into a dozen competing shipping concerns. The Neimoidians are apoplectic. The corporate worlds are frightened, and frightened worlds listen to separatists. ?][? if not tf_broken_up : The guilds' friends close ranks. The bill dies on the floor. ?]
+[? if tf_broken_up : The Trade Federation is to be broken into a dozen competing shipping concerns. The Neimoidians are apoplectic, but there is no one left to carry out their threats: the cartel that could blockade a world or strike the Republic's credit is gone, and the guilds' senators are suddenly very quiet. ?][? if not tf_broken_up : The guilds' friends close ranks. The bill dies on the floor. ?]
+
+@deregulate
+subtitle: −1 from the treasury. The guilds rejoice; the Rim does not.
+on-arrival: {! SW.cutRegulation(Q); !}
+
+The committee strikes out a year's worth of inspections, disclosure rules and lane quotas. Trade picks up at once. In the Outer and Mid Rim, where the inspections were all that stood between small haulers and the guilds, it is remembered differently.
 
 @audit
 view-if: not banking_audit
@@ -71,6 +104,23 @@ if (Q.bi_vote >= 50) { Q.banking_independent = 1; Q.guild_relation += 4; }
 [+ vote_html +]
 
 [? if banking_independent : The Banking Clan's charter now forbids any transfer of control to the executive. Nobody in [+ pal_office +] admits to ever wanting any such thing. ?][? if not banking_independent and not rc_chancellor : The bill fails. The Chancellor's allies say it "ties the Republic's hands in wartime". ?][? if not banking_independent and rc_chancellor : The bill fails. The guilds and the Security Bloc say it "ties the Republic's hands in wartime". ?]
+
+@bonds
+view-if: banking_independent and not republic_bonds
+subtitle: −1 political capital. The Republic borrows from its citizens, not the Banking Clan.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {!
+Q.capital -= 1;
+var st = SW.stance(Q, {mod: 0.6, guild: 0.3, rim: 0.6, sec: 0.5, ind: 0.6, pal: 0.3, cis: 0.4}, true);
+Q.rb_vote = SW.vote(Q, st, 1, 'oversight');
+Q.vote_html = SW.voteBanner('Republic Bonds Act', Q.rb_vote);
+if (Q.rb_vote >= 50) { Q.republic_bonds = 1; Q.faith += 1; Q.guild_relation -= 3; }
+!}
+
+[+ vote_html +]
+
+[? if republic_bonds : Republic bonds go on sale across the Core and the Colonies, and sell out in a week. The Republic's creditors are its own citizens now, at a lower rate, and the Banking Clan no longer holds the Republic's purse strings. ?][? if not republic_bonds : The bill fails. ?]
 
 @books
 view-if: treasury < 6

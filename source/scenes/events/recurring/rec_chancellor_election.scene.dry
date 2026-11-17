@@ -481,26 +481,44 @@ Every new government shares out the committee chairs afresh. The Caucus has [+ l
 
 [? if pledge_count > 0 : Our pledges this term: [+ pledge_text +]. ?]
 
-- @el_chair_rimaffairs: Outer Rim Affairs (5 leverage).
-- @el_chair_finance: Finance & Commerce (10 leverage).
+- @el_chair_constitution: Constitutional Affairs (5 leverage).
+- @el_chair_jedi: Jedi Affairs (5 leverage).
+- @el_chair_rimaffairs: Outer Rim Affairs (10 leverage).
 - @el_chair_judiciary: Judiciary & Intelligence (10 leverage).
-- @el_chair_security: Security & Defence (12 leverage).
+- @el_chair_security: Security & Defence (10 leverage).
+- @el_chair_finance: Finance & Commerce (20 leverage).
 - @el_chairs_done: That will do.
+
+@el_chair_constitution
+view-if: chair_constitution != "rc"
+choose-if: leverage >= 5 and rc_chairs < chair_cap and not chair_res_constitution
+unavailable-subtitle: [? if chair_res_constitution : Promised to the [+ chair_res_constitution_name +] in the coalition talks. ?][? if not chair_res_constitution and rc_chairs >= chair_cap : Our partners will not give up another chair. ?][? if not chair_res_constitution and rc_chairs < chair_cap : Not enough leverage. ?]
+subtitle: Amendments, the Chancellor's office and the emergency powers.
+on-arrival: chair_constitution = "rc"; leverage -= 5; rc_chairs += 1
+go-to: el_chairs
+
+@el_chair_jedi
+view-if: chair_jedi != "rc"
+choose-if: leverage >= 5 and rc_chairs < chair_cap and not chair_res_jedi
+unavailable-subtitle: [? if chair_res_jedi : Promised to the [+ chair_res_jedi_name +] in the coalition talks. ?][? if not chair_res_jedi and rc_chairs >= chair_cap : Our partners will not give up another chair. ?][? if not chair_res_jedi and rc_chairs < chair_cap : Not enough leverage. ?]
+subtitle: The Jedi Order's place in the Republic, and its future.
+on-arrival: chair_jedi = "rc"; leverage -= 5; rc_chairs += 1
+go-to: el_chairs
 
 @el_chair_rimaffairs
 view-if: chair_rimaffairs != "rc"
-choose-if: leverage >= 5 and rc_chairs < chair_cap and not chair_res_rimaffairs
+choose-if: leverage >= 10 and rc_chairs < chair_cap and not chair_res_rimaffairs
 unavailable-subtitle: [? if chair_res_rimaffairs : Promised to the [+ chair_res_rimaffairs_name +] in the coalition talks. ?][? if not chair_res_rimaffairs and rc_chairs >= chair_cap : Our partners will not give up another chair. ?][? if not chair_res_rimaffairs and rc_chairs < chair_cap : Not enough leverage. ?]
 subtitle: Relief, piracy, slavery and Rim representation.
-on-arrival: chair_rimaffairs = "rc"; leverage -= 5; rc_chairs += 1
+on-arrival: chair_rimaffairs = "rc"; leverage -= 10; rc_chairs += 1
 go-to: el_chairs
 
 @el_chair_finance
 view-if: chair_finance != "rc"
-choose-if: leverage >= 10 and rc_chairs < chair_cap and not chair_res_finance
+choose-if: leverage >= 20 and rc_chairs < chair_cap and not chair_res_finance
 unavailable-subtitle: [? if chair_res_finance : Promised to the [+ chair_res_finance_name +] in the coalition talks. ?][? if not chair_res_finance and rc_chairs >= chair_cap : Our partners will not give up another chair. ?][? if not chair_res_finance and rc_chairs < chair_cap : Not enough leverage. ?]
 subtitle: Trade policy, the Banking Clan, and the treasury.
-on-arrival: chair_finance = "rc"; leverage -= 10; rc_chairs += 1
+on-arrival: chair_finance = "rc"; leverage -= 20; rc_chairs += 1
 go-to: el_chairs
 
 @el_chair_judiciary
@@ -513,10 +531,10 @@ go-to: el_chairs
 
 @el_chair_security
 view-if: chair_security != "rc"
-choose-if: leverage >= 12 and rc_chairs < chair_cap and not chair_res_security
+choose-if: leverage >= 10 and rc_chairs < chair_cap and not chair_res_security
 unavailable-subtitle: [? if chair_res_security : Promised to the [+ chair_res_security_name +] in the coalition talks. ?][? if not chair_res_security and rc_chairs >= chair_cap : Our partners will not give up another chair. ?][? if not chair_res_security and rc_chairs < chair_cap : Not enough leverage. ?]
 subtitle: The Judicial Forces, defence policy and, one day, the army.
-on-arrival: chair_security = "rc"; leverage -= 12; rc_chairs += 1
+on-arrival: chair_security = "rc"; leverage -= 10; rc_chairs += 1
 go-to: el_chairs
 
 @el_chairs_done

@@ -3,7 +3,7 @@ subtitle: A New Ruusan: entrench the Senate's safeguards in the constitution.
 is-card: true
 tags: senate_affairs
 card-image: img/card_law.svg
-view-if: constitution_timer <= 0 and rc_in_govt and (chair_judiciary = "rc" or rc_chancellor) and cardok_constitution
+view-if: constitution_timer <= 0 and chair_constitution = "rc" and cardok_constitution
 on-arrival: amend_threshold = 66.7 if faith < 60; amend_threshold = 60 if faith >= 60; turn_actions += 1; constitution_timer = 3; last_card_timer = "constitution"
 new-page: true
 
@@ -14,9 +14,9 @@ Constitutional amendments need **two-thirds** of the Senate (three-fifths if fai
 - @sunset: Sunset clauses on all emergency powers.
 - @terms: Entrench the Chancellor's term limit.
 - @vonc: A constructive vote of no confidence.
-- @jedi: Guarantee the independence of the Jedi Order.
 - @rim: Constitutional seats for the Outer Rim.
 - @powers_review: The Powers Review Act.
+- @speaker: An independent Speaker of the Senate.
 - @groundwork: Build support for a future amendment.
 - @easy_discard
 
@@ -72,24 +72,6 @@ if (Q.cr_vote >= Q.amend_threshold) { Q.constructive_vonc = 1; Q.coalition_disse
 
 [? if constructive_vonc : Governments will no longer fall to paralysis and procedural ambush. Nobody can do to a future Chancellor what was done to Valorum. ?][? if not constructive_vonc : The amendment fails. ?]
 
-@jedi
-view-if: not jedi_independence
-subtitle: The Jedi Council could never be placed under the Chancellor's authority.
-choose-if: capital >= 1
-unavailable-subtitle: Not enough political capital.
-on-arrival: {!
-Q.capital -= 1;
-var st = SW.stance(Q, {mod: 0.6, guild: 0.4, rim: 0.55, sec: 0.25, ind: 0.6, pal: 0.15, cis: 0.4}, true);
-st.mod += (Q.jedi_standing - 50) / 200; st.ind += (Q.jedi_standing - 50) / 200;
-Q.cr_vote = SW.vote(Q, st, 1, 'oversight');
-Q.vote_html = SW.voteBanner('Jedi Independence Amendment', Q.cr_vote, Q.amend_threshold);
-if (Q.cr_vote >= Q.amend_threshold) { Q.jedi_independence = 1; Q.jedi_relation += 10; }
-!}
-
-[+ vote_html +]
-
-[? if jedi_independence : The Order's independence is written into the constitution. No Chancellor may appoint its Council or direct its Knights. ?][? if not jedi_independence : The amendment fails. ?]
-
 @rim
 view-if: not rim_enfranchised and rim_relief_act
 subtitle: Permanent constitutional seats for the Outer Rim.
@@ -126,6 +108,24 @@ if (Q.pr_vote >= Q.amend_threshold) { Q.powers_review = 1; Q.faith += 1; Q.senat
 [+ vote_html +]
 
 [? if powers_review : The amendment passes. Every year a joint committee of the Senate will review each emergency power the Chancellery holds, and the Senate will vote to take one back. The war powers will no longer simply accumulate. ?][? if not powers_review : The amendment falls short. The Chancellery's powers will outlast the emergencies that justified them. ?]
+
+@speaker
+view-if: constructive_vonc and not independent_speaker
+subtitle: −1 political capital. The Chancellor would no longer preside over the Senate, or decide what it debates.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {!
+Q.constitution_timer = 1;
+Q.capital -= 1;
+var st = SW.stance(Q, {mod: 0.65, guild: 0.45, rim: 0.6, sec: 0.35, ind: 0.65, pal: (Q.pal_chancellor ? 0.05 : 0.3), cis: 0.55}, true);
+Q.sp_vote = SW.vote(Q, st, 1, 'oversight');
+Q.vote_html = SW.voteBanner('Independent Speaker Amendment', Q.sp_vote, Q.amend_threshold);
+if (Q.sp_vote >= Q.amend_threshold) { Q.independent_speaker = 1; Q.senate_resolve += 0.5; Q.faith += 1; }
+!}
+
+[+ vote_html +]
+
+[? if independent_speaker : For a thousand years the Supreme Chancellor has presided over the Senate from the podium at its centre, deciding who speaks and what is debated. From now on the Senate elects its own Speaker for that, and the Chancellor sits among the senators to answer them. The Vice Chair's gavel is a ceremonial thing at last. ?][? if not independent_speaker : The amendment fails. The podium stays where it is. ?]
 
 @groundwork
 subtitle: Free. Makes future constitutional votes a little easier.

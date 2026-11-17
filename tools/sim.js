@@ -95,9 +95,11 @@ function smartWeight(id, Q) {
     [/\.civil_service$/, 12], [/\.amedda$/, 14], [/\.integrity$/, 12], [/\.hhc_investigate$/, 10], [/^sa_judiciary\.syndicates$/, 12],
     [/\.relief_act$/, 12], [/\.assembly$/, 14], [/\.slavery_report$/, 11], [/^sa_rimaffairs\.abolition$/, 12], [/^sa_rimaffairs\.enfranchise$/, 12], [/\.enforce$/, 12], [/\.sentience$/, 10],
     [/^sa_constitution\.(sunset|rim)$/, 11], [/\.powers_review$/, 12], [/^sa_security\.oversight$/, 11], [/^sa_security\.command$/, 12], [/^sa_security\.patrols$/, 11], [/\.pirate_campaign$/, (Q.mil_invest || 0) >= 2 ? 12 : 0.1],
-    [/^sa_security\.officers$/, 10], [/^ca_jedi\.reform$/, 8], [/^ca_jedi\.attachment$/, 10], [/^ca_jedi\.new_order$/, 14],
+    [/^sa_security\.officers$/, 10], [/^ca_jedi\.reform$/, 8], [/^sa_jedi_affairs\.reform$/, 8], [/^sa_jedi_affairs\.attachment$/, 10], [/^sa_jedi_affairs\.new_order$/, 14],
+    [/^sa_jedi_affairs\.(independence|service|compact)$/, 10], [/^sa_finance\.anticartel$/, 9], [/^sa_finance\.bonds$/, 9], [/^sa_finance\.deregulate$/, Q.capital <= 2 ? 6 : 2],
+    [/^sa_judiciary\.(expel|oversight_act|compor)$/, 10], [/^sa_security\.charter$/, 10], [/^sa_constitution\.speaker$/, 10], [/^ld_corporate$/, 8],
     // the offices are few and short: play their cards while we hold them
-    [/^sa_(judiciary|rimaffairs|security)$/, 10], [/^sa_constitution$/, 9],
+    [/^sa_(judiciary|rimaffairs|security)$/, 10], [/^sa_constitution$/, 9], [/^sa_jedi_affairs$/, 9],
     // guild money: avoid the strings, and break free when they bind
     [/^ca_contributions\.guilds$/, 0.4], [/^ca_contributions\.break$/, (Q.guild_hold || 0) > 0 ? 5 : 0], [/\.el_chest$/, 0.3],
     // the Hutts: deal only when the war is being lost
@@ -269,6 +271,11 @@ const PREMISES = [
   [/^(ca_confront|rec_piracy\.blame|ca_media\.(overreach|counter)|ca_enemy\.overreach|adv_mothma\.mothma_vigilance)$/, Q => !Q.rc_chancellor && !Q.rc_in_govt, 'opposition-style option while the Caucus governs'],
   // the Last Days only draw on what was built
   [/^ld_forces$/, Q => Q.pact_formed, 'Free Worlds mobilised without a Defence Pact'],
+  [/^ld_corporate$/, Q => Q.dereg_count >= 3, 'corporate security called without three rounds of deregulation'],
+  [/^sa_jedi_affairs$/, Q => Q.chair_jedi === 'rc', 'the Jedi Affairs card without its chair'],
+  [/^sa_constitution$/, Q => Q.chair_constitution === 'rc', 'the Constitutional card without its chair'],
+  [/^sa_finance\.breakup$/, Q => Q.anti_cartel, 'the Trade Federation broken up before the Anti-Cartel Act'],
+  [/^rec_(guild_pressure|embargo)$/, Q => !Q.tf_broken_up, 'a guild threat after the Trade Federation was broken up'],
   [/^ld_navy$/, Q => Q.navy_vetted >= 1 || Q.officer_corps || Q.senate_command, 'Navy appealed to without earlier work'],
   [/^ld_delegation$/, Q => Q.delegation_formed, 'Delegation rallied without a Delegation'],
   [/^ld_evidence$/, Q => Q.evidence >= 3, 'evidence secured without a case'],

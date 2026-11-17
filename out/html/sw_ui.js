@@ -116,10 +116,18 @@
     else if (Q.rimward_split) h += '<p class="sb-note">The Rimward wing has split off' + (Q.rfc_kind === 'rimward' ? ' as the ' + (Q.rfc_name || 'Rim Freedom Caucus') : ' to the Rimward Coalition') + '.</p>';
     if (SW.TRACKS) {
       h += head('Reforms');
-      for (var tk in SW.TRACKS) {
-        var T = SW.TRACKS[tk], lv = T.level(Q);
-        var v = lv > 0 ? '<span class="good">' + T.steps[lv - 1] + '</span>' : '<span class="sb-dim">not begun</span>';
-        h += row(T.name, v + ' · ' + lv + '/' + T.steps.length);
+      // each committee's reform paths, then those that cross the committees
+      var groups = SW.COMMITTEES.concat(['']);
+      for (var gi = 0; gi < groups.length; gi++) {
+        var gc = groups[gi], first = true;
+        for (var tk in SW.TRACKS) {
+          var T = SW.TRACKS[tk];
+          if ((T.committee || '') !== gc) continue;
+          if (first) { h += '<div class="sb-note"><b>' + (gc ? SW.COMMITTEE_NAMES[gc] : 'Across the committees') + '</b>' + (gc && Q['chair_' + gc] === 'rc' ? ' (our chair)' : '') + '</div>'; first = false; }
+          var lv = T.level(Q);
+          var v = lv > 0 ? '<span class="good">' + (T.label ? T.label(Q) : T.steps[Math.min(lv, T.steps.length) - 1]) + '</span>' : '<span class="sb-dim">not begun</span>';
+          h += row(T.name, v + ' · ' + lv + '/' + T.steps.length);
+        }
       }
       if (Q.hutt_deal) h += '<p class="sb-note">The Hutt treaty puts the syndicates beyond the law.</p>';
     }

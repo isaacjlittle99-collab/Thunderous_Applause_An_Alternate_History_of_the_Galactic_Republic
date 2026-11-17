@@ -56,6 +56,7 @@ The **Holocron** link at the top of the page explains the factions, blocs and sy
 - @htp_senate: The Senate: coalitions and relations
 - @htp_elections: Elections and campaigns
 - @htp_purse: The Republic's purse
+- @htp_government: The government
 - @htp_reforms: Reforms, step by step
 - @htp_war: The Separatists and the war
 - @htp_sith: The search for the Sith
@@ -165,30 +166,49 @@ The Caucus does not know who the Sith Lord is. It has to find out. The Shadow ta
 
 - @how_to_play: Back to How to play
 
+@htp_government
+new-page: true
+
+= The government
+
+The Senate's work is done in **six committees**, and whoever chairs one decides what it puts to the Senate. Holding a chair puts that committee's card in the *Senate Affairs* deck.
+
+• **Finance & Commerce:** the budget, the guilds and the banks.
+
+• **Judiciary & Intelligence:** the courts, corruption, the bureaucracy and the Bureau of Intelligence.
+
+• **Security & Defence:** the army, the Navy, the Senate Guard and the pirates.
+
+• **Outer Rim Affairs:** relief, slavery and the Rim's representation.
+
+• **Constitutional Affairs:** amendments, the Chancellor's office and the emergency powers.
+
+• **Jedi Affairs:** the Jedi Order's place in the Republic, and its future.
+
+**Sharing out the chairs.** Every new government shares the chairs out afresh. Each partner in the coalition insists on at least one, and a firm leader insists on the one it cares about most. The Caucus buys the rest with its leverage, which comes from its seats: Finance & Commerce costs 20, Judiciary, Security and the Rim office 10 each, and Constitutional and Jedi Affairs 5 each. In opposition, the Caucus chairs nothing.
+
+- @how_to_play: Back to How to play
+
 @htp_reforms
 new-page: true
 
 = Reforms, step by step
 
-Many of the Republic's problems can only be fixed in several steps, each a separate decision and most a Senate vote. Each step needs the one before it, and the Status tab shows how far each has gone. The committee chairs are the offices that open them: the **Rim office** (Outer Rim Affairs), the **military office** (Security & Defence) and the **investigation office** (Judiciary & Intelligence).
+Many of the Republic's problems can only be fixed in several steps, each a separate decision and most a Senate vote. Each committee has its own paths, and the Status tab shows how far each has gone. Each step needs the one before it.
 
-• **The bureaucracy:** a civil service review, then the Civil Service Act, after which the bureaucrats are no longer a threat and Vice Chair Mas Amedda can be arrested, ending his gavel.
+• **Finance & Commerce.** *The guilds:* regulating them, then the Anti-Cartel Act, then breaking up the Trade Federation, which weakens the guilds' bloc and ends every guild threat for good. *The banks:* an audit of the Banking Clan, then its independence from the Chancellery, then Republic bonds, which cut the Republic's interest. The committee can also cut regulation, as often as it likes: the guilds and trade gain, the treasury and the Rim lose, and grateful donors fill the Caucus's coffers. Three rounds of it and the guilds' security forces will answer the Caucus in the Last Days.
 
-• **The Rim:** the Rim Relief Act, then enfranchisement, then a Rim Assembly, which stops the Separatist cause from growing.
+• **Judiciary & Intelligence.** *Corruption:* the ethics law, then an Office of Public Integrity, then expelling the Senate's most corrupt members. *The bureaucracy:* a civil service review, then the Civil Service Act, after which the bureaucrats are no longer a threat and Vice Chair Mas Amedda can be arrested. *Intelligence:* an intelligence review, then the Intelligence Oversight Act, then the Commission for the Protection of the Republic, which sees schemes coming, keeps the proof from wasting away and protects investigators.
 
-• **Corruption:** the ethics law, then an Office of Public Integrity: no more bought votes, and corruption keeps falling.
+• **Security & Defence.** *Command of the army:* Senate oversight, then the Senate Command Act (the Senate Guard must be reformed first). *The Senate's guard:* returning the Guard to the Senate, then the Judicial Forces Charter. *The syndicates:* patrol fleets in the Rim (after investing in the military), a campaign against the pirate fleets (the fleets must be strong enough, or the Republic is humiliated), then breaking the syndicates (Judiciary). Until something is done, pirates raid the trade lanes.
 
-• **Emergency powers:** sunset clauses, then the Powers Review Act, which takes one power back every year.
+• **Outer Rim Affairs.** *The Rim:* the Rim Relief Act, then enfranchisement, then a Rim Assembly, which stops the Separatist cause from growing. *Slavery:* a Senate report, abolition, then enforcing it, which needs the syndicates broken. Each step helps the Caucus on the Rim and Anakin's state of mind; enforcement frees his mother.
 
-• **The military:** Senate oversight of the army, then the Senate Command Act (the Senate Guard must be reformed first).
+• **Constitutional Affairs.** *Emergency powers:* sunset clauses, then the Powers Review Act, which takes one power back every year. *The office of Chancellor:* entrenched term limits and a constructive vote of no confidence (in either order), then an independent Speaker, which ends the Vice Chair's control of the agenda. Amendments need two-thirds of the Senate (three-fifths when faith is high).
 
-• **The Jedi:** a campaign for reform, then a Council that accepts attachment, then a New Jedi Order. The last needs Anakin Skywalker firmly on the light side, and close relations with the Order.
+• **Jedi Affairs.** *The Order's future:* a campaign for reform (the Caucus's own Jedi card can speak for it too), then a Council that accepts attachment, then a New Jedi Order, which needs Anakin Skywalker firmly on the light side and close relations with the Order. *The Order's independence:* the Jedi Independence Amendment, then the Jedi Service Act (the Jedi serve as peacekeepers, never as generals), then a Senate–Jedi Compact.
 
-• **Slavery** (Rim office): a Senate report, abolition, then enforcing it, which needs the syndicates broken. Each step helps the Caucus on the Rim and Anakin's state of mind; enforcement frees his mother.
-
-• **The syndicates:** patrol fleets in the Rim (military office, after investing in the military), a campaign against the pirate fleets (the military office again, and the fleets must be strong enough, or the Republic is humiliated), then breaking the syndicates (investigation office). Until something is done, pirates raid the trade lanes, hurting whoever holds the Chancellery and driving voters to the Security Bloc. In wartime the Republic may be offered a deal with the Hutts, which ends this track for good. Unbroken syndicates stand with Palpatine when he makes his move.
-
-• **High Human Culture:** the Rights of Sentience (Rim office), a diverse officer corps (military office) and an investigation of the human-first groups (investigation office) together discredit it. Until then it keeps rising, helping Palpatine and the Separatists and making hardline leaders likelier to win their contests.
+• **High Human Culture**, across the committees: the Rights of Sentience (Rim office), a diverse officer corps (Security) and an investigation of the human-first groups (Judiciary) together discredit it. Until then it keeps rising, helping Palpatine and the Separatists and making hardline leaders likelier.
 
 - @how_to_play: Back to How to play
 
