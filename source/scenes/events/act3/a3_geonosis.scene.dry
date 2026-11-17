@@ -78,7 +78,8 @@ if (!Q.geo_outcome) Q.geo_outcome = 'none';
 Q.vote_html = html;
 // the war begins either way: the Confederacy will not stand down now
 Q.war = 1;
-Q.jedi_generals = 1;
+// the Jedi Service Act keeps them out of command until the Senate suspends it
+Q.jedi_generals = Q.jedi_service_act ? 0 : 1;
 if (Q.geo_outcome === 'oversight' || Q.geo_outcome === 'powers') { Q.clones = 5; Q.war_balance = 1; Q.jedi_strength -= 0.5; }
 else { Q.clones = 0; Q.war_balance = -2 + Q.judicial_forces * 0.2 + Q.member_forces * 0.2; Q.jedi_strength -= 2; Q.jedi_standing -= 5; }
 var idx = Q.parties.indexOf('cis');

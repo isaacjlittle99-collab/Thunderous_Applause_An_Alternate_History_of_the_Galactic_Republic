@@ -295,6 +295,7 @@ const STEP_SEEN = {};
 const STEP_RE = /\.(bureau_reform|civil_service|amedda|ethics|integrity|hhc_investigate|syndicates|relief_act|enfranchise|assembly|slavery_report|abolition|enforce|sentience|sunset|powers_review|oversight|command|patrols|pirate_campaign|officers|reform|attachment|new_order|judicials|navy|train|exercise|break|guilds|el_chest)$/;
 let lastGovt = [];
 const DECREES_TAKEN = {};
+const MINORITY_OVER = new Map();
 function checkPremises(id, Q, game, out) {
   const g = (Q.govt_blocs || []).slice();
   const added = g.filter(b => lastGovt.indexOf(b) < 0);
@@ -329,6 +330,15 @@ function checkPremises(id, Q, game, out) {
       if (Q['chp_' + P.id + '_state'] === 'held') held++;
     }
     if (held !== Q.chan_powers) out['the power count is wrong'] = (out['the power count is wrong'] || 0) + 1;
+  }
+  // no Jedi generals while the Jedi Service Act is law
+  if (id === 'post_event' && Q.jedi_service_act && Q.jedi_generals) out['Jedi generals under the Service Act'] = (out['Jedi generals under the Service Act'] || 0) + 1;
+  // a Caucus minority past its breaking point falls within a turn or two
+  if (id === 'post_event' && SW.isCaucusMinority) {
+    const over = SW.isCaucusMinority(Q) && Q.coalition_dissent >= Q.collapse_at && !Q.finale && !Q.election_due && !Q.game_ending;
+    if (!over) MINORITY_OVER.delete(Q);
+    else if (!MINORITY_OVER.has(Q)) MINORITY_OVER.set(Q, Q.time);
+    else if (Q.time >= MINORITY_OVER.get(Q) + 2) { out['a Caucus minority past its breaking point that does not fall'] = (out['a Caucus minority past its breaking point that does not fall'] || 0) + 1; MINORITY_OVER.delete(Q); }
   }
   // the turn processor has just run every-visit: with nothing to hold him, Anakin is never below the rising line
   if (id === 'post_event' && Q.anakin_found && !Q.anakin_fallen && Q.anakin_fall < SW.anakinFloor(Q) - 1e-6) out['Anakin below the line with nothing to hold him'] = (out['Anakin below the line with nothing to hold him'] || 0) + 1;

@@ -1,20 +1,21 @@
 title: Strains in the Coalition
 subtitle: Our partners are unhappy.
 tags: event
-view-if: rc_in_govt and coalition_strain_timer <= 0 and time >= 4 and coalition_dissent < 4 and not finale
+view-if: rc_in_govt and coalition_strain_timer <= 0 and time >= 4 and coalition_dissent < collapse_at and not finale
 new-page: true
 face-image: img/ev_senate.svg
 on-arrival: {!
 Q.coalition_strain_timer = 3 + Math.floor(Math.random() * 3);
-var partners = Q.govt_blocs.filter(function (b) { return b !== 'rc'; });
+var partners = Q.govt_blocs.filter(function (b) { return b !== 'rc'; }).concat(Q.minority_support || []);
 Q.strain_bloc = partners.length ? partners[Math.floor(Math.random() * partners.length)] : 'ind';
 Q.strain_name = SW.name(Q, Q.strain_bloc);
 Q.coalition_dissent += 1;
+Q.coalition_mood_v = Q.coalition_dissent + (4 - (Q.collapse_at || 4));
 !}
 
 = Strains in the Coalition
 
-The [+ strain_name +] complain that the Caucus is setting the government's agenda without consulting them. The coalition's mood is now **[+ coalition_dissent : coalition_dissent +]**.
+The [+ strain_name +] complain that the Caucus is setting the government's agenda without consulting them. [? if minority_govt and rc_chancellor : The minority government's standing with the blocs it relies on is now **[+ coalition_mood_v : coalition_dissent +]**. ?][? if not minority_govt or not rc_chancellor : The coalition's mood is now **[+ coalition_mood_v : coalition_dissent +]**. ?]
 
 - @soothe: Reassure them with a concession.
 - @hold: Hold firm.

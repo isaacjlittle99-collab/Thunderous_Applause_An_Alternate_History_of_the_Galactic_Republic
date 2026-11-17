@@ -88,8 +88,9 @@
     h += row('Political capital', '<b>' + Q.capital + '</b>');
     var pos = Q.rc_chancellor ? '<b class="good">holds the Chancellery</b>' : (Q.rc_in_govt ? 'in government' : 'in opposition');
     h += row(bloc(Q, 'rc'), pos);
-    if (Q.rc_in_govt) h += row('Coalition', Q.coalition_name + (Q.minority_govt ? ' (minority)' : ''));
-    if (Q.rc_in_govt) h += row('Coalition mood', SW.label('cdissent', Q.coalition_dissent));
+    if (Q.rc_in_govt) h += row('Coalition', Q.coalition_name + (Q.minority_govt && !/minority/i.test(Q.coalition_name || '') ? ' (minority)' : ''));
+    if (Q.rc_in_govt) h += row(SW.isCaucusMinority(Q) ? 'Supporters\u2019 patience' : 'Coalition mood', SW.label('cdissent', Q.coalition_mood_v !== undefined ? Q.coalition_mood_v : Q.coalition_dissent));
+    if (SW.isCaucusMinority(Q)) h += '<div class="sb-note">' + (Q.minority_support_n ? 'Relying on ' + Q.minority_support_names + '.' : 'No bloc has promised its support.') + '</div>';
     if (Q.rc_in_govt) h += row('Republic treasury', SW.round1(Q.treasury) + ' · debt ' + SW.round1(Q.debt || 0));
     var chairs = [];
     for (var i = 0; i < SW.COMMITTEES.length; i++) if (Q['chair_' + SW.COMMITTEES[i]] === 'rc') chairs.push(SW.COMMITTEE_NAMES[SW.COMMITTEES[i]]);
@@ -140,10 +141,10 @@
     var list = Q.parties.slice().sort(function (a, b) { return (Q[b + '_r'] || 0) - (Q[a + '_r'] || 0); });
     for (var i = 0; i < list.length; i++) {
       var b = list[i];
-      var mark = (Q.govt_blocs || []).indexOf(b) >= 0 ? ' ★' : '';
+      var mark = (Q.govt_blocs || []).indexOf(b) >= 0 ? ' ★' : ((Q.minority_support || []).indexOf(b) >= 0 ? ' ☆' : '');
       h += row(bloc(Q, b) + mark, (Q[b + '_r'] || 0).toFixed(1) + '%');
     }
-    h += '<p class="sb-note">★ in the governing coalition (' + Q.govt_seats + '%).</p>';
+    h += '<p class="sb-note">★ in the governing coalition (' + Q.govt_seats + '%).' + ((Q.minority_support || []).length ? ' ☆ supporting our minority government from outside it (' + SW.round1(SW.seats(Q, (Q.govt_blocs || []).concat(Q.minority_support))) + '% together).' : '') + '</p>';
     if (Q.merged_sec === 'pal') h += '<p class="sb-note warn">The Security Bloc has folded into the ' + SW.name(Q, 'pal') + '.</p>';
     if (Q.merged_rim === 'cis') h += '<p class="sb-note warn">The Rimward Coalition has gone over to the Separatists.</p>';
     if (Q.merged_rfc === 'cis') h += '<p class="sb-note warn">The ' + (Q.rfc_name || 'breakaway party') + ' has gone over to the Separatists.</p>';

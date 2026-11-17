@@ -1,19 +1,29 @@
 title: The Government Falls
 subtitle: Our coalition partners have walked out.
 tags: event
-view-if: rc_in_govt and coalition_dissent >= 4 and not finale and not election_due and not game_ending
+view-if: rc_in_govt and coalition_dissent >= collapse_at and not finale and not election_due and not game_ending
 priority: 6
 new-page: true
 face-image: img/ev_senate.svg
 on-arrival: {!
-Q.cc_kept = 0; Q.cc_dropped = 0; Q.gov_minority_swing = 0;
+Q.cc_kept = 0; Q.cc_dropped = 0; Q.gov_minority_swing = 0; Q.cc_noone = 0; Q.cc_supporter_left = 0;
 Q.rc_momentum -= 0.5; Q.faith -= 1; Q.govt_fell = (Q.govt_fell || 0) + 1;
+// a Caucus minority loses the least friendly of its partners and supporters, or, leaning on nobody, the Senate's patience
+Q.cc_minority = SW.isCaucusMinority(Q) ? 1 : 0;
+var leaver = Q.cc_minority ? SW.minorityLeaver(Q) : '';
+Q.cc_supporter_left = (leaver && (Q.govt_blocs || []).indexOf(leaver) < 0) ? 1 : 0;
+if (Q.cc_minority && !leaver) Q.cc_noone = 1;
 if (!Q.constructive_vonc) {
-    SW.walkout(Q, 24);
+    if (!Q.cc_noone) SW.walkout(Q, 24, leaver);
     Q.election_due = 1; Q.govt_fell_now = 1; Q.fall_reason = 'collapse';
+} else if (Q.rc_chancellor && (Q.cc_supporter_left || Q.cc_noone)) {
+    // the Chancellor survives; the minority leans on whoever is left
+    if (Q.cc_supporter_left) SW.walkout(Q, 24, leaver);
+    Q.minority_support = [];
+    Q.coalition_dissent = 1; Q.cc_kept = 1;
 } else if (Q.rc_chancellor) {
     // the Chancellor survives; the partner simply leaves
-    var gone = SW.walkout(Q, 24);
+    var gone = SW.walkout(Q, 24, leaver);
     var rest = (Q.govt_blocs || []).filter(function (b) { return b !== gone; });
     if (rest.length > 1 && !SW.coldPair(Q, rest)) SW.setGovt(Q, rest);
     else SW.setGovt(Q, gone === 'ind' || !SW.relOk(Q, 'rc', 'ind') ? ['rc'] : ['rc', 'ind'], 'Caucus Minority Government');
@@ -33,11 +43,11 @@ if (!Q.constructive_vonc) {
 
 = The Government Falls
 
-[? if not cc_dropped : The [+ walkout_name +] have had enough, and walk out of the coalition. ?][? if cc_dropped : Our partners have had enough of the Caucus. ?]
+[? if not cc_dropped and not cc_supporter_left and not cc_noone : The [+ walkout_name +] have had enough, and walk out of the coalition. ?][? if cc_supporter_left : The [+ walkout_name +] have had enough, and withdraw their support from the Caucus's minority government. ?][? if cc_noone : No bloc in the Senate will vote with the Caucus's minority government any longer. ?][? if cc_dropped : Our partners have had enough of the Caucus. ?]
 
-[? if govt_fell_now and rc_chancellor : They join a motion of no confidence in Chancellor [+ chancellor +], and it passes. The Senate must elect a new Supreme Chancellor. ?][? if govt_fell_now and not rc_chancellor : Without them the government has no majority, and it collapses. The Senate must elect a new Supreme Chancellor. ?][? if cc_kept : Under the constructive no-confidence rule they cannot bring Chancellor [+ chancellor +] down without agreeing on a successor, so the government carries on without them, weaker than before: the [+ coalition_name +]. ?][? if cc_dropped : Under the constructive no-confidence rule the Chancellor cannot be brought down, so the coalition simply drops the Caucus and governs without us. Our committee chairs go with it. ?]
+[? if govt_fell_now and rc_chancellor and not cc_noone : They join a motion of no confidence in Chancellor [+ chancellor +], and it passes. The Senate must elect a new Supreme Chancellor. ?][? if govt_fell_now and rc_chancellor and cc_noone : A motion of no confidence in Chancellor [+ chancellor +] passes easily. The Senate must elect a new Supreme Chancellor. ?][? if govt_fell_now and not rc_chancellor : Without them the government has no majority, and it collapses. The Senate must elect a new Supreme Chancellor. ?][? if cc_kept and not cc_noone : Under the constructive no-confidence rule they cannot bring Chancellor [+ chancellor +] down without agreeing on a successor, so the government carries on without them, weaker than before: the [+ coalition_name +]. ?][? if cc_kept and cc_noone : Under the constructive no-confidence rule the Senate cannot bring Chancellor [+ chancellor +] down without agreeing on a successor, so the government limps on. ?][? if cc_dropped : Under the constructive no-confidence rule the Chancellor cannot be brought down, so the coalition simply drops the Caucus and governs without us. Our committee chairs go with it. ?]
 
 [? if gov_minority_swing : What is left of the government has no majority. Voters lose patience with a Senate that cannot govern: Palpatine's bloc and the separatists gain. ?]
 
-[? if not cc_dropped : The [+ walkout_name +] will not serve in a government with the Caucus for the next two years. ?][? if cc_dropped : The [+ walkout_name +] will not have us back for at least a year. ?]
+[? if not cc_dropped and not cc_supporter_left and not cc_noone : The [+ walkout_name +] will not serve in a government with the Caucus for the next two years. ?][? if cc_supporter_left : The [+ walkout_name +] will neither support nor serve in a government with the Caucus for the next two years. ?][? if cc_dropped : The [+ walkout_name +] will not have us back for at least a year. ?]
 
