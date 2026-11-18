@@ -197,6 +197,11 @@
       'hutt_terms_seen', 'petition_lost', 'hawks_called', 'militia_events'];
     for (var wbn = 0; wbn < WBN.length; wbn++) D[WBN[wbn]] = 0;
     D.radicals_steps0 = -1; D.hutt_rep_kind = ''; D.hutt_turned_why = ''; D.rc_lead = '';
+    // walkouts
+    var WDS = ['walkout_ready', 'wk_wing', 'wk_wing_name', 'wk_bloc', 'wk_bloc_name', 'wk_leader', 'wk_leader_id', 'wk_winner', 'wk_winner_leader', 'wk_found', 'wk_join', 'wk_join_name', 'wk_grievance'];
+    for (var wds = 0; wds < WDS.length; wds++) D[WDS[wds]] = '';
+    var WDN = ['walkout_go', 'walkouts', 'splinters', 'wk_us', 'wk_cis', 'wk_govt', 'wk_govt_w'];
+    for (var wdn = 0; wdn < WDN.length; wdn++) D[WDN[wdn]] = 0;
     // the Caucus congress and its programme
     var WCN = ['rc_congress_ready', 'rc_congress_elections', 'rc_congress_hold', 'rc_congresses', 'rcg_adv_ok', 'rcg_can_pay', 'rcg_deadlock', 'rcg_changed',
       'rcg_c1', 'rcg_c2', 'rcg_c3', 'rcg_c4', 'lead_events', 'committee_smooth', 'chan_ceasefire', 'chan_peace_stage', 'chan_peace_ok', 'cp_vote', 'cp_passed',
@@ -1662,7 +1667,7 @@
     var c = SW.wingCandidate(Q, w) || W.leaders[0], L = SW.LEADERS[c];
     var lv = (L && L.views) || {};
     for (k in lv) v[k] = (v[k] || 0) + lv[k];
-    var xv = W.views || {};
+    var xv = W.views || (SW.WING_VIEWS && SW.WING_VIEWS[w]) || {};
     for (k in xv) v[k] = (v[k] || 0) + xv[k];
     return v;
   };
@@ -1899,6 +1904,7 @@
     return h;
   };
   SW.congressApply = function (Q, b, winner, terms, backed) {
+    if (!SW.wingCandidate(Q, winner)) return;
     var wc = SW.wingCandidate(Q, winner), was = Q[b + '_wing'], wasLeader = b === 'pal' ? (Q.pal_leader_id || '') : Q[b + '_leader_id'];
     var palFree = b === 'pal' && !SW.leaderOut(Q, 'pal') && !Q.pal_leader_id;
     Q[b + '_wing'] = winner;
@@ -1931,6 +1937,8 @@
     Q.cg_result = t;
     Q.cg_effect = (palFree ? '' : SW.leaderEffect(Q, b, wc)) || ' ';
     Q.contest_group = '';
+    if (b !== 'pal' && SW.walkoutCheck) SW.walkoutCheck(Q, b, winner, backed);
+    Q.walkout_go = Q.walkout_ready ? 1 : 0;
   };
   // the wing behind a bloc's line, for display
   SW.wingLine = function (Q, b) {
@@ -1992,6 +2000,7 @@
   // the views a bloc votes by: its leader's and its ruling wing's
   SW.blocViews = function (Q, b) {
     var v = {}, k, L = SW.leader(Q, b).views || {}, w = Q && SW.hasWings && SW.hasWings(Q, b) ? Q[b + '_wing'] : '', W = (w && SW.WING_VIEWS[w]) || {};
+    if (b === 'rfc' && Q && SW.splinterWing && SW.splinterWing(Q)) { w = Q.rfc_kind; W = SW.WING_VIEWS[w] || {}; }
     for (k in L) v[k] = (v[k] || 0) + L[k];
     for (k in W) v[k] = (v[k] || 0) + W[k];
     // the Brokers stand by the Republic once it is fighting
@@ -2405,6 +2414,106 @@
     Q.chancellors_peace = 1; Q.war = 0; Q.peace_achieved = 1;
     Q.outer_sep -= 20; Q.midrim_sep -= 15; Q.corporate_sep -= 15; Q.fear -= 10; Q.faith += 5;
   };
+
+  // ------------------------------------------------------------------ walkouts and splinter parties
+  // After a congress, a defeated wing that is large, far from the winner and angry may leave its bloc:
+  // to join another bloc (or us), or to found a party of its own in the breakaway slot.
+  // join: the bloc it joins; found: the party it founds; near: where a would-be founder goes if the slot is taken;
+  // usJoin: the Caucus faction whose leadership brings it to us instead; rejects: partners it will not govern beside.
+  SW.WALKOUT = {
+    old_families: {join: 'pal', rejects: ['rim', 'rfc']},
+    ruusan: {join: 'rc', faction: 'inst', rejects: ['pal']},
+    establishment: {join: 'sec', rare: true, rejects: ['rim']},
+    corporatists: {join: 'cis', rejects: []},
+    confederates: {join: 'cis', rejects: ['rc', 'rim']},
+    free_traders: {found: 'Free Commerce League', near: 'mod', rejects: ['pal']},
+    radicals: {join: 'cis', rejects: ['mod', 'guild', 'sec']},
+    rfc_radicals: {join: 'cis', rejects: ['guild']},
+    human_first: {join: 'pal', rejects: ['rim', 'rfc', 'rc']},
+    const_hawks: {found: 'Constitutional Defence League', near: 'mod', usJoin: 'hawk', faction: 'hawk', rejects: ['pal']},
+    isolationists: {join: 'cis', rejects: ['pal', 'sec']},
+    neutralists: {found: 'Council of Neutral Systems', near: 'rim', usJoin: 'pacifist', faction: 'pacifist', rejects: ['sec']}
+  };
+  SW.WALKOUT_MIN = 20;          // a wing needs this share of its bloc's delegates to walk out
+  // where a walking-out wing would go, now: '' if nowhere
+  SW.walkoutDest = function (Q, w) {
+    var R = SW.WALKOUT[w];
+    if (!R) return null;
+    if (R.usJoin && SW.rcLead && SW.rcLead(Q) === R.usJoin) return {join: 'rc'};
+    if (R.found) {
+      if (!Q.rfc_formed && Q.parties.indexOf('rfc') < 0) return {found: R.found};
+      return Q.parties.indexOf(R.near) >= 0 && R.near !== SW.WINGS[w].bloc ? {join: R.near} : null;
+    }
+    if (R.join === 'cis') return Q.dooku_movement ? {join: 'cis'} : null;
+    if (R.join === 'pal' && (Q.pal_disgraced || Q.sidious_defeated)) return null;
+    return R.join && (R.join === 'rc' || Q.parties.indexOf(R.join) >= 0) ? {join: R.join} : null;
+  };
+  // how angry a defeated wing is: it lost; its bloc sits in government beside partners it rejects; we backed its rival; it is far from the winner
+  SW.walkoutAnger = function (Q, w, winner, backed) {
+    var R = SW.WALKOUT[w] || {}, b = SW.WINGS[w].bloc, a = 1, gov = Q.govt_blocs || [];
+    if (gov.indexOf(b) >= 0 && (R.rejects || []).some(function (x) { return gov.indexOf(x) >= 0; })) { a += 1; Q.wk_govt = 1; }
+    if (backed && backed === winner) a += 1;
+    var d = SW.ideoDistance(SW.wingIdeo(Q, w), SW.wingIdeo(Q, winner));
+    if (d >= 0.35) a += 1;
+    return {anger: a, dist: d};
+  };
+  // after a congress: does a defeated wing walk out?
+  SW.walkoutCheck = function (Q, b, winner, backed) {
+    Q.walkout_ready = '';
+    if (Q.finale || Q.game_ending) return '';
+    var ws = SW.blocWings(Q, b), pick = '', pickA = 0;
+    for (var i = 0; i < ws.length; i++) {
+      var w = ws[i];
+      if (w === winner || !SW.WALKOUT[w] || SW.wingShare(Q, w) < SW.WALKOUT_MIN) continue;
+      Q.wk_govt = 0;
+      var an = SW.walkoutAnger(Q, w, winner, backed);
+      if (an.dist < 0.2 || an.anger < 2 || !SW.walkoutDest(Q, w)) continue;
+      var chance = (0.45 + 0.15 * (an.anger - 2)) * (SW.WALKOUT[w].rare ? 0.3 : 1);
+      if (SW.rnd() < chance && an.anger > pickA) { pick = w; pickA = an.anger; Q.wk_govt_w = Q.wk_govt; }
+    }
+    if (!pick) return '';
+    var dest = SW.walkoutDest(Q, pick), c = SW.wingCandidate(Q, pick) || SW.WINGS[pick].leaders[0];
+    Q.walkout_ready = pick;
+    Q.wk_wing = pick; Q.wk_wing_name = SW.wingName(pick); Q.wk_bloc = b; Q.wk_bloc_name = SW.name(Q, b);
+    Q.wk_leader = SW.LEADERS[c] ? SW.LEADERS[c].name : SW.wingName(pick); Q.wk_leader_id = c;
+    Q.wk_winner = SW.wingName(winner); Q.wk_winner_leader = SW.LEADERS[SW.wingCandidate(Q, winner)] ? SW.LEADERS[SW.wingCandidate(Q, winner)].name : '';
+    Q.wk_found = dest.found || ''; Q.wk_join = dest.join || '';
+    Q.wk_join_name = dest.join === 'rc' ? 'the Ruusan Caucus' : (dest.join ? 'the ' + SW.name(Q, dest.join) : '');
+    Q.wk_us = dest.join === 'rc' ? 1 : 0;
+    Q.wk_cis = dest.join === 'cis' ? 1 : 0;
+    var rej = (SW.WALKOUT[pick].rejects || []).filter(function (x) { return (Q.govt_blocs || []).indexOf(x) >= 0; });
+    Q.wk_grievance = Q.wk_govt_w && rej.length ? 'And now the ' + Q.wk_bloc_name + (SW.blocPlural(Q, b) ? ' sit' : ' sits') + ' in government beside the ' + rej.map(function (x) { return x === 'rc' ? 'Ruusan Caucus' : SW.name(Q, x); }).join(' and the ') +
+      ', a government the ' + Q.wk_wing_name + ' call a betrayal of everything the bloc stands for.' : 'Their delegates leave the hall convinced that the ' + Q.wk_bloc_name + (SW.blocPlural(Q, b) ? ' have' : ' has') + ' no room for them any more.';
+    return pick;
+  };
+  // the walkout itself
+  SW.doWalkout = function (Q) {
+    var w = Q.walkout_ready;
+    Q.walkout_ready = ''; Q.walkout_go = 0;
+    if (!w || !SW.wingActive(Q, w)) return;
+    var dest = SW.walkoutDest(Q, w);
+    if (!dest) return;
+    var R = SW.WALKOUT[w], b = SW.WINGS[w].bloc, share;
+    if (dest.found) {
+      // a new party in the breakaway slot, with the wing's leader at its head
+      Q.rfc_formed = 1; Q.rfc_kind = w; Q.rfc_name = dest.found;
+      if (Q.parties.indexOf('rfc') < 0) Q.parties.push('rfc');
+      for (var r0 = 0; r0 < SW.REGIONS.length; r0++) Q[SW.REGIONS[r0] + '_rfc'] = Q[SW.REGIONS[r0] + '_rfc'] || 0;
+      Q.rfc_leader_id = Q.wk_leader_id; Q.rfc_leader = Q.wk_leader;
+      Q.rfc_relation = SW.clamp((Q[b + '_relation'] || 35) + 5, 0, 100); Q.rfc_relation_prev = Q.rfc_relation;
+      share = SW.wingLeaves(Q, w, 'rfc');
+      Q.splinters = (Q.splinters || 0) + 1;
+    } else {
+      share = SW.wingLeaves(Q, w, dest.join === 'rc' ? 'rc' : dest.join);
+      if (dest.join === 'rc' && R.faction) { Q[R.faction + '_strength'] = (Q[R.faction + '_strength'] || 0) + Math.round(share * 60); Q[R.faction + '_dissent'] = Math.max(0, (Q[R.faction + '_dissent'] || 0) - 5); }
+    }
+    Q.walkouts = (Q.walkouts || 0) + 1;
+    Q['walked_' + w] = dest.found ? 'found' : dest.join;
+    Q[b + '_relation'] = (Q[b + '_relation'] || 0) - (dest.join === 'rc' ? 8 : 0);
+    SW.computeSupport(Q);
+  };
+  // a breakaway party that is a wing's: it votes and governs by that wing's ideology, under its bloc's baseline
+  SW.splinterWing = function (Q) { return Q.rfc_kind && SW.WINGS[Q.rfc_kind] ? Q.rfc_kind : ''; };
 
   // ------------------------------------------------------------------ support / seats
   SW.computeSupport = function (Q) {
@@ -2853,7 +2962,7 @@
     ind: {peace: 0.2, oversight: 0.1}
   };
   SW.ideology = function (Q, b) {
-    var v = {}, base = SW.BLOC_IDEOLOGY[b] || {}, L = SW.blocViews ? SW.blocViews(Q, b) : (SW.leader(Q, b).views || {}), k;
+    var v = {}, base = SW.BLOC_IDEOLOGY[(b === 'rfc' && SW.splinterWing && SW.splinterWing(Q)) ? SW.WINGS[Q.rfc_kind].bloc : b] || {}, L = SW.blocViews ? SW.blocViews(Q, b) : (SW.leader(Q, b).views || {}), k;
     for (k in base) v[k] = (v[k] || 0) + base[k];
     for (k in L) v[k] = (v[k] || 0) + L[k];
     return v;
@@ -3816,8 +3925,8 @@
     SW.recomputeGovt(Q);
   };
   // a breakaway party behaves like the bloc closest to the faction that founded it
-  SW.RFC_PROXY = {hawk: 'sec', pacifist: 'ind', inst: 'mod', rimward: 'rim'};
-  SW.RFC_COMFORT = {rimward: -1.0, hawk: 0.2, pacifist: -0.5, inst: 0.3};
+  SW.RFC_PROXY = {hawk: 'sec', pacifist: 'ind', inst: 'mod', rimward: 'rim', free_traders: 'mod', const_hawks: 'sec', neutralists: 'ind'};
+  SW.RFC_COMFORT = {rimward: -1.0, hawk: 0.2, pacifist: -0.5, inst: 0.3, free_traders: 0.3, const_hawks: 0.2, neutralists: -0.2};
 
   // ------------------------------------------------------------------ Sidious's schemes
   // A hidden hand answers the Caucus's successes. Every few turns Sidious picks a scheme, weighted by
@@ -4121,6 +4230,7 @@
       var p;
       if (b === 'rc') p = rcYes;
       else if (stance[b] !== undefined) p = stance[b];
+      else if (b === 'rfc' && SW.splinterWing && SW.splinterWing(Q)) { var px = SW.WINGS[Q.rfc_kind].bloc; p = stance[px] !== undefined ? stance[px] : 0.5; }
       else if (b === 'rfc') p = rcYes * 0.8 + 0.1;
       else p = 0.5;
       if (b !== 'rc') {

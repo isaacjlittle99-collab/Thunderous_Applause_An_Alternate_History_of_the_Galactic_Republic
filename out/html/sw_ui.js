@@ -197,6 +197,11 @@
           return SW.wingSpan(w) + ' ' + (s >= 45 ? 'dominant' : (s >= 30 ? 'strong' : (s >= 15 ? 'middling' : 'weak'))) + (w === rw ? ' (ruling)' : '');
         }).join(' · ') + '.' + (Q[wb + '_congress_quiet'] ? ' Its last congress re-elected its leader unopposed.' : '') +
           ' Next congress ' + (Q[wb + '_congress_due'] > Q.date ? 'in ' + (33 - Math.floor(Q[wb + '_congress_due'] / 12)) + ' BBY' : 'soon') + '.</div>';
+        var gone = (SW.BLOC_WINGS[wb] || []).filter(function (w) { return SW.wingGone(Q, w); });
+        if (gone.length) h += '<div class="sb-note warn">' + gone.map(function (w) {
+          var d = Q['wing_left_' + w];
+          return 'The ' + SW.wingName(w) + ' walked out' + (d === 'rc' ? ' to join us' : (d === 'cis' || d === 'out' ? ' to the Separatists' : (d === 'rfc' ? ' to found the ' + (Q.rfc_name || 'a party of their own') : (d ? ' to the ' + SW.name(Q, d) : ''))));
+        }).join('. ') + '.</div>';
       }
     }
     h += head('Committee chairs');
