@@ -71,8 +71,8 @@ artwork, music or footage is included; all images are original abstract art.*
 - **Six committees**, each with its own reform paths: Finance & Commerce, Judiciary & Intelligence, Security & Defence,
   Outer Rim Affairs, Constitutional Affairs and Jedi Affairs. Every new government shares out the chairs afresh.
   Each chair is held by a named minister; the Caucus picks its own, and the committees it does not chair act on
-  their bloc's ideology at the time. Four of them can also hand out patronage, each its own kind and in its own part
-  of the galaxy, until the Senate expels its corrupt senators.
+  their bloc's ideology at the time. Four of them can also hand out patronage, in six forms each, one offered at random
+  whenever a committee's card is played, until the Senate expels its corrupt senators.
 - **The Chancellery** is an office of its own, with its own screen. It gathers twelve named powers over the game, from
   the gavel and the Senate Guard to emergency decrees, the Bureau of Intelligence and the HoloNet; reforms check them
   for good. Our own Chancellor can rule by decree, at a price: the precedent wears away faith, serves the next

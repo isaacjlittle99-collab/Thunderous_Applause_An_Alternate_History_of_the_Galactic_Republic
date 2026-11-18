@@ -4,7 +4,7 @@ is-card: true
 tags: senate_affairs
 card-image: img/card_law.svg
 view-if: judiciary_timer <= 0 and chair_judiciary = "rc" and cardok_judiciary
-on-arrival: turn_actions += 1; judiciary_timer = 3; last_card_timer = "judiciary"
+on-arrival: {! Q.turn_actions += 1; Q.judiciary_timer = 3; Q.last_card_timer = 'judiciary'; SW.porkPick(Q, 'judiciary'); !}
 new-page: true
 on-display: {! SW.cardStuck(Q, this); !}
 
@@ -26,7 +26,12 @@ The Caucus chairs the Judiciary & Intelligence Committee: the Republic's courts,
 - @compor: Found the Commission for the Protection of the Republic.
 - @hhc_investigate: Investigate the human-first groups.
 - @syndicates: Break the syndicates.
-- @patronage: Fill Coruscant's judgeships with friends.
+- @patronage_1: Fill Coruscant's judgeships with friends.
+- @patronage_2: Quietly close the investigations into friendly senators.
+- @patronage_3: Lease listening posts from friendly worlds.
+- @patronage_4: Appoint friendly sector magistrates on the Rim.
+- @patronage_5: Drop the charges against friendly shipping magnates.
+- @patronage_6: Give the intelligence contracts to friendly firms.
 - @easy_discard
 - @set_aside
 
@@ -236,9 +241,44 @@ if (Q.syndicates_ok) {
 
 [? if syndicates_ok : Judicial task forces, backed by the patrol fleets, raid the counting houses of Nal Hutta and the Black Sun vigos' towers on Coruscant's lower levels in a single night. A hundred senators wake to find their benefactors in custody. The HoloNet calls it the end of an age, and for once the HoloNet is right. ?][? if not syndicates_ok : The raids are betrayed: the vigos are gone hours before the task forces arrive, and the cartels' lawyers are on the HoloNet by morning. We will have to try again. ?]
 
-@patronage
-view-if: not senators_expelled
+@patronage_1
+view-if: not senators_expelled and pork_v_judiciary = 1
 subtitle: +1 political capital, and support in the Core Worlds. Corruption rises and faith in the Republic falls.
-on-arrival: {! SW.porkBarrel(Q, 'judiciary', 'rc'); !}
+on-arrival: {! SW.porkBarrel(Q, 'judiciary', 'rc', 1); !}
 
 A dozen vacant judgeships in Coruscant's courts go to lawyers from families that have always voted for the Caucus. They are not the best candidates. Their families are very grateful, and so are the Core Worlds' great houses that recommended them.
+
+@patronage_2
+view-if: not senators_expelled and pork_v_judiciary = 2
+subtitle: +1 political capital, and support in the Colonies and the Inner Rim. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'judiciary', 'rc', 2); !}
+
+The committee's investigators decide that the cases against three senators from the Colonies, all of whom vote with the Caucus, lack sufficient evidence. The files are sealed. Their delegations will remember the favour.
+
+@patronage_3
+view-if: not senators_expelled and pork_v_judiciary = 3
+subtitle: +1 political capital, and support in the Mid Rim and the Expansion Region. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'judiciary', 'rc', 3); !}
+
+The Republic's intelligence services need listening posts along the Mid Rim, and the committee leases them from worlds whose senators vote with us, at rents nobody else would pay. The posts hear very little. Their landlords hear the Caucus's name with fondness.
+
+@patronage_4
+view-if: not senators_expelled and pork_v_judiciary = 4
+subtitle: +1 political capital, and support in the Outer Rim. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'judiciary', 'rc', 4); !}
+
+A dozen vacant sector magistracies on the Outer Rim go to the nominees of friendly governors. The new magistrates know little law, but a great deal about who appointed them. Their sectors' delegations vote accordingly.
+
+@patronage_5
+view-if: not senators_expelled and pork_v_judiciary = 5
+subtitle: +1 political capital, and support in the Mid Rim and the Expansion Region. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'judiciary', 'rc', 5); !}
+
+The charges against two shipping magnates of the Hydian Way, for smuggling, bribery and creative bookkeeping, are dropped for want of a witness willing to testify. Their companies employ half the voters of three Mid Rim sectors, and those sectors' senators are very grateful.
+
+@patronage_6
+view-if: not senators_expelled and pork_v_judiciary = 6
+subtitle: +1 political capital, and support in the Core Worlds. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'judiciary', 'rc', 6); !}
+
+The Bureau of Intelligence's contracts for slicers, analysts and secure couriers go to Coruscant firms owned by families that support the Caucus. The work is middling. The invoices are excellent.

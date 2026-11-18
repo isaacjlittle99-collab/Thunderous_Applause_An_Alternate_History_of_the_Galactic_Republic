@@ -47,17 +47,61 @@
   SW.COMMITTEE_COST = {finance: 20, judiciary: 20, security: 10, rimaffairs: 10, constitution: 5, jedi: 5};
   // Patronage: each committee's own way of buying friends, until the Senate's corruption reforms are complete.
   // region: where it buys support; act: what a bloc's ministry is said to have done.
+  // Patronage: six kinds for each of four committees, each boosting one region. A card offers one, picked afresh
+  // whenever the card is drawn; the ministries rotate through them too. Variant k is SW.PORK[c][k - 1], and the
+  // card's option @patronage_k shows it. act: how The Committees Report puts it.
   SW.PORK = {
-    finance: {region: 'midrim', act: 'handed out hyperlane subsidies to friendly sectors'},
-    judiciary: {region: 'core', act: 'filled Coruscant\'s judgeships with friends'},
-    security: {region: 'colonies', act: 'steered warship contracts to friendly yards'},
-    rimaffairs: {region: 'outer', act: 'routed relief contracts through friendly governors'}
+    finance: [
+      {region: 'midrim', act: 'handed out hyperlane subsidies to friendly sectors'},
+      {region: 'core', act: 'let friendly Core banks underwrite the Republic\'s bonds'},
+      {region: 'colonies', act: 'handed the Corellian Run\'s customs posts to friendly sectors'},
+      {region: 'midrim', act: 'paid price supports to friendly agriworlds'},
+      {region: 'outer', act: 'paid friendly Rim worlds to rebuild their spaceports'},
+      {region: 'colonies', act: 'gave the Republic\'s freight contracts to friendly haulers'}
+    ],
+    judiciary: [
+      {region: 'core', act: 'filled Coruscant\'s judgeships with friends'},
+      {region: 'colonies', act: 'quietly closed the investigations into friendly senators'},
+      {region: 'midrim', act: 'leased listening posts from friendly worlds at inflated rents'},
+      {region: 'outer', act: 'appointed friendly sector magistrates on the Rim'},
+      {region: 'midrim', act: 'dropped the charges against friendly shipping magnates'},
+      {region: 'core', act: 'gave the Bureau of Intelligence\'s contracts to friendly firms'}
+    ],
+    security: [
+      {region: 'colonies', act: 'steered warship contracts to the yards of Fondor'},
+      {region: 'midrim', act: 'built new Judicial bases on friendly worlds'},
+      {region: 'core', act: 'bought the Judicial Forces\' blasters from friendly armsmakers'},
+      {region: 'outer', act: 'put friendly sector militias on the Republic\'s payroll'},
+      {region: 'outer', act: 'bought the Judicial Forces\' fuel from friendly refineries'},
+      {region: 'colonies', act: 'handed Judicial commissions to friendly families'}
+    ],
+    rimaffairs: [
+      {region: 'outer', act: 'routed relief contracts through friendly governors'},
+      {region: 'outer', act: 'built hyperspace beacons in friendly sectors'},
+      {region: 'midrim', act: 'granted colonisation charters in the Expansion Region to friends'},
+      {region: 'outer', act: 'recognised friendly claimants in disputed Rim systems'},
+      {region: 'core', act: 'sold Rim mining charters to friendly Core firms'},
+      {region: 'midrim', act: 'paid friendly Mid Rim worlds to resettle Rim refugees'}
+    ]
   };
   SW.porkOk = function (Q) { return !Q.senators_expelled; };
-  // b: 'rc' for the Caucus's own card, or the bloc whose ministry hands it out
-  SW.porkBarrel = function (Q, c, b) {
-    var P = SW.PORK[c];
-    if (!P || !SW.porkOk(Q)) return;
+  // a random kind other than the last one offered (q: the quality that remembers it)
+  SW.porkRoll = function (Q, c, q) {
+    var n = (SW.PORK[c] || []).length, cur = Q[q] || 0, k;
+    if (!n) return 0;
+    if (cur < 1 || cur > n || n < 2) k = 1 + Math.floor(SW.rnd() * n);
+    else { k = 1 + Math.floor(SW.rnd() * (n - 1)); if (k >= cur) k++; }
+    Q[q] = Math.min(n, Math.max(1, k));
+    return Q[q];
+  };
+  // run when a committee card is drawn: which kind of patronage it offers this time
+  SW.porkPick = function (Q, c) { return SW.porkRoll(Q, c, 'pork_v_' + c); };
+  // b: 'rc' for the Caucus's own card, or the bloc whose ministry hands it out; k: which kind (a ministry picks its own)
+  SW.porkBarrel = function (Q, c, b, k) {
+    if (!SW.PORK[c] || !SW.porkOk(Q)) return;
+    if (!k) k = SW.porkRoll(Q, c, 'pork_mv_' + c);
+    var P = SW.PORK[c][k - 1] || SW.PORK[c][0];
+    Q.pork_said = P.act;
     if (b === 'rc') {
       Q.capital += 1; Q[P.region + '_rc'] = (Q[P.region + '_rc'] || 0) + 1.5; Q.corruption += 1.5; Q.faith -= 1;
     } else {
@@ -210,7 +254,9 @@
       D[lg + '_favour'] = 0; D[lg + '_grudge'] = 0; D[lg + '_asked'] = -99; D['vote_boost_' + lg] = 0;
     }
     // party wings and congresses
-    D.wings_seeded = 0; D.congresses_quiet = 0; D.congress_go = 0; D.pork_count = 0;
+    D.wings_seeded = 0; D.congresses_quiet = 0; D.congress_go = 0; D.pork_count = 0; D.pork_said = '';
+    D.pork_v_finance = 0; D.pork_v_judiciary = 0; D.pork_v_security = 0; D.pork_v_rimaffairs = 0;
+    D.pork_mv_finance = 0; D.pork_mv_judiciary = 0; D.pork_mv_security = 0; D.pork_mv_rimaffairs = 0;
     // what the ruling wings do
     var WBN = ['hutt_rules', 'hutt_terms', 'hutt_turned', 'hutt_offer_ok', 'hutt_turned_ready', 'hutt_offers', 'hutt_reprisals', 'hutt_gutted', 'hutt_joined',
       'militias', 'repeal_tried', 'repealed', 'repeal_vote', 'farr_return_ready', 'farr_returned', 'ld_hawks_used', 'hawks_fleets', 'no_purge', 'no_crowd', 'no_militias',
@@ -3008,7 +3054,7 @@
         fx: function (Q) { Q.treasury -= 1; Q.rim_hardship -= 1.5; }},
       {id: 'war', text: 'paid for the war', vec: {army: 1, peace: -0.5}, ok: function (Q) { return Q.war && Q.treasury >= 1; },
         fx: function (Q) { Q.treasury -= 1; Q.war_balance += 0.4; }},
-      {id: 'pork_finance', text: SW.PORK.finance.act, pork: 1, vec: {}, ok: function (Q) { return SW.porkOk(Q); }, score: function (Q, ideo) { return SW.porkScore(Q, ideo); }, fx: function (Q, b) { SW.porkBarrel(Q, 'finance', b); }}
+      {id: 'pork_finance', text: SW.PORK.finance[0].act, said: function (Q) { return Q.pork_said; }, pork: 1, vec: {}, ok: function (Q) { return SW.porkOk(Q); }, score: function (Q, ideo) { return SW.porkScore(Q, ideo); }, fx: function (Q, b) { SW.porkBarrel(Q, 'finance', b); }}
     ],
     judiciary: [
       {id: 'ethics', text: 'passed an Ethics Commission', bill: 'the Ethics Commission Act', vec: {regulate: 0.6, oversight: 0.6}, ok: function (Q) { return !Q.anti_corruption; },
@@ -3018,7 +3064,7 @@
       {id: 'look_away', text: 'looked the other way', vec: {regulate: -0.6, oversight: -0.4}, fx: function (Q) { Q.corruption += 1.5; }},
       {id: 'critics', text: 'investigated the government\'s critics', vec: {powers: 1, oversight: -0.5},
         fx: function (Q) { Q.grand_plan += 1; if (!Q.evidence_secured && !Q.compor) Q.evidence = Math.max(0, Q.evidence - 0.3); }},
-      {id: 'pork_judiciary', text: SW.PORK.judiciary.act, pork: 1, vec: {}, ok: function (Q) { return SW.porkOk(Q); }, score: function (Q, ideo) { return SW.porkScore(Q, ideo); }, fx: function (Q, b) { SW.porkBarrel(Q, 'judiciary', b); }}
+      {id: 'pork_judiciary', text: SW.PORK.judiciary[0].act, said: function (Q) { return Q.pork_said; }, pork: 1, vec: {}, ok: function (Q) { return SW.porkOk(Q); }, score: function (Q, ideo) { return SW.porkScore(Q, ideo); }, fx: function (Q, b) { SW.porkBarrel(Q, 'judiciary', b); }}
     ],
     security: [
       {id: 'oversight', text: 'brought the army under Senate oversight', bill: 'the Grand Army Oversight Act', vec: {oversight: 1, powers: -0.5}, ok: function (Q) { return !Q.army_oversight && (Q.clones > 0 || Q.kamino_known); },
@@ -3027,7 +3073,7 @@
       {id: 'expand', text: 'expanded the army', vec: {army: 1, powers: 0.5}, fx: function (Q, b) { Q.fear += 1.5; if (b === 'pal') Q.grand_plan += 1; }},
       {id: 'navy', text: 'built up the Navy', vec: {army: 0.8, peace: -0.3}, fx: function (Q) { Q.mil_invest = (Q.mil_invest || 0) + 1; Q.navy_loyalty -= 2; }},
       {id: 'cut', text: 'cut the defence budget', vec: {peace: 1, army: -1}, fx: function (Q) { Q.treasury += 1; if (Q.war) Q.war_balance -= 0.3; }},
-      {id: 'pork_security', text: SW.PORK.security.act, pork: 1, vec: {}, ok: function (Q) { return SW.porkOk(Q); }, score: function (Q, ideo) { return SW.porkScore(Q, ideo); }, fx: function (Q, b) { SW.porkBarrel(Q, 'security', b); }}
+      {id: 'pork_security', text: SW.PORK.security[0].act, said: function (Q) { return Q.pork_said; }, pork: 1, vec: {}, ok: function (Q) { return SW.porkOk(Q); }, score: function (Q, ideo) { return SW.porkScore(Q, ideo); }, fx: function (Q, b) { SW.porkBarrel(Q, 'security', b); }}
     ],
     rimaffairs: [
       {id: 'relief_act', text: 'passed the Rim Relief Act', bill: 'the Rim Relief Act', vec: {rim: 1, regulate: 0.3}, ok: function (Q) { return !Q.rim_relief_act; },
@@ -3036,7 +3082,7 @@
       {id: 'relief', text: 'sent relief to the Rim', vec: {rim: 1}, fx: function (Q) { Q.rim_hardship -= 2; Q.treasury -= 0.5; }},
       {id: 'hutt', text: 'protected the Hutt trade', vec: {regulate: -0.8, rim: -0.5}, fx: function (Q) { Q.guild_relation += 2; Q.rim_hardship += 1; }},
       {id: 'crackdown', text: 'cracked down on unrest in the Rim', vec: {army: 0.7, rim: -1}, fx: function (Q) { Q.fear += 1; Q.rim_relation -= 3; Q.outer_sep += 1; }},
-      {id: 'pork_rimaffairs', text: SW.PORK.rimaffairs.act, pork: 1, vec: {}, ok: function (Q) { return SW.porkOk(Q); }, score: function (Q, ideo) { return SW.porkScore(Q, ideo); }, fx: function (Q, b) { SW.porkBarrel(Q, 'rimaffairs', b); }}
+      {id: 'pork_rimaffairs', text: SW.PORK.rimaffairs[0].act, said: function (Q) { return Q.pork_said; }, pork: 1, vec: {}, ok: function (Q) { return SW.porkOk(Q); }, score: function (Q, ideo) { return SW.porkScore(Q, ideo); }, fx: function (Q, b) { SW.porkBarrel(Q, 'rimaffairs', b); }}
     ],
     constitution: [
       {id: 'sunset', text: 'passed sunset clauses on the emergency powers', bill: 'the Sunset Amendment', vec: {oversight: 1, powers: -1}, ok: function (Q) { return !Q.emergency_sunset; },
@@ -3099,7 +3145,7 @@
       if (!A) continue;
       var passed = A.vote ? A.vote(Q) : true;
       if (passed) A.fx(Q, b); else Q['mfail_' + A.id] = Q.time + 12;
-      var did = passed ? A.text : 'put ' + A.bill + ' to the Senate, which voted it down';
+      var did = passed ? (A.said && A.said(Q)) || A.text : 'put ' + A.bill + ' to the Senate, which voted it down';
       Q['ministry_act_' + c] = did; Q['ministry_act_by_' + c] = b;
       Q.ministry_acts_total = (Q.ministry_acts_total || 0) + 1;
       lines.push('<b>' + SW.COMMITTEE_NAMES[c] + '</b> (' + (Q['minister_' + c + '_name'] || SW.name(Q, b)) + ', ' + SW.name(Q, b) + ') ' + did + '.');
