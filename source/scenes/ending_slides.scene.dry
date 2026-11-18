@@ -138,9 +138,11 @@ go-to: legacy
 
 = The Galactic Empire
 
-[? if padme_alive : *"So this is how liberty dies,"* Padmé Amidala said. *"With thunderous applause."* ?][? if not padme_alive : *"So this is how liberty dies,"* Bail Organa said quietly. *"With thunderous applause."* ?]
+[? if padme_alive : “So this is how liberty dies,” Padmé Amidala said. “With thunderous applause.” ?][? if not padme_alive : “So this is how liberty dies,” Bail Organa said quietly. “With thunderous applause.” ?]
 
 The Republic is gone. In its place stands the Galactic Empire of Emperor Palpatine. [? if order66 : The Jedi have been exterminated, all but a handful of exiles. ?] [? if anakin_fallen : At the Emperor's side stands a figure in black armour, Darth Vader, who was once Anakin Skywalker. ?] [? if not padme_alive : Padmé Amidala is dead. ?] The Senate survives for a while, as a ceremony.
+
+[? if pal_wing = "centralists" : **An Empire of order.** The Empire runs on time. Its ministries are efficient, its governors are competent, and its anti-corruption courts are busy, mostly with the Emperor's critics. The Senate still meets to approve what it is given. Many in the Core call it the renewal the Republic needed. ?][? if pal_wing = "new_order" : **The Human Empire.** Within a year, the Rim's seats are abolished and every non-human senator has lost their office. The militias become the Empire's youth, and alien worlds are governed by human prefects. On Ryloth, Mon Cala and Rodia, the Republic's old flags are hidden in cellars. ?][? if pal_wing = "cult" : **The cult of the Emperor.** His portrait hangs in every classroom and every barracks. Children swear oaths to him by name, and the Senate rises to applaud him whenever he enters, for as long as he cares to stay. ?]
 
 [? if seeds : **Seeds of Rebellion.** But the Caucus has not been destroyed, only scattered. Bail Organa returns to Alderaan, Mon Mothma to Chandrila. In secret, the senators who stood against the New Order begin to talk again: of alliances, of hidden fleets, of a rebellion. The Republic is gone, but not forgotten. ?][? if not seeds : Of the Caucus, little remains: a few senators who keep their heads down, and a few who are never heard from again. ?]
 

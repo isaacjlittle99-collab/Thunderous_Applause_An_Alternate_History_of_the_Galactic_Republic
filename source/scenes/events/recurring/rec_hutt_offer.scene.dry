@@ -1,0 +1,33 @@
+title: The Machine Delivers
+subtitle: The Hutt-space Machine keeps its side of the bargain.
+tags: event
+view-if: hutt_offer_ok = 1 and not finale and not game_ending
+priority: 2
+new-page: true
+face-image: img/ev_rim.svg
+
+= The Machine Delivers
+
+A messenger from Orn Free Taa's office arrives with a sealed datapad and a message: the Hutt clans are pleased with the Caucus's understanding of Rim affairs, and wish to show it.
+
+- @evidence: Ask for what the Hutts' spies know.
+- @capital: Accept the clans' generosity.
+- @coalition: Ask for the Coalition's support in government.
+
+@evidence
+subtitle: The Hutts' spies watch Coruscant's back offices.
+on-arrival: {! SW.huttOffer(Q, 'evidence'); !}
+
+The datapad holds the movements of shipments, credits and men around the Chancellery for the last year: who met whom, and who paid. Not all of it makes sense yet.
+
+@capital
+subtitle: +2 political capital, and a little more corruption.
+on-arrival: {! SW.huttOffer(Q, 'capital'); !}
+
+Credits arrive through a dozen respectable channels. Nobody asks where they came from.
+
+@coalition
+subtitle: The Rimward Coalition's goodwill, and its votes.
+on-arrival: {! SW.huttOffer(Q, 'coalition'); !}
+
+[? if hutt_joined : Orn Free Taa brings the Rimward Coalition into the government, and takes a seat at the cabinet table with a satisfied sigh. ?][? if not hutt_joined : The Rimward Coalition's senators are told to treat the Caucus as friends. For now, they do. ?]

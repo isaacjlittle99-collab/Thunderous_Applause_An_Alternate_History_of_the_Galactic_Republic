@@ -53,7 +53,7 @@ Q.rimaffairs_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.6, guild: 0.3, rim: 0.7, sec: 0.45, ind: 0.45, pal: 0.4, cis: 0.2}, true);
 st.rim += Q.slavery_campaign * 0.05; st.mod += Q.slavery_campaign * 0.05;
-Q.ab_vote = SW.vote(Q, st, 1, 'rim');
+Q.ab_vote = SW.vote(Q, st, 1, ['rim', 'slavery']);
 Q.vote_html = SW.voteBanner('Abolition of Slavery Act', Q.ab_vote);
 if (Q.ab_vote >= 50) {
     Q.slavery_abolished = 1; Q.rim_hardship += 2; Q.rim_relation += 6; Q.faith += 2; Q.anakin_fall -= 1;
@@ -75,7 +75,7 @@ on-arrival: {!
 Q.rimaffairs_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.35, guild: 0.25, rim: 0.95, sec: 0.2, ind: 0.6, pal: 0.35, cis: 0.7}, true);
-Q.en_vote = SW.vote(Q, st, 1, 'rim');
+Q.en_vote = SW.vote(Q, st, 1, ['rim', 'representation']);
 Q.vote_html = SW.voteBanner('Rim Enfranchisement Act', Q.en_vote);
 if (Q.en_vote >= 50) { Q.rim_enfranchised = 1; Q.outer_sep -= 10; Q.midrim_sep -= 6; Q.rim_relation += 10; Q.mod_relation -= 5; Q.outer_rc += 3; this.achieve('enfranchised'); }
 !}
@@ -117,7 +117,7 @@ on-arrival: {!
 Q.rimaffairs_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.3, guild: 0.25, rim: 0.95, sec: 0.2, ind: 0.55, pal: 0.25, cis: 0.8}, true);
-Q.as_vote = SW.vote(Q, st, 1, 'rim');
+Q.as_vote = SW.vote(Q, st, 1, ['rim', 'representation']);
 Q.vote_html = SW.voteBanner('Rim Assembly Act', Q.as_vote);
 if (Q.as_vote >= 50) {
     Q.rim_assembly = 1; Q.outer_sep -= 15; Q.midrim_sep -= 15; Q.rim_relation += 8; Q.rimward_dissent -= 8;
@@ -162,7 +162,7 @@ on-arrival: {!
 Q.rimaffairs_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.55, guild: 0.45, rim: 0.85, sec: 0.25, ind: 0.65, pal: 0.2, cis: 0.6}, true);
-Q.sr_vote = SW.vote(Q, st, 1, 'rim');
+Q.sr_vote = SW.vote(Q, st, 1, ['rim', 'xenos']);
 Q.vote_html = SW.voteBanner('Declaration of the Rights of Sentience', Q.sr_vote);
 if (Q.sr_vote >= 50) { Q.sentience_rights = 1; Q.rim_relation += 3; Q.outer_rc += 1; Q.midrim_rc += 1; Q.hawk_dissent += 2; SW.computeSupport(Q); }
 !}

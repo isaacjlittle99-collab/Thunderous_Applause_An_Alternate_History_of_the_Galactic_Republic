@@ -1,0 +1,15 @@
+title: Farr Comes Home
+subtitle: The Rim Freedom Caucus has what it asked for.
+tags: event
+view-if: farr_return_ready = 1
+max-visits: 1
+priority: 3
+new-page: true
+face-image: img/ev_rim.svg
+on-arrival: {! SW.farrReturns(Q); !}
+
+= Farr Comes Home
+
+Onaconda Farr crosses the Senate floor with his delegation behind him and sits down among the Caucus benches he left. The Rim has its seats, its Assembly and its relief, and the slave markets of Hutt space are closing one by one.
+
+"I said I would come back when the Caucus kept its word," he tells the chamber. "It has. So here I am." The Rim Freedom Caucus is dissolved, and its senators rejoin our Rimward wing.

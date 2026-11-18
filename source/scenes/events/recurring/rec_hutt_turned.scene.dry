@@ -1,0 +1,14 @@
+title: The Hutts Turn
+subtitle: The bargain with Hutt space is broken.
+tags: event
+view-if: hutt_turned_ready = 1 and not finale and not game_ending
+priority: 3
+new-page: true
+face-image: img/ev_shadow.svg
+on-arrival: hutt_turned_ready = 0
+
+= The Hutts Turn
+
+Orn Free Taa does not shout. He sends back the Caucus's last message unopened, and lets it be known in the Senate's corridors that [+ hutt_turned_why +]. Within days, his senators are dining with the Chancellor's people, and the Hutt clans' accounts on Coruscant are moving.
+
+Nobody in the Caucus expects the Hutts to forget.

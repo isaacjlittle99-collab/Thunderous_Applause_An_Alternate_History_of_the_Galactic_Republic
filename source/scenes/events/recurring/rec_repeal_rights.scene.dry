@@ -1,0 +1,33 @@
+title: The Restoration of Order Act
+subtitle: The New Order moves to undo the Rim's rights.
+tags: event
+view-if: pal_wing = "new_order" and parties_has_pal and pal_chancellor and (rim_enfranchised or sentience_rights) and not repeal_tried and not finale and not game_ending
+max-visits: 1
+priority: 3
+new-page: true
+face-image: img/ev_chancellery.svg
+
+= The Restoration of Order Act
+
+With the Chancellor's blessing, Janus Greejatus introduces the Restoration of Order Act. In the name of security, it would [? if rim_enfranchised : strip the Rim of its new seats in the Senate?][? if rim_enfranchised and sentience_rights : , and ?][? if sentience_rights : repeal the Rights of Sentience?]. The galleries are full of grey tunics.
+
+- @fight: Rally the Senate against it.
+- @vote_no: Vote against it.
+
+@fight
+choose-if: capital >= 1
+unavailable-subtitle: Needs 1 political capital.
+subtitle: −1 political capital.
+on-arrival: {! Q.capital -= 1; SW.repealVote(Q, true); !}
+go-to: repeal_result
+
+@vote_no
+subtitle: The Caucus votes no and hopes it is enough.
+on-arrival: {! SW.repealVote(Q, false); !}
+go-to: repeal_result
+
+@repeal_result
+
+[+ vote_html +]
+
+[? if repealed : The Act passes. On the Rim, crowds gather outside the Republic's offices, and the Separatists' broadcasts have a new story to tell. ?][? if not repealed : The Act fails. Greejatus walks out of the chamber without a word, and the galleries empty after him. ?]
