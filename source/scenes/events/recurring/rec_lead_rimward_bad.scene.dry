@@ -1,0 +1,12 @@
+title: The Ministries Push Back
+subtitle: Officials slow-walk the Caucus's Rim programmes.
+tags: event
+view-if: lead_event_ready = "rimward_bad" and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_law.svg
+on-arrival: {! SW.leadEventDone(Q); Q.bureau_relation -= 6; Q.rim_hardship += 1; !}
+
+= The Ministries Push Back
+
+The permanent staff of Coruscant's ministries have never liked the Rim's demands, and they like a Caucus led by the Rimward faction even less. Relief manifests go missing. Grant applications are returned for the wrong form. Nobody refuses anything. Nothing happens.

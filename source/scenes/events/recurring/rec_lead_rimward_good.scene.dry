@@ -1,0 +1,12 @@
+title: The Rim Turns Out
+subtitle: Volunteers across the Rim campaign for the Caucus.
+tags: event
+view-if: lead_event_ready = "rimward_good" and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_rim.svg
+on-arrival: {! SW.leadEventDone(Q); Q.outer_rc += 1; Q.midrim_rc += 1; SW.momentum(Q, 0.4, 'the Rim turns out'); !}
+
+= The Rim Turns Out
+
+With the Rimward faction leading the party, the Rim's own people come to the Caucus. On Rodia, Ryloth and a hundred smaller worlds, volunteers knock on doors, run broadcasts from cargo holds and send their savings to the Caucus's campaign.

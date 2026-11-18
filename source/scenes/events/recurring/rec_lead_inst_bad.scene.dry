@@ -1,0 +1,12 @@
+title: Coruscant's Party
+subtitle: The Rim says the Caucus has forgotten it.
+tags: event
+view-if: lead_event_ready = "inst_bad" and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_rim.svg
+on-arrival: {! SW.leadEventDone(Q); Q.rim_relation -= 5; Q.rimward_dissent += 5; Q.outer_rc -= 0.5; Q.midrim_rc -= 0.3; !}
+
+= Coruscant's Party
+
+A Rim broadsheet runs a cartoon of the Caucus's leaders as Core aristocrats, sipping wine above a starving Outer Rim. It is unfair. It is also everywhere. Our Rimward senators ask, loudly, whose party this is.

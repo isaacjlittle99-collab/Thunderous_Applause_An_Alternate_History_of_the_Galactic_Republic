@@ -106,6 +106,20 @@ go-to: menu
 
 Each faction has a **strength**, a **dissent** level and a **leader**. Overall dissent reduces almost every gain the Caucus makes. An advisor from a faction keeps its dissent in check. If a faction's dissent reaches about 60 (70 for the Institutionalists), it will break away: sooner under a firm leader, later under a pragmatist. A faction that breaks takes its senators with it. Under a firm leader it founds its own party; otherwise it joins the nearest bloc (Hawks the Security Bloc, Rimward the Rimward Coalition, Pacifists the Independents, Institutionalists the Core Moderates). Each leader has their own demands, shown in the Status panel when they are not met.
 
+
+**The leading faction and our programme**
+
+After each Senate election, and early if the leading faction loses its delegates' confidence or is outgrown, the Caucus meets in congress. Each faction's strength is its share of the delegates, and every advisor rallies their own faction. The leadership can put its weight behind a faction (1 political capital) or have an advisor rally their faction (the advisors' action). A faction with a majority wins at once; otherwise the two largest bargain, and the others side with the nearer. The winner's leader chairs the Caucus. Its dissent falls, and the faction furthest from it grows restless.
+
+• *Institutionalists:* Caucus bills on oversight and the constitution do better, those on the Rim worse. The bureaucrats warm to us faster.
+
+• *Rimward:* Caucus bills on the Rim do better. The Rim warms to us; the guilds and the bureaucrats cool.
+
+• *Pacifists:* Caucus bills on peace do better, those for the military worse. Our Hawks grow restless in wartime, and the guilds' Corporatists warm to us. A Pacifist-led Caucus that holds the Chancellery in wartime can proclaim a ceasefire from the Chancellery and call a peace conference. Its treaty, if the Senate passes it and it survives sabotage, ends the war.
+
+• *Hawks:* Caucus bills for the army do better, those on peace worse. The Navy's loyalty to the Senate grows.
+
+While a faction leads, its own events come every few turns, one good and one bad in turn: the Institutionalists' committee men and the Rim's resentment of a Core party; the Rim turning out and the ministries pushing back; peace vigils and, in wartime, the charge of appeasement; the officers' confidence and a Hawk's call for a punitive Rim campaign. The Caucus is also strongest where its leading faction comes from.
 @lib_leaders
 is-special: true
 go-to: menu

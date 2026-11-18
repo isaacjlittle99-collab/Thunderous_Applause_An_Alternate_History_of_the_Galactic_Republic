@@ -31,6 +31,7 @@ on-arrival: {! SW.chancelleryStrings(Q); SW.decreeScan(Q, this); !}
 - @d_address: Address the galaxy.
 - @d_rival: Turn the Bureau on a rival bloc.
 - @d_investigate: Set the Bureau to investigate.
+- @ceasefire: Proclaim a ceasefire and call a peace conference.
 - @giveback: Return a power to the Senate.
 - @go_back: Back.
 
@@ -293,6 +294,13 @@ unavailable-subtitle: Not enough political capital.
 on-arrival: {! SW.decree(Q, 'army'); !}
 
 Our Chancellor orders the clone army forward on the weakest front, on the office's authority alone. The clones obey at once, as they were made to.
+
+@ceasefire
+view-if: chan_peace_ok
+subtitle: The Navy and our Hawks will resent it, and the Security Bloc will not forgive it soon. Takes the turn.
+on-arrival: {! SW.chanCeasefire(Q); !}
+
+The Chancellor orders the Republic's forces to hold their fire and invites the Confederacy to talk. The Navy obeys, with bad grace. The Confederacy, after three days of silence, accepts.
 
 @d_address
 view-if: chan_can_decree and chp_holonet_state = "held"

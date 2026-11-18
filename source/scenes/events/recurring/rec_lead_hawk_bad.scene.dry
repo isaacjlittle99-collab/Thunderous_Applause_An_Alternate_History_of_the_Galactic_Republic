@@ -1,0 +1,12 @@
+title: Hawks over the Rim
+subtitle: A Hawk senator calls for a punitive campaign in the Rim.
+tags: event
+view-if: lead_event_ready = "hawk_bad" and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_war.svg
+on-arrival: {! SW.leadEventDone(Q); Q.rim_relation -= 5; Q.pacifist_dissent += 5; Q.outer_sep += 2; !}
+
+= Hawks over the Rim
+
+One of our Hawks, carried away on a HoloNet panel, calls for the Rim's disloyal worlds to be "brought to heel". The Separatists replay the clip on every Rim world, and our Pacifists demand an apology that our Hawks will not give.
