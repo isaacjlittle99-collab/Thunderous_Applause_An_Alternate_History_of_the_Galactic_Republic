@@ -6,6 +6,7 @@ card-image: img/card_civil.svg
 view-if: civil_timer <= 0 and date >= 24 and cardok_civil
 on-arrival: turn_actions += 1; civil_timer = 3; last_card_timer = "civil"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Friends of the Republic
 
@@ -16,6 +17,7 @@ The Senate is not the Republic. Its strength lies with the billions who still be
 - @clones: Campaign for the rights of clone troopers.
 - @volunteers: Organise a volunteer drive.
 - @easy_discard
+- @set_aside
 
 @networks
 view-if: faith < 85

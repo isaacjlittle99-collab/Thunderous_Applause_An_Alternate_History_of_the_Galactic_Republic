@@ -6,6 +6,7 @@ card-image: img/card_pact.svg
 view-if: pact_timer <= 0 and (senate_resolve >= 3 or pact_formed) and cardok_pact
 on-arrival: turn_actions += 1; pact_timer = 3; last_card_timer = "pact"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Free Worlds Defence Pact
 
@@ -17,6 +18,7 @@ new-page: true
 - @defensive: Keep the Pact strictly defensive and transparent.
 - @talks: Hold preliminary talks among member worlds.
 - @easy_discard
+- @set_aside
 
 @form
 view-if: not pact_formed

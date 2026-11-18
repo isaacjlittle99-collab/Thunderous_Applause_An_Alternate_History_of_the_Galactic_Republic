@@ -6,6 +6,7 @@ card-image: img/card_peace.svg
 view-if: diplomacy_timer <= 0 and rc_in_govt and (dooku_movement or war) and not federal_compact
 on-arrival: turn_actions += 1; diplomacy_timer = 3; last_card_timer = "diplomacy"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Diplomacy
 
@@ -16,6 +17,7 @@ The government can open official talks with the Separatist Parliament on Raxus. 
 - @compact: Propose a Federal Compact.
 - @recognise: Recognise the Confederacy's independence.
 - @easy_discard
+- @set_aside
 
 @talks
 view-if: peace_talks < 3

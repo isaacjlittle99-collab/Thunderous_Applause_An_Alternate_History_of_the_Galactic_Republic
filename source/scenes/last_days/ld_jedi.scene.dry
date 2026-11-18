@@ -6,6 +6,7 @@ card-image: img/card_jedi.svg
 view-if: finale and jedi_relation >= 60 and not ld_jedi_used_today
 on-arrival: turn_actions += 1; ld_jedi_used_today = 1; last_card_timer = ""
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Coordinate with the Jedi Council
 
@@ -13,6 +14,7 @@ The Jedi Council is deciding what to do about [+ pal_title +]. The Council trust
 
 - @do: Coordinate with the Jedi Council.
 - @easy_discard
+- @set_aside
 
 @do
 on-arrival: senate_jedi_pact = 1; jedi_relation += 2; jedi_suspicion += 1.5 if evidence >= 6

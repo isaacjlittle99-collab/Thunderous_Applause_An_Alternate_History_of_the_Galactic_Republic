@@ -6,6 +6,7 @@ card-image: img/card_forces.svg
 view-if: security_timer <= 0 and chair_security = "rc" and cardok_security
 on-arrival: turn_actions += 1; security_timer = 3; last_card_timer = "security"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Security & Defence Committee
 
@@ -23,6 +24,7 @@ The Caucus chairs the Security & Defence Committee.
 - @officers: Open the officer corps to every species.
 - @review: Review the Republic's defences.
 - @easy_discard
+- @set_aside
 
 @judicials
 view-if: judicial_forces < 8

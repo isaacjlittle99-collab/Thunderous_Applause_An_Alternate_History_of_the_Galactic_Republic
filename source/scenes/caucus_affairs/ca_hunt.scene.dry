@@ -6,6 +6,7 @@ card-image: img/card_shadow.svg
 view-if: hunt_timer <= 0 and cardok_hunt
 on-arrival: turn_actions += 1; hunt_timer = 2; last_card_timer = "hunt"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = The Hunt for Darth Sidious
 
@@ -22,6 +23,7 @@ new-page: true
 - @anakin: Tell Anakin Skywalker the truth.
 - @case: Build the public case.
 - @easy_discard
+- @set_aside
 
 @arrest
 view-if: rc_chancellor and not cha_arrest_done

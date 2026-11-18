@@ -6,6 +6,7 @@ card-image: img/card_shadow.svg
 view-if: investigate_timer <= 0 and date >= 12 and cardok_investigate
 on-arrival: turn_actions += 1; investigate_timer = 2; last_card_timer = "investigate"; investigated_at = time
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Shadow Investigation
 
@@ -25,6 +26,7 @@ new-page: true
 - @charges: Lay charges before the Senate.
 - @records: Comb through public records.
 - @easy_discard
+- @set_aside
 
 @look_amedda
 view-if: sith_stage = 3 and not suspect_amedda

@@ -6,6 +6,7 @@ card-image: img/card_credits.svg
 view-if: finale and corporate_security and not ld_corporate_used_today
 on-arrival: turn_actions += 1; ld_corporate_used_today = 1; last_card_timer = ""
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Call on Corporate Security
 
@@ -13,6 +14,7 @@ The Commerce Guilds keep security forces on every world where they do business: 
 
 - @do: Call on corporate security.
 - @easy_discard
+- @set_aside
 
 @do
 on-arrival: corporate_forces += 2; corruption += 1

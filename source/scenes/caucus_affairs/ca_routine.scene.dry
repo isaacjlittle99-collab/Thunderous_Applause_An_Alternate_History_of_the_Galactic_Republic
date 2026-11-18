@@ -5,6 +5,7 @@ tags: caucus_affairs
 card-image: img/card_routine.svg
 on-arrival: turn_actions += 1; last_card_timer = ""
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Routine Senate Business
 
@@ -14,6 +15,7 @@ Grand strategy is all very well, but the business of the Republic does not stop 
 - @petitions: Answer the petitions of member worlds.
 - @dinner: Host a quiet dinner for the Caucus.
 - @easy_discard
+- @set_aside
 
 @favours
 subtitle: +1 political capital. Only when the Caucus's coffers are nearly empty.

@@ -6,6 +6,7 @@ card-image: img/card_disunity.svg
 view-if: disunity_timer <= 0 and (dissent_percent >= 22 or inst_dissent >= 40 or rimward_dissent >= 40 or pacifist_dissent >= 40 or hawk_dissent >= 40)
 on-arrival: turn_actions += 1; disunity_timer = 2; last_card_timer = "disunity"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Caucus Disunity
 
@@ -15,6 +16,7 @@ The Caucus is [+ dissent_percent : dissent +]. Institutionalists: [+ inst_dissen
 - @concede: Give the angriest faction what it wants.
 - @convention: Hold an open convention.
 - @easy_discard
+- @set_aside
 
 @discipline
 subtitle: −1 political capital. Everyone calms down a little.

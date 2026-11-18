@@ -6,6 +6,7 @@ card-image: img/card_platform.svg
 view-if: platform_timer <= 0
 on-arrival: turn_actions += 1; platform_timer = 10; last_card_timer = "platform"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Platform Convention
 
@@ -16,6 +17,7 @@ Every few years the Caucus gathers to decide what it stands for. The platform sh
 - @peace: Peace and the rule of law.
 - @defence: Defend the Republic.
 - @easy_discard
+- @set_aside
 
 @clean
 subtitle: Strengthens the Institutionalists; the Core Moderates approve.

@@ -1,0 +1,5 @@
+title: Set this card aside.
+subtitle: Nothing on this card can be done now. The card is put away, and the turn passes.
+view-if: card_stuck = 1
+go-to: root
+on-arrival: {! if (!(Q.turn_actions >= 1)) Q.turn_actions = 1; Q.card_stuck = 0; Q.cards_set_aside = (Q.cards_set_aside || 0) + 1; !}

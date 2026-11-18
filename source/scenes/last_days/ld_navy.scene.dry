@@ -6,6 +6,7 @@ card-image: img/card_forces.svg
 view-if: finale and clones > 0 and (navy_vetted >= 1 or officer_corps or senate_command) and not ld_navy_used_today
 on-arrival: turn_actions += 1; ld_navy_used_today = 1; last_card_timer = ""
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Appeal to the Navy
 
@@ -13,6 +14,7 @@ new-page: true
 
 - @do: Appeal to the Navy.
 - @easy_discard
+- @set_aside
 
 @do
 on-arrival: {! Q.navy_loyalty += Math.min(15, 5 * (Math.min(2, Q.navy_vetted || 0) + (Q.officer_corps ? 1 : 0) + (Q.senate_command ? 1 : 0))); !}

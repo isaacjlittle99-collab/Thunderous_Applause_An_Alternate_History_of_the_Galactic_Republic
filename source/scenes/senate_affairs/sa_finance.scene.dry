@@ -6,6 +6,7 @@ card-image: img/card_credits.svg
 view-if: finance_timer <= 0 and chair_finance = "rc" and cardok_finance
 on-arrival: turn_actions += 1; finance_timer = 3; last_card_timer = "finance"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Finance & Commerce Committee
 
@@ -23,6 +24,7 @@ The Caucus chairs the Finance & Commerce Committee. The treasury holds [+ treasu
 - @stockpile: Stockpile bacta against the next shortage.
 - @refinance: Refinance the Republic's debts.
 - @easy_discard
+- @set_aside
 
 @regulate
 view-if: corruption > 25 and guild_relation > 5

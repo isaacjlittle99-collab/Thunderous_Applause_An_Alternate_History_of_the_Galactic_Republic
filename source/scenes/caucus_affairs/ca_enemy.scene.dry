@@ -7,6 +7,7 @@ view-if: enemy_timer <= 0
 max-visits: 4
 on-arrival: turn_actions += 1; enemy_timer = 12; last_card_timer = "enemy"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Choosing our Enemy
 
@@ -18,6 +19,7 @@ The Caucus cannot fight on every front at once. What should it treat as the grea
 - @separatists: The Separatists.
 - @overreach: The Chancellery itself.
 - @easy_discard
+- @set_aside
 
 @corruption
 subtitle: Everyone's enemy, and therefore nobody's.

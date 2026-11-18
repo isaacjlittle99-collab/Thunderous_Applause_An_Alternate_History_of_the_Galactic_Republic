@@ -6,6 +6,7 @@ card-image: img/card_law.svg
 view-if: constitution_timer <= 0 and chair_constitution = "rc" and cardok_constitution
 on-arrival: amend_threshold = 66.7 if faith < 60; amend_threshold = 60 if faith >= 60; turn_actions += 1; constitution_timer = 3; last_card_timer = "constitution"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Constitutional Reform
 
@@ -19,6 +20,7 @@ Constitutional amendments need **two-thirds** of the Senate (three-fifths if fai
 - @speaker: An independent Speaker of the Senate.
 - @groundwork: Build support for a future amendment.
 - @easy_discard
+- @set_aside
 
 @sunset
 view-if: not emergency_sunset
