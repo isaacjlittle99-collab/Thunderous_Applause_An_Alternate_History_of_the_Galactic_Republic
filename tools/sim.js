@@ -123,7 +123,8 @@ function smartWeight(id, Q) {
     [/^ca_peace$/, Q.war ? 5 : 1], [/^ca_relations$/, 3], [/^ca_media$/, 3], [/^sa_rimaffairs$/, 5], [/^sa_finance$/, 4],
     [/^sa_diplomacy$/, Q.war ? 6 : 3],
     // advisors and leadership
-    [/let_decide$/, 4], [/\.offer$/, 3], [/^shuffle_leadership$/, (Q.n_advisors || 0) < 3 ? 6 : 0.3],
+    [/let_decide$/, 4], [/\.offer$/, 3],
+    [/^rec_party_congress\.adv$/, 5], [/^rec_party_congress\.back\d$/, Q.capital >= 3 ? 2 : 0.3], [/^rec_party_congress\.stay_out$/, 3], [/^shuffle_leadership$/, (Q.n_advisors || 0) < 3 ? 6 : 0.3],
     // the lore events
     [/labyrinth\.judicials$/, Q.judicial_forces >= 4 ? 6 : 1], [/labyrinth\.council$/, 4], [/hostage_crisis\.measured$/, Q.capital >= 2 ? 5 : 1],
     [/loyalist_committee\.join$/, 4], [/\.scatter$/, 6],
@@ -289,8 +290,14 @@ const PREMISES = [
   [/^fin_gambit_response\.army$/, Q => Q.army_oversight || Q.chips_removed || Q.senate_command, 'army called on without Senate command'],
   [/^rec_rim_radical$/, Q => !Q.dooku_movement, 'a story of the radicalising Rim after Dooku\'s declaration'],
   [/^rec_rim_radicals$/, Q => !SW.rimTackled(Q) && Q.date >= 60, 'the Rim\'s politicians radicalising although the Rim was tackled'],
+  [/^rec_party_congress$/, Q => !Q.finale && SW.hasWings(Q, Q.cg_bloc || Q.congress_ready), 'a congress in the finale, or of a bloc without wings'],
+  [/^rec_party_congress\.cg_round2$/, Q => Q.cg_deadlock, 'a second round without a deadlock'],
 ];
 const PREMISE_HITS = {};
+// why each congress met, and where a text problem was seen (TEXTWHERE=1)
+const CG_WHY = {};
+{ const pc = SW.prepareCongress; SW.prepareCongress = function (Q) { if (Q.congress_ready) CG_WHY[Q.congress_why || '?'] = (CG_WHY[Q.congress_why || '?'] || 0) + 1; return pc.apply(this, arguments); }; }
+const TEXT_WHERE = {};
 // ---------------------------------------------------------------- text audit
 // Every rendered paragraph and option is checked for broken text and for words that contradict the state at that moment.
 // How to play, the Holocron and the Chancellery's tables are left out: they describe the rules, not the game in progress.
@@ -316,7 +323,7 @@ function textAudit(scene, Q, raw) {
   if (TEXT_SKIP.test(scene)) return;
   const t = plainText(raw);
   if (!t) return;
-  for (const [k, re] of TEXT_RULES) if (re.test(t)) PREMISE_HITS[k] = (PREMISE_HITS[k] || 0) + 1;
+  for (const [k, re] of TEXT_RULES) if (re.test(t)) { PREMISE_HITS[k] = (PREMISE_HITS[k] || 0) + 1; if (process.env.TEXTWHERE) { const w = k + ' @' + scene + ': ' + t.slice(0, 120); TEXT_WHERE[w] = (TEXT_WHERE[w] || 0) + 1; } }
   for (const [k, re, bad, unless] of TEXT_STATE) if (bad(Q) && re.test(t) && !(unless && unless.test(t))) PREMISE_HITS[k] = (PREMISE_HITS[k] || 0) + 1;
 }
 {
@@ -338,6 +345,7 @@ const STEP_RE = /\.(bureau_reform|civil_service|amedda|ethics|integrity|hhc_inve
 let lastGovt = [];
 const DECREES_TAKEN = {};
 const MINORITY_OVER = new Map();
+const MIC_SEEN = new WeakSet();
 function checkPremises(id, Q, game, out) {
   const g = (Q.govt_blocs || []).slice();
   const added = g.filter(b => lastGovt.indexOf(b) < 0);
@@ -388,6 +396,19 @@ function checkPremises(id, Q, game, out) {
   for (const b of (Q.govt_blocs || [])) if (Q.parties.indexOf(b) < 0) out['a bloc outside the Senate in government'] = (out['a bloc outside the Senate in government'] || 0) + 1;
   for (const b of SW.BLOCS) if (Q['merged_' + b] && Q.parties.indexOf(b) >= 0) out['a merged bloc back in the Senate'] = (out['a merged bloc back in the Senate'] || 0) + 1;
   if (Q.rc_chairs > (Q.chair_cap || 4) && Q.rc_in_govt) out['more chairs than partners allow'] = (out['more chairs than partners allow'] || 0) + 1;
+  // party wings: one ruling wing per bloc, of that bloc; shares that add up to 100; no hidden wing before its moment
+  if (id === 'post_event' && SW.WINGS) {
+    const add = k => { out[k] = (out[k] || 0) + 1; };
+    for (const b of SW.CONGRESS_BLOCS) {
+      if (!SW.hasWings(Q, b)) continue;
+      const rw = Q[b + '_wing'];
+      if (!rw || !SW.WINGS[rw] || SW.WINGS[rw].bloc !== b || !SW.wingActive(Q, rw)) add('a bloc without a ruling wing of its own');
+      const tot = SW.blocWings(Q, b).reduce((x, w) => x + SW.wingShare(Q, w), 0) + SW.nonAff(Q, b);
+      if (Math.abs(tot - 100) > 0.5 || SW.blocWings(Q, b).some(w => !(SW.wingShare(Q, w) >= 0))) add('wing shares that do not add up to 100');
+      if (b !== 'pal' && SW.LEADER_WING[Q[b + '_leader_id']] && SW.LEADER_WING[Q[b + '_leader_id']] !== rw) add('a bloc led by a figure of a wing that does not rule it');
+    }
+    if (Q.wing_seen_mic && !MIC_SEEN.has(Q)) { MIC_SEEN.add(Q); if (!(Q.war || Q.corporate_seceded >= 0.3)) add('a hidden wing before its moment'); }
+  }
 }
 
 function playOne(gameIndex) {
@@ -528,6 +549,7 @@ function playOne(gameIndex) {
       for (const c in t.cardPlays) if (t.cardPlays[c] >= 6) audit.repeatCards[c] = (audit.repeatCards[c] || 0) + 1;
       // leaders
       audit.contests.push(Q.leadership_contests || 0);
+      audit.congresses = audit.congresses || []; audit.congresses.push(Q.congresses || 0);
       audit.changes.push(Q.leader_changes || 0);
       audit.refused += Q.coal_refused || 0;
       for (const grp of ['mod', 'guild', 'rim', 'sec', 'ind', 'inst', 'rimward', 'pacifist', 'hawk']) {
@@ -615,7 +637,9 @@ function playOne(gameIndex) {
   origLog('audit: Caucus won first election ' + audit.rcWon32 + 'x; Palpatine later Chancellor in ' + audit.rcWon32ThenPal + '; Caucus still Chancellor at end ' + audit.rcHeldToEnd);
   if (audit.enfWhere) origLog('audit: enfranchised games, where/sep: ' + Object.keys(audit.enfWhere).slice(0, 12).join(' | '));
   origLog('audit: enfranchised before 22 BBY in ' + audit.enf + ' games; avg seceded ' + avg(audit.enfSeceded) + '%; war in ' + audit.enfWar);
-  origLog('audit: leadership contests per game avg ' + avg(audit.contests) + ', leader changes avg ' + avg(audit.changes) + ', coalition offers refused by a leader ' + audit.refused);
+  origLog('audit: congresses by reason ' + JSON.stringify(CG_WHY));
+  if (process.env.TEXTWHERE) for (const w in TEXT_WHERE) origLog('text where: ' + TEXT_WHERE[w] + 'x ' + w);
+  origLog('audit: faction contests per game avg ' + avg(audit.contests) + ', party congresses avg ' + avg(audit.congresses || [0]) + ', leader changes avg ' + avg(audit.changes) + ', coalition offers refused by a leader ' + audit.refused);
   origLog('audit: radical Rim leader at some point in ' + audit.radicalRim + ' games (war in ' + audit.radicalRimWar + ', end Rim sep avg ' + avg(audit.radicalRimSep) + ') vs end Rim sep avg ' + avg(audit.softRimSep) + ' otherwise');
   origLog('audit: schemes per game avg ' + avg(audit.schemes) + ', foiled total ' + audit.foiled + ', kinds ' + JSON.stringify(audit.schemeKinds));
   origLog('audit: early or special endings ' + JSON.stringify(audit.early) + '; safeguards passed ' + JSON.stringify(audit.reformsBy));

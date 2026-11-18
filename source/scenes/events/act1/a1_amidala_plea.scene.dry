@@ -21,7 +21,7 @@ The Caucus must decide in the next few minutes.
 
 @yes
 subtitle: Valorum is paralysed. Perhaps someone better can lead.
-on-arrival: vonc_rc = 1; mod_relation -= 6; pal_relation += 6; rc_momentum += 0.5
+on-arrival: {! Q.vonc_rc = 1; Q.mod_relation -= 6; Q.pal_relation += 6; Q.rc_momentum += 0.5; SW.wingShift(Q, 'ruusan', -6); !}
 go-to: a1_vonc
 
 @no
@@ -33,5 +33,5 @@ go-to: a1_vonc
 
 @abstain
 subtitle: Let others decide Valorum's fate.
-on-arrival: vonc_rc = 0.5
+on-arrival: {! Q.vonc_rc = 0.5; SW.wingShift(Q, 'ruusan', -2); !}
 go-to: a1_vonc

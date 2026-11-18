@@ -115,7 +115,7 @@ on-arrival: adv_amidala = 0; n_advisors -= 1; inst_dissent += 10; shuffle_change
 go-to: shuffle_leadership
 
 @add_valorum
-view-if: adv_valorum = 0 and valorum_fallen and date < 150
+view-if: adv_valorum = 0 and valorum_fallen and date < 150 and not valorum_leads_mod
 choose-if: n_advisors < 3
 unavailable-subtitle: We already have three advisors.
 subtitle: The Institutionalists will be pleased.

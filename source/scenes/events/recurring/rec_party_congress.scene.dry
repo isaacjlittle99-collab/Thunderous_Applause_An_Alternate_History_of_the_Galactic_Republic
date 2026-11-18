@@ -1,0 +1,108 @@
+title: A Party Congress
+subtitle: One of the Senate's blocs meets to decide who leads it.
+tags: event
+view-if: congress_go = 1
+priority: 2
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {! SW.prepareCongress(Q); !}
+on-display: {! if (typeof SW !== 'undefined' && SW.drawCongress) SW.drawCongress(Q, 'congress_chart'); !}
+
+= Congress of the [+ cg_bloc_name +]
+
+[+ cg_intro +]
+
+{!<svg id="congress_chart" class="congress-chart" style="width: 500px; height: 260px;"></svg>!}
+
+[+ cg_table +]
+
+- @back1: Back [+ cg_c1_cand +] of the [+ cg_c1_name +].
+- @back2: Back [+ cg_c2_cand +] of the [+ cg_c2_name +].
+- @back3: Back [+ cg_c3_cand +] of the [+ cg_c3_name +].
+- @back4: Back [+ cg_c4_cand +] of the [+ cg_c4_name +].
+- @adv: Ask [+ cg_adv_name +] to work their connections for the [+ cg_adv_wing_name +].
+- @promise: [+ cg_offer +], to help [+ cg_soft +].
+- @stay_out: Stay out of it.
+
+@back1
+view-if: cg_c1
+choose-if: cg_can_pay
+unavailable-subtitle: Needs [+ cg_cost +] political capital.
+subtitle: [+ cg_cost_txt +]
+on-arrival: {! SW.resolveCongress(Q, 'back', 1); !}
+go-to: cg_ballot
+
+@back2
+view-if: cg_c2
+choose-if: cg_can_pay
+unavailable-subtitle: Needs [+ cg_cost +] political capital.
+subtitle: [+ cg_cost_txt +]
+on-arrival: {! SW.resolveCongress(Q, 'back', 2); !}
+go-to: cg_ballot
+
+@back3
+view-if: cg_c3
+choose-if: cg_can_pay
+unavailable-subtitle: Needs [+ cg_cost +] political capital.
+subtitle: [+ cg_cost_txt +]
+on-arrival: {! SW.resolveCongress(Q, 'back', 3); !}
+go-to: cg_ballot
+
+@back4
+view-if: cg_c4
+choose-if: cg_can_pay
+unavailable-subtitle: Needs [+ cg_cost +] political capital.
+subtitle: [+ cg_cost_txt +]
+on-arrival: {! SW.resolveCongress(Q, 'back', 4); !}
+go-to: cg_ballot
+
+@adv
+view-if: cg_adv
+choose-if: cg_adv_ok
+unavailable-subtitle: Our advisors have already acted.
+subtitle: Uses our advisors' action. Their friends in the bloc will remember it.
+on-arrival: {! SW.resolveCongress(Q, 'adv'); !}
+go-to: cg_ballot
+
+@promise
+view-if: cg_soft_wing
+subtitle: No capital, but the promise will cost us inside the Caucus.
+on-arrival: {! SW.resolveCongress(Q, 'promise'); !}
+go-to: cg_ballot
+
+@stay_out
+subtitle: The bloc settles its own affairs.
+on-arrival: {! SW.resolveCongress(Q, ''); !}
+go-to: cg_ballot
+
+@cg_ballot
+new-page: true
+on-display: {! if (typeof SW !== 'undefined' && SW.drawCongress) SW.drawCongress(Q, 'congress_chart2'); !}
+
+= The First Ballot
+
+{!<svg id="congress_chart2" class="congress-chart" style="width: 500px; height: 260px;"></svg>!}
+
+[+ cg_table +]
+
+[+ cg_analysis +]
+
+[+ cg_box +]
+
+[? if not cg_deadlock : [+ cg_result +] ?]
+
+[? if not cg_deadlock : [+ cg_effect +] ?]
+
+- @cg_round2: Continue...
+
+@cg_round2
+view-if: cg_deadlock
+new-page: true
+
+= Congress Deadlocked
+
+[+ cg_round2 +]
+
+[+ cg_result +]
+
+[+ cg_effect +]

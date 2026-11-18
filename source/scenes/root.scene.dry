@@ -54,6 +54,7 @@ The **Holocron** link at the top of the page explains the factions, blocs and sy
 *This is an unofficial, non-commercial fan work. It borrows from both canon and Legends, and wanders off into alternate history from the very first turn.*
 
 - @htp_senate: The Senate: coalitions and relations
+- @htp_parties: Parties, wings and congresses
 - @htp_elections: Elections and campaigns
 - @htp_purse: The Republic's purse
 - @htp_government: The government
@@ -82,11 +83,32 @@ new-page: true
 
 **The bureaucrats.** Once the Caucus governs or chairs a committee, the Senate's permanent staff judge us by the partners we choose and the reforms we pass. Cold, they lose our bills in committee; hostile, they build a case against us and strike. Finis Valorum, Bail Organa or Bail Antilles can work with them as advisors, the Judiciary & Intelligence Committee can reform them, and a more establishment coalition reassures them.
 
-**Leaders.** Every bloc and every faction of the Caucus has a leader whose mood follows what they care about and what they remember of us. Now and then a leader makes a demand or an offer.
+**Leaders.** Every bloc and every faction of the Caucus has a leader whose mood follows what they care about and what they remember of us. Now and then a leader makes a demand or an offer. A bloc's leader is chosen by its congress (see *Parties, wings and congresses*).
 
 **Shifting blocs.** Over the years the Core Moderates and the Independents lose about half their natural support. It goes to the Caucus or to Palpatine: more of it to us when our relations with the Moderates are good, our momentum is high, the evidence against Sidious is public and reforms have passed; more to him when he holds the Chancellery and the Senate is corrupt and afraid. The Independents also lose voters to the Separatists where separatism runs high, and to the Rimward Coalition where the Rim suffers. The Security Bloc drifts toward Palpatine while he holds power or fear is high.
 
-**Defections.** A bloc or faction under a hardline leader may be subverted. The Rimward Coalition (under Ardana), our own Rimward wing (under Corvane) or the Rim Freedom Caucus may go over to the Separatists; the Security Bloc, led by Tarkin and cold toward us, may fold into Palpatine's bloc. A warning comes first, and the next leadership challenge comes sooner. In the few turns that follow, the threat passes only if relations with that bloc reach *cordial* (for our own wing, if its anger cools), if the Caucus takes a reform step that answers its grievances (the Rim, slavery or the syndicates for the Rim; the military for the Security Bloc), or if a rival we backed unseats the hardliner. Otherwise it happens, and after Geonosis the Rim's defectors leave the Republic altogether.
+**Defections.** A bloc or faction under a hardline leader may be subverted. The Rimward Coalition (under Ardana), our own Rimward wing (under Corvane) or the Rim Freedom Caucus may go over to the Separatists; the Security Bloc, led by Tarkin and cold toward us, may fold into Palpatine's bloc. A warning comes first, and the bloc's congress meets early. In the few turns that follow, the threat passes only if relations with that bloc reach *cordial* (for our own wing, if its anger cools), if the Caucus takes a reform step that answers its grievances (the Rim, slavery or the syndicates for the Rim; the military for the Security Bloc), or if a wing we backed wins the congress and unseats the hardliner. Otherwise it happens, and after Geonosis the Rim's defectors leave the Republic altogether.
+
+- @how_to_play: Back to How to play
+
+@htp_parties
+new-page: true
+
+= Parties, wings and congresses
+
+**Wings.** Every bloc is a coalition of wings, each with its own ideology and its own leader: the Core Moderates' Ruusan Republicans, Core Establishment and Old Families, for instance. Palpatine's bloc has wings too. The Senate tab shows each bloc's wings and which one rules it; the Holocron describes them all.
+
+**Delegates.** Each wing holds a share of its bloc's delegates, and some delegates belong to no wing. The shares move every quarter with the state of the galaxy: fear and the High Human Culture grow the human-first wings, a suffering Rim grows its radicals, taxes on the guilds grow their hardliners, and so on. What the Caucus does moves them too. Some events cost a wing delegates for good, such as a conviction of its leader.
+
+**Congresses.** A bloc's congress meets every four years, and sooner if its leader falls, a scandal breaks, it loses heavily at a session, a defection looms, or another wing grows well past the ruling one. A wing with a majority of the delegates wins at once. Otherwise the congress is deadlocked, and in a second round the two largest wings bargain: every other wing, and the non-affiliated delegates, side with whichever of the two is closer to its own views. The winner's candidate leads the bloc, with all that follows for its votes, its partners and its relations with us. At most one congress meets each turn. A routine congress where the ruling wing holds so many delegates that nothing could unseat it simply re-elects its leader.
+
+**Tipping a congress.** Before the ballot, the Caucus can back a wing with political capital (one point less if our relations with the bloc are warm), have an advisor with friends in that bloc work them for the wing nearest our own views, make the bloc's usual policy promise to help its most flexible candidate, or stay out. The wing we backed remembers it if it wins; a winner we opposed holds a grudge.
+
+**Where a bloc is strong.** Each wing comes from particular regions, and a bloc is strongest where its ruling wing is at home: under the Old Families the Moderates gain in the Core and lose in the Colonies.
+
+**Palpatine's bloc.** While he is free, Palpatine leads it whatever its congress decides; the congress picks the wing that sets its line, and that wing's figure becomes his lieutenant. If he falls, the congress chooses his successor.
+
+**Valorum.** When Valorum falls, the Moderates hold an emergency congress before the Senate chooses a new Chancellor. A year later he can stand again for the Ruusan Republicans (three years, if the Caucus pursued his shipping scandal), unless he is serving as our advisor.
 
 - @how_to_play: Back to How to play
 

@@ -6,10 +6,10 @@ max-visits: 1
 priority: 3
 new-page: true
 face-image: img/ev_senate.svg
-on-arrival: {! Q.valorum_fallen = 1; SW.setLeader(Q, 'mod', 'quill'); Q.election_due = 1; !}
+on-arrival: {! Q.valorum_fallen = 1; Q.valorum_fell_date = Q.date; SW.callCongress(Q, 'mod', 'fallen'); Q.election_due = 1; !}
 
 = The End of Valorum's Term
 
 Finis Valorum survived the Naboo crisis, but he has served the two terms the constitution allows. He leaves office tired and bruised, with a quiet warning to the Caucus: "Someone engineered that blockade to bring me down. I could never prove who."
 
-The Core Moderates nominate **Davan Quill of Brentaal**, a cautious party manager, to succeed him. The election of a new Supreme Chancellor follows at once.
+The Core Moderates must now choose who will lead them in his place, and their congress meets at once. The election of a new Supreme Chancellor follows.

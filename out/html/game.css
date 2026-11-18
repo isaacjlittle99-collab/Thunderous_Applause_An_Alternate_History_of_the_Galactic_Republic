@@ -487,6 +487,18 @@ body:not(.dark-mode) .crawl {
   white-space: nowrap;
 }
 
+/* ---- party congresses and wings (sw.js SW.prepareCongress, sw_ui.js SW.drawCongress) */
+.wing { color: var(--wi); font-weight: 600; }
+body.dark-mode .wing { color: var(--wl); }
+table.congress { border-collapse: collapse; margin: 0.4em 0 0.8em; font-size: 0.95em; min-width: 60%; }
+table.congress th { text-align: left; font-weight: normal; color: var(--muted-color); padding: 0.15em 1.2em 0.15em 0; }
+table.congress td { padding: 0.15em 1.2em 0.15em 0; }
+table.congress td:last-child, table.congress th:last-child { text-align: right; padding-right: 0; }
+table.congress .nonaff { color: var(--muted-color); font-weight: 600; }
+.cg-box { border: 1px solid var(--bad); border-radius: 3px; padding: 0.4em 0.8em; margin: 0.8em 0; color: var(--bad); }
+.cg-box.ok { border-color: var(--good); color: var(--good); }
+hr.cg-rule { width: 30%; margin: 0.8em auto; border: 0; border-top: 1px solid var(--card-border-color); }
+
 /* ---- the galaxy map: who leads each region (sw_ui.js SW.regionMapSvg) */
 .region-map {
   margin: 0.3em 0 0.6em;

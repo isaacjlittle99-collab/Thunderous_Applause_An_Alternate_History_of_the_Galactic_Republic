@@ -8,7 +8,8 @@ Q.vonc_vote = SW.vote(Q, st, Q.vonc_rc, 'vonc');
 Q.vonc_passed = Q.vonc_vote >= 50 ? 1 : 0;
 Q.vote_html = SW.voteBanner('No confidence in Chancellor Valorum', Q.vonc_vote);
 if (Q.vonc_passed) {
-    Q.valorum_fallen = 1;
+    Q.valorum_fallen = 1; Q.valorum_fell_date = Q.date;
+    SW.callCongress(Q, 'mod', 'fallen');
     Q.election_due = 1;
     Q.faith -= 2;
 } else {

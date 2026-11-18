@@ -180,6 +180,21 @@
       if (warm.length) h += '<div class="sb-note"><b>Warmest ties:</b> ' + warm.slice(0, 3).map(function (x) { return x.t; }).join('; ') + '.</div>';
       h += '<div class="sb-note' + (cold.length ? ' warn' : '') + '">' + (cold.length ? '<b>Will not govern together:</b> ' + cold.join('; ') + '.' : 'Every pair of blocs could, in principle, govern together.') + '</div>';
     }
+    if (SW.BLOC_WINGS) {
+      h += head('Party wings');
+      for (var wi = 0; wi < SW.CONGRESS_BLOCS.length; wi++) {
+        var wb = SW.CONGRESS_BLOCS[wi];
+        if (!SW.hasWings(Q, wb)) continue;
+        var rw = Q[wb + '_wing'], ws = SW.blocWings(Q, wb).slice().sort(function (x, y) { return SW.wingShare(Q, y) - SW.wingShare(Q, x); });
+        var who = wb === 'pal' && !Q.pal_leader_id ? 'Palpatine' + (Q.pal_lieutenant ? ', with ' + Q.pal_lieutenant : '') : (Q[wb + '_leader'] || '');
+        h += row(bloc(Q, wb), (rw ? SW.wingSpan(rw) : '—') + (who ? ' <span class="sb-tag">' + who + '</span>' : ''));
+        h += '<div class="sb-note">' + ws.map(function (w) {
+          var s = SW.wingShare(Q, w);
+          return SW.wingSpan(w) + ' ' + (s >= 45 ? 'dominant' : (s >= 30 ? 'strong' : (s >= 15 ? 'middling' : 'weak'))) + (w === rw ? ' (ruling)' : '');
+        }).join(' · ') + '.' + (Q[wb + '_congress_quiet'] ? ' Its last congress re-elected its leader unopposed.' : '') +
+          ' Next congress ' + (Q[wb + '_congress_due'] > Q.date ? 'in ' + (33 - Math.floor(Q[wb + '_congress_due'] / 12)) + ' BBY' : 'soon') + '.</div>';
+      }
+    }
     h += head('Committee chairs');
     for (var c = 0; c < SW.COMMITTEES.length; c++) {
       var cm = SW.COMMITTEES[c];
@@ -362,7 +377,10 @@
     for (var i = 0; i < Q.parties.length; i++) {
       var b = Q.parties[i];
       var tag = (SW.CONTEST_BLOCS && SW.CONTEST_BLOCS.indexOf(b) >= 0 && SW.firmLabel) ? ' <span class="sb-tag">' + SW.firmLabel(Q, b) + '</span>' : '';
-      h += row(bloc(Q, b), (Q[b + '_leader'] || '—') + tag);
+      var wingTag = SW.wingLine && SW.wingLine(Q, b) ? ' · ' + SW.wingSpan(Q[b + '_wing']) : '';
+      var nm = b === 'pal' && !Q.pal_leader_id ? 'Palpatine' : (Q[b + '_leader'] || '—');
+      h += row(bloc(Q, b), nm + wingTag + tag);
+      if (b === 'pal' && !Q.pal_leader_id && Q.pal_lieutenant) h += '<div class="sb-note">His lieutenant: ' + Q.pal_lieutenant + '.</div>';
       if (SW.CONTEST_BLOCS && SW.CONTEST_BLOCS.indexOf(b) >= 0 && SW.leaderLine) {
         var mood = SW.leaderMood(Q, b).score;
         h += '<div class="sb-note' + (mood <= -3 ? ' bad' : (mood <= -1 ? ' warn' : '')) + '">' + SW.leaderLine(Q, b) + '</div>';
@@ -490,6 +508,22 @@
     parliament.enter.fromCenter(true).smallToBig(true);
     parliament.exit.toCenter(false).bigToSmall(true);
     d3.select('#' + svgId).datum(SW.parliamentData(Q)).call(parliament);
+  };
+
+  // a congress's delegates, wing by wing, as a hemicycle
+  SW.drawCongress = function (Q, svgId) {
+    if (typeof document === 'undefined' || typeof d3 === 'undefined' || !d3.parliament) return;
+    var el = document.getElementById(svgId);
+    if (!el || !(Q.cg_chart && Q.cg_chart.length)) return;
+    var width = 500, height = 500;
+    var content = document.getElementById('content');
+    var screenWidth = content ? content.offsetWidth : 500;
+    if (screenWidth < width - 50) { width = screenWidth - 50; height = width; el.style.height = (screenWidth / 2) + 'px'; el.style.width = width + 'px'; }
+    var parliament = d3.parliament();
+    parliament.width(width).height(height).innerRadiusCoef(0.4);
+    parliament.enter.fromCenter(true).smallToBig(true);
+    parliament.exit.toCenter(false).bigToSmall(true);
+    d3.select('#' + svgId).datum(Q.cg_chart).call(parliament);
   };
 
   SW.drawHistory = function (Q, svgId, which) {
