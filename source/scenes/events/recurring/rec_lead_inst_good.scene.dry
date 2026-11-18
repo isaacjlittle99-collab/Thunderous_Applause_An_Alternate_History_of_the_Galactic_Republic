@@ -1,0 +1,12 @@
+title: The Committee Men
+subtitle: The Institutionalists know how the Senate works.
+tags: event
+view-if: lead_event_ready = "inst_good" and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {! SW.leadEventDone(Q); Q.bureau_relation += 6; Q.committee_smooth = 1; !}
+
+= The Committee Men
+
+The Institutionalists have spent their careers in the Senate's committee rooms, and it shows. Senior clerks who would once have buried a Caucus bill now ask, politely, how they can help it along. Our next reform will not be lost in committee.

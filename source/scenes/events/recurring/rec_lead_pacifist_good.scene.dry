@@ -1,0 +1,12 @@
+title: Candles on the Senate Steps
+subtitle: Peace vigils fill the plazas.
+tags: event
+view-if: lead_event_ready = "pacifist_good" and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_peace.svg
+on-arrival: {! SW.leadEventDone(Q); Q.faith += 2; SW.momentum(Q, 0.4, 'the peace vigils'); !}
+
+= Candles on the Senate Steps
+
+Every night for a week, thousands of people gather on the Senate steps with candles, for an end to the fighting and for the Caucus that speaks for them. The HoloNet cannot ignore them, and the galaxy watches.

@@ -104,6 +104,10 @@
     h += row('Outer Rim hardship', SW.label('level', Q.rim_hardship)) + bar(Q.rim_hardship, 100, 'bad-fill');
     h += row('Emergency powers', SW.label('powers', Q.emergency_powers)) + bar(Q.emergency_powers, 10, 'bad-fill');
     h += head('The Caucus');
+    if (SW.rcLead && SW.rcLead(Q)) {
+      h += row('Leading faction', SW.factionSpan(SW.rcLead(Q), SW.FACTION_NAMES[SW.rcLead(Q)]) + (Q.rc_chair ? ' <span class="sb-tag">chaired by ' + Q.rc_chair + '</span>' : ''));
+      h += '<div class="sb-note">Our programme: ' + SW.PROGRAMME_TEXT[SW.rcLead(Q)] + '.</div>';
+    }
     for (var j = 0; j < SW.FACTIONS.length; j++) {
       var f = SW.FACTIONS[j];
       h += row(SW.FACTION_NAMES[f], Math.round(Q[f + '_strength']) + '% · ' + SW.label('dissent', Q[f + '_dissent']));
@@ -386,6 +390,7 @@
         h += '<div class="sb-note' + (mood <= -3 ? ' bad' : (mood <= -1 ? ' warn' : '')) + '">' + SW.leaderLine(Q, b) + '</div>';
       }
     }
+    if (SW.rcLead && SW.rcLead(Q) && Q.rc_chair) h += row('Caucus chair', Q.rc_chair + ' · ' + SW.factionSpan(SW.rcLead(Q), SW.FACTION_NAMES[SW.rcLead(Q)]));
     h += head('Our advisors');
     var any = false;
     for (var a in SW.ADVISOR_NAMES) {

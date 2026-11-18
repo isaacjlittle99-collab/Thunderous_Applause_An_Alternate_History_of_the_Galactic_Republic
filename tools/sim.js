@@ -126,7 +126,9 @@ function smartWeight(id, Q) {
     [/let_decide$/, 4], [/\.offer$/, 3],
     [/^rec_party_congress\.adv$/, 5], [/^rec_party_congress\.back\d$/, Q.capital >= 3 ? 2 : 0.3], [/^rec_party_congress\.stay_out$/, 3],
     [/^rec_hutt_terms\.accept$/, 2], [/^rec_hutt_terms\.refuse$/, 3], [/^rec_human_militias\.(crackdown|investigate)$/, 5], [/^rec_repeal_rights\.fight$/, 6],
-    [/^ld_hawks$/, 9], [/^shuffle_leadership$/, (Q.n_advisors || 0) < 3 ? 6 : 0.3],
+    [/^ld_hawks$/, 9],
+    [/^rec_caucus_congress\.adv\d$/, 4], [/^rec_caucus_congress\.back\d$/, Q.capital >= 3 ? 1.5 : 0.2], [/^rec_caucus_congress\.stay_out$/, 3],
+    [/^chancellery\.ceasefire$/, Q.war && (Q.war_ratio || 2) < 0.9 ? 6 : 2], [/^shuffle_leadership$/, (Q.n_advisors || 0) < 3 ? 6 : 0.3],
     // the lore events
     [/labyrinth\.judicials$/, Q.judicial_forces >= 4 ? 6 : 1], [/labyrinth\.council$/, 4], [/hostage_crisis\.measured$/, Q.capital >= 2 ? 5 : 1],
     [/loyalist_committee\.join$/, 4], [/\.scatter$/, 6],
@@ -303,6 +305,14 @@ const PREMISES = [
   [/^rec_farr_returns$/, Q => SW.TRACKS.rim.level(Q) >= 3 && Q.slavery_enforced && !Q.farr_dead, 'Farr returns before the Rim\'s reforms and abolition'],
   [/^ld_hawks$/, Q => Q.sec_wing === 'const_hawks', 'the Constitutional Hawks called without them ruling Security'],
   [/^fin_(purge|militias|crowds)$/, Q => Q.finale && !Q.sidious_defeated, 'a finale move by Palpatine\'s wings outside the finale'],
+  [/^rec_caucus_congress$/, Q => !Q.finale, 'a Caucus congress in the finale'],
+  [/^rec_lead_pacifist_bad$/, Q => Q.war, 'appeasers without a war'],
+  [/^rec_lead_inst_/, Q => Q.rc_lead === 'inst', 'a faction event while another faction leads'],
+  [/^rec_lead_rimward_/, Q => Q.rc_lead === 'rimward', 'a faction event while another faction leads'],
+  [/^rec_lead_pacifist_/, Q => Q.rc_lead === 'pacifist', 'a faction event while another faction leads'],
+  [/^rec_lead_hawk_/, Q => Q.rc_lead === 'hawk', 'a faction event while another faction leads'],
+  [/^rec_peace_conference$/, Q => Q.chan_ceasefire && Q.rc_chancellor, 'a peace conference without our ceasefire'],
+  [/^chancellery\.ceasefire$/, Q => Q.rc_chancellor && Q.rc_lead === 'pacifist', 'a ceasefire without a Pacifist-led Caucus in the Chancellery'],
 ];
 const PREMISE_HITS = {};
 // why each congress met, and where a text problem was seen (TEXTWHERE=1)

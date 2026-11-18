@@ -1,0 +1,128 @@
+title: The Caucus in Congress
+subtitle: Our own delegates choose who leads the party.
+tags: event
+view-if: rc_congress_ready = 1
+priority: 2
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {! SW.prepareCaucusCongress(Q); !}
+on-display: {! if (typeof SW !== 'undefined' && SW.drawCongress) SW.drawCongress(Q, 'congress_chart'); !}
+
+= Congress of the Ruusan Caucus
+
+[+ rcg_intro +]
+
+{!<svg id="congress_chart" class="congress-chart" style="width: 500px; height: 260px;"></svg>!}
+
+[+ rcg_table +]
+
+- @back1: Put the leadership's weight behind [+ rcg_c1_cand +] of the [+ rcg_c1_name +].
+- @back2: Put the leadership's weight behind [+ rcg_c2_cand +] of the [+ rcg_c2_name +].
+- @back3: Put the leadership's weight behind [+ rcg_c3_cand +] of the [+ rcg_c3_name +].
+- @back4: Put the leadership's weight behind [+ rcg_c4_cand +] of the [+ rcg_c4_name +].
+- @adv1: Have [+ rcg_c1_adv +] rally the [+ rcg_c1_name +].
+- @adv2: Have [+ rcg_c2_adv +] rally the [+ rcg_c2_name +].
+- @adv3: Have [+ rcg_c3_adv +] rally the [+ rcg_c3_name +].
+- @adv4: Have [+ rcg_c4_adv +] rally the [+ rcg_c4_name +].
+- @stay_out: Let the delegates decide.
+
+@back1
+view-if: rcg_c1
+choose-if: rcg_can_pay
+unavailable-subtitle: Needs 1 political capital.
+subtitle: −1 political capital. The losers will remember it.
+on-arrival: {! SW.resolveCaucusCongress(Q, 'back', 1); !}
+go-to: rcg_ballot
+
+@back2
+view-if: rcg_c2
+choose-if: rcg_can_pay
+unavailable-subtitle: Needs 1 political capital.
+subtitle: −1 political capital. The losers will remember it.
+on-arrival: {! SW.resolveCaucusCongress(Q, 'back', 2); !}
+go-to: rcg_ballot
+
+@back3
+view-if: rcg_c3
+choose-if: rcg_can_pay
+unavailable-subtitle: Needs 1 political capital.
+subtitle: −1 political capital. The losers will remember it.
+on-arrival: {! SW.resolveCaucusCongress(Q, 'back', 3); !}
+go-to: rcg_ballot
+
+@back4
+view-if: rcg_c4
+choose-if: rcg_can_pay
+unavailable-subtitle: Needs 1 political capital.
+subtitle: −1 political capital. The losers will remember it.
+on-arrival: {! SW.resolveCaucusCongress(Q, 'back', 4); !}
+go-to: rcg_ballot
+
+@adv1
+view-if: rcg_c1 and rcg_c1_adv != ""
+choose-if: rcg_adv_ok
+unavailable-subtitle: Our advisors have already acted.
+subtitle: Uses our advisors' action.
+on-arrival: {! SW.resolveCaucusCongress(Q, 'adv', 1); !}
+go-to: rcg_ballot
+
+@adv2
+view-if: rcg_c2 and rcg_c2_adv != ""
+choose-if: rcg_adv_ok
+unavailable-subtitle: Our advisors have already acted.
+subtitle: Uses our advisors' action.
+on-arrival: {! SW.resolveCaucusCongress(Q, 'adv', 2); !}
+go-to: rcg_ballot
+
+@adv3
+view-if: rcg_c3 and rcg_c3_adv != ""
+choose-if: rcg_adv_ok
+unavailable-subtitle: Our advisors have already acted.
+subtitle: Uses our advisors' action.
+on-arrival: {! SW.resolveCaucusCongress(Q, 'adv', 3); !}
+go-to: rcg_ballot
+
+@adv4
+view-if: rcg_c4 and rcg_c4_adv != ""
+choose-if: rcg_adv_ok
+unavailable-subtitle: Our advisors have already acted.
+subtitle: Uses our advisors' action.
+on-arrival: {! SW.resolveCaucusCongress(Q, 'adv', 4); !}
+go-to: rcg_ballot
+
+@stay_out
+subtitle: Every faction will respect it.
+on-arrival: {! SW.resolveCaucusCongress(Q, ''); !}
+go-to: rcg_ballot
+
+@rcg_ballot
+new-page: true
+on-display: {! if (typeof SW !== 'undefined' && SW.drawCongress) SW.drawCongress(Q, 'congress_chart2'); !}
+
+= The First Ballot
+
+{!<svg id="congress_chart2" class="congress-chart" style="width: 500px; height: 260px;"></svg>!}
+
+[+ rcg_table +]
+
+[+ rcg_analysis +]
+
+[+ rcg_box +]
+
+[? if not rcg_deadlock : [+ rcg_result +] ?]
+
+[? if not rcg_deadlock : [+ rcg_effect +] ?]
+
+- @rcg_round2: Continue...
+
+@rcg_round2
+view-if: rcg_deadlock
+new-page: true
+
+= Congress Deadlocked
+
+[+ rcg_round2 +]
+
+[+ rcg_result +]
+
+[+ rcg_effect +]

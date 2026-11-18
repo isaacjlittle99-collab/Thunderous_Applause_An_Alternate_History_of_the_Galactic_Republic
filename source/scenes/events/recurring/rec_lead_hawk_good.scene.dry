@@ -1,0 +1,12 @@
+title: The Officers' Confidence
+subtitle: The Navy trusts a Caucus led by its Hawks.
+tags: event
+view-if: lead_event_ready = "hawk_good" and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_war.svg
+on-arrival: {! SW.leadEventDone(Q); Q.navy_loyalty = Math.min(100, Q.navy_loyalty + 5); Q.sec_relation += 4; !}
+
+= The Officers' Confidence
+
+Senior officers start taking the Caucus's calls. A Caucus led by its Hawks, they say, understands what the Navy needs and what it is for. Some of them say quietly that they would rather answer to the Senate than to the Chancellery.
