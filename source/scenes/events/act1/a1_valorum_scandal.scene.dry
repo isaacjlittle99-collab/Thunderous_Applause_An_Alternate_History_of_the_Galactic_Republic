@@ -22,12 +22,12 @@ The Caucus stands by Valorum. The scandal fades, but the press calls the Caucus 
 
 @inquiry
 subtitle: Good for the Senate's integrity, bad for the Chancellor.
-on-arrival: mod_relation -= 10; corruption -= 2; faith += 1; rc_momentum += 1; valorum_scandal = 1
+on-arrival: {! Q.mod_relation -= 10; Q.corruption -= 2; Q.faith += 1; Q.rc_momentum += 1; Q.valorum_scandal = 1; SW.wingShift(Q, 'ruusan', -6); !}
 
 The inquiry clears Valorum personally but finds a web of kickbacks involving three Core Moderate senators. The Chancellor is wounded, and the Caucus is suddenly seen as the only bloc with clean hands.
 
 @silent
 subtitle: The scandal will run its course without us.
-on-arrival: mod_relation -= 2; valorum_scandal = 1
+on-arrival: {! Q.mod_relation -= 2; Q.valorum_scandal = 1; SW.wingShift(Q, 'ruusan', -2); !}
 
 The Caucus keeps its head down. The scandal does not.

@@ -56,7 +56,7 @@
     'corruption_scandal', 'piracy', 'famine', 'embargo', 'secession', 'profiteering', 'protest',
     'assassination', 'leak', 'unease', 'sunset', 'battle', 'gunray', 'pal_media', 'faction_crisis',
     'last_days', 'coalition_strain', 'leadership', 'faction_leader', 'bureau_reform', 'scheme',
-    'trail', 'world_election', 'referendum', 'recall', 'case'
+    'trail', 'world_election', 'referendum', 'recall', 'case', 'congress'
   ];
 
   // Initial pairwise affinity of each bloc for each potential partner/candidate bloc (0-100).
@@ -162,7 +162,7 @@
       n_advisors: 0, max_advisors: 3,
       adv_antilles: 0, adv_organa: 0, adv_bel_iblis: 0, adv_farr: 0, adv_mothma: 0,
       adv_amidala: 0, adv_valorum: 0, adv_chuchi: 0,
-      farr_dead: 0, valorum_fallen: 0, valorum_scandal: 0,
+      farr_dead: 0, valorum_fallen: 0, valorum_scandal: 0, valorum_fell_date: -1, valorum_leads_mod: 0,
 
       // records
       support_records: [], senate_records: [],
@@ -188,6 +188,15 @@
       D[lg + '_leader'] = SW.LEADERS[SW.LEADER_START[lg]].name;
       D[lg + '_favour'] = 0; D[lg + '_grudge'] = 0; D[lg + '_asked'] = -99; D['vote_boost_' + lg] = 0;
     }
+    // party wings and congresses
+    D.wings_seeded = 0; D.congresses_quiet = 0; D.congress_go = 0; D.congress_ready = ''; D.congress_why = ''; D.congress_timer = 0; D.congresses = 0; D.pal_lieutenant = ''; D.pal_lieutenant_id = '';
+    var CGN = ['cg_pal', 'cg_pal_free', 'cg_cost', 'cg_can_pay', 'cg_adv', 'cg_adv_ok', 'cg_deadlock', 'cg_changed', 'cg_backed_won', 'cg_backed_lost', 'cg_c1', 'cg_c2', 'cg_c3', 'cg_c4'];
+    for (var cgn = 0; cgn < CGN.length; cgn++) D[CGN[cgn]] = 0;
+    var CGS = ['cg_cost_txt', 'cg_bloc', 'cg_why', 'cg_bloc_name', 'cg_ruling', 'cg_ruling_name', 'cg_old_leader', 'cg_intro', 'cg_adv_name', 'cg_adv_wing', 'cg_adv_wing_name', 'cg_offer', 'cg_soft_wing', 'cg_soft',
+      'cg_table', 'cg_backed', 'cg_result', 'cg_analysis', 'cg_round2', 'cg_effect', 'cg_box', 'cg_winner', 'cg_winner_id', 'cg_winner_wing', 'cg_winner_wing_name'];
+    for (var cgs = 0; cgs < CGS.length; cgs++) D[CGS[cgs]] = '';
+    for (var cgk = 1; cgk <= 4; cgk++) { D['cg_c' + cgk + '_wing'] = ''; D['cg_c' + cgk + '_name'] = ''; D['cg_c' + cgk + '_cand'] = ''; }
+    D.cg_chart = [];
     D.treasury_txt = 4; D.debt_txt = 8; D.debt_label = ''; D.trade_label = '';
     D.cm_region = 'core'; D.cm_effect = 0; D.cm_backfired = 0; D.cm_word = ''; D.cm_msg_name = ''; D.cm_region_name = ''; D.scandal_ours_until = -99; D.campaigns_run = 0;
     D.cm_word_clean = ''; D.cm_word_relief = ''; D.cm_word_security = ''; D.cm_word_peace = ''; D.cm_word_republic = '';
@@ -373,6 +382,7 @@
       Q.inst_dissent = 25; Q.rimward_dissent = 30; Q.pacifist_dissent = 25; Q.hawk_dissent = 25; Q.grand_plan = 10;
     }
     SW.setGovt(Q, ['mod', 'guild', 'sec', 'ind'], 'Commerce Coalition');
+    SW.seedWings(Q);
     SW.computeSupport(Q);
     SW.senateSession(Q, true);
     SW.updateDate(Q);
@@ -410,6 +420,7 @@
         Q['chair_' + newChairs[nc]] = pick;
       }
     }
+    if (!Q.wings_seeded) SW.seedWings(Q);
     Q.save_version = SW.SAVE_VERSION;
   };
 
@@ -532,7 +543,7 @@
   SW.LEADERS = {
     // Rimward Coalition
     teem: {group: 'rim', name: 'Ainlee Teem', tag: 'populist', firm: 0.5, relBase: 32,
-      views: {rim: 0.05}, blurb: 'A Malastare populist. Wants the Rim\'s due, but will bargain for it.',
+      views: {rim: 0.05}, blurb: 'A Malastare populist. Wants the Rim\'s place in the Republic: seats, an end to slavery and to humancentrism. Will bargain for it.',
       rise: function (Q) { return 0.35 + 0.1 * on(Q.rim_enfranchised) + 0.15 * on(Q.rim_hardship < 45); }},
     orn_free_taa: {group: 'rim', name: 'Orn Free Taa', tag: 'dealmaker', firm: 0.2, relBase: 36,
       views: {regulate: -0.12, powers: 0.05, oversight: -0.05}, likes: {guild: 12, mod: 6}, rimGriev: -0.15, rimSep: -0.15,
@@ -542,7 +553,7 @@
       views: {rim: 0.15, regulate: 0.2, powers: -0.1, army: -0.15, peace: 0.15, vonc: 0.15},
       likes: {mod: -15, guild: -20, sec: -15, cis: 15, rfc: 10}, refuses: ['mod', 'guild', 'sec'],
       rimGriev: 0.15, rimSep: 0.2, pull: function (Q) { return Q.rim_hardship > 40 ? 0.1 : -0.05; },
-      blurb: 'An Ord Mantell firebrand. No more promises from Coruscant, and no deals with the Core or the guilds.',
+      blurb: 'An Ord Mantell firebrand who has had enough talk. Reform now, or the Rim goes its own way, and she listens to Dooku.',
       rise: function (Q) {
         var lostRim = (Q.secession_where || '').indexOf('outer') >= 0 || (Q.secession_where || '').indexOf('midrim') >= 0;
         return 0.05 + Math.max(0, Q.rim_hardship - 45) / 30 + 0.2 * on(lostRim) + 0.1 * on(Q.dooku_movement) + 0.3 * on((Q.rim_radical || 0) >= 2) -
@@ -569,7 +580,8 @@
     // Core Moderates
     valorum: {group: 'mod', name: 'Finis Valorum', tag: 'establishment reformer', firm: 0.5, relBase: 42,
       views: {regulate: 0.05, oversight: 0.05}, blurb: 'The Chancellor. A decent man trapped in a slow machine.',
-      available: function (Q) { return !Q.valorum_fallen; },
+      // fallen as Chancellor, he can stand again for the Moderates' leadership a year on (three, if we pursued his scandal), unless he works for us
+      available: function (Q) { return !Q.valorum_fallen || (!Q.adv_valorum && Q.valorum_fell_date >= 0 && Q.date >= Q.valorum_fell_date + (Q.valorum_scandal ? 36 : 12)); },
       rise: function (Q) { return 0.4; }},
     quill: {group: 'mod', name: 'Davan Quill', tag: 'establishment', firm: 0.6, relBase: 38,
       views: {regulate: -0.05, powers: 0.05, rim: -0.05}, likes: {guild: 6},
@@ -585,7 +597,7 @@
       }},
     // Security Bloc
     hask: {group: 'sec', name: 'Orvos Hask', tag: 'law and order', firm: 0.5, relBase: 28,
-      blurb: 'A Colonies conservative. Wants order, and an army to keep it.',
+      blurb: 'A Colonies moderate. Will back anyone who clears the lanes of pirates and pays for the Republic\'s defence.',
       rise: function (Q) { return 0.35 + 0.1 * on(Q.fear < 35); }},
     tarkin: {group: 'sec', name: 'Wilhuff Tarkin', tag: 'hardliner', firm: 0.85, relBase: 20,
       views: {powers: 0.08, army: 0.1, oversight: -0.05, peace: -0.12, rim: -0.1}, likes: {pal: 15, rim: -15, rfc: -15},
@@ -603,7 +615,7 @@
       }},
     // Independents
     vell: {group: 'ind', name: 'Tamsar Vell', tag: 'broker', firm: 0.4, relBase: 40,
-      blurb: 'Speaks for the unaligned worlds. Open to any bargain that leaves them alone.',
+      blurb: 'Speaks for the unaligned worlds. Wants the war ended at the table, but stands by the Republic once it fights, and wants it reformed.',
       rise: function (Q) { return 0.35; }},
     satine: {group: 'ind', name: 'Satine Kryze', tag: 'neutralist', firm: 0.6, relBase: 42,
       views: {peace: 0.2, army: -0.15, powers: -0.1}, likes: {sec: -10, pal: -5, cis: 5},
@@ -612,7 +624,7 @@
       rise: function (Q) { return 0.15 + Q.war_weariness / 100 + 0.1 * on(Q.peace_talks >= 1) + 0.1 * on(Q.satine_friend); }},
     shale: {group: 'ind', name: 'Corwin Shale', tag: 'isolationist', firm: 0.7, relBase: 30,
       views: {army: -0.1, rim: -0.1, regulate: -0.05, peace: 0.05}, likes: {rc: -5},
-      blurb: 'Wants the Republic to leave his worlds alone, and to stop asking them to pay for it.',
+      blurb: 'Wants Coruscant\'s hands off his worlds: seats and rights for the Rim, but no new taxes and no new powers for the Republic.',
       rise: function (Q) { return 0.15 + 0.1 * on(Q.treasury < 2) + 0.1 * on(Q.rim_hardship > 45) + 0.1 * on(Q.war_weariness > 40); }},
     // Rim Freedom Caucus (only if the Rimward wing splits away)
     farr: {group: 'rfc', name: 'Onaconda Farr', tag: 'pragmatist', firm: 0.35, relBase: 45,
@@ -625,6 +637,38 @@
       rimGriev: 0.1, rimSep: 0.15,
       blurb: 'A Mid Rim organiser who thinks the Caucus betrayed the Rim.',
       rise: function (Q) { return 0.1 + Math.max(0, Q.rim_hardship - 40) / 30 + (Q.farr_dead ? 1 : 0) + 0.3 * on((Q.rim_radical || 0) >= 2); }},
+    // the leaders of the wings that have none of the original leaders
+    doran: {group: 'mod', name: 'Tessaly Doran', tag: 'old family', firm: 0.7, relBase: 30,
+      views: {rim: -0.1, powers: 0.08, oversight: -0.05}, likes: {pal: 12, rim: -10, rfc: -10},
+      blurb: 'Lady of an old Corulag house. She speaks for the Core\'s ancient human families, and she listens to Palpatine.',
+      rise: function (Q) { return 0.15 + 0.04 * Math.min(5, Q.hhc_heat || 0) + 0.1 * on(Q.fear > 45) + 0.1 * on(Q.pal_chancellor || (Q.pal_relation || 0) > 50) - 0.3 * on(Q.hhc_discredited); }},
+    brask: {group: 'guild', name: 'Aldo Brask', tag: 'war industrialist', firm: 0.75, relBase: 26,
+      views: {army: 0.15, powers: 0.1, peace: -0.15, oversight: -0.1, regulate: -0.1}, likes: {pal: 15, sec: 10, rim: -5},
+      blurb: 'Fondor\'s senator, and the voice of the yards and foundries that build the Republic\'s war.',
+      available: function (Q) { return SW.wingActive(Q, 'mic'); },
+      rise: function (Q) { return 0.25 + 0.03 * Math.min(15, Q.war_turns || 0) + 0.04 * Math.min(5, Q.clones || 0) + 0.1 * on((Q.debt || 0) >= 20) + 0.1 * on(Q.banking_dereg) - 0.15 * on(Q.peace_talks >= 1); }},
+    // Palpatine's lieutenants: each speaks for a wing of his bloc, and one of them succeeds him if he falls
+    amedda: {group: 'pal', name: 'Mas Amedda', tag: 'centralist', firm: 0.6, relBase: 30,
+      views: {powers: 0.15, oversight: -0.1}, likes: {mod: 6, sec: 6},
+      blurb: 'The Vice Chair of the Senate, and the manager of the Chancellor\'s machine.',
+      available: function (Q) { return !Q.amedda_arrested && !Q.amedda_removed; },
+      rise: function (Q) { return 0.4; }},
+    pestage: {group: 'pal', name: 'Sate Pestage', tag: 'centralist', firm: 0.6, relBase: 28,
+      views: {powers: 0.15, oversight: -0.1}, likes: {mod: 4, sec: 6},
+      blurb: 'A fixer from Palpatine\'s Naboo years, who now runs his appointments.',
+      available: function (Q) { return !!(Q.amedda_arrested || Q.amedda_removed); },
+      rise: function (Q) { return 0.4; }},
+    greejatus: {group: 'pal', name: 'Janus Greejatus', tag: 'new order', firm: 0.9, relBase: 15,
+      views: {powers: 0.2, army: 0.15, rim: -0.2, peace: -0.1, oversight: -0.15}, likes: {sec: 10, rim: -20, rfc: -20, rc: -10},
+      blurb: 'A Coruscant ideologue who wants a human Republic, ruled by one man and guarded by the young.',
+      rise: function (Q) { return 0.1 + 0.04 * Math.min(6, Q.hhc_heat || 0) + 0.12 * on(Q.rim_enfranchised) + 0.08 * on(Q.rim_assembly) + 0.1 * on(Q.sentience_rights) - 0.3 * on(Q.hhc_discredited); }},
+    dangor: {group: 'pal', name: 'Ars Dangor', tag: 'devotee', firm: 0.85, relBase: 20,
+      views: {powers: 0.25, oversight: -0.2}, likes: {rc: -5},
+      blurb: 'Palpatine\'s most devoted adviser. He serves the man, not the Republic.',
+      rise: function (Q) {
+        if (Q.sidious_known || Q.pal_disgraced) return -0.45;
+        return 0.1 + Math.min(0.25, (Q.pal_office_months || 0) / 200) + 0.6 * on(Q.pal_chancellor) + (Q.pal_chancellor ? 0.1 * Math.min(6, Q.emergency_powers || 0) : 0);
+      }},
 
     // Caucus factions. agenda(Q) is true when the faction's demands are not being met.
     ryder: {group: 'inst', name: 'Horox Ryder', tag: 'mainstream', firm: 0.5,
@@ -714,7 +758,7 @@
   var tariffsOn = function (Q) { return Q.trade_tax || Q.budget_rev === 'tariffs'; };
   var frontLosing = function (Q, f) { return Q.war && (Q.war_balance + (Q['war_off_' + f] || 0)) < -2; };
   SW.LEADER_MINDS = {
-    teem: {motive: 'Ainlee Teem built his career on Malastare\'s grievances. He bargains because a deal that feeds his worlds beats a principle that starves them, but he never forgets a broken promise.',
+    teem: {motive: 'Ainlee Teem built his career on Malastare\'s grievances. He wants the Rim inside the Republic as an equal, not a colony. He bargains because a deal that feeds his worlds beats a principle that starves them, but he never forgets a broken promise.',
       cares: [mc(function (Q) { return Q.rim_relief >= 1; }, 2, 'relief for the Rim'), mc(function (Q) { return Q.rim_enfranchised; }, 2, 'Rim seats in the Senate'),
         mc(function (Q) { return Q.rim_hardship > 45; }, -2, 'hunger on the Rim'), mc(function (Q) { return inGovt(Q, 'rim'); }, 1, 'a seat in government'),
         mc(function (Q) { return frontLosing(Q, 'outer'); }, -2, 'the sieges of the Rim')]},
@@ -722,7 +766,7 @@
       cares: [mc(function (Q) { return inGovt(Q, 'rim'); }, 2, 'a share of power'), mc(function (Q) { return Q.guild_relation > 35; }, 1, 'the guilds\' generosity'),
         mc(function (Q) { return Q.anti_corruption; }, -2, 'the Ethics Commission'), mc(function (Q) { return tariffsOn(Q); }, -1, 'the trade tariffs'),
         mc(function (Q) { return Q.free_ryloth; }, -2, 'arming Cham Syndulla\'s rebels')]},
-    ardana: {motive: 'Tal Ardana watched Ord Mantell starve while Coruscant debated. Every compromise the Rim has made has been broken, so she makes none.',
+    ardana: {motive: 'Tal Ardana watched Ord Mantell starve while Coruscant debated. Every compromise the Rim has made has been broken, so she makes none. She takes her seat to stop the Senate working, and only reform that actually passes will change her mind.',
       cares: [mc(function (Q) { return Q.rim_hardship > 40; }, -2, 'the Rim\'s suffering'), mc(function (Q) { return Q.rim_enfranchised; }, 2, 'Rim enfranchisement'),
         mc(function (Q) { return inGovt(Q, 'guild'); }, -2, 'guild ministers in government'), mc(function (Q) { return Q.date >= 60 && !Q.slavery_abolished; }, -1, 'the slave markets'),
         mc(function (Q) { return frontLosing(Q, 'outer'); }, -2, 'the sieges of the Rim')]},
@@ -747,7 +791,7 @@
     fang_zar: {motive: 'Fang Zar has watched the Senate hand away its powers one emergency at a time. He will work with anyone who wants them back, and with no one who wants more.',
       cares: [mc(function (Q) { return Q.emergency_powers >= 3 && !Q.rc_chancellor; }, -2, 'the Chancellor\'s emergency powers'), mc(function (Q) { return Q.emergency_sunset; }, 2, 'sunset clauses'),
         mc(function (Q) { return Q.term_limits_protected; }, 1, 'entrenched term limits'), mc(function (Q) { return Q.delegation_formed; }, 1, 'the Delegation of 2000')]},
-    hask: {motive: 'Orvos Hask wants order, and a Republic able to keep it. He is steady rather than fierce, and grows fiercer when the lanes are unsafe.',
+    hask: {motive: 'Orvos Hask wants order, and a Republic able to keep it. He is a moderate who will deal with anyone serious about the pirates and the Republic\'s defence, and he grows fiercer when the lanes are unsafe.',
       cares: [mc(function (Q) { return Q.judicial_forces >= 5; }, 2, 'a stronger Judicial Force'), mc(function (Q) { return Q.pact_formed; }, 1, 'the Defence Pact'),
         mc(function (Q) { return Q.rim_hardship > 45 || (Q.trade || 60) < 35; }, -1, 'piracy on the lanes'), mc(function (Q) { return Q.fear > 45; }, -1, 'the disorder')]},
     tarkin: {motive: 'Wilhuff Tarkin learned on Eriadu that order comes from fear of force. He holds his line because he thinks compromise is weakness, and he has Palpatine\'s ear.',
@@ -757,13 +801,13 @@
     danu: {motive: 'Giddean Danu builds warships at Kuat and wants them commanded by the Senate. He bends on budgets and never on who holds the leash.',
       cares: [mc(function (Q) { return Q.army_oversight || !Q.kamino_army; }, 2, 'Senate command of the forces'), mc(function (Q) { return Q.judicial_forces >= 5; }, 1, 'the Judicial Forces'),
         mc(function (Q) { return Q.emergency_powers >= 5; }, -2, 'a Chancellor with an army of his own'), mc(function (Q) { return Q.fleet_levy; }, 1, 'the member-world fleets')]},
-    vell: {motive: 'Tamsar Vell speaks for worlds that joined the Republic for trade and protection, and nothing more. He sells his votes for exemptions, and resents every new burden.',
+    vell: {motive: 'Tamsar Vell speaks for worlds that joined the Republic for trade and protection. He would end any war at the negotiating table, but he will not abandon the Republic once it is fighting, and he believes it can be reformed.',
       cares: [mc(function (Q) { return Q.budget_rev === 'levy' || tariffsOn(Q); }, -1, 'new taxes on unaligned worlds'), mc(function (Q) { return inGovt(Q, 'ind'); }, 1, 'being consulted'),
-        mc(function (Q) { return Q.war; }, -1, 'the war\'s demands'), mc(function (Q) { return Q.fleet_levy; }, -2, 'the fleet levy')]},
+        mc(function (Q) { return Q.peace_talks >= 1; }, 1, 'the peace talks'), mc(function (Q) { return Q.fleet_levy; }, -2, 'the fleet levy')]},
     satine: {motive: 'Duchess Satine rebuilt Mandalore on the promise that it would never go to war again. She compromises on everything but that.',
       cares: [mc(function (Q) { return Q.peace_talks >= 1; }, 2, 'the peace talks'), mc(function (Q) { return Q.war; }, -1, 'the war'),
         mc(function (Q) { return Q.mandalore_pressed; }, -3, 'pressure on Mandalore\'s neutrality'), mc(function (Q) { return Q.satine_friend; }, 1, 'the Caucus\'s friendship')]},
-    shale: {motive: 'Corwin Shale\'s worlds pay their dues and ask for nothing. He wants the Republic to return the favour by leaving them alone, and treats every levy as a betrayal.',
+    shale: {motive: 'Corwin Shale\'s worlds pay their dues and ask for nothing. He will vote to give the Rim its seats and its rights, but against anything that makes Coruscant stronger, and he treats every levy as a betrayal.',
       cares: [mc(tariffsOn, -2, 'Coruscant\'s taxes'), mc(function (Q) { return Q.budget_rev === 'levy'; }, -2, 'the Core levy'),
         mc(function (Q) { return Q.war; }, -1, 'the war'), mc(function (Q) { return Q.fleet_levy; }, -2, 'the fleet levy')]},
     farr: {motive: 'Onaconda Farr left the Caucus over the Rim, but he still believes it can be persuaded. He bargains warmly and remembers betrayal for ever.',
@@ -772,6 +816,22 @@
     tandeth: {motive: 'Mira Tandeth thinks the Caucus sold the Rim for committee seats. She sets the price of her votes high, and in public.',
       cares: [mc(function (Q) { return Q.rim_hardship > 40; }, -2, 'the Rim\'s suffering'), mc(function (Q) { return inGovt(Q, 'guild'); }, -2, 'guild ministers in government'),
         mc(function (Q) { return Q.rim_enfranchised; }, 2, 'Rim enfranchisement'), mc(function (Q) { return Q.farr_dead; }, -2, 'Farr\'s murder')]},
+    doran: {motive: 'The Dorans have sat in the Senate since before Ruusan. Tessaly Doran believes the Republic was built by humans for humans, and that the Rim\'s new rights are the beginning of the end. She bends for order and for Palpatine, and for nothing else.',
+      cares: [mc(function (Q) { return Q.rim_enfranchised; }, -2, 'Rim enfranchisement'), mc(function (Q) { return Q.sentience_rights; }, -2, 'the Rights of Sentience'),
+        mc(function (Q) { return Q.hhc_investigated; }, -2, 'the investigation of the human-first groups'), mc(function (Q) { return Q.fear > 45; }, 1, 'the call for order'),
+        mc(function (Q) { return inGovt(Q, 'mod'); }, 1, 'a seat in government')]},
+    brask: {motive: 'Aldo Brask\'s yards at Fondor have never been busier. Every warship the Republic orders is another reason for the war to go on, and he will not let the Senate forget who builds them.',
+      cares: [mc(function (Q) { return Q.war; }, 2, 'the war orders'), mc(function (Q) { return Q.peace_talks >= 1; }, -2, 'talk of peace'),
+        mc(function (Q) { return Q.army_oversight; }, -1, 'the Senate meddling in procurement'), mc(function (Q) { return (Q.debt || 0) >= 25; }, -1, 'a Republic too deep in debt to pay')]},
+    amedda: {motive: 'Mas Amedda manages the Senate for the Chancellor. He believes order needs a strong hand, and that his is the hand that holds the gavel.',
+      cares: [mc(function (Q) { return Q.emergency_powers >= 3; }, 2, 'the Chancellor\'s powers'), mc(function (Q) { return Q.independent_speaker; }, -2, 'the independent Speaker')]},
+    pestage: {motive: 'Sate Pestage has served Palpatine since Naboo. He sells appointments, keeps the files, and wants the machine to go on running.',
+      cares: [mc(function (Q) { return Q.emergency_powers >= 3; }, 2, 'the Chancellor\'s powers'), mc(function (Q) { return Q.integrity_office; }, -2, 'the Office of Public Integrity')]},
+    greejatus: {motive: 'Janus Greejatus wants a human Republic under one man. He regards every right granted to the Rim as a wrong to be undone.',
+      cares: [mc(function (Q) { return Q.rim_enfranchised; }, -3, 'the Rim\'s seats'), mc(function (Q) { return Q.sentience_rights; }, -2, 'the Rights of Sentience'),
+        mc(function (Q) { return Q.fear > 45; }, 2, 'the fear in the streets')]},
+    dangor: {motive: 'Ars Dangor believes in Palpatine, not in the Republic. Whatever serves the Chancellor is right.',
+      cares: [mc(function (Q) { return Q.pal_chancellor; }, 3, 'the Chancellor in his rightful place'), mc(function (Q) { return Q.anti_corruption; }, -2, 'the ethics law')]},
     // Caucus factions
     ryder: {motive: 'Horox Ryder has sat through forty years of scandals. He is patient with the Caucus as long as it is visibly cleaner than the Senate around it.',
       cares: [mc(function (Q) { return Q.corruption > 62; }, -2, 'the corruption scandals'), mc(function (Q) { return Q.anti_corruption; }, 2, 'the Ethics Commission'),
@@ -935,6 +995,13 @@
     Q.leader_changes = (Q.leader_changes || 0) + 1;
     Q[group + '_favour'] = 0; Q[group + '_grudge'] = 0;
     if (id === 'ardana') Q.rim_was_radical = 1;
+    var lw = SW.LEADER_WING && SW.LEADER_WING[id];
+    if (lw && SW.WINGS[lw].bloc === group && Q[group + '_wing'] !== lw) {
+      Q[group + '_wing'] = lw;
+      if (SW.wingActive(Q, lw)) SW.wingShift(Q, lw, 8);
+      Q[group + '_congress_hold'] = Q.date + 12;
+    }
+    if (group === 'mod') Q.valorum_leads_mod = (Q.valorum_fallen && id === 'valorum') ? 1 : 0;
   };
   SW.leaderRefuses = function (Q, a, b) {
     var r = SW.leader(Q, a).refuses || [];
@@ -1275,27 +1342,634 @@
     else if (g === 'rfc') { Q.inst_dissent += 3; }
   };
 
+  // ------------------------------------------------------------------ party wings and congresses
+  // Every bloc is a coalition of wings with their own ideology. Delegates drift between the wings with the times;
+  // a congress decides which wing leads the bloc, and the ruling wing's candidate becomes the bloc's leader.
+  // Palpatine stays at the head of his own bloc while he is free: its congress picks the wing that sets its line.
+  SW.WINGS = {
+    // the Core Moderates
+    ruusan: {bloc: 'mod', name: 'Ruusan Republicans', leaders: ['valorum', 'fang_zar'], color: '#6fa8d6', ink: '#2f6fae', lit: '#8cbbe3', base: 44,
+      home: {colonies: 1, midrim: 0.3}, creed: 'clean government and slow reform within the old rules',
+      grow: function (Q) { return 0.35 + 0.04 * SW.TRACKS.hhc.level(Q) + 0.1 * on(Q.rim_enfranchised) + 0.06 * on(Q.rim_assembly); }},
+    establishment: {bloc: 'mod', name: 'Core Establishment', leaders: ['quill'], color: '#d8cb8c', ink: '#7a6a2e', lit: '#d8cb8c', base: 34,
+      home: {core: 1}, creed: 'order and trade, and change only if necessary',
+      grow: function (Q) { return 0.3 + 0.1 * on(Q.fear > 45) + 0.1 * on(SW.reformCount(Q) >= 3); }},
+    old_families: {bloc: 'mod', name: 'Old Families', leaders: ['doran'], color: '#8c7b4e', ink: '#6b5a2e', lit: '#b8a46e', base: 12,
+      home: {core: 1.5}, creed: 'humancentric and traditionalist, and receptive to Palpatine'},
+    // the Commerce Guilds
+    corporatists: {bloc: 'guild', name: 'Corporatists', leaders: ['dod'], color: '#d08f2a', ink: '#9a6312', lit: '#e0a548', base: 46,
+      home: {corporate: 1, midrim: 0.6}, creed: 'the Trade Federation\'s way: monopolies, low taxes, and friends in the Senate',
+      grow: function (Q) {
+        return 0.45 - 0.08 * on(Q.naboo_crisis || Q.naboo_free) - 0.04 * Math.min(4, Q.gunray_stage || 0) - 0.05 * on(Q.tf_probe) -
+          0.35 * on(Q.gunray_convicted) - 0.15 * on(Q.suspect_dod) - 0.2 * on(Q.tf_broken_up) + 0.05 * on(Q.guild_relation < 30);
+      }},
+    confederates: {bloc: 'guild', name: 'Confederates', leaders: ['san_hill'], color: '#7d4e9e', ink: '#6a3f8a', lit: '#b48ad6', base: 30,
+      home: {corporate: 1.2, outer: 0.4}, creed: 'the Techno Union and the Banking Clan, who see the Republic as a broken, humancentric state that means to seize their wealth',
+      grow: function (Q) {
+        return SW.LEADERS.san_hill.rise(Q) + 0.12 * on(tariffsOn(Q)) + 0.05 * Math.min(3, Q.guild_regulations || 0) + 0.03 * Math.min(5, Q.hhc_heat || 0) - 0.1 * on(Q.hhc_discredited);
+      }},
+    free_traders: {bloc: 'guild', name: 'Free Traders', leaders: ['clovis'], color: '#e6c46a', ink: '#8f7410', lit: '#e6c46a', base: 10,
+      home: {colonies: 0.8, midrim: 0.8}, creed: 'commerce inside a lawful Republic, with honest courts and a navy to guard the lanes',
+      grow: function (Q) {
+        return 0.05 + 0.1 * Math.min(3, Q.dereg_count || 0) + 0.15 * on(Q.anti_cartel) + 0.15 * on(Q.tf_broken_up) + 0.15 * on(Q.pirates_crushed) + 0.15 * on(Q.syndicates_broken);
+      }},
+    mic: {bloc: 'guild', name: 'Military-Industrial Complex', leaders: ['brask'], color: '#5e6670', ink: '#4a525b', lit: '#9aa3ad', base: 14,
+      home: {core: 0.8, colonies: 1}, creed: 'the yards and foundries that profit from the war: for the clone army and a strong Chancellor',
+      hidden: function (Q) { return !(Q.war || (Q.corporate_seceded || 0) >= 0.3); },
+      grow: function (Q) { return SW.LEADERS.brask.rise(Q) + 0.5 * on(SW.wingGone(Q, 'confederates') && SW.wingGone(Q, 'corporatists')); }},
+    // the Rimward Coalition
+    populists: {bloc: 'rim', name: 'Rim Populists', leaders: ['teem'], color: '#e8843f', ink: '#c4520f', lit: '#f0985a', base: 44,
+      home: {midrim: 1, outer: 0.7}, creed: 'a place for the Rim inside the Republic: an end to humancentrism and slavery, and seats for the Rim'},
+    hutt_machine: {bloc: 'rim', name: 'Hutt-space Machine', leaders: ['orn_free_taa'], color: '#a06a38', ink: '#86552a', lit: '#c99260', base: 30,
+      home: {outer: 1.2}, creed: 'deals, patronage and the cartels',
+      grow: function (Q) { return SW.LEADERS.orn_free_taa.rise(Q) + 0.1 * on(Q.hutt_deal) - 0.5 * on(Q.syndicates_broken); }},
+    radicals: {bloc: 'rim', name: 'Rim Radicals', leaders: ['ardana'], color: '#b63d1c', ink: '#9c3214', lit: '#e0603c', base: 16,
+      home: {outer: 1.2}, creed: 'reform now: they no longer believe the Republic can change, and many listen to Dooku'},
+    // the Security Bloc
+    law_order: {bloc: 'sec', name: 'Law and Order Moderates', leaders: ['hask'], color: '#8aa0b4', ink: '#4f6578', lit: '#a8bccd', base: 48,
+      home: {colonies: 1, core: 0.4}, creed: 'broadly moderate: order, a Republic that pays for its defence, and lanes cleared of pirates'},
+    human_first: {bloc: 'sec', name: 'Human-Firsters', leaders: ['tarkin'], color: '#56606b', ink: '#3c4650', lit: '#b0a99b', base: 22,
+      home: {outer: 0.8, core: 0.6}, creed: 'order through force, and the High Human Culture',
+      grow: function (Q) { return SW.LEADERS.tarkin.rise(Q) + 0.03 * Math.min(5, Q.hhc_heat || 0) - 0.2 * on(Q.hhc_discredited); }},
+    const_hawks: {bloc: 'sec', name: 'Constitutional Hawks', leaders: ['danu'], color: '#5b8fc0', ink: '#2f5f8f', lit: '#8ab6de', base: 20,
+      home: {core: 0.9, colonies: 0.6}, creed: 'a strong defence under the Senate\'s control'},
+    // the Independents
+    brokers: {bloc: 'ind', name: 'Brokers', leaders: ['vell'], color: '#6ea07a', ink: '#4c8459', lit: '#8cbc97', base: 46,
+      home: {midrim: 1}, creed: 'a negotiated end to the war, loyalty to the Republic once it fights, and a reformed Republic'},
+    neutralists: {bloc: 'ind', name: 'Neutralists', leaders: ['satine'], color: '#acd2a2', ink: '#4f8a43', lit: '#acd2a2', base: 22,
+      home: {outer: 0.9, midrim: 0.4}, creed: 'Mandalore\'s peace: neutrality, and an end to war'},
+    isolationists: {bloc: 'ind', name: 'Isolationists', leaders: ['shale'], color: '#3e6c4b', ink: '#3e6c4b', lit: '#7fae8b', base: 22,
+      home: {midrim: 0.8, outer: 0.5}, creed: 'leave the member worlds alone: seats and rights for the Rim, but no new powers for Coruscant',
+      grow: function (Q) {
+        return SW.LEADERS.shale.rise(Q) + 0.05 * Math.min(6, Q.emergency_powers || 0) + 0.1 * on(Q.fleet_levy) + 0.1 * on(Q.budget_rev === 'levy' || tariffsOn(Q)) +
+          0.03 * Math.min(6, Q.chan_powers || 0) + 0.1 * on(Q.kamino_army && !Q.army_oversight);
+      }},
+    // the Rim Freedom Caucus, when it exists
+    rfc_pragmatists: {bloc: 'rfc', name: 'Pragmatists', leaders: ['farr'], color: '#e8b84a', ink: '#a07410', lit: '#e8b84a', base: 55,
+      home: {outer: 0.8, midrim: 0.6}, creed: 'a Rim party that still talks to the Caucus'},
+    rfc_radicals: {bloc: 'rfc', name: 'Radicals', leaders: ['tandeth'], color: '#c27e26', ink: '#8f5a14', lit: '#d99a4c', base: 35,
+      home: {outer: 1, midrim: 0.4}, creed: 'the Rim first, and no more bargains'},
+    // Palpatine's bloc
+    centralists: {bloc: 'pal', name: 'Centralists', leaders: ['amedda', 'pestage'], color: '#b3141b', ink: '#b3141b', lit: '#e0474f', base: 55,
+      home: {core: 0.8, midrim: 0.5}, creed: 'a strong executive, the only way to restore order, clean up the Senate and renew the Republic',
+      grow: function (Q) { return 0.45; }},
+    new_order: {bloc: 'pal', name: 'New Order', leaders: ['greejatus'], color: '#7a1218', ink: '#5e0a0f', lit: '#c0505a', base: 15,
+      home: {core: 1, colonies: 0.6}, creed: 'a totalitarian, human Republic: the Rim\'s rights undone, and human militias in the streets'},
+    cult: {bloc: 'pal', name: 'Personality Cult', leaders: ['dangor'], color: '#e0646e', ink: '#b8404a', lit: '#ee8a92', base: 15,
+      home: {core: 1.2}, creed: 'devotion to Palpatine himself, and to whatever serves him'}
+  };
+  SW.BLOC_WINGS = {};
+  SW.LEADER_WING = {};
+  (function () {
+    for (var wid in SW.WINGS) {
+      var W = SW.WINGS[wid];
+      (SW.BLOC_WINGS[W.bloc] = SW.BLOC_WINGS[W.bloc] || []).push(wid);
+      for (var i = 0; i < W.leaders.length; i++) SW.LEADER_WING[W.leaders[i]] = wid;
+    }
+  })();
+  SW.CONGRESS_BLOCS = ['mod', 'guild', 'rim', 'sec', 'ind', 'rfc', 'pal'];
+  SW.NONAFF = {mod: 10, guild: 8, rim: 12, sec: 10, ind: 15, rfc: 10, pal: 8};
+  SW.CONGRESS_START = {mod: 20, guild: 26, rim: 32, sec: 38, ind: 44, rfc: 24, pal: 30};
+  SW.CONGRESS_GAP = 48;        // months between a bloc's regular congresses
+  SW.CONGRESS_HOLD = 18;       // months after a congress before an outgrown ruling wing can be challenged again
+  SW.WING_PULL = 0.3;          // how strongly a wing lifts its bloc in its home regions
+  SW.WING_SWING = 2.5;         // how strongly the times move delegates between the wings
+  SW.CONGRESS_RANK = {fallen: 4, crisis: 3, scandal: 3, overtaken: 2, regular: 1};
+
+  SW.wingGone = function (Q, id) { return !!Q['wing_gone_' + id]; };
+  SW.wingActive = function (Q, id) {
+    var W = SW.WINGS[id];
+    if (!W || Q['wing_gone_' + id]) return false;
+    return !W.hidden || !!Q['wing_seen_' + id];
+  };
+  // the blocs whose wings are in play: the Rim Freedom Caucus has wings only as a Rim party
+  SW.hasWings = function (Q, b) {
+    if (!SW.BLOC_WINGS[b] || (Q.parties || []).indexOf(b) < 0) return false;
+    if (b === 'rfc') return Q.rfc_kind === 'rimward';
+    return true;
+  };
+  SW.blocWings = function (Q, b) { return (SW.BLOC_WINGS[b] || []).filter(function (w) { return SW.wingActive(Q, w); }); };
+  SW.nonAff = function (Q, b) { var n = Q[b + '_nonaff']; return n >= 0 ? n : (SW.NONAFF[b] || 10); };
+  SW.wingName = function (id) { return SW.WINGS[id] ? SW.WINGS[id].name : ''; };
+  SW.wingSpan = function (id, text) {
+    var W = SW.WINGS[id];
+    return W ? '<span class="wing" style="--wi:' + (W.ink || W.color) + ';--wl:' + (W.lit || W.color) + '">' + (text || W.name) + '</span>' : (text || '');
+  };
+  SW.wingGrow = function (Q, id) {
+    var W = SW.WINGS[id], g;
+    try {
+      if (W.grow) g = W.grow(Q);
+      else { var L = SW.LEADERS[W.leaders[0]]; g = L && L.rise ? L.rise(Q) : 0.3; }
+    } catch (e) { g = 0.3; }
+    return isFinite(g) ? SW.clamp(g, -0.45, 1.4) : 0.3;
+  };
+  // where each wing's share is heading: its natural size and what the times favour, plus what has lately happened to it
+  SW.wingTargets = function (Q, b) {
+    var ws = SW.blocWings(Q, b), room = 100 - SW.nonAff(Q, b), raw = {}, sum = 0, t = {}, i;
+    for (i = 0; i < ws.length; i++) { raw[ws[i]] = SW.WINGS[ws[i]].base * Math.exp(SW.WING_SWING * SW.wingGrow(Q, ws[i])); sum += raw[ws[i]]; }
+    for (i = 0; i < ws.length; i++) t[ws[i]] = room * raw[ws[i]] / (sum || 1);
+    for (i = 0; i < ws.length; i++) if (Q['wingpush_' + ws[i]]) SW.moveShare(t, ws[i], Q['wingpush_' + ws[i]]);
+    return t;
+  };
+  // move d points to (or, if negative, from) one wing, taking them from (or giving them to) the others in proportion to their size
+  SW.moveShare = function (sh, w, d) {
+    var others = 0, k;
+    for (k in sh) if (k !== w) others += sh[k];
+    d = Math.max(-(sh[w] - 0.5), Math.min(d, others - 0.5 * (Object.keys(sh).length - 1)));
+    if (others <= 0 || !d) return;
+    for (k in sh) if (k !== w) sh[k] = Math.max(0.5, sh[k] - d * sh[k] / others);
+    sh[w] += d;
+  };
+  SW.normWings = function (Q, b) {
+    var ws = SW.blocWings(Q, b), room = 100 - SW.nonAff(Q, b), s = 0, i;
+    for (i = 0; i < ws.length; i++) { if (!(Q['wing_' + ws[i]] > 0)) Q['wing_' + ws[i]] = 0; s += Q['wing_' + ws[i]]; }
+    if (s <= 0) { var t = SW.wingTargets(Q, b); for (i = 0; i < ws.length; i++) Q['wing_' + ws[i]] = t[ws[i]]; return; }
+    for (i = 0; i < ws.length; i++) Q['wing_' + ws[i]] = room * Q['wing_' + ws[i]] / s;
+  };
+  // an event moves delegates now, and the change lingers for a while
+  SW.wingShift = function (Q, id, d) {
+    var W = SW.WINGS[id];
+    if (!W || !SW.wingActive(Q, id)) return;
+    if (!SW.blocWings(Q, W.bloc).some(function (w) { return Q['wing_' + w] > 0; })) SW.ensureWings(Q, W.bloc);
+    var sh = {}, ws = SW.blocWings(Q, W.bloc), i;
+    for (i = 0; i < ws.length; i++) sh[ws[i]] = Q['wing_' + ws[i]] || 0;
+    SW.moveShare(sh, id, d);
+    for (i = 0; i < ws.length; i++) Q['wing_' + ws[i]] = sh[ws[i]];
+    Q['wingpush_' + id] = (Q['wingpush_' + id] || 0) + d;
+    SW.normWings(Q, W.bloc);
+  };
+  // a wing's candidate: its leader if still able to lead, else the strongest of its figures who can stand
+  SW.wingCandidate = function (Q, w) {
+    var W = SW.WINGS[w], best = '', bestS = -99;
+    if (!W) return '';
+    for (var i = 0; i < W.leaders.length; i++) {
+      var id = W.leaders[i], L = SW.LEADERS[id];
+      if (!L || (L.available && !L.available(Q))) continue;
+      var s = 0.3;
+      try { s = L.rise ? L.rise(Q) : 0.3; } catch (e) { s = 0.3; }
+      s += (Q[W.bloc + '_leader_id'] === id ? 0.15 : 0) - i * 0.01;
+      if (s > bestS) { bestS = s; best = id; }
+    }
+    return best;
+  };
+  // the bloc's leader can no longer lead it (fallen, dead, gone); for Palpatine's bloc, he has fallen and no successor is chosen
+  SW.leaderOut = function (Q, b) {
+    if (b === 'pal') return !!((Q.pal_disgraced || Q.sidious_defeated || Q.sidious_gone) && !Q.pal_leader_id);
+    var L = SW.LEADERS[Q[b + '_leader_id']];
+    return !!(L && L.available && !L.available(Q));
+  };
+  SW.ensureWings = function (Q, b) {
+    if (!SW.BLOC_WINGS[b]) return;
+    if (!(Q[b + '_nonaff'] >= 0)) Q[b + '_nonaff'] = SW.NONAFF[b];
+    var ws = SW.blocWings(Q, b);
+    if (!ws.some(function (w) { return Q['wing_' + w] > 0; })) {
+      var t = SW.wingTargets(Q, b);
+      for (var i = 0; i < ws.length; i++) Q['wing_' + ws[i]] = t[ws[i]];
+      // at the start the ruling wing is the largest
+      var rw = b === 'pal' ? 'centralists' : SW.LEADER_WING[Q[b + '_leader_id']];
+      if (rw && ws.indexOf(rw) >= 0) {
+        var mx = 0;
+        for (var j = 0; j < ws.length; j++) if (ws[j] !== rw) mx = Math.max(mx, Q['wing_' + ws[j]]);
+        if (Q['wing_' + rw] < mx + 4) { var d = mx + 4 - Q['wing_' + rw]; Q['wing_' + rw] += d; Q['wingpush_' + rw] = (Q['wingpush_' + rw] || 0) + d; SW.normWings(Q, b); }
+      }
+    }
+    var cur = Q[b + '_wing'];
+    if (!cur || !SW.wingActive(Q, cur) || SW.WINGS[cur].bloc !== b) {
+      var lw = b === 'pal' ? (Q.pal_leader_id ? SW.LEADER_WING[Q.pal_leader_id] : 'centralists') : SW.LEADER_WING[Q[b + '_leader_id']];
+      Q[b + '_wing'] = (lw && ws.indexOf(lw) >= 0) ? lw : (ws[0] || '');
+    }
+    if (!(Q[b + '_congress_due'] > 0)) Q[b + '_congress_due'] = (b === 'rfc' ? Q.date : 0) + SW.CONGRESS_START[b];
+    if (!(Q[b + '_congress_due'] > Q.date - 12) && b === 'rfc') Q[b + '_congress_due'] = Q.date + SW.CONGRESS_START[b];
+  };
+  SW.seedWings = function (Q) {
+    for (var i = 0; i < SW.CONGRESS_BLOCS.length; i++) if (SW.hasWings(Q, SW.CONGRESS_BLOCS[i])) SW.ensureWings(Q, SW.CONGRESS_BLOCS[i]);
+    if (Q.valorum_fallen && !(Q.valorum_fell_date >= 0)) Q.valorum_fell_date = Q.date;
+    Q.wings_seeded = 1;
+  };
+  // each quarter: hidden wings appear when their moment comes, delegates drift a fifth of the way to where the times push them
+  SW.wingTick = function (Q, rf) {
+    for (var id in SW.WINGS) {
+      var W = SW.WINGS[id];
+      if (W.hidden && !Q['wing_seen_' + id] && !Q['wing_gone_' + id] && !W.hidden(Q)) { Q['wing_seen_' + id] = 1; Q['wing_' + id] = 2; }
+    }
+    for (var i = 0; i < SW.CONGRESS_BLOCS.length; i++) {
+      var b = SW.CONGRESS_BLOCS[i];
+      if (!SW.hasWings(Q, b)) continue;
+      SW.ensureWings(Q, b);
+      var t = SW.wingTargets(Q, b), k = Math.min(1, 0.2 * rf);
+      for (var w in t) Q['wing_' + w] = (Q['wing_' + w] || 0) + (t[w] - (Q['wing_' + w] || 0)) * k;
+      SW.normWings(Q, b);
+    }
+    for (var p in SW.WINGS) {
+      var v = Q['wingpush_' + p];
+      if (v) Q['wingpush_' + p] = Math.abs(v) < 0.2 ? 0 : v * Math.pow(0.8, rf);
+    }
+  };
+  SW.wingShare = function (Q, w) { return Q['wing_' + w] || 0; };
+  // a wing with a candidate that has outgrown the ruling wing
+  SW.wingOvertaken = function (Q, b) {
+    if (Q.date < (Q[b + '_congress_hold'] || -99)) return '';
+    var rw = Q[b + '_wing'], r = SW.wingShare(Q, rw), ws = SW.blocWings(Q, b);
+    for (var i = 0; i < ws.length; i++) if (ws[i] !== rw && SW.wingShare(Q, ws[i]) >= r + 8 && SW.wingCandidate(Q, ws[i])) return ws[i];
+    return '';
+  };
+
+  // ------------------------------------------------------------------ when congresses meet
+  SW.callCongress = function (Q, b, why) {
+    if (!b || !SW.BLOC_WINGS[b]) return;
+    var R = SW.CONGRESS_RANK, cur = Q[b + '_congress_why'];
+    if (!cur || (R[why] || 0) > (R[cur] || 0)) Q[b + '_congress_why'] = why;
+  };
+  // which bloc's congress meets next, if any: one a turn at most, the most pressing first
+  SW.congressCheck = function (Q) {
+    Q.congress_ready = ''; Q.congress_go = 0;
+    Q.valorum_leads_mod = (Q.valorum_fallen && Q.mod_leader_id === 'valorum') ? 1 : 0;
+    if (Q.valorum_fallen && !(Q.valorum_fell_date >= 0)) Q.valorum_fell_date = Q.date;
+    if (Q.finale || Q.game_ending || !(Q.months_per_turn > 0) || Q.time < 3) return;
+    var best = '', bestR = 0, bestWhy = '', fallen = '';
+    for (var i = 0; i < SW.CONGRESS_BLOCS.length; i++) {
+      var b = SW.CONGRESS_BLOCS[i];
+      if (!SW.hasWings(Q, b)) continue;
+      SW.ensureWings(Q, b);
+      // while Palpatine is free his bloc settles its line on schedule; it does not hold emergency congresses over him
+      var why = SW.leaderOut(Q, b) ? 'fallen' : (Q[b + '_congress_why'] || '');
+      if (!why && Q.date >= Q[b + '_congress_due']) why = 'regular';
+      if (why && why !== 'fallen' && why !== 'overtaken' && SW.congressSettled(Q, b)) { if (why === 'regular') SW.quietCongress(Q, b); Q[b + '_congress_why'] = ''; why = ''; }
+      if (!why && SW.wingOvertaken(Q, b)) why = 'overtaken';
+      if (why && (SW.CONGRESS_RANK[why] || 0) > bestR) { best = b; bestR = SW.CONGRESS_RANK[why]; bestWhy = why; }
+    }
+    if (best && (!(Q.congress_timer > 0) || bestWhy === 'fallen')) { Q.congress_ready = best; Q.congress_why = bestWhy; }
+    Q.congress_go = Q.congress_ready ? 1 : 0;
+  };
+  // the ruling wing holds more delegates than any backing could take from it, and its candidate already leads
+  SW.CONGRESS_SAFE = 57;
+  SW.congressSettled = function (Q, b) {
+    var rw = Q[b + '_wing'], c = SW.wingCandidate(Q, rw);
+    if (!rw || !c || SW.wingShare(Q, rw) <= SW.CONGRESS_SAFE) return false;
+    if (b === 'pal' && !Q.pal_leader_id) return !Q.pal_lieutenant_id || Q.pal_lieutenant_id === c;
+    return c === Q[b + '_leader_id'];
+  };
+  SW.quietCongress = function (Q, b) {
+    var rw = Q[b + '_wing'];
+    if (b === 'pal' && !Q.pal_leader_id && !Q.pal_lieutenant_id) { var c = SW.wingCandidate(Q, rw); Q.pal_lieutenant_id = c; Q.pal_lieutenant = SW.LEADERS[c].name; }
+    Q[b + '_congress_due'] = Q.date + SW.CONGRESS_GAP;
+    Q[b + '_congress_last'] = Q.date;
+    Q[b + '_congress_quiet'] = 1;
+    Q.congresses_quiet = (Q.congresses_quiet || 0) + 1;
+  };
+
+  // a hardliner is being groomed: the bloc where a hardline wing comes closest to power
+  SW.rigTarget = function (Q) {
+    var best = '', bestS = -1;
+    for (var i = 0; i < SW.CONGRESS_BLOCS.length; i++) {
+      var b = SW.CONGRESS_BLOCS[i];
+      if (b === 'pal' || !SW.hasWings(Q, b)) continue;
+      var ws = SW.blocWings(Q, b);
+      for (var j = 0; j < ws.length; j++) {
+        var c = SW.wingCandidate(Q, ws[j]);
+        if (ws[j] === Q[b + '_wing'] || !c || SW.LEADERS[c].firm < 0.7) continue;
+        if (SW.wingShare(Q, ws[j]) > bestS) { bestS = SW.wingShare(Q, ws[j]); best = b; }
+      }
+    }
+    return best;
+  };
+
+  // ------------------------------------------------------------------ ideology, distances and the words for them
+  // a wing's ideology: its bloc's baseline, its figure's views, and its own extra views
+  SW.wingIdeo = function (Q, w) {
+    var W = SW.WINGS[w], v = {}, k;
+    var base = SW.BLOC_IDEOLOGY[W.bloc] || {};
+    for (k in base) v[k] = (v[k] || 0) + base[k];
+    var c = SW.wingCandidate(Q, w) || W.leaders[0], L = SW.LEADERS[c];
+    var lv = (L && L.views) || {};
+    for (k in lv) v[k] = (v[k] || 0) + lv[k];
+    var xv = W.views || {};
+    for (k in xv) v[k] = (v[k] || 0) + xv[k];
+    return v;
+  };
+  SW.ideoDistance = function (a, b) {
+    var d = 0, k, seen = {};
+    for (k in a) { seen[k] = 1; d += Math.pow((a[k] || 0) - (b[k] || 0), 2); }
+    for (k in b) if (!seen[k]) d += Math.pow(b[k] || 0, 2);
+    return Math.sqrt(d);
+  };
+  SW.VIEW_TOPIC = {regulate: 'the guilds', rim: 'the Rim', powers: 'the Chancellor\'s powers', army: 'the army', peace: 'the war',
+    oversight: 'oversight of the government', vonc: 'bringing governments down'};
+  SW.VIEW_FEAR = {regulate: ['tie the guilds in red tape', 'let the guilds do as they please'], rim: ['give in to the Rim', 'turn the bloc\'s back on the Rim'],
+    powers: ['hand the Chancellor more power', 'weaken the Chancellery'], army: ['spend everything on the army', 'starve the army'],
+    peace: ['make peace at any price', 'never make peace'], oversight: ['tie the government\'s hands', 'let the government do as it likes'],
+    vonc: ['bring down every government', 'prop up any government']};
+  SW.VIEW_AGREE = {regulate: ['the guilds curbed', 'the guilds left free'], rim: ['an answer for the Rim', 'a firm line against the Rim'],
+    powers: ['a stronger Chancellor', 'the Chancellor\'s powers curbed'], army: ['a stronger army', 'a smaller army'],
+    peace: ['an end to the war', 'the war fought on'], oversight: ['oversight of the government', 'a free hand for the government'],
+    vonc: ['governments brought down', 'stable government']};
+  // where two wings agree most, and where they part
+  SW.ideoCompare = function (a, b) {
+    var agree = '', agreeK = '', aS = 0, part = '', pS = 0, k, keys = {};
+    for (k in a) keys[k] = 1;
+    for (k in b) keys[k] = 1;
+    for (k in keys) {
+      if (!SW.VIEW_TOPIC[k]) continue;
+      var x = a[k] || 0, y = b[k] || 0;
+      if (x * y > 0 && Math.min(Math.abs(x), Math.abs(y)) > aS) { aS = Math.min(Math.abs(x), Math.abs(y)); agree = SW.VIEW_AGREE[k][x > 0 ? 0 : 1]; agreeK = k; }
+    }
+    for (k in keys) {
+      if (!SW.VIEW_TOPIC[k] || k === agreeK) continue;
+      var x2 = a[k] || 0, y2 = b[k] || 0;
+      if (x2 * y2 <= 0 && Math.abs(x2 - y2) > Math.max(pS, 0.08)) { pS = Math.abs(x2 - y2); part = k; }
+    }
+    return {agree: agree, agreeK: agreeK, part: part, partSign: part ? ((a[part] || 0) > (b[part] || 0) ? 1 : -1) : 0};
+  };
+  var sp = function (Q, b, t) { return SW.span ? SW.span(Q, b, t) : t; };
+  SW.blocPlural = function (Q, b) { var n = SW.name(Q, b) || ''; return /s$/.test(n) && !/(Caucus|Systems|Congress)$/.test(n); };
+  SW.shortName = function (id) { var n = (SW.LEADERS[id] || {}).name || ''; var p = n.split(' '); return p.length > 1 ? p.slice(1).join(' ') : n; };
+
+  // ------------------------------------------------------------------ a congress
+  SW.ADVISOR_TIES = {antilles: ['mod', 'ind'], organa: ['mod', 'ind'], bel_iblis: ['sec', 'mod'], farr: ['rim', 'rfc'],
+    mothma: ['mod', 'ind'], amidala: ['mod', 'rim'], valorum: ['mod'], chuchi: ['rim', 'rfc', 'ind']};
+  SW.CONGRESS_OFFERS = {
+    rim: 'Promise the Rimward Coalition our votes for Rim relief',
+    guild: 'Promise the guilds we will go easy on regulation',
+    mod: 'Promise to back the establishment\'s budget',
+    sec: 'Promise support for defence spending',
+    ind: 'Offer the Independents a voice in our peace efforts',
+    rfc: 'Offer the Rim Freedom Caucus a joint Rim platform'
+  };
+  SW.congressCost = function (Q, b) {
+    var c = (Q[b + '_r'] || 0) >= 18 ? 2 : 1;
+    if ((Q[b + '_relation'] || 0) >= 55) c -= 1;
+    return Math.max(0, c);
+  };
+  SW.congressChart = function (Q, b, sh) {
+    var ws = SW.blocWings(Q, b), data = [];
+    for (var i = 0; i < ws.length; i++) {
+      var n = Math.round((sh ? sh[ws[i]] : SW.wingShare(Q, ws[i])) * 2);
+      if (n > 0) data.push({id: ws[i], legend: SW.WINGS[ws[i]].name, name: SW.WINGS[ws[i]].name, seats: n, color: SW.WINGS[ws[i]].color});
+    }
+    var na = Math.round(SW.nonAff(Q, b) * 2);
+    if (na > 0) data.push({id: 'nonaff', legend: 'Non-affiliated', name: 'Non-affiliated', seats: na, color: '#bdb6a8'});
+    return data;
+  };
+  SW.congressTable = function (Q, b, sh) {
+    var ws = SW.blocWings(Q, b), h = '<table class="congress"><tr><th>Wing</th><th>Candidate</th><th>Delegates</th></tr>';
+    for (var i = 0; i < ws.length; i++) {
+      var c = SW.wingCandidate(Q, ws[i]);
+      h += '<tr><td>' + SW.wingSpan(ws[i]) + '</td><td>' + (c ? SW.LEADERS[c].name : '<i>none</i>') + '</td><td>' + Math.round(sh ? sh[ws[i]] : SW.wingShare(Q, ws[i])) + '%</td></tr>';
+    }
+    return h + '<tr><td class="nonaff">Non-affiliated</td><td></td><td>' + Math.round(SW.nonAff(Q, b)) + '%</td></tr></table>';
+  };
+  SW.CG_SLOTS = 4;
+  SW.prepareCongress = function (Q) {
+    var b = Q.congress_ready;
+    Q.cg_bloc = b || '';
+    if (!b) return;
+    SW.ensureWings(Q, b);
+    Q.congress_timer = 1;
+    Q.cg_why = Q.congress_why || 'regular';
+    Q.cg_bloc_name = SW.name(Q, b);
+    Q.cg_pal = b === 'pal' ? 1 : 0;
+    Q.cg_pal_free = (b === 'pal' && !Q.pal_leader_id) ? 1 : 0;
+    var rw = Q[b + '_wing'];
+    Q.cg_ruling = rw; Q.cg_ruling_name = SW.wingName(rw);
+    Q.cg_old_leader = b === 'pal' ? 'Palpatine' : (Q[b + '_leader'] || '');
+    var ov = SW.wingOvertaken(Q, b);
+    var lead = Q.cg_old_leader, bn = sp(Q, b, 'the ' + Q.cg_bloc_name), Bn = sp(Q, b, 'The ' + Q.cg_bloc_name), pl = SW.blocPlural(Q, b);
+    var why = {
+      fallen: b === 'pal' ? 'With Palpatine gone, ' + bn + ' convenes to choose who will lead it now, with its wings vying for control.' :
+        lead + ' can no longer lead ' + bn + '. The bloc\'s congress convenes to choose a successor, with the wings vying for control.',
+      crisis: 'After a bad season for ' + bn + ', its leaders call an emergency congress. The wings are vying for control.',
+      scandal: 'A bribery scandal has shaken ' + bn + ', and its congress convenes amid recriminations. The wings are vying for control.',
+      overtaken: 'The ' + SW.wingSpan(rw) + ' no longer speak for most of ' + bn + '. ' + (pl ? 'Their' : 'Its') + ' congress convenes early, with the ' + SW.wingSpan(ov || rw) + ' demanding a change of course.',
+      regular: Q.cg_pal_free ? Bn + (pl ? ' gather for their congress. Palpatine will lead them' : ' gathers for its congress. Palpatine will lead it') + ' whatever happens, but his wings are vying to set the bloc\'s line.' :
+        Bn + (pl ? ' gather for their congress, as they do' : ' gathers for its congress, as it does') + ' every four years. The wings are vying for control.'
+    };
+    Q.cg_intro = why[Q.cg_why] || why.regular || ' ';
+    var ws = SW.blocWings(Q, b), cands = [];
+    for (var i = 0; i < SW.CG_SLOTS; i++) {
+      var w = ws[i], c = w ? SW.wingCandidate(Q, w) : '';
+      Q['cg_c' + (i + 1)] = c ? 1 : 0;
+      Q['cg_c' + (i + 1) + '_wing'] = c ? w : '';
+      Q['cg_c' + (i + 1) + '_name'] = c ? SW.WINGS[w].name : '';
+      Q['cg_c' + (i + 1) + '_cand'] = c ? SW.LEADERS[c].name : '';
+      if (c) cands.push(w);
+    }
+    Q.cg_cost = SW.congressCost(Q, b);
+    Q.cg_can_pay = (Q.cg_cost <= 0 || Q.capital >= Q.cg_cost) ? 1 : 0;
+    Q.cg_cost_txt = (Q.cg_cost > 0 ? 'Costs ' + Q.cg_cost + ' political capital.' : 'Our warm relations make it cost nothing.') + ' They will remember who helped, and who didn\'t.';
+    // an advisor with friends in the bloc works them for the wing nearest the Caucus
+    Q.cg_adv = 0; Q.cg_adv_name = ''; Q.cg_adv_wing = ''; Q.cg_adv_wing_name = '';
+    var near = '', nd = 99, rcv = {oversight: 0.15, rim: 0.15, regulate: 0.1, powers: -0.15, peace: 0.05};
+    for (var j = 0; j < cands.length; j++) { var dd = SW.ideoDistance(SW.wingIdeo(Q, cands[j]), rcv); if (dd < nd) { nd = dd; near = cands[j]; } }
+    for (var a in SW.ADVISOR_TIES) if (Q['adv_' + a] && SW.ADVISOR_TIES[a].indexOf(b) >= 0 && near) { Q.cg_adv = 1; Q.cg_adv_name = SW.ADVISOR_NAMES[a]; Q.cg_adv_wing = near; Q.cg_adv_wing_name = SW.WINGS[near].name; break; }
+    Q.cg_adv_ok = (Q.cg_adv && !(Q.advisor_action_timer > 0)) ? 1 : 0;
+    // a promise helps the candidate most open to a bargain
+    var soft = '', sf = 2;
+    for (var s = 0; s < cands.length; s++) { var f = SW.LEADERS[SW.wingCandidate(Q, cands[s])].firm; if (f < sf) { sf = f; soft = cands[s]; } }
+    Q.cg_offer = SW.CONGRESS_OFFERS[b] || '';
+    Q.cg_soft_wing = Q.cg_offer ? soft : '';
+    Q.cg_soft = soft ? SW.LEADERS[SW.wingCandidate(Q, soft)].name : '';
+    Q.cg_table = SW.congressTable(Q, b);
+    Q.cg_chart = SW.congressChart(Q, b);
+    Q.cg_backed = ''; Q.cg_deadlock = 0; Q.cg_result = ' '; Q.cg_analysis = ' '; Q.cg_round2 = ' '; Q.cg_effect = ' '; Q.cg_box = ' ';
+  };
+  // how: '' (stay out), 'back' (slot n), 'adv' or 'promise'
+  SW.resolveCongress = function (Q, how, n) {
+    var b = Q.cg_bloc;
+    if (!b) return;
+    var ws = SW.blocWings(Q, b), sh = {}, i, w;
+    for (i = 0; i < ws.length; i++) sh[ws[i]] = SW.wingShare(Q, ws[i]);
+    var backed = '', bump = 0;
+    if (how === 'back') { backed = Q['cg_c' + n + '_wing']; bump = 6; Q.capital -= Q.cg_cost; }
+    else if (how === 'adv') { backed = Q.cg_adv_wing; bump = 4; Q.advisor_action_timer = Math.max(Q.advisor_action_timer || 0, 3); }
+    else if (how === 'promise') { backed = Q.cg_soft_wing; bump = 5; Q.contest_group = b; SW.contestOffer(Q); }
+    Q.cg_backed = backed;
+    // our help, and a bribed hardliner's, move delegates from the other wings
+    var moves = {};
+    if (backed && sh[backed] !== undefined) moves[backed] = bump;
+    if (Q.contest_rigged && b !== 'pal') {
+      for (i = 0; i < ws.length; i++) { var hc = SW.wingCandidate(Q, ws[i]); if (hc && SW.LEADERS[hc].firm >= 0.7 && ws[i] !== Q[b + '_wing']) moves[ws[i]] = (moves[ws[i]] || 0) + 8; }
+      Q.contest_rigged = 0;
+    }
+    for (w in moves) {
+      var take = moves[w], others = 0;
+      for (i = 0; i < ws.length; i++) if (ws[i] !== w) others += sh[ws[i]];
+      if (others <= 0) continue;
+      for (i = 0; i < ws.length; i++) if (ws[i] !== w) sh[ws[i]] -= take * sh[ws[i]] / others;
+      sh[w] += take;
+      Q['wing_' + w] = sh[w]; Q['wingpush_' + w] = (Q['wingpush_' + w] || 0) + take / 2;
+    }
+    for (i = 0; i < ws.length; i++) Q['wing_' + ws[i]] = Math.max(0.5, sh[ws[i]]);
+    SW.normWings(Q, b);
+    for (i = 0; i < ws.length; i++) sh[ws[i]] = SW.wingShare(Q, ws[i]);
+    Q.cg_table = SW.congressTable(Q, b, sh);
+    Q.cg_chart = SW.congressChart(Q, b, sh);
+    // the first ballot: only a wing with a candidate can win it
+    var cands = ws.filter(function (x) { return !!SW.wingCandidate(Q, x); }).sort(function (x, y) { return sh[y] - sh[x]; });
+    if (!cands.length) return;
+    var ideo = {};
+    for (i = 0; i < ws.length; i++) ideo[ws[i]] = SW.wingIdeo(Q, ws[i]);
+    var winner = cands[0], terms = '', allies = [], A = cands[0], B = cands[1];
+    Q.cg_analysis = SW.congressAnalysis(Q, b, sh, ideo, cands);
+    if (sh[A] > 50 || !B) {
+      Q.cg_deadlock = 0;
+      Q.cg_box = '<div class="cg-box ok">' + SW.LEADERS[SW.wingCandidate(Q, A)].name + ' carries the first ballot!</div>';
+    } else {
+      // the second round: the two strongest candidates bargain; every other wing, and the non-affiliated, side with the nearer
+      Q.cg_deadlock = 1;
+      Q.cg_box = '<div class="cg-box">The congress is deadlocked!</div>';
+      var tot = {}, side = {};
+      tot[A] = sh[A]; tot[B] = sh[B];
+      for (i = 0; i < ws.length; i++) {
+        w = ws[i];
+        if (w === A || w === B) continue;
+        var da = SW.ideoDistance(ideo[w], ideo[A]), db = SW.ideoDistance(ideo[w], ideo[B]);
+        side[w] = da <= db ? A : B; tot[side[w]] += sh[w];
+      }
+      var base = SW.BLOC_IDEOLOGY[b] || {};
+      var na = SW.ideoDistance(base, ideo[A]) + (A === 'free_traders' ? 0.3 : 0), nb = SW.ideoDistance(base, ideo[B]) + (B === 'free_traders' ? 0.3 : 0);
+      var naSide = na <= nb ? A : B;
+      tot[naSide] += SW.nonAff(Q, b);
+      winner = tot[A] > tot[B] || (tot[A] === tot[B] && sh[A] >= sh[B]) ? A : B;
+      for (w in side) if (side[w] === winner) allies.push(w);
+      allies.sort(function (x, y) { return sh[y] - sh[x]; });
+      // a wing without a candidate that carried the day sets the winner's terms
+      if (allies.length && sh[allies[0]] > sh[winner] && !SW.wingCandidate(Q, allies[0])) terms = allies[0];
+      var loser = winner === A ? B : A, wc = SW.wingCandidate(Q, winner), lc = SW.wingCandidate(Q, loser);
+      var cmp = allies.length ? SW.ideoCompare(ideo[allies[0]], ideo[winner]) : null;
+      var t2 = '<p>The first round of voting at the congress of ' + sp(Q, b, 'the ' + Q.cg_bloc_name) + ' ended without a clear winner. The wings remain divided, and no candidate has enough support to claim the leadership.</p><hr class="cg-rule">';
+      if (terms) t2 += '<p>Without a candidate of their own, the ' + SW.wingSpan(terms) + ' decided the congress. They carried it for ' + SW.LEADERS[wc].name + ' of the ' + SW.wingSpan(winner) + ', on their own terms.';
+      else if (allies.length) t2 += '<p>The ' + SW.wingSpan(winner) + ' managed to unite the divided congress around ' + SW.LEADERS[wc].name + '. After much debate, enough delegates from the ' + allies.map(function (x) { return SW.wingSpan(x); }).join(' and the ') +
+        ' decided to back ' + SW.shortName(wc) + ', holding that ' + (cmp && cmp.agreeK ? SW.shortName(wc) + '\'s line on ' + SW.VIEW_TOPIC[cmp.agreeK] + ' was closer to their own than ' + SW.shortName(lc) + '\'s.' : 'another ballot would only deepen the split.');
+      else t2 += '<p>The ' + SW.wingSpan(winner) + ' held their nerve. With the non-affiliated delegates behind ' + SW.shortName(wc) + ', ' + SW.LEADERS[wc].name + ' edged out ' + SW.LEADERS[lc].name + ' on the second ballot.';
+      t2 += (naSide === winner && allies.length ? ' The non-affiliated delegates followed.' : '') + '</p>';
+      Q.cg_round2 = t2;
+    }
+    SW.congressApply(Q, b, winner, terms, backed);
+  };
+  // three short paragraphs on the first ballot, from the shares and what divides the wings
+  SW.congressAnalysis = function (Q, b, sh, ideo, cands) {
+    var ws = Object.keys(sh), pair = null, pd = 99, i, j;
+    for (i = 0; i < ws.length; i++) for (j = i + 1; j < ws.length; j++) {
+      if (sh[ws[i]] + sh[ws[j]] <= 50) continue;
+      var d = SW.ideoDistance(ideo[ws[i]], ideo[ws[j]]);
+      if (d < pd) { pd = d; pair = sh[ws[i]] >= sh[ws[j]] ? [ws[i], ws[j]] : [ws[j], ws[i]]; }
+    }
+    var h = '', A = cands[0], c = SW.wingCandidate(Q, A);
+    if (pair) {
+      var cmp = SW.ideoCompare(ideo[pair[0]], ideo[pair[1]]);
+      h += '<p>The ' + SW.wingSpan(pair[0]) + ' and the ' + SW.wingSpan(pair[1]) + ' together hold a majority of the delegates' +
+        (cmp.agree ? ', and both want ' + cmp.agree : '') + '. ' + (cmp.part ? 'They part over ' + SW.VIEW_TOPIC[cmp.part] + '.' : '') + '</p>';
+    } else h += '<p>No two wings together hold a majority of the delegates.</p>';
+    var big = ws.slice().sort(function (x, y) { return sh[y] - sh[x]; })[0];
+    if (sh[A] > 50) {
+      h += '<p>The ' + SW.wingSpan(A) + ' hold a majority on their own, and ' + SW.LEADERS[c].name + ' needs no one else.</p>';
+    } else {
+      var need = '', nd = 99;
+      for (i = 0; i < ws.length; i++) if (ws[i] !== A && sh[A] + sh[ws[i]] > 50) { var dd = SW.ideoDistance(ideo[A], ideo[ws[i]]); if (dd < nd) { nd = dd; need = ws[i]; } }
+      // the largest wing has no candidate of its own: it decides who leads
+      if (big !== A && !SW.wingCandidate(Q, big) && sh[A] + sh[big] > 50) need = big;
+      var cm = need ? SW.ideoCompare(ideo[A], ideo[need]) : null, fear = cm && cm.part ? ', who fear that ' + SW.shortName(c) + ' would ' + SW.VIEW_FEAR[cm.part][cm.partSign > 0 ? 0 : 1] : '';
+      if (need && need === big && big !== A) {
+        h += '<p>The ' + SW.wingSpan(big) + ' are the largest wing but have no candidate of their own, and whoever they back will lead. ' +
+          SW.LEADERS[c].name + ' of the ' + SW.wingSpan(A) + ' cannot win without them' + (fear ? ', and they fear that ' + SW.shortName(c) + ' would ' + SW.VIEW_FEAR[cm.part][cm.partSign > 0 ? 0 : 1] : '') + '.</p>';
+      } else if (need) {
+        h += '<p>Although the ' + SW.wingSpan(A) + ' appear strongest, they cannot elect ' + SW.LEADERS[c].name + ' without the ' + SW.wingSpan(need) + fear + '.</p>';
+      } else h += '<p>The ' + SW.wingSpan(A) + ' are the largest wing, but far from a majority.</p>';
+      h += '<p>No wing can carry the congress on its own. The delegates must now return to negotiation and decide who will lead.</p>';
+    }
+    return h;
+  };
+  SW.congressApply = function (Q, b, winner, terms, backed) {
+    var wc = SW.wingCandidate(Q, winner), was = Q[b + '_wing'], wasLeader = b === 'pal' ? (Q.pal_leader_id || '') : Q[b + '_leader_id'];
+    var palFree = b === 'pal' && !SW.leaderOut(Q, 'pal') && !Q.pal_leader_id;
+    Q[b + '_wing'] = winner;
+    Q[b + '_terms'] = terms || '';
+    if (palFree) { Q.pal_lieutenant_id = wc; Q.pal_lieutenant = SW.LEADERS[wc].name; }
+    else if (wc !== wasLeader || SW.leaderOut(Q, b)) SW.setLeader(Q, b, wc);
+    Q[b + '_wing'] = winner;
+    Q['wingpush_' + winner] = (Q['wingpush_' + winner] || 0) + 4;
+    Q.cg_changed = winner !== was || wc !== wasLeader ? 1 : 0;
+    Q.cg_winner = SW.LEADERS[wc].name; Q.cg_winner_id = wc; Q.cg_winner_wing = winner; Q.cg_winner_wing_name = SW.wingName(winner);
+    var won = backed && backed === winner, lost = backed && backed !== winner;
+    Q.cg_backed_won = won ? 1 : 0; Q.cg_backed_lost = lost ? 1 : 0;
+    if (won) { Q[b + '_favour'] = (Q[b + '_favour'] || 0) + 2; if (b !== 'pal') Q[b + '_relation'] = (Q[b + '_relation'] || 0) + 6; }
+    if (lost) { Q[b + '_grudge'] = (Q[b + '_grudge'] || 0) + 2; if (b !== 'pal') Q[b + '_relation'] = (Q[b + '_relation'] || 0) - 8; }
+    // backing the rival who unseats a hardliner heads off the defection they were threatening
+    var tid = SW.threatOnGroup(Q, b);
+    if (tid && won && SW.THREATS[tid].hard.indexOf(wasLeader) >= 0 && wc !== wasLeader) Q[tid + '_threat_rival'] = 1;
+    Q[b + '_congress_due'] = Q.date + SW.CONGRESS_GAP;
+    Q[b + '_congress_why'] = '';
+    Q[b + '_congress_last'] = Q.date;
+    Q[b + '_congress_quiet'] = 0;
+    Q[b + '_congress_hold'] = Q.date + SW.CONGRESS_HOLD;
+    Q.congresses = (Q.congresses || 0) + 1;
+    var bn = sp(Q, b, 'the ' + Q.cg_bloc_name), wn = SW.wingSpan(winner), t;
+    if (palFree) t = 'Palpatine\'s bloc will follow the line of the ' + wn + ', with ' + Q.cg_winner + ' at his side!';
+    else if (Q.cg_changed) t = '<b>' + Q.cg_winner + '</b> now leads ' + bn + '. ' + sp(Q, b, 'The ' + Q.cg_bloc_name) + ' will follow the programme of the ' + wn + (terms ? ', on the ' + SW.wingSpan(terms) + '\'s terms' : '') + '!';
+    else t = '<b>' + Q.cg_winner + '</b> holds on to the leadership of ' + bn + ', and the ' + wn + ' keep control' + (terms ? ', on the ' + SW.wingSpan(terms) + '\'s terms' : '') + '.';
+    if (won) t += ' Our help did not go unnoticed.';
+    if (lost) t += ' Our meddling did not go unnoticed either, and the winners will remember it.';
+    Q.cg_result = t;
+    Q.cg_effect = (palFree ? '' : SW.leaderEffect(Q, b, wc)) || ' ';
+    Q.contest_group = '';
+  };
+  // the wing behind a bloc's line, for display
+  SW.wingLine = function (Q, b) {
+    var w = Q[b + '_wing'];
+    if (!w || !SW.WINGS[w]) return '';
+    return SW.WINGS[w].name;
+  };
+  // the bloc's regional strength: each wing lifts it where its delegates come from, the ruling wing most of all,
+  // and the other regions dip to match, so that the bloc's overall size is kept
+  SW.wingPull = function (Q, b) {
+    if (!SW.hasWings(Q, b)) return null;
+    var f = {}, ws = SW.blocWings(Q, b), rw = Q[b + '_wing'], r, i;
+    for (i = 0; i < SW.REGIONS.length; i++) f[SW.REGIONS[i]] = 1;
+    for (i = 0; i < ws.length; i++) {
+      var h = SW.WINGS[ws[i]].home || {}, s = SW.wingShare(Q, ws[i]) / 100 * (ws[i] === rw ? 2 : 1);
+      for (r in h) if (f[r] !== undefined) f[r] += SW.WING_PULL * s * h[r];
+    }
+    var num = 0, den = 0;
+    for (i = 0; i < SW.REGIONS.length; i++) {
+      r = SW.REGIONS[i];
+      var v = (Q[r] > 0 ? Q[r] : 0) * (Q[r + '_' + b] > 0 ? Q[r + '_' + b] : 0);
+      num += v * f[r]; den += v;
+    }
+    if (num > 0 && den > 0) for (r in f) f[r] *= den / num;
+    return f;
+  };
+  SW.regionRaw = function (Q, r, b) {
+    var v = Math.max(0, Q[r + '_' + b] || 0), f = SW.wingPull(Q, b);
+    return f ? v * f[r] : v;
+  };
+
   // ------------------------------------------------------------------ support / seats
   SW.computeSupport = function (Q) {
     var parties = Q.parties;
     var totalWeight = 0;
     var support = {};
     for (var p = 0; p < parties.length; p++) support[parties[p]] = 0;
+    // each bloc's wings pull its support toward the regions they come from
+    var pull = {};
+    for (var pp = 0; pp < parties.length; pp++) {
+      for (var rr = 0; rr < SW.REGIONS.length; rr++) { var kk = SW.REGIONS[rr] + '_' + parties[pp]; if (!(Q[kk] > 0)) Q[kk] = 0; }
+      pull[parties[pp]] = SW.wingPull ? SW.wingPull(Q, parties[pp]) : null;
+    }
     for (var i = 0; i < SW.REGIONS.length; i++) {
       var r = SW.REGIONS[i];
-      var sum = 0;
+      var sum = 0, eff = {};
       for (var a = 0; a < parties.length; a++) {
-        var key = r + '_' + parties[a];
-        if (!(Q[key] > 0)) Q[key] = 0;
-        sum += Q[key];
+        var pf = pull[parties[a]];
+        eff[parties[a]] = Q[r + '_' + parties[a]] * (pf ? pf[r] : 1);
+        sum += eff[parties[a]];
       }
       if (sum <= 0) continue;
       var w = Q[r] > 0 ? Q[r] : 0;
       totalWeight += w;
       for (var b = 0; b < parties.length; b++) {
         var k2 = r + '_' + parties[b];
-        Q[k2 + '_share'] = Math.round(100 * Q[k2] / sum);
-        support[parties[b]] += w * Q[k2] / sum;
+        Q[k2 + '_share'] = Math.round(100 * eff[parties[b]] / sum);
+        support[parties[b]] += w * eff[parties[b]] / sum;
       }
     }
     if (totalWeight <= 0) totalWeight = 1;
@@ -1317,6 +1991,7 @@
       Q[b + '_r'] = inSenate ? Q[b + '_votes'] : 0;
       Q[b + '_seats'] = Math.round(Q[b + '_r'] * Q.senate_size / 100);
       if (inSenate) rec[b] = Q[b + '_r'];
+      if (inSenate && !silent && Q[b + '_old_r'] - Q[b + '_r'] >= 4 && SW.hasWings(Q, b)) SW.callCongress(Q, b, 'crisis');
     }
     Q.last_session_bby = Q.bby;
     Q.new_session = 0;
@@ -1784,11 +2459,17 @@
     ]
   };
   // the act that best fits the ministry's bloc, or none if nothing fits
-  // The Core Moderates and the Independents put reforms forward only under their reforming wings.
-  SW.REFORMING_WINGS = {mod: ['fang_zar'], ind: ['satine']};
+  // The Core Moderates and the Independents put reforms forward only under their reforming wings;
+  // under the Isolationists the Independents put forward only bills on the Rim's seats and the Rights of Sentience.
+  SW.REFORMING_WINGS = {mod: ['ruusan'], ind: ['brokers', 'neutralists']};
+  SW.WING_BILLS = {isolationists: ['enfranchise', 'assembly', 'sentience']};
   SW.blocReforms = function (Q, b) {
     var w = SW.REFORMING_WINGS[b];
-    return !w || w.indexOf(Q[b + '_leader_id']) >= 0;
+    return !w || w.indexOf(Q[b + '_wing']) >= 0;
+  };
+  SW.wingBill = function (Q, b, id) {
+    var only = SW.WING_BILLS[Q[b + '_wing']];
+    return !!(only && only.indexOf(id) >= 0);
   };
   SW.ministryChoice = function (Q, c) {
     var b = Q['chair_' + c], acts = SW.MINISTRY_ACTS[c] || [], ideo = SW.ideology(Q, b), best = null, bestS = 0.05;
@@ -1796,7 +2477,7 @@
     for (var i = 0; i < acts.length; i++) {
       var A = acts[i];
       if (A.ok && !A.ok(Q)) continue;
-      if ((A.bill || A.reform) && !reforms) continue;
+      if ((A.bill || A.reform) && !reforms && !SW.wingBill(Q, b, A.id)) continue;
       // a bill the Senate voted down waits a few years before it is tried again
       if ((Q['mfail_' + A.id] || 0) > Q.time) continue;
       var sc = 0;
@@ -2036,6 +2717,7 @@
     Q[b + '_relation'] = (Q[b + '_relation'] || 0) - 6;
     Q[b + '_grudge'] = (Q[b + '_grudge'] || 0) + 1;
     Q[b + '_scandal'] = (Q[b + '_scandal'] || 0) + 0.3;
+    SW.callCongress(Q, b, 'scandal');
     Q.decrees_used = (Q.decrees_used || 0) + 1; Q.turn_actions += 1; Q.decree_last = 'rival'; Q.decree_rival_name = SW.name(Q, b);
     SW.computeSupport(Q); SW.chancellery(Q);
     return 1;
@@ -2185,7 +2867,7 @@
     Q.govt_fell_now = 0;
     Q.elections_held += 1;
     Q.naboo_sympathy = 0;
-    if (prev === 'Valorum' && Q.chancellor !== 'Valorum') Q.valorum_fallen = 1;
+    if (prev === 'Valorum' && Q.chancellor !== 'Valorum') { if (!Q.valorum_fallen) Q.valorum_fell_date = Q.date; Q.valorum_fallen = 1; }
     if (bloc === 'pal') { if (Q.chancellor === 'Palpatine') { Q.pal_was_chancellor = 1; Q.pal_terms = (Q.pal_terms || 0) + 1; } }
     if (bloc === 'rc') { Q.rc_was_chancellor = 1; Q.rc_terms = (Q.rc_terms || 0) + 1; }
     SW.recomputeGovt(Q);
@@ -2729,7 +3411,9 @@
       counter: 'Warn the bloc',
       foiled: 'The Caucus warns the bloc\'s elders. The bribes are returned, with apologies.',
       apply: function (Q) {
-        Q.contest_rigged = 1; Q.leadership_timer = 0;
+        Q.contest_rigged = 1;
+        var rb = SW.rigTarget(Q);
+        if (rb) SW.callCongress(Q, rb, 'crisis');
         return 'Credits change hands among the leaders of another bloc. A hardliner is being groomed to take over.';
       }
     },
@@ -4461,6 +5145,7 @@
     SW.cardAvailability(Q);
     SW.grievances(Q);
     SW.leaderPressure(Q);
+    SW.congressCheck(Q);
     Q.hawk_split_ready = (Q.hawk_dissent >= SW.splitAt(Q, 'hawk') && !Q.hawks_split) ? 1 : 0;
     Q.rimward_split_ready = (Q.rimward_dissent >= SW.splitAt(Q, 'rimward') && !Q.rimward_split) ? 1 : 0;
     Q.pacifist_split_ready = (Q.pacifist_dissent >= SW.splitAt(Q, 'pacifist') && !Q.pacifists_resigned) ? 1 : 0;
@@ -4533,6 +5218,7 @@
       Q[rb + '_relation'] += (base - Q[rb + '_relation']) * 0.07 * rf;
     }
     SW.relTick(Q, rf);
+    SW.wingTick(Q, rf);
     SW.bureauTick(Q);
     SW.schemeTick(Q);
     Q.assassination_roll = Math.random();
@@ -4890,7 +5576,7 @@
     Q[id + '_threat_dissent'] = Q.rimward_dissent || 0;
     Q[id + '_threat_rival'] = 0;
     // a crisis brings the next leadership challenge forward
-    if (T.kind === 'bloc') Q.leadership_timer = 0; else Q.faction_leader_timer = 0;
+    if (T.kind === 'bloc') SW.callCongress(Q, T.group, 'crisis'); else Q.faction_leader_timer = 0;
     Q.threat_id = id;
     Q.threat_group_name = T.kind === 'bloc' ? SW.name(Q, T.group) : 'our Rimward wing';
     Q.threat_leader = T.kind === 'bloc' ? (Q[T.group + '_leader'] || SW.leader(Q, T.group).name || '') : (SW.leader(Q, 'rimward').name || '');
