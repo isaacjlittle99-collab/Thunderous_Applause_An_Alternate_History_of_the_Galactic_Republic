@@ -484,7 +484,7 @@ Every new government shares out the committee chairs afresh. The Caucus has [+ l
 - @el_chair_constitution: Constitutional Affairs (5 leverage).
 - @el_chair_jedi: Jedi Affairs (5 leverage).
 - @el_chair_rimaffairs: Outer Rim Affairs (10 leverage).
-- @el_chair_judiciary: Judiciary & Intelligence (10 leverage).
+- @el_chair_judiciary: Judiciary & Intelligence (20 leverage).
 - @el_chair_security: Security & Defence (10 leverage).
 - @el_chair_finance: Finance & Commerce (20 leverage).
 - @el_chairs_done: That will do.
@@ -523,10 +523,10 @@ go-to: el_chairs
 
 @el_chair_judiciary
 view-if: chair_judiciary != "rc"
-choose-if: leverage >= 10 and rc_chairs < chair_cap and not chair_res_judiciary
+choose-if: leverage >= 20 and rc_chairs < chair_cap and not chair_res_judiciary
 unavailable-subtitle: [? if chair_res_judiciary : Promised to the [+ chair_res_judiciary_name +] in the coalition talks. ?][? if not chair_res_judiciary and rc_chairs >= chair_cap : Our partners will not give up another chair. ?][? if not chair_res_judiciary and rc_chairs < chair_cap : Not enough leverage. ?]
 subtitle: Courts, investigations and intelligence. Vital for unmasking the Sith.
-on-arrival: chair_judiciary = "rc"; leverage -= 10; rc_chairs += 1
+on-arrival: chair_judiciary = "rc"; leverage -= 20; rc_chairs += 1
 go-to: el_chairs
 
 @el_chair_security

@@ -4,7 +4,7 @@ is-card: true
 tags: senate_affairs
 card-image: img/card_rim.svg
 view-if: rimaffairs_timer <= 0 and chair_rimaffairs = "rc" and cardok_rimaffairs
-on-arrival: turn_actions += 1; rimaffairs_timer = 3; last_card_timer = "rimaffairs"
+on-arrival: {! Q.turn_actions += 1; Q.rimaffairs_timer = 3; Q.last_card_timer = 'rimaffairs'; SW.porkPick(Q, 'rimaffairs'); !}
 new-page: true
 on-display: {! SW.cardStuck(Q, this); !}
 
@@ -22,6 +22,12 @@ The Caucus chairs the Outer Rim Affairs Committee. Hardship on the Rim is [+ rim
 - @assembly: Found a Rim Assembly.
 - @sentience: Proclaim the Rights of Sentience.
 - @hearings: Hold committee hearings on the Rim.
+- @patronage_1: Route relief contracts through friendly governors.
+- @patronage_2: Build hyperspace beacons in friendly sectors.
+- @patronage_3: Grant colonisation charters to friends.
+- @patronage_4: Recognise friendly claimants in disputed Rim systems.
+- @patronage_5: Sell Rim mining charters to friendly Core firms.
+- @patronage_6: Pay friendly Mid Rim worlds to resettle Rim refugees.
 - @easy_discard
 - @set_aside
 
@@ -170,3 +176,45 @@ if (Q.sr_vote >= 50) { Q.sentience_rights = 1; Q.rim_relation += 3; Q.outer_rc +
 [+ vote_html +]
 
 [? if sentience_rights : The Senate proclaims that every sentient being in the Republic, human or not, holds the same rights under its laws. In the Core, some of the old families call it the end of civilisation. On the Rim, crowds gather to hear it read. ?][? if not sentience_rights : The declaration is voted down. In the Core, the human-first clubs celebrate. ?]
+
+@patronage_1
+view-if: not senators_expelled and pork_v_rimaffairs = 1
+subtitle: +1 political capital, and support in the Outer Rim. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'rimaffairs', 'rc', 1); !}
+
+Relief for the Rim goes out through sector governors who have pledged their support to the Caucus, and the contracts go to their cousins. Most of the grain arrives. The governors make sure everyone knows whom to thank.
+
+@patronage_2
+view-if: not senators_expelled and pork_v_rimaffairs = 2
+subtitle: +1 political capital, and support in the Outer Rim. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'rimaffairs', 'rc', 2); !}
+
+New hyperspace beacons, long promised to the Outer Rim, go up in sectors whose senators vote with us. The sectors next door, which did not, keep navigating by dead reckoning. Everyone draws the obvious lesson.
+
+@patronage_3
+view-if: not senators_expelled and pork_v_rimaffairs = 3
+subtitle: +1 political capital, and support in the Mid Rim and the Expansion Region. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'rimaffairs', 'rc', 3); !}
+
+The committee grants charters to settle a string of newly surveyed worlds in the Expansion Region, every one of them to a consortium with friends in the Caucus. The settlers will come later. The gratitude comes at once.
+
+@patronage_4
+view-if: not senators_expelled and pork_v_rimaffairs = 4
+subtitle: +1 political capital, and support in the Outer Rim. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'rimaffairs', 'rc', 4); !}
+
+In three disputed Outer Rim systems, each claimed by two rival governments, the committee recognises the claimants who have pledged their votes to the Caucus. The losers appeal to the Senate. The Senate is busy.
+
+@patronage_5
+view-if: not senators_expelled and pork_v_rimaffairs = 5
+subtitle: +1 political capital, and support in the Core Worlds. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'rimaffairs', 'rc', 5); !}
+
+Mining rights on a dozen Outer Rim worlds are sold, cheaply, to Core Worlds firms whose directors support the Caucus. The Core is pleased. The miners on those worlds were not consulted.
+
+@patronage_6
+view-if: not senators_expelled and pork_v_rimaffairs = 6
+subtitle: +1 political capital, and support in the Mid Rim and the Expansion Region. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'rimaffairs', 'rc', 6); !}
+
+Grants to resettle refugees from the troubled Rim go to Mid Rim worlds whose senators vote with us, at a generous rate per head. The refugees get a roof, mostly. Their hosts get a windfall, and a reason to stay loyal.

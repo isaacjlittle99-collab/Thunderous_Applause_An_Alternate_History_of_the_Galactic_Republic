@@ -18,6 +18,9 @@ let rng = mulberry(SEED);
 Math.random = () => rng();
 
 const SW = require(path.join(repo, 'out/html/sw.js'));
+// which kinds of patronage the ministries hand out
+const MIN_PORK_KINDS = {};
+{ const pb = SW.porkBarrel; SW.porkBarrel = function (Q, c, b, k) { const n = Q.pork_count || 0; pb.apply(this, arguments); if (b !== 'rc' && (Q.pork_count || 0) > n) MIN_PORK_KINDS[c + ':' + Q['pork_mv_' + c]] = 1; }; }
 globalThis.SW = SW;
 const engineLib = require(path.join(repo, 'node_modules/dendrynexus/lib/engine.js'));
 const json = fs.readFileSync(path.join(repo, 'out/game.json'), 'utf8');
@@ -128,7 +131,8 @@ function smartWeight(id, Q) {
     [/^rec_hutt_terms\.accept$/, 2], [/^rec_hutt_terms\.refuse$/, 3], [/^rec_human_militias\.(crackdown|investigate)$/, 5], [/^rec_repeal_rights\.fight$/, 6],
     [/^ld_hawks$/, 9],
     [/^rec_caucus_congress\.adv\d$/, 4], [/^rec_caucus_congress\.back\d$/, Q.capital >= 3 ? 1.5 : 0.2], [/^rec_caucus_congress\.stay_out$/, 3],
-    [/^chancellery\.ceasefire$/, Q.war && (Q.war_ratio || 2) < 0.9 ? 6 : 2], [/^shuffle_leadership$/, (Q.n_advisors || 0) < 3 ? 6 : 0.3],
+    [/^chancellery\.ceasefire$/, Q.war && (Q.war_ratio || 2) < 0.9 ? 6 : 2],
+    [/^sa_(finance|judiciary|security|rimaffairs)\.patronage_\d$/, Q.capital <= 1 ? 4 : 0.5], [/^sa_security\.demobilise$/, Q.treasury <= 0 ? 3 : 0.2], [/^shuffle_leadership$/, (Q.n_advisors || 0) < 3 ? 6 : 0.3],
     // the lore events
     [/labyrinth\.judicials$/, Q.judicial_forces >= 4 ? 6 : 1], [/labyrinth\.council$/, 4], [/hostage_crisis\.measured$/, Q.capital >= 2 ? 5 : 1],
     [/loyalist_committee\.join$/, 4], [/\.scatter$/, 6],
@@ -307,6 +311,8 @@ const PREMISES = [
   [/^fin_(purge|militias|crowds)$/, Q => Q.finale && !Q.sidious_defeated, 'a finale move by Palpatine\'s wings outside the finale'],
   [/^rec_caucus_congress$/, Q => !Q.finale, 'a Caucus congress in the finale'],
   [/^rec_walkout$/, Q => !!Q.wk_wing && (!!Q.wk_found || !!Q.wk_join), 'a walkout with nowhere to go'],
+  [/^sa_(finance|judiciary|security|rimaffairs)\.patronage_\d$/, Q => !Q.senators_expelled, 'patronage after the corruption reforms'],
+  [/^sa_security\.demobilise$/, Q => Q.judicial_forces >= 0, 'demobilising Judicial Forces that do not exist'],
   [/^rec_lead_pacifist_bad$/, Q => Q.war, 'appeasers without a war'],
   [/^rec_lead_inst_/, Q => Q.rc_lead === 'inst', 'a faction event while another faction leads'],
   [/^rec_lead_rimward_/, Q => Q.rc_lead === 'rimward', 'a faction event while another faction leads'],
@@ -369,7 +375,11 @@ const DECREES_TAKEN = {};
 const MINORITY_OVER = new Map();
 const MIC_SEEN = new WeakSet();
 const LD_PLAYED = new WeakMap();
+const PORK_AT_EXPEL = new WeakMap();
+// the committees' patronage and demobilisation, as chosen by the Caucus
+const COMMITTEE_HITS = {}, PORK_KINDS = {};
 function checkPremises(id, Q, game, out) {
+  if (/^sa_\w+\.(patronage_\d|demobilise)$/.test(id)) { const k = id.replace(/_\d$/, ''); COMMITTEE_HITS[k] = (COMMITTEE_HITS[k] || 0) + 1; PORK_KINDS[id] = 1; }
   const g = (Q.govt_blocs || []).slice();
   const added = g.filter(b => lastGovt.indexOf(b) < 0);
   if (added.length || g.length !== lastGovt.length) {
@@ -439,6 +449,11 @@ function checkPremises(id, Q, game, out) {
     // a splinter party only in a free slot: never two at once, and a wing's party is led by that wing's figure
     if (SW.splinterWing(Q) && Q.parties.indexOf('rfc') >= 0 && SW.LEADER_WING[Q.rfc_leader_id] !== Q.rfc_kind) add('a splinter party led by someone outside its wing');
     for (const w in SW.WINGS) if (SW.wingGone(Q, w) && SW.wingShare(Q, w) > 0) add('a wing that walked out still holding delegates');
+    // no patronage, by us or by a ministry, once the corrupt senators are expelled
+    if (Q.senators_expelled) {
+      if (!PORK_AT_EXPEL.has(Q)) PORK_AT_EXPEL.set(Q, Q.pork_count || 0);
+      else if ((Q.pork_count || 0) > PORK_AT_EXPEL.get(Q)) { add('patronage after the corruption reforms'); PORK_AT_EXPEL.set(Q, Q.pork_count || 0); }
+    }
     if (Q.wing_seen_mic && !MIC_SEEN.has(Q)) { MIC_SEEN.add(Q); if (!(Q.war || Q.corporate_seceded >= 0.3)) add('a hidden wing before its moment'); }
   }
 }
@@ -498,6 +513,11 @@ function playOne(gameIndex) {
           return;
         }
         if (process.env.STEPS) for (const c of (eng.getCurrentChoices() || [])) { const m = STEP_RE.exec(c.id); if (m) { const k = m[0].replace(/^\./, ''); const o = STEP_SEEN[k] = STEP_SEEN[k] || {seen: 0, can: 0, took: 0}; o.seen++; if (c.canChoose) o.can++; } }
+        // a committee card shows exactly one kind of patronage before the corruption reforms, and none after
+        if (/^sa_(finance|judiciary|security|rimaffairs)$/.test(eng.state.sceneId)) {
+          const np = (eng.getCurrentChoices() || []).filter(c => /\.patronage_\d$/.test(c.id)).length;
+          if (np !== (Q.senators_expelled ? 0 : 1)) PREMISE_HITS['a committee card showing ' + np + ' kinds of patronage'] = (PREMISE_HITS['a committee card showing ' + np + ' kinds of patronage'] || 0) + 1;
+        }
         const choices = (eng.getCurrentChoices() || []).map((c, i) => ({c, i})).filter(x => x.c.canChoose);
         if (!choices.length) { resolve({stuck: 'no choices at ' + eng.state.sceneId, Q, steps, visits}); return; }
         // avoid undo and back in automated play
@@ -582,6 +602,7 @@ function playOne(gameIndex) {
       // leaders
       audit.contests.push(Q.leadership_contests || 0);
       audit.congresses = audit.congresses || []; audit.congresses.push(Q.congresses || 0);
+      audit.pork = (audit.pork || 0) + (Q.pork_count || 0);
       audit.walkouts = audit.walkouts || {n: 0, games: 0, splinters: 0, where: {}};
       audit.walkouts.n += Q.walkouts || 0; if (Q.walkouts) audit.walkouts.games++; audit.walkouts.splinters += Q.splinters || 0;
       for (const w in SW.WINGS) if (Q['walked_' + w]) audit.walkouts.where[w + '>' + Q['walked_' + w]] = (audit.walkouts.where[w + '>' + Q['walked_' + w]] || 0) + 1;
@@ -674,6 +695,8 @@ function playOne(gameIndex) {
   origLog('audit: enfranchised before 22 BBY in ' + audit.enf + ' games; avg seceded ' + avg(audit.enfSeceded) + '%; war in ' + audit.enfWar);
   origLog('audit: congresses by reason ' + JSON.stringify(CG_WHY));
   if (audit.walkouts) origLog('audit: walkouts ' + audit.walkouts.n + ' in ' + audit.walkouts.games + ' games, splinter parties ' + audit.walkouts.splinters + ', by wing ' + JSON.stringify(audit.walkouts.where));
+  { const ours = Object.keys(COMMITTEE_HITS).filter(k => /patronage/.test(k)).reduce((a, k) => a + COMMITTEE_HITS[k], 0);
+    origLog('audit: committee options chosen ' + JSON.stringify(COMMITTEE_HITS) + '; kinds of patronage we chose ' + Object.keys(PORK_KINDS).filter(k => /patronage/.test(k)).length + ' of 24; patronage by the ministries ' + ((audit.pork || 0) - ours) + ', ' + Object.keys(MIN_PORK_KINDS).length + ' kinds of 24'); }
   if (process.env.TEXTWHERE) for (const w in TEXT_WHERE) origLog('text where: ' + TEXT_WHERE[w] + 'x ' + w);
   origLog('audit: faction contests per game avg ' + avg(audit.contests) + ', party congresses avg ' + avg(audit.congresses || [0]) + ', leader changes avg ' + avg(audit.changes) + ', coalition offers refused by a leader ' + audit.refused);
   origLog('audit: radical Rim leader at some point in ' + audit.radicalRim + ' games (war in ' + audit.radicalRimWar + ', end Rim sep avg ' + avg(audit.radicalRimSep) + ') vs end Rim sep avg ' + avg(audit.softRimSep) + ' otherwise');
