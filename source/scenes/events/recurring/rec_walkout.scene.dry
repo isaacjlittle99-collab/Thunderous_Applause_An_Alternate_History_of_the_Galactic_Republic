@@ -1,0 +1,14 @@
+title: A Walkout
+subtitle: A defeated wing will not accept the congress's verdict.
+tags: event
+view-if: walkout_go = 1 and not finale and not game_ending
+priority: 3
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {! SW.doWalkout(Q); !}
+
+= [+ wk_leader +] Walks Out!
+
+The congress of the [+ wk_bloc_name +] was called to settle the bloc's quarrels, and it has done the opposite. The election of [+ wk_winner_leader +] for the [+ wk_winner +] was met with fury by the [+ wk_wing_name +], who had wanted the bloc's line to be theirs and its leadership to be [+ wk_leader +]'s.
+
+[+ wk_grievance +] [? if wk_found != "" : [+ wk_leader +] leads them out of the bloc to found a party of their own, the **[+ wk_found +]**. ?][? if wk_us : [+ wk_leader +] crosses the floor and brings them to the Ruusan Caucus. ?][? if wk_cis : [+ wk_leader +] takes them out of the Senate and over to the Confederacy. ?][? if wk_join != "" and not wk_us and not wk_cis : [+ wk_leader +] takes them over to [+ wk_join_name +]. ?]

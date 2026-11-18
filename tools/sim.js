@@ -306,6 +306,7 @@ const PREMISES = [
   [/^ld_hawks$/, Q => Q.sec_wing === 'const_hawks', 'the Constitutional Hawks called without them ruling Security'],
   [/^fin_(purge|militias|crowds)$/, Q => Q.finale && !Q.sidious_defeated, 'a finale move by Palpatine\'s wings outside the finale'],
   [/^rec_caucus_congress$/, Q => !Q.finale, 'a Caucus congress in the finale'],
+  [/^rec_walkout$/, Q => !!Q.wk_wing && (!!Q.wk_found || !!Q.wk_join), 'a walkout with nowhere to go'],
   [/^rec_lead_pacifist_bad$/, Q => Q.war, 'appeasers without a war'],
   [/^rec_lead_inst_/, Q => Q.rc_lead === 'inst', 'a faction event while another faction leads'],
   [/^rec_lead_rimward_/, Q => Q.rc_lead === 'rimward', 'a faction event while another faction leads'],
@@ -435,6 +436,9 @@ function checkPremises(id, Q, game, out) {
       if (Math.abs(tot - 100) > 0.5 || SW.blocWings(Q, b).some(w => !(SW.wingShare(Q, w) >= 0))) add('wing shares that do not add up to 100');
       if (b !== 'pal' && SW.LEADER_WING[Q[b + '_leader_id']] && SW.LEADER_WING[Q[b + '_leader_id']] !== rw) add('a bloc led by a figure of a wing that does not rule it');
     }
+    // a splinter party only in a free slot: never two at once, and a wing's party is led by that wing's figure
+    if (SW.splinterWing(Q) && Q.parties.indexOf('rfc') >= 0 && SW.LEADER_WING[Q.rfc_leader_id] !== Q.rfc_kind) add('a splinter party led by someone outside its wing');
+    for (const w in SW.WINGS) if (SW.wingGone(Q, w) && SW.wingShare(Q, w) > 0) add('a wing that walked out still holding delegates');
     if (Q.wing_seen_mic && !MIC_SEEN.has(Q)) { MIC_SEEN.add(Q); if (!(Q.war || Q.corporate_seceded >= 0.3)) add('a hidden wing before its moment'); }
   }
 }
@@ -578,6 +582,9 @@ function playOne(gameIndex) {
       // leaders
       audit.contests.push(Q.leadership_contests || 0);
       audit.congresses = audit.congresses || []; audit.congresses.push(Q.congresses || 0);
+      audit.walkouts = audit.walkouts || {n: 0, games: 0, splinters: 0, where: {}};
+      audit.walkouts.n += Q.walkouts || 0; if (Q.walkouts) audit.walkouts.games++; audit.walkouts.splinters += Q.splinters || 0;
+      for (const w in SW.WINGS) if (Q['walked_' + w]) audit.walkouts.where[w + '>' + Q['walked_' + w]] = (audit.walkouts.where[w + '>' + Q['walked_' + w]] || 0) + 1;
       audit.changes.push(Q.leader_changes || 0);
       audit.refused += Q.coal_refused || 0;
       for (const grp of ['mod', 'guild', 'rim', 'sec', 'ind', 'inst', 'rimward', 'pacifist', 'hawk']) {
@@ -666,6 +673,7 @@ function playOne(gameIndex) {
   if (audit.enfWhere) origLog('audit: enfranchised games, where/sep: ' + Object.keys(audit.enfWhere).slice(0, 12).join(' | '));
   origLog('audit: enfranchised before 22 BBY in ' + audit.enf + ' games; avg seceded ' + avg(audit.enfSeceded) + '%; war in ' + audit.enfWar);
   origLog('audit: congresses by reason ' + JSON.stringify(CG_WHY));
+  if (audit.walkouts) origLog('audit: walkouts ' + audit.walkouts.n + ' in ' + audit.walkouts.games + ' games, splinter parties ' + audit.walkouts.splinters + ', by wing ' + JSON.stringify(audit.walkouts.where));
   if (process.env.TEXTWHERE) for (const w in TEXT_WHERE) origLog('text where: ' + TEXT_WHERE[w] + 'x ' + w);
   origLog('audit: faction contests per game avg ' + avg(audit.contests) + ', party congresses avg ' + avg(audit.congresses || [0]) + ', leader changes avg ' + avg(audit.changes) + ', coalition offers refused by a leader ' + audit.refused);
   origLog('audit: radical Rim leader at some point in ' + audit.radicalRim + ' games (war in ' + audit.radicalRimWar + ', end Rim sep avg ' + avg(audit.radicalRimSep) + ') vs end Rim sep avg ' + avg(audit.softRimSep) + ' otherwise');

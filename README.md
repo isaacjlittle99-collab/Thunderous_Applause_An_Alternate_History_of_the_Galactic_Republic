@@ -37,7 +37,8 @@ artwork, music or footage is included; all images are original abstract art.*
   The ruling wing sets how the bloc votes and what it does: the Hutts offer terms, the Rim Radicals obstruct, the guilds' hardliners
   walk out to the Confederacy, and Palpatine's wings shape his last moves and the Empire he would build. Our own congress chooses
   the Caucus's leading faction, whose programme, events and home regions become ours; a Pacifist-led Caucus in the Chancellery
-  can try for the Chancellor's Peace.
+  can try for the Chancellor's Peace. Defeated wings can walk out, to another bloc, to us, to the Separatists, or to
+  found a splinter party of their own.
 - **The War Council.** When war comes, the Senate sets its war aims, and every other turn the War Council decides
   which of three fronts to push and faces a lore dilemma whose consequences reach far beyond the battlefield.
 - **The Republic's purse.** A yearly budget, debt to the Banking Clan, hyperlane trade, and bacta, Tibanna and spice
