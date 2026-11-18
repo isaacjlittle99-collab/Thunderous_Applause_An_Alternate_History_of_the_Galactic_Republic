@@ -23,6 +23,8 @@ The Caucus chairs the Security & Defence Committee.
 - @pirate_campaign: Launch a campaign against the pirate fleets.
 - @officers: Open the officer corps to every species.
 - @review: Review the Republic's defences.
+- @demobilise: Demobilise part of the Judicial Forces.
+- @patronage: Steer warship contracts to friendly yards.
 - @easy_discard
 - @set_aside
 
@@ -161,3 +163,17 @@ unavailable-subtitle: Needs 1 political capital.
 on-arrival: capital -= 1; officer_corps = 1; navy_loyalty += 3; hawk_dissent += 2; sec_relation -= 2; security_timer = 1
 
 The committee orders that commissions and promotions be open to every species of the Republic, and reviews every case of an officer passed over for not being human. A good many admirals are quietly furious. A good many captains are not.
+
+@demobilise
+view-if: judicial_forces >= 1
+subtitle: +1 treasury. −1 Judicial Forces. The Security Bloc and our Hawks will not like it.
+on-arrival: {! Q.treasury += 1; Q.judicial_forces = Math.max(0, Q.judicial_forces - 1); Q.sec_relation -= 2; Q.hawk_dissent += 3; Q.pacifist_dissent -= 2; !}
+
+A squadron of Judicial cruisers is stood down, and its crews go home. The treasury breathes a little easier. The Security Bloc asks, loudly, who will guard the lanes now.
+
+@patronage
+view-if: not senators_expelled
+subtitle: +1 political capital, and support in the Colonies and the Inner Rim. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'security', 'rc'); !}
+
+The next round of Judicial cruiser contracts goes to the yards of Fondor and Rendili, whose senators have been good friends to the Caucus. Kuat's lobbyists cry foul. The shipwrights of the Colonies remember who fed them.

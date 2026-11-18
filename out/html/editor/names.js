@@ -165,7 +165,7 @@
     petition_lost: 'How much of the petition\'s weight Palpatine\'s wings have cost it', rc_lead: 'The faction that leads the Caucus',
     rc_chair: 'The Caucus\'s chair', rc_congress_ready: 'The Caucus congress is ready to meet', rc_congresses: 'Caucus congresses held',
     lead_event_ready: 'The leading faction\'s next event', committee_smooth: 'The next Caucus bill will be smoothed through committee',
-    walkout_go: 'A wing is about to walk out', walkout_ready: 'The wing walking out', wk_join: 'Where it goes (a bloc, rc for us, cis for the Separatists)',
+    pork_count: 'Patronage handed out by any committee', walkout_go: 'A wing is about to walk out', walkout_ready: 'The wing walking out', wk_join: 'Where it goes (a bloc, rc for us, cis for the Separatists)',
     wk_found: 'The party it founds', walkouts: 'Wings that have walked out', splinters: 'Splinter parties founded',
     chan_peace_ok: 'Our Chancellor can proclaim a ceasefire', chan_ceasefire: 'The Chancellor\'s ceasefire was proclaimed', chancellors_peace: 'The Chancellor\'s Peace ended the war',
     chan_powers: 'Powers the Chancellery holds', chan_decrees: 'The Chancellery holds emergency decrees', chan_can_decree: 'Our Chancellor can rule by decree',

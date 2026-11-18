@@ -26,6 +26,7 @@ The Caucus chairs the Judiciary & Intelligence Committee: the Republic's courts,
 - @compor: Found the Commission for the Protection of the Republic.
 - @hhc_investigate: Investigate the human-first groups.
 - @syndicates: Break the syndicates.
+- @patronage: Fill Coruscant's judgeships with friends.
 - @easy_discard
 - @set_aside
 
@@ -234,3 +235,10 @@ if (Q.syndicates_ok) {
 !}
 
 [? if syndicates_ok : Judicial task forces, backed by the patrol fleets, raid the counting houses of Nal Hutta and the Black Sun vigos' towers on Coruscant's lower levels in a single night. A hundred senators wake to find their benefactors in custody. The HoloNet calls it the end of an age, and for once the HoloNet is right. ?][? if not syndicates_ok : The raids are betrayed: the vigos are gone hours before the task forces arrive, and the cartels' lawyers are on the HoloNet by morning. We will have to try again. ?]
+
+@patronage
+view-if: not senators_expelled
+subtitle: +1 political capital, and support in the Core Worlds. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'judiciary', 'rc'); !}
+
+A dozen vacant judgeships in Coruscant's courts go to lawyers from families that have always voted for the Caucus. They are not the best candidates. Their families are very grateful, and so are the Core Worlds' great houses that recommended them.

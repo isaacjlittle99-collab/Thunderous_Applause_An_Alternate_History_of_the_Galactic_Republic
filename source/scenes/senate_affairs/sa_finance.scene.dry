@@ -23,6 +23,7 @@ The Caucus chairs the Finance & Commerce Committee. The treasury holds [+ treasu
 - @patrols: Fund patrols on the hyperlanes.
 - @stockpile: Stockpile bacta against the next shortage.
 - @refinance: Refinance the Republic's debts.
+- @patronage: Hand out hyperlane subsidies to friendly sectors.
 - @easy_discard
 - @set_aside
 
@@ -157,3 +158,10 @@ unavailable-subtitle: Needs 1 political capital.
 on-arrival: capital -= 1; debt_refinanced = 1; debt -= 2; guild_relation += 3; corruption += 0.5
 
 The committee rolls the Republic's loans into long, cheap bonds, sold to Core banks that are not the Banking Clan. The Muuns take note.
+
+@patronage
+view-if: not senators_expelled
+subtitle: +1 political capital, and support in the Mid Rim and the Expansion Region. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'finance', 'rc'); !}
+
+Subsidies flow to the shipping lines of the Hydian Way and the Perlemian Trade Route, by way of the sectors whose senators vote with us. The Caucus's friends on the Mid Rim discover new reasons to stay friends. The HoloNet calls it business as usual, which is the problem.
