@@ -6,6 +6,7 @@ card-image: img/card_credits.svg
 view-if: contributions_timer <= 0
 on-arrival: turn_actions += 1; contributions_timer = 6; last_card_timer = "contributions"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Patron Contributions
 
@@ -16,6 +17,7 @@ Politics in the Galactic Senate runs on favours and credits. The Caucus has frie
 - @guilds: Accept a generous offer from guild-linked donors.
 - @break: Break with the guilds and return their money.
 - @easy_discard
+- @set_aside
 
 @core
 subtitle: +2 political capital. The Rimward wing dislikes it.

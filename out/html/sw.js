@@ -250,6 +250,7 @@
     D.lm_ready = 0; D.lm_group = ''; D.lm_ultimatum = 0; D.lm_leader = ''; D.lm_group_name = ''; D.lm_reason = ''; D.lm_motive = ''; D.lm_title = ''; D.lm_ask = ''; D.lm_label = ''; D.lm_cost = 0; D.lm_accept_sub = ''; D.lm_refuse_sub = ''; D.lm_offer = '';
     D.leader_moment_timer = 8; D.ultimatums_met = 0; D.ultimatums_refused = 0; D.guild_regulations = 0; D.sanctions_lifted = 0; D.tariff_ban_until = -99;
     D.tf_lead_used = 0;
+    D.card_stuck = 0; D.cards_set_aside = 0;
     D.pal_standin_title = 'Vice Chair <b>Mas Amedda</b>'; D.pal_cand_title = 'Senator Palpatine';
     D.pal_title = 'Senator Palpatine'; D.pal_office = 'Palpatine\'s office'; D.pal_people = 'Palpatine\'s people'; D.chair_cap = 6; D.chair_partners = 0; D.walkout_bloc = ''; D.walkout_until = -99; D.cc_dropped = 0; D.cc_kept = 0; D.el_walkout_blocks = 0; D.walkout_name = ''; D.govt_fell_now = 0; D.fall_reason = ''; D.war_name = 'Clone Wars';
     D.trial_cleanup = 0; D.force_war = SW.off('war') ? 0 : 1; D.amend_threshold = 66.7; D.gavel_date = -99; D.gavels = 0; D.vote_tabled = 0;
@@ -1829,6 +1830,24 @@
   // The Senate suspends the Jedi Service Act for the duration of the war: the Jedi become generals.
   SW.suspendServiceAct = function (Q) {
     Q.jedi_service_act = 0; Q.jedi_service_suspended = 1; Q.jedi_generals = 1; Q.war_balance += 1;
+  };
+
+  // A card nothing on which can be chosen (usually for want of political capital) can be set aside; the turn still passes.
+  // Run from each card's on-display, after its own on-arrival and before its options are shown.
+  SW.cardStuck = function (Q, engine) {
+    Q.card_stuck = 0;
+    try {
+      var sc = engine.game.scenes[engine.state.sceneId];
+      if (!sc || !sc.options) return 0;
+      var ids = engine.__filterViewable(engine.__getChoiceIdsFromOptions(sc.options));
+      for (var id in ids) {
+        if (id === 'easy_discard' || id === 'set_aside' || id === 'go_back') continue;
+        var os = engine.game.scenes[id];
+        if (os && engine._runPredicate(os.chooseIf, true)) return 0;
+      }
+      Q.card_stuck = 1;
+    } catch (e) { Q.card_stuck = 0; }
+    return Q.card_stuck;
   };
 
   // ------------------------------------------------------------------ the Chancellery

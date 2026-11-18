@@ -6,6 +6,7 @@ card-image: img/card_rim.svg
 view-if: rimaffairs_timer <= 0 and chair_rimaffairs = "rc" and cardok_rimaffairs
 on-arrival: turn_actions += 1; rimaffairs_timer = 3; last_card_timer = "rimaffairs"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Outer Rim Affairs Committee
 
@@ -22,6 +23,7 @@ The Caucus chairs the Outer Rim Affairs Committee. Hardship on the Rim is [+ rim
 - @sentience: Proclaim the Rights of Sentience.
 - @hearings: Hold committee hearings on the Rim.
 - @easy_discard
+- @set_aside
 
 @relief
 view-if: rim_hardship > 15

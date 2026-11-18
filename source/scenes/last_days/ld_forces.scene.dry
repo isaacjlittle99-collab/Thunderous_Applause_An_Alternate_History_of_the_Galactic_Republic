@@ -6,6 +6,7 @@ card-image: img/card_pact.svg
 view-if: finale and pact_formed and not ld_forces_used_today
 on-arrival: turn_actions += 1; ld_forces_used_today = 1; last_card_timer = ""
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Mobilise the Free Worlds
 
@@ -13,6 +14,7 @@ Alderaan, Corellia, Chandrila and the other Defence Pact worlds can bring their 
 
 - @do: Mobilise the Free Worlds.
 - @easy_discard
+- @set_aside
 
 @do
 on-arrival: member_forces += 1; fear += 1

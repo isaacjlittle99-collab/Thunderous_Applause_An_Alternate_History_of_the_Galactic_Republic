@@ -6,6 +6,7 @@ card-image: img/card_jedi.svg
 view-if: jedi_affairs_timer <= 0 and chair_jedi = "rc" and cardok_jediaffairs
 on-arrival: amend_threshold = 66.7 if faith < 60; amend_threshold = 60 if faith >= 60; turn_actions += 1; jedi_affairs_timer = 3; last_card_timer = "jedi_affairs"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Jedi Affairs Committee
 
@@ -19,6 +20,7 @@ The Caucus chairs the Senate's Jedi Affairs Committee, which answers for the Ord
 - @compact: Propose a Senate–Jedi Compact.
 - @testimony: Hear the Order's own account of its work.
 - @easy_discard
+- @set_aside
 
 @reform
 view-if: (date >= 108 or war) and jedi_reform < 3 and not jedi_reformed

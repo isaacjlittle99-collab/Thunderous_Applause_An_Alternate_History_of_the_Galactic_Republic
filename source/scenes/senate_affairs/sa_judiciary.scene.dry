@@ -6,6 +6,7 @@ card-image: img/card_law.svg
 view-if: judiciary_timer <= 0 and chair_judiciary = "rc" and cardok_judiciary
 on-arrival: turn_actions += 1; judiciary_timer = 3; last_card_timer = "judiciary"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Judiciary & Intelligence Committee
 
@@ -26,6 +27,7 @@ The Caucus chairs the Judiciary & Intelligence Committee: the Republic's courts,
 - @hhc_investigate: Investigate the human-first groups.
 - @syndicates: Break the syndicates.
 - @easy_discard
+- @set_aside
 
 @prosecute
 view-if: corruption > 20

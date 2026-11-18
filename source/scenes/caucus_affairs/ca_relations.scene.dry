@@ -6,6 +6,7 @@ card-image: img/card_relations.svg
 view-if: relations_timer <= 0
 on-arrival: {! Q.turn_actions += 1; Q.relations_timer = 2; Q.last_card_timer = 'relations'; SW.relationsOpen(Q); !}
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Inter-bloc Relations
 
@@ -23,6 +24,7 @@ No bloc in the Senate can govern alone, and none will govern beside a partner it
 - @summit: Host a summit for the [+ sm_label +].
 - @word: A friendly word in the corridors.
 - @easy_discard
+- @set_aside
 
 @mod
 view-if: parties_has_mod

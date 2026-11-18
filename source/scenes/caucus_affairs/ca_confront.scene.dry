@@ -6,6 +6,7 @@ card-image: img/card_confront.svg
 view-if: confront_timer <= 0 and date >= 21 and (emergency_powers >= 1 or evidence >= 2 or grand_plan >= 35 or pal_chancellor) and not rc_chancellor and not rc_in_govt and cardok_confront
 on-arrival: turn_actions += 1; confront_timer = 3; last_card_timer = "confront"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Confronting the Chancellery
 
@@ -18,6 +19,7 @@ new-page: true
 - @vonc: Move a vote of no confidence in the Chancellor.
 - @downplay: Downplay it. We must not look paranoid.
 - @easy_discard
+- @set_aside
 
 @alarm
 subtitle: +1 Senate resolve. Some will think we are overreacting.

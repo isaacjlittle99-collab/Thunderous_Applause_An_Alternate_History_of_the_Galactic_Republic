@@ -6,6 +6,7 @@ card-image: img/card_rim.svg
 view-if: rim_outreach_timer <= 0 and cardok_rim
 on-arrival: turn_actions += 1; rim_outreach_timer = 3; last_card_timer = "rim_outreach"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Rim Outreach
 
@@ -16,6 +17,7 @@ The Outer Rim is poor, overtaxed and preyed upon by pirates and the Hutt cartels
 - @listen: Hold hearings on Rim grievances.
 - @moderates: Court moderate Separatist sympathisers.
 - @easy_discard
+- @set_aside
 
 @relief
 view-if: rim_hardship > 15

@@ -6,6 +6,7 @@ card-image: img/card_jedi.svg
 view-if: jedi_timer <= 0 and cardok_jedi
 on-arrival: turn_actions += 1; jedi_timer = 3; last_card_timer = "jedi"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Jedi Relations
 
@@ -17,6 +18,7 @@ The Jedi Order is the Republic's oldest institution, and its most misunderstood.
 - @reform: Speak for reform of the Order.
 - @anakin: Ask about young Skywalker.
 - @easy_discard
+- @set_aside
 
 @visit
 view-if: jedi_relation < 85

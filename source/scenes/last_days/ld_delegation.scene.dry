@@ -6,6 +6,7 @@ card-image: img/card_senate.svg
 view-if: finale and delegation_formed and not ld_delegation_used_today
 on-arrival: turn_actions += 1; ld_delegation_used_today = 1; last_card_timer = ""
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Rally the Delegation
 
@@ -13,6 +14,7 @@ The Delegation of 2000 meets in shadowed offices. Senators who once applauded [+
 
 - @do: Rally the Delegation.
 - @easy_discard
+- @set_aside
 
 @do
 on-arrival: petition_signatures += 4 + rc_r / 4; senate_resolve += 1; mod_relation += 3; ind_relation += 3

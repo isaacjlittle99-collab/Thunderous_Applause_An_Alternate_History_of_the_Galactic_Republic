@@ -6,6 +6,7 @@ card-image: img/card_confront.svg
 view-if: emergency_measures_timer <= 0 and rc_chancellor and (war or dooku_movement or emergency_powers > 0)
 on-arrival: turn_actions += 1; emergency_measures_timer = 3; last_card_timer = "emergency_measures"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Emergency Measures
 
@@ -17,6 +18,7 @@ The Chancellor currently holds [+ emergency_powers : powers +] emergency powers.
 - @return: Return emergency powers to the Senate.
 - @martial: Impose martial law in seceding sectors.
 - @easy_discard
+- @set_aside
 
 @request
 subtitle: +2 emergency powers. The war goes better; the Pacifists are horrified.

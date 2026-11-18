@@ -6,6 +6,7 @@ card-image: img/card_peace.svg
 view-if: peace_timer <= 0 and (war or dooku_movement) and cardok_peace
 on-arrival: turn_actions += 1; peace_timer = 2; last_card_timer = "peace"
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Peace Movement
 
@@ -16,6 +17,7 @@ new-page: true
 - @corridors: Negotiate humanitarian corridors.
 - @compact: Table a Federal Compact in the Senate.
 - @easy_discard
+- @set_aside
 
 @rallies
 subtitle: Calms fear and the Pacifists; the Hawks are irritated.

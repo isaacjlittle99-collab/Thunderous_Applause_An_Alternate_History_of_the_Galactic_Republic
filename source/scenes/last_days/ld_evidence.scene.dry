@@ -6,6 +6,7 @@ card-image: img/card_shadow.svg
 view-if: finale and evidence >= 3 and not evidence_secured and not ld_evidence_used_today
 on-arrival: turn_actions += 1; ld_evidence_used_today = 1; last_card_timer = ""
 new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
 
 = Secure the Evidence
 
@@ -13,6 +14,7 @@ If [+ pal_title +] moves against us, the evidence we have gathered must survive.
 
 - @do: Secure the Evidence.
 - @easy_discard
+- @set_aside
 
 @do
 on-arrival: evidence_secured = 1
