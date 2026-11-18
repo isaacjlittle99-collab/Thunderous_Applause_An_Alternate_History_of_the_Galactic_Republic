@@ -4,14 +4,14 @@ is-hand: true
 max-cards: 4
 on-arrival: {!
 SW.everyVisit(Q);
-Q.coalition_label = Q.coalition_name + (Q.minority_govt ? ' (minority)' : '');
+Q.coalition_label = Q.coalition_name + (Q.minority_govt && !/minority/i.test(Q.coalition_name || '') ? ' (minority)' : '');
 !}
 
 [? if time = 1 : {!<div class="tutorial">!}**How a turn works.** Click a deck below to draw a card into your hand (on Story it holds four). Then click a card in your hand to play it. Playing a card ends the turn, and the galaxy moves on to the next quarter. Your advisors, shown as pinned cards at the bottom, can act without ending the turn, but only once every few turns.{!</div>!} ?]
 
 [? if finale : {!<div class="alert">!}**The Last Days.** Each card you play now takes a day. Events will move very fast.{!</div>!} ?]
 
-Supreme Chancellor **[+ chancellor +]** leads the [+ coalition_label +][? if rc_in_govt : , and the Caucus sits in government?][? if not rc_in_govt : . The Caucus is in opposition?].[? if rc_chairs > 0 : The Caucus chairs [+ rc_chairs +] Senate committee(s). ?]
+Supreme Chancellor **[+ chancellor +]** leads the [+ coalition_label +][? if rc_in_govt : , and the Caucus sits in government?][? if not rc_in_govt : . The Caucus is in opposition?]. [? if rc_chairs = 1 : The Caucus chairs one Senate committee. ?][? if rc_chairs > 1 : The Caucus chairs [+ rc_chairs +] Senate committees. ?]
 
 [? if war : The [+ war_name +] grind[? if not kamino_army : s ?] on: the front is [+ war_balance : war +]. ?][? if not war and dooku_movement : The Separatist crisis deepens. [+ seceded_total +]% of the Senate's delegations have walked out. ?][? if emergency_powers > 0 : The Chancellor holds [+ emergency_powers : powers +] emergency powers. ?]
 

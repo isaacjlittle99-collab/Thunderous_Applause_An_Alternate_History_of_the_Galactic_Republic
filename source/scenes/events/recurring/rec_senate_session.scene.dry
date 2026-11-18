@@ -25,7 +25,7 @@ on-display: {! if (typeof SW !== 'undefined' && SW.drawSenate) { SW.drawSenate(Q
 
 {!<div id="session_region_map"></div>!}
 
-[+ session_changes +] The governing [+ coalition_name +] holds [+ govt_seats +]% of the Senate.[? if minority_govt : It no longer commands a majority. ?]
+[+ session_changes +] The governing [+ coalition_name +] holds [+ govt_seats +]% of the Senate. [? if minority_govt : It does not command a majority. ?]
 
 [? if seceded_total > 0 : [+ seceded_total +]% of the Senate's delegations have left the Republic. ?]
 

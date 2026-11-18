@@ -9,6 +9,6 @@ on-arrival: {! SW.sidiousFlees(Q); !}
 
 = The Sith Lord Flees
 
-Palpatine's offices are found empty. His aides are gone, his files are ash, and his shuttle left the planet before dawn under false codes. Three days later he appears on Raxus at Count Dooku's side, no longer pretending to be anything but what he is.
+Palpatine's offices are found empty. His aides are gone, his files are ash, and his shuttle left the planet before dawn under false codes. Three days later he appears on Raxus [? if not dooku_dead and not dooku_turned : at Count Dooku's side?][? if dooku_dead or dooku_turned : at the head of the Confederacy?], no longer pretending to be anything but what he is.
 
 The Confederacy has a new master. Its parliament is dissolved within the month, and its armies march under a darker banner. The war is no longer between a Republic and its rebels. It is between the Republic and the Sith.

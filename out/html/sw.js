@@ -196,7 +196,7 @@
     // the Chancellor race
     D.el_nominee = ''; D.el_nominees = 0; D.el_nominee_default = ''; D.el_bought_amt = 0; D.el_exposed = 0; D.el_pledges_made = 0; D.el_deal = ''; D.el_deal_chair = ''; D.el_deal_chair_name = '';
     D.el_deal_won = 0; D.el_done = 0; D.el_whip = ''; D.el_backing_name = ''; D.el_proj_share = 0; D.el_act_share = 0; D.el_proj_exact = 0; D.el_res1 = []; D.el_top = [];
-    D.el_switch_note = ''; D.el_whip_note = ''; D.el_join_pledge = ''; D.el_join_price = ''; D.el_text = ''; D.el_cands = [];
+    D.el_switch_note = ''; D.el_whip_note = ''; D.el_join_pledge = ''; D.el_join_price = ' '; D.el_text = ''; D.el_cands = [];
     D.eb_a = ''; D.eb_b = ''; D.eb_a_name = ''; D.eb_b_name = ''; D.eb_ours_in = 0; D.eb_ours_out = 0; D.eb_backing_name = ''; D.eb_out = []; D.eb_out_main = ''; D.eb_out_name = ''; D.eb_out_cand = '';
     D.eb_has_out = 0; D.eb_pledge = ''; D.eb_pledge_ok = 0; D.eb_pledge_name = ''; D.eb_a_chair = ''; D.eb_b_chair = ''; D.eb_a_chair_name = ''; D.eb_b_chair_name = ''; D.eb_a_rc = 0; D.eb_b_rc = 0; D.eb_rc_seats = 0;
     D.whip_seed = 0; D.whip_for = 0; D.el_proj_for = ''; D.second_ballots = 0; D.kingmaker_deals = 0; D.debates_won = 0; D.endorsements = 0; D.mothma_out_until = -99; D.bel_iblis_out_until = -99;
@@ -249,6 +249,8 @@
     D.free_ryloth = 0; D.citadel = 0; D.fleet_levy = 0; D.mandalore_pressed = 0; D.krell_backed = 0; D.trade = 60; D.bacta = 10; D.tibanna = 10; D.spice = 15; D.debt = 10; D.leaders_html = '';
     D.lm_ready = 0; D.lm_group = ''; D.lm_ultimatum = 0; D.lm_leader = ''; D.lm_group_name = ''; D.lm_reason = ''; D.lm_motive = ''; D.lm_title = ''; D.lm_ask = ''; D.lm_label = ''; D.lm_cost = 0; D.lm_accept_sub = ''; D.lm_refuse_sub = ''; D.lm_offer = '';
     D.leader_moment_timer = 8; D.ultimatums_met = 0; D.ultimatums_refused = 0; D.guild_regulations = 0; D.sanctions_lifted = 0; D.tariff_ban_until = -99;
+    D.tf_lead_used = 0;
+    D.pal_standin_title = 'Vice Chair <b>Mas Amedda</b>'; D.pal_cand_title = 'Senator Palpatine';
     D.pal_title = 'Senator Palpatine'; D.pal_office = 'Palpatine\'s office'; D.pal_people = 'Palpatine\'s people'; D.chair_cap = 6; D.chair_partners = 0; D.walkout_bloc = ''; D.walkout_until = -99; D.cc_dropped = 0; D.cc_kept = 0; D.el_walkout_blocks = 0; D.walkout_name = ''; D.govt_fell_now = 0; D.fall_reason = ''; D.war_name = 'Clone Wars';
     D.trial_cleanup = 0; D.force_war = SW.off('war') ? 0 : 1; D.amend_threshold = 66.7; D.gavel_date = -99; D.gavels = 0; D.vote_tabled = 0;
     D.scheme_pending = ''; D.scheme_due = 0; D.scheme_countered = 0; D.scheme_warned = 0; D.scheme_foreseen = 0;
@@ -1439,8 +1441,12 @@
     }
     if (has('pal') && has('sec')) return 'Security Coalition';
     if (has('mod') && has('guild')) return 'Commerce Coalition';
+    // a short adjective for the leading bloc: "the Moderate-led Coalition", "the Security Government"
     var lead = blocs[0] || 'mod';
-    return SW.name(Q, lead) + '-led Coalition';
+    var palAdj = Q && Q.chancellor_bloc === 'pal' ? 'Chancellor\'s' : 'Chommell';
+    var adj = {mod: 'Moderate', rim: 'Rimward', sec: 'Security', ind: 'Independent', guild: 'Commerce', rfc: 'Rim Freedom', cis: 'Separatist', pal: palAdj}[lead] || 'Senate';
+    if (blocs.length <= 1) return adj + ' Government';
+    return lead === 'pal' ? palAdj + ' Coalition' : adj + '-led Coalition';
   };
 
   // affinity of bloc a towards bloc b (dynamic)
@@ -1714,9 +1720,13 @@
     return v;
   };
   // a reform a ministry puts to the Senate: the Caucus is not its sponsor
-  SW.ministryVote = function (Q, stance, topic) {
-    return SW.vote(Q, SW.stance(Q, stance, true), 0.5, topic) >= 50;
+  SW.ministryVote = function (Q, stance, topic, bonus) {
+    var st = SW.stance(Q, stance, true);
+    if (bonus) for (var b in st) st[b] = SW.clamp(st[b] + bonus, 0, 1);
+    return SW.vote(Q, st, 0.5, topic) >= 50;
   };
+  // Each scandal the Caucus turned into a demand for ethics enforcement builds the case for an Ethics Commission.
+  SW.ethicsPush = function (Q) { return Math.min(0.09, 0.03 * (Q.ethics_push || 0)); };
   SW.MINISTRY_ACTS = {
     finance: [
       {id: 'bank_audit', text: 'audited the Banking Clan', reform: 1, vec: {regulate: 0.8, oversight: 0.5}, ok: function (Q) { return !Q.banking_audit; },
@@ -1732,7 +1742,7 @@
     ],
     judiciary: [
       {id: 'ethics', text: 'passed an Ethics Commission', bill: 'the Ethics Commission Act', vec: {regulate: 0.6, oversight: 0.6}, ok: function (Q) { return !Q.anti_corruption; },
-        vote: function (Q) { return SW.ministryVote(Q, {mod: 0.55, guild: 0.15, rim: 0.7, sec: 0.45, ind: 0.55, pal: 0.45, cis: 0.3}, ['oversight', 'regulate']); },
+        vote: function (Q) { return SW.ministryVote(Q, {mod: 0.55, guild: 0.15, rim: 0.7, sec: 0.45, ind: 0.55, pal: 0.45, cis: 0.3}, ['oversight', 'regulate'], SW.ethicsPush(Q)); },
         fx: function (Q) { Q.anti_corruption = 1; Q.corruption -= 4; Q.faith += 2; }},
       {id: 'prosecute', text: 'prosecuted corruption', vec: {regulate: 0.5, oversight: 0.5}, fx: function (Q) { Q.corruption -= 2; }},
       {id: 'look_away', text: 'looked the other way', vec: {regulate: -0.6, oversight: -0.4}, fx: function (Q) { Q.corruption += 1.5; }},
@@ -2108,7 +2118,7 @@
 
   // ------------------------------------------------------------------ chancellor elections
   SW.candidateName = function (Q, b) {
-    if (b === 'pal') return Q.pal_can_run === 0 ? 'Mas Amedda' : 'Palpatine';
+    if (b === 'pal') return Q.pal_can_run === 0 ? SW.palStandin(Q) : 'Palpatine';
     return Q[b + '_leader'] || SW.name(Q, b);
   };
 
@@ -2596,7 +2606,7 @@
     for (var c in pr.chairs) { Q['chair_' + c] = pr.chairs[c]; Q['chair_res_' + c] = 1; Q['chair_res_' + c + '_name'] = SW.name(Q, pr.chairs[c]); }
   };
   // joining someone else's government asks no promise of the Caucus
-  SW.juniorPrice = function (Q) { Q.el_join_pledge = ''; Q.el_join_price = ''; };
+  SW.juniorPrice = function (Q) { Q.el_join_pledge = ''; Q.el_join_price = ' '; };
 
   // ------------------------------------------------------------------ faction splits
   // A faction that breaks takes its senators with it: it joins the nearest bloc, or, under a firm
@@ -2721,7 +2731,7 @@
       foiled: 'Forewarned, the Council exposes the forged evidence before the HoloNet can run it.',
       apply: function (Q) {
         Q.jedi_standing -= 12; Q.jedi_relation -= 5; Q.jedi_suspicion = Math.max(0, Q.jedi_suspicion - 1.5);
-        return 'Forged reports accuse Jedi generals of atrocities. The Order is too busy defending itself to look for anyone else.';
+        return 'Forged reports accuse ' + (Q.jedi_generals ? 'Jedi generals' : 'Jedi peacekeepers') + ' of atrocities. The Order is too busy defending itself to look for anyone else.';
       }
     },
     guilds: {
@@ -2878,7 +2888,7 @@
   SW.bureauPurge = function (Q) {
     Q.bureau_purges += 1;
     Q.bp_gov = 0; Q.bp_walkout = 0; Q.bp_chancellor = 0; Q.bp_vote = 0; Q.bp_fell = 0; Q.bp_saved = 0; Q.bp_survived = 0;
-    Q.vote_html = '';
+    Q.vote_html = ' ';
     if (Q.rc_chancellor) {
       // Valorum's fate: a manufactured crisis, and the coalition abandons the Chancellor
       Q.bp_chancellor = 1; Q.bureau_purge_kind = 'chancellor';
@@ -3479,7 +3489,7 @@
       Q.wa_vote = SW.vote(Q, st, 1, aim === 'peace' ? 'peace' : 'rim');
       Q.vote_html = SW.voteBanner('War aims: ' + SW.WAR_AIM_TEXT[aim], Q.wa_vote);
       if (Q.wa_vote < 50) { chosen = gov; Q.wa_overruled = 1; }
-    } else Q.vote_html = '';
+    } else Q.vote_html = ' ';
     Q.war_aim = chosen;
     Q.war_aim_text = SW.WAR_AIM_TEXT[chosen];
   };
@@ -3700,7 +3710,7 @@
         }
       } else SW.react(Q, 'The government\'s budget is defeated, and a stopgap keeps the Republic running.');
     }
-    Q.bd_reactions = Q._reactions.length ? '<ul class="reactions"><li>' + Q._reactions.join('</li><li>') + '</li></ul>' : '';
+    Q.bd_reactions = Q._reactions.length ? '<ul class="reactions"><li>' + Q._reactions.join('</li><li>') + '</li></ul>' : ' ';
     Q._reactions = [];
   };
   SW.budgetOutlook = function (Q, rev, pri) {
@@ -3824,7 +3834,7 @@
       stakes: 'Mon Mothma\'s seat. If she loses it, she is out of Caucus life for a year.', ok: function (Q) { return Q.mothma_joined || Q.date >= 36; },
       win: function (Q) { Q.core_rc += 2; Q.pacifist_dissent -= 3; }, lose: function (Q) { Q.mothma_out_until = Q.date + 12; if (Q.adv_mothma) { Q.adv_mothma = 0; Q.wv_lost_adv = 'Mon Mothma'; } Q.core_rc -= 1; }},
     naboo: {name: 'Naboo\'s royal election', world: 'Naboo', region: 'midrim', from: 96, to: 112, adv: 'amidala',
-      ours: 'Queen Jamillia', theirs: function () { return 'a loyalist of Senator Palpatine'; },
+      ours: 'Queen Jamillia', theirs: function (Q) { return 'a loyalist of ' + ((Q && Q.pal_title) || 'Senator Palpatine'); },
       stakes: 'Palpatine\'s home world, and its delegations across the Chommell sector.', ok: function (Q) { return !Q.sidious_defeated && !Q.pal_disgraced; },
       win: function (Q) { Q.midrim_rc += 2; Q.midrim_pal *= 0.9; Q.pal_relation -= 5; }, lose: function (Q) { Q.midrim_pal += 1.5; Q.grand_plan += 1; }},
     corellia: {name: 'the Corellian Diet', world: 'Corellia', region: 'core', from: 100, to: 120, adv: 'bel_iblis',
@@ -3866,6 +3876,7 @@
     Q.wv_name = W.name; Q.wv_world = W.world; Q.wv_region = W.region; Q.wv_region_name = SW.REGION_NAMES[W.region];
     Q.wv_ours = W.ours; Q.wv_theirs = W.theirs(Q); Q.wv_stakes = W.stakes; Q.wv_lost_adv = '';
     Q.wv_chance = SW.worldPoll(Q, W.region); Q.wv_boost = 0;
+    if (Q.wv_id === 'naboo' && Q.naboo_aid) Q.wv_chance = SW.clamp(Q.wv_chance + 0.17, 0.05, 0.95);
     Q.wv_adv = W.adv && Q['adv_' + W.adv] ? W.adv : ''; Q.wv_adv_name = Q.wv_adv ? SW.ADVISOR_NAMES[Q.wv_adv] : '';
     Q.wv_has_adv = Q.wv_adv ? 1 : 0;
     Q.wv_poll = Math.round(50 + (Q.wv_chance - 0.5) * 30);
@@ -4393,7 +4404,11 @@
     Q.pal_title = Q.chancellor === 'Palpatine' ? 'Chancellor Palpatine' : 'Senator Palpatine';
     Q.pal_office = bloc ? 'the Chancellery' : 'Palpatine\'s office';
     Q.pal_people = bloc ? 'the Chancellor\'s people' : 'Palpatine\'s people';
+    // who stands for Palpatine's bloc when he cannot: his Vice Chair, or, once Amedda has fallen, his aide
+    Q.pal_standin_title = (Q.amedda_arrested || Q.amedda_removed) ? 'Palpatine\'s aide <b>Sate Pestage</b>' : 'Vice Chair <b>Mas Amedda</b>';
+    Q.pal_cand_title = Q.pal_can_run === 0 ? SW.palStandin(Q) : Q.pal_title;
   };
+  SW.palStandin = function (Q) { return (Q.amedda_arrested || Q.amedda_removed) ? 'Sate Pestage' : 'Mas Amedda'; };
 
   SW.everyVisit = function (Q) {
     SW.scaleChanges(Q);

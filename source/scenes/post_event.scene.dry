@@ -33,8 +33,8 @@ if (choices && choices.length && choices[0].title !== 'Continue...') {
 // 5. ui strings
 var t = Q.advisor_action_timer;
 var unit = Q.finale ? 'day' : 'turn';
-Q.pinnedCardsDescription = 'Advisors (one action shared between them): ' +
-    (t <= 0 ? 'an action is available.' : 'next action in ' + t + ' ' + unit + (t === 1 ? '' : 's') + '.') +
+Q.pinnedCardsDescription = 'Advisors and the Chancellery. The advisors share one action: ' +
+    (t <= 0 ? 'it is available now.' : 'the next comes in ' + t + ' ' + unit + (t === 1 ? '' : 's') + '.') +
     (Q.shuffle_timer <= 0 ? ' The Caucus leadership can be reshuffled.' : '');
 Q.handDescription = 'Your hand - play one card to end the turn.';
 Q.deckDescription = 'Decks - click a deck to draw a card (hand holds ' + (Q.difficulty < 0 ? 'four' : 'three') + ').';

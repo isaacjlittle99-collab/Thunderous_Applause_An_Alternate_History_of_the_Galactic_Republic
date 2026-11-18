@@ -43,6 +43,8 @@ on-arrival: {!
 Q.judiciary_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.55, guild: 0.15, rim: 0.7, sec: 0.45, ind: 0.55, pal: 0.45, cis: 0.3}, true);
+var push = SW.ethicsPush(Q);
+if (push) for (var b in st) st[b] = SW.clamp(st[b] + push, 0, 1);
 Q.eth_vote = SW.vote(Q, st, 1, ['oversight', 'regulate']);
 Q.vote_html = SW.voteBanner('Senate Ethics Commission Act', Q.eth_vote);
 if (Q.eth_vote >= 50) { Q.anti_corruption = 1; Q.corruption -= 4; Q.faith += 2; }

@@ -1,7 +1,7 @@
 title: The Count's Doubts
 subtitle: Count Dooku wants to talk.
 tags: event
-view-if: war and date >= 144 and dooku_contact and dooku_doubt >= 2 and peace_talks >= 1 and not dooku_turned and not dooku_offer_seen
+view-if: war and date >= 144 and dooku_contact and dooku_doubt >= 2 and peace_talks >= 1 and not dooku_turned and not dooku_dead and not dooku_offer_seen
 max-visits: 1
 priority: 2
 new-page: true

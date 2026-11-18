@@ -1,7 +1,7 @@
 title: The Death of Mina Bonteri
 subtitle: The Separatist peacemaker has been murdered.
 tags: event
-view-if: bonteri_contact and date >= 146 and not bonteri_dead and not dooku_turned and war
+view-if: bonteri_contact and date >= 146 and not bonteri_dead and not dooku_turned and not dooku_dead and war
 max-visits: 1
 new-page: true
 face-image: img/ev_separatist.svg

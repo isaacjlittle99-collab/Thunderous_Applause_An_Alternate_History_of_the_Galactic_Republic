@@ -33,4 +33,4 @@ view-if: not rc_chancellor and not rc_in_govt
 subtitle: Hurts the government, helps us, and fuels Rim anger.
 on-arrival: rc_momentum += 0.6; outer_sep += 1; faith -= 0.5
 
-"While the Chancellery debates procedure, the Rim bleeds," declares Onaconda Farr.
+[? if not farr_dead : "While the Chancellery debates procedure, the Rim bleeds," declares Onaconda Farr. ?][? if farr_dead : "While the Chancellery debates procedure, the Rim bleeds," declares [+ rim_leader +] of the Rimward Coalition. ?]

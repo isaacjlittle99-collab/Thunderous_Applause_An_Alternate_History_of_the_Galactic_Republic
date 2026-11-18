@@ -125,7 +125,7 @@ if (Q.as_vote >= 50) {
 
 [+ vote_html +]
 
-[? if rim_assembly : The Rim Assembly meets for the first time on Ord Mantell: a parliament for the Mid and Outer Rim, with its own budget and the right to run its own affairs within the Republic. Count Dooku's envoys find the Rim's worlds suddenly less interested in leaving. ?][? if not rim_assembly : The Core's delegations will not share sovereignty. The Rim takes note, and Raxus takes heart. ?]
+[? if rim_assembly : The Rim Assembly meets for the first time on Ord Mantell: a parliament for the Mid and Outer Rim, with its own budget and the right to run its own affairs within the Republic. The Separatists' envoys find the Rim's worlds suddenly less interested in leaving. ?][? if not rim_assembly : The Core's delegations will not share sovereignty. The Rim takes note, and Raxus takes heart. ?]
 
 @slavery_report
 view-if: not slavery_report

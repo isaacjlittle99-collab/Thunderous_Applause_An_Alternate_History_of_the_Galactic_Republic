@@ -9,9 +9,9 @@ on-arrival: {! SW.worldElectionOpen(Q); Q.we_rally = 0; !}
 
 = [+ wv_heading +]
 
-[+ wv_world +] holds [+ wv_name +]: [+ wv_ours +] against [+ wv_theirs +]. *At stake:* [+ wv_stakes +]
+An election on [+ wv_world +]: [+ wv_ours +] against [+ wv_theirs +]. *At stake:* [+ wv_stakes +]
 
-The polls give [+ wv_ours +] about **[+ wv_poll +]%**. [? if wv_has_adv : [+ wv_adv_name +] is one of our advisors, and this is home ground. ?]
+The polls give [+ wv_ours +] about **[+ wv_poll +]%**. [? if wv_id = "naboo" and naboo_aid : Naboo has not forgotten who opened their ports to its refugees. ?] [? if wv_has_adv : [+ wv_adv_name +] is one of our advisors, and this is home ground. ?]
 
 - @hard: Campaign hard on [+ wv_world +].
 - @advisor: Send [? if wv_has_adv : [+ wv_adv_name +] ?][? if not wv_has_adv : one of our advisors ?]to campaign.
