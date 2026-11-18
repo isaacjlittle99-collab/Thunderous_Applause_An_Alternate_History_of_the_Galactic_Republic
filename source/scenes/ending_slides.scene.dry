@@ -14,9 +14,9 @@ Q.seeds = (Q.delegation_formed || Q.petition >= 1 || Q.pact_formed) ? 1 : 0;
 Q.blood_liberty = (Q.faith >= 50 && Q.emergency_powers <= 4) ? 1 : 0;
 this.achieve('ending_' + Q.ending);
 if (Q.anakin_found && !Q.anakin_fallen && Q.anakin_fall < 8) this.achieve('anakin_saved');
-Q.legacy_html = (typeof SW.legacyHTML === 'function') ? SW.legacyHTML(Q) : '';
-Q.summary_html = (typeof SW.summaryHTML === 'function') ? SW.summaryHTML(Q) : '';
-Q.game_ach_html = (typeof SW.achievementsHTML === 'function') ? SW.achievementsHTML(Q, true) : '';
+Q.legacy_html = ((typeof SW.legacyHTML === 'function') ? SW.legacyHTML(Q) : '') || ' ';
+Q.summary_html = ((typeof SW.summaryHTML === 'function') ? SW.summaryHTML(Q) : '') || ' ';
+Q.game_ach_html = ((typeof SW.achievementsHTML === 'function') ? SW.achievementsHTML(Q, true) : '') || ' ';
 Q.game_over_reached = 1;
 !}
 go-to: ep_reborn if ending = "reborn"; ep_endures if ending = "endures"; ep_blood if ending = "blood"; ep_divided if ending = "divided"; ep_protectorate if ending = "protectorate"; ep_admirals if ending = "admirals"; ep_hollow if ending = "hollow_crown"; ep_confederacy if ending = "confederacy"; ep_sith_confederacy if ending = "sith_confederacy"; ep_republic_falls if ending = "republic_falls"; ep_dissolved if ending = "dissolved"; ep_endless if ending = "endless_war"; ep_empire if ending = "empire"
@@ -73,7 +73,7 @@ go-to: legacy
 
 = The Admirals' Republic
 
-[? if admirals_strike : The Sith Lord fell, but the admirals did not. They seized the Republic in the weeks after his arrest, with the emergency powers he left behind and the human-first officers he promoted. ?][? if admirals_coup and not admirals_strike : Wilhuff Tarkin's Council of Admirals rules "until victory", and victory never quite comes. The Senate is suspended, then recalled as an advisory chamber. Somewhere in the Chancellery district, a retired senator from Naboo offers the admirals his counsel, and they are wise enough to take it. ?][? if not admirals_coup : Darth Sidious is gone, but the machine he built runs on without him. The emergency powers, the regional governors and the security services pass to the men who served him: Vice Chair Mas Amedda, Governor Tarkin, the admirals of the Grand Army. They speak of order, stability and the dangers of the Jedi. ?]
+[? if admirals_strike : The Sith Lord fell, but the admirals did not. They seized the Republic in the weeks after his arrest, with the emergency powers he left behind and the human-first officers he promoted. ?][? if admirals_coup and not admirals_strike : Wilhuff Tarkin's Council of Admirals rules "until victory", and victory never quite comes. The Senate is suspended, then recalled as an advisory chamber. Somewhere in the Chancellery district, a retired senator from Naboo offers the admirals his counsel, and they are wise enough to take it. ?][? if not admirals_coup : Darth Sidious is gone, but the machine he built runs on without him. The emergency powers, the regional governors and the security services pass to the men who served him: [? if not amedda_arrested and not amedda_removed : Vice Chair Mas Amedda, ?]Governor Tarkin, the admirals of the Grand Army. They speak of order, stability and the dangers of the Jedi. ?]
 
 The Republic survives in name. The Senate still meets, when it is allowed to. It is not the Empire. But it is not the Republic the Caucus fought for, either.
 
@@ -138,7 +138,7 @@ go-to: legacy
 
 = The Galactic Empire
 
-*"So this is how liberty dies,"* Padmé Amidala said. *"With thunderous applause."*
+[? if padme_alive : *"So this is how liberty dies,"* Padmé Amidala said. *"With thunderous applause."* ?][? if not padme_alive : *"So this is how liberty dies,"* Bail Organa said quietly. *"With thunderous applause."* ?]
 
 The Republic is gone. In its place stands the Galactic Empire of Emperor Palpatine. [? if order66 : The Jedi have been exterminated, all but a handful of exiles. ?] [? if anakin_fallen : At the Emperor's side stands a figure in black armour, Darth Vader, who was once Anakin Skywalker. ?] [? if not padme_alive : Padmé Amidala is dead. ?] The Senate survives for a while, as a ceremony.
 

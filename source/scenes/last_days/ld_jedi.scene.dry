@@ -17,4 +17,4 @@ The Jedi Council is deciding what to do about [+ pal_title +]. The Council trust
 @do
 on-arrival: senate_jedi_pact = 1; jedi_relation += 2; jedi_suspicion += 1.5 if evidence >= 6
 
-Master Windu agrees: if the Jedi move against [+ pal_title +], a Senate delegation will stand with them and the Supreme Court will be told at once.[? if evidence >= 6 : The Caucus's evidence goes to the Council with the agreement. ?]
+Master Windu agrees: if the Jedi move against [+ pal_title +], a Senate delegation will stand with them and the Supreme Court will be told at once. [? if evidence >= 6 : The Caucus's evidence goes to the Council with the agreement. ?]

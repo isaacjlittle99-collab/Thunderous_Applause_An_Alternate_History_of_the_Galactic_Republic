@@ -10,7 +10,7 @@ on-arrival: petition_seen = 1; petition_possible = 1 if senate_resolve >= 3 or d
 
 = The Petition of 2000
 
-[? if petition_possible : The Delegation of 2000 has prepared a petition demanding that the Chancellor return his emergency powers to the Senate now that the war is ending. [+ petition_signatures +] additional senators have signed in the last few days. ?][? if not petition_possible : A few senators talk of a petition demanding that the Chancellor return his powers. Too few have the courage to sign it. ?]
+[? if petition_possible : The Delegation of 2000 has prepared a petition demanding that the Chancellor return his emergency powers to the Senate now that the war is ending. [? if petition_signatures = 0 : No more senators have signed in the last few days. ?][? if petition_signatures = 1 : One more senator has signed in the last few days. ?][? if petition_signatures > 1 : [+ petition_signatures +] more senators have signed in the last few days. ?]?][? if not petition_possible : A few senators talk of a petition demanding that the Chancellor return his powers. Too few have the courage to sign it. ?]
 
 - @present: Present it to the Chancellor in person.
 - @wait: Hold it back until we know what the Jedi will do.
@@ -21,7 +21,7 @@ view-if: petition_possible
 subtitle: A public stand. The Chancellor will know exactly who his opponents are.
 on-arrival: petition = 1; senate_resolve += 1; faith += 1; pal_relation -= 15; mod_relation += 3; ind_relation += 3
 
-Bail Organa, Mon Mothma[? if padme_alive : and Padmé Amidala ?] carry the petition to the Chancellor's office. Palpatine receives them graciously, thanks them, and promises to "consider it carefully". When they have gone, he summons Mas Amedda and asks for a list of every signatory.
+[? if padme_alive : Bail Organa, Mon Mothma and Padmé Amidala carry?][? if not padme_alive : Bail Organa and Mon Mothma carry?] the petition to the Chancellor's office. Palpatine receives them graciously, thanks them, and promises to "consider it carefully". When they have gone, he summons Mas Amedda and asks for a list of every signatory.
 
 @wait
 view-if: petition_possible

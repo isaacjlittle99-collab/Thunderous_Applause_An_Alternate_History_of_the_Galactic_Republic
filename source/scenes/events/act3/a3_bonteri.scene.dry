@@ -1,7 +1,7 @@
 title: A Voice from Raxus
 subtitle: A Separatist senator wants to talk.
 tags: event
-view-if: dooku_movement and date >= 114 and (peace_talks >= 0.5 or cis_relation >= 25 or adv_amidala) and not bonteri_contact
+view-if: dooku_movement and date >= 114 and (peace_talks >= 0.5 or cis_relation >= 25 or adv_amidala) and not bonteri_contact and not dooku_dead and not finale
 max-visits: 1
 new-page: true
 face-image: img/ev_peace.svg

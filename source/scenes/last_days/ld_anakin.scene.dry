@@ -15,6 +15,6 @@ Anakin Skywalker is torn between the Jedi, Padmé and Palpatine, who has been hi
 - @easy_discard
 
 @do
-on-arrival: anakin_fall -= 1.5 if padme_alive and (padme_married or adv_amidala); anakin_fall -= 1 if jedi_relation >= 60 and not (padme_alive and (padme_married or adv_amidala)); anakin_fall -= 0.5 if quigon_alive
+on-arrival: anakin_fall -= 1.5 if padme_alive and (padme_married or adv_amidala); anakin_fall -= 0.5 if padme_alive and padme_trust > 0; anakin_fall -= 1 if jedi_relation >= 60 and not (padme_alive and (padme_married or adv_amidala)); anakin_fall -= 0.5 if quigon_alive
 
-[? if padme_alive and (padme_married or adv_amidala) : Padmé tells Anakin everything she knows, and asks him to trust her rather than Palpatine. ?][? if jedi_relation >= 60 and not (padme_alive and (padme_married or adv_amidala)) : Caucus friends of the Jedi seek Anakin out and speak to him plainly about Palpatine. ?][? if quigon_alive : Qui-Gon Jinn, who found him on Tatooine, sits with him through the night. ?] He does not answer. But he listens.
+[? if padme_alive and (padme_married or adv_amidala) : Padmé tells Anakin everything she knows, and asks him to trust her rather than Palpatine. ?][? if padme_alive and padme_trust > 0 : She has never forgotten that the Caucus kept their secret, and she speaks for us now. ?][? if jedi_relation >= 60 and not (padme_alive and (padme_married or adv_amidala)) : Caucus friends of the Jedi seek Anakin out and speak to him plainly about Palpatine. ?][? if quigon_alive : Qui-Gon Jinn, who found him on Tatooine, sits with him through the night. ?] He does not answer. But he listens.

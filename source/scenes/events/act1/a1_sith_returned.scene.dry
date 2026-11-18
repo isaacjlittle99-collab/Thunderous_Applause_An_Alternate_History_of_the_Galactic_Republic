@@ -31,4 +31,4 @@ The Council agrees, coolly, to "remain vigilant". A small group of Jedi archivis
 subtitle: Fear will spread. The Jedi will be furious.
 on-arrival: fear += 5; jedi_relation -= 10; jedi_standing -= 3; pal_relation += 2; core_pal += 1; colonies_pal += 1
 
-The HoloNet runs with "SITH RETURN!" for a week. Senator Palpatine calls for calm and for "a government strong enough to protect us". Many find this very reassuring.
+The HoloNet runs with "SITH RETURN!" for a week. [+ pal_title +] calls for calm and for "a government strong enough to protect us". Many find this very reassuring.

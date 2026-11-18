@@ -35,7 +35,7 @@ on-display: {! if (typeof SW !== 'undefined' && SW.drawRegionMap) SW.drawRegionM
 - @el_back_mod: Endorse [+ mod_leader +] of the Core Moderates.
 - @el_back_rim: Endorse [+ rim_leader +] of the Rimward Coalition.
 - @el_back_sec: Endorse [+ el_sec_leader +] of the Security Bloc.
-- @el_back_pal: Endorse Senator Palpatine.
+- @el_back_pal: Endorse [+ pal_cand_title +].
 
 @el_run
 view-if: el_has_rc
@@ -431,7 +431,7 @@ Q.el_rc_needed = needRc && Q.el_invited ? 1 : 0;
 if (needRc && !Q.el_invited) gov = SW.formCoalitionAuto(Q, Q.el_winner, false);
 SW.setGovt(Q, gov);
 Q.gov_minority_swing = 0;
-if (SW.seats(Q, gov) < 50 && !Q.el_rc_needed) { SW.brokenSystem(Q, 'minority'); Q.gov_minority_swing = 1; Q.coalition_name = SW.candidateName(Q, Q.el_winner) + '\'s minority government'; }
+if (SW.seats(Q, gov) < 50 && !Q.el_rc_needed) { SW.brokenSystem(Q, 'minority'); Q.gov_minority_swing = 1; }
 Q.el_pal_won = Q.el_winner === 'pal' ? 1 : 0;
 Q.el_join_bureau = SW.bureauReaction(SW.bureauComfort(Q, (Q.govt_blocs || []).concat(['rc'])));
 SW.juniorPrice(Q);
@@ -442,11 +442,11 @@ SW.assignChairs(Q);
 
 [+ el_result +]
 
-[? if el_pal_won : Senator Palpatine of Naboo accepts the office with quiet humility, promising to "end the corruption and paralysis of the Senate". The galleries applaud. ?][? if not el_pal_won : [+ el_winner_name +] forms a government: the [+ coalition_name +]. ?]
+[? if el_pal_won and chancellor = "Palpatine" and el_incumbent != "Palpatine" : Senator Palpatine of Naboo accepts the office with quiet humility, promising to "end the corruption and paralysis of the Senate". The galleries applaud. ?][? if el_pal_won and chancellor = "Palpatine" and el_incumbent = "Palpatine" : Chancellor Palpatine begins another term with the same quiet humility, and the same promise to "end the corruption and paralysis of the Senate". The galleries applaud, a little less loudly than before. ?][? if el_pal_won and chancellor != "Palpatine" : [+ chancellor +] takes the office that Palpatine himself cannot. Everyone in the rotunda knows whose Chancellor this is. ?][? if not el_pal_won : [+ el_winner_name +] forms a government: the [+ coalition_name +]. ?]
 
-[? if gov_minority_swing : No coalition can command a majority, and the new Chancellor must govern as a minority. Voters lose patience with a Senate that cannot govern: Palpatine's bloc and the separatists gain. ?]
+[? if gov_minority_swing : No coalition can command a majority, and the Chancellor must govern as a minority. Voters lose patience with a Senate that cannot govern: Palpatine's bloc and the separatists gain. ?]
 
-[? if el_invited and el_deal_won : [+ el_winner_name +] keeps the bargain struck between the ballots: the Caucus is invited into the government, and the [+ el_deal_chair_name +] chair is ours if we join. ?][? if el_invited and not el_deal_won and el_rc_needed : The new Chancellor needs the Caucus's votes for a majority, and has invited us into the government, with a share of the committee chairs. ?][? if el_invited and not el_deal_won and not el_rc_needed : The new Chancellor's office has invited the Caucus to join the governing coalition, with a share of the committee chairs. ?] [? if el_invited : [+ el_join_price +] ?][? if not el_invited and el_walkout_blocks : The [+ walkout_name +], who walked out on the Caucus, sit in the new government and will not have us. ?][? if not el_invited and not el_walkout_blocks : The new government does not need the Caucus, and has not asked for it. ?]
+[? if el_invited and el_deal_won : [+ el_winner_name +] keeps the bargain struck between the ballots: the Caucus is invited into the government, and the [+ el_deal_chair_name +] chair is ours if we join. ?][? if el_invited and not el_deal_won and el_rc_needed : The Chancellor needs the Caucus's votes for a majority, and has invited us into the government, with a share of the committee chairs. ?][? if el_invited and not el_deal_won and not el_rc_needed : The Chancellor's office has invited the Caucus to join the governing coalition, with a share of the committee chairs. ?] [? if el_invited : [+ el_join_price +] ?][? if not el_invited and el_walkout_blocks : The [+ walkout_name +], who walked out on the Caucus, sit in the new government and will not have us. ?][? if not el_invited and not el_walkout_blocks : The new government does not need the Caucus, and has not asked for it. ?]
 
 - @el_join: Join the government.
 - @el_oppose: Remain in opposition.
@@ -468,7 +468,7 @@ if (Q.el_rc_needed) {
 SW.assignChairs(Q); Q.rc_momentum += 0.5;
 !}
 
-The Caucus will hold the new government to account from the opposition benches. [? if gov_minority_swing : Without us, the new Chancellor can only govern as a minority, and voters lose patience with a Senate that cannot govern: Palpatine's bloc and the separatists gain. ?]
+The Caucus will hold the new government to account from the opposition benches. [? if gov_minority_swing : Without us, the Chancellor can only govern as a minority, and voters lose patience with a Senate that cannot govern: Palpatine's bloc and the separatists gain. ?]
 
 @el_chairs
 new-page: true

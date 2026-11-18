@@ -9,7 +9,7 @@ on-arrival: anakin_fall += 1
 
 = Palpatine's Protégé
 
-Anakin Skywalker, now a teenage Padawan, has become a frequent guest of [? if pal_chancellor : the Supreme Chancellor ?][? if not pal_chancellor : Senator Palpatine ?]. Palpatine praises his gifts, sympathises with his frustrations at the Jedi's rules, and tells him he will one day be the most powerful Jedi of all. The boy adores him.
+Anakin Skywalker, now a teenage Padawan, has become a frequent guest of [? if pal_chancellor : the Supreme Chancellor?][? if not pal_chancellor : Senator Palpatine?]. Palpatine praises his gifts, sympathises with his frustrations at the Jedi's rules, and tells him he will one day be the most powerful Jedi of all. The boy adores him.
 
 - @warn: Quietly warn the Jedi that this friendship is unhealthy.
 - @encourage: It is touching. Encourage it.

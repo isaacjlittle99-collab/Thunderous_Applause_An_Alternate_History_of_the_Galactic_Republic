@@ -8,7 +8,7 @@ face-image: img/ev_trade.svg
 
 = Lifting the Sanctions
 
-The sanctions imposed after Naboo are hurting the Trade Federation, and the Federation has been generous to many senators. A motion to lift them is before the Senate, [? if pal_chancellor : with the Chancellor's quiet blessing ?][? if not pal_chancellor : with the support of the Commerce Guilds ?].
+The sanctions imposed after Naboo are hurting the Trade Federation, and the Federation has been generous to many senators. A motion to lift them is before the Senate, [? if pal_chancellor : with the Chancellor's quiet blessing?][? if not pal_chancellor : with the support of the Commerce Guilds?].
 
 - @oppose: Oppose lifting the sanctions.
 - @accept: Accept it in the interest of galactic commerce.

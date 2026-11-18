@@ -10,7 +10,7 @@ new-page: true
 
 Pantora’s young senator is honest to the point of naivety. That makes her surprisingly dangerous to cynics.
 
-[? if advisor_action_timer > 0 : Our advisors can act again in [+ advisor_action_timer +] turn(s). ?]
+[? if advisor_action_timer = 1 : Our advisors can act again next turn. ?][? if advisor_action_timer > 1 : Our advisors can act again in [+ advisor_action_timer +] turns. ?]
 
 - @chuchi_integrity: Pantoran integrity.
 - @chuchi_rim: Outer Rim voices.

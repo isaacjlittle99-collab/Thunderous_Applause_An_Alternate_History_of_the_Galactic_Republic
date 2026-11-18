@@ -291,6 +291,48 @@ const PREMISES = [
   [/^rec_rim_radicals$/, Q => !SW.rimTackled(Q) && Q.date >= 60, 'the Rim\'s politicians radicalising although the Rim was tackled'],
 ];
 const PREMISE_HITS = {};
+// ---------------------------------------------------------------- text audit
+// Every rendered paragraph and option is checked for broken text and for words that contradict the state at that moment.
+// How to play, the Holocron and the Chancellery's tables are left out: they describe the rules, not the game in progress.
+const TEXT_SKIP = /^(root|library|chancellery|game_over)/;
+const flatText = el => Array.isArray(el) ? el.map(flatText).join('') : (typeof el === 'string' ? el : (el && el.content !== undefined ? flatText(el.content) : ''));
+const plainText = s => s.replace(/<(br|\/li|\/td|\/tr|\/p|\/div)[^>]*>/gi, ' ').replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').trim();
+const TEXT_RULES = [
+  ['text: markup leaked', /undefined|NaN|\[object|\{!|!\}|\[\+|\+\]|\[\?|\?\]/],
+  ['text: an empty insert shown as 0', /^0$|[.!?]\s+0(\s+[a-z]|$)/],
+  ['text: a full stop running into the next sentence', /[a-z]\.[A-Z][a-z]/],
+  ['text: a space before punctuation', /[a-z]\s+[.,;:!?](\s|$)/],
+];
+const TEXT_STATE = [
+  ['text: Padmé after her death', /Padm[ée]/, Q => !Q.padme_alive, /died|death|dead|killed|funeral|grave|memory/],
+  ['text: Dooku after his death', /Count Dooku (wants|sends|says|declares|orders|offers|will)|Dooku's (emissaries|envoys|side)|reaches Count Dooku|beside Count Dooku/, Q => Q.dooku_dead, null],
+  ['text: Farr speaking after his death', /(declares|says|asks|warns|demands|insists) Onaconda Farr|Senator Farr (says|declares|asks|warns)/, Q => Q.farr_dead, null],
+  ['text: Mas Amedda as Vice Chair after his fall', /Vice Chair (Mas )?Amedda/, Q => Q.amedda_arrested || Q.amedda_removed, null],
+  ['text: the Defence Pact before it exists', /Defence Pact (squadrons|forces|fleets)/, Q => !Q.pact_formed, null],
+  ['text: Senator Palpatine while he is Chancellor', /Senator Palpatine/, Q => Q.pal_chancellor, /accepts the office|once|former/],
+  ['text: Jedi generals under the Service Act', /Jedi generals|General Kenobi|General Skywalker/, Q => Q.jedi_service_act, null],
+];
+function textAudit(scene, Q, raw) {
+  if (TEXT_SKIP.test(scene)) return;
+  const t = plainText(raw);
+  if (!t) return;
+  for (const [k, re] of TEXT_RULES) if (re.test(t)) PREMISE_HITS[k] = (PREMISE_HITS[k] || 0) + 1;
+  for (const [k, re, bad, unless] of TEXT_STATE) if (bad(Q) && re.test(t) && !(unless && unless.test(t))) PREMISE_HITS[k] = (PREMISE_HITS[k] || 0) + 1;
+}
+{
+  const mk = engineLib.DendryEngine.prototype._makeDisplayContent;
+  engineLib.DendryEngine.prototype._makeDisplayContent = function () {
+    const r = mk.apply(this, arguments);
+    try { for (const el of r) textAudit(this.state.sceneId, this.state.qualities, flatText(el)); } catch (e) {}
+    return r;
+  };
+  const dc = engineLib.DendryEngine.prototype.displayChoices;
+  engineLib.DendryEngine.prototype.displayChoices = function () {
+    const r = dc.apply(this, arguments);
+    try { for (const c of (this.ui.choices || [])) { textAudit(c.id, this.state.qualities, flatText(c.title)); if (c.subtitle) textAudit(c.id, this.state.qualities, flatText(c.subtitle)); } } catch (e) {}
+    return r;
+  };
+}
 const STEP_SEEN = {};
 const STEP_RE = /\.(bureau_reform|civil_service|amedda|ethics|integrity|hhc_investigate|syndicates|relief_act|enfranchise|assembly|slavery_report|abolition|enforce|sentience|sunset|powers_review|oversight|command|patrols|pirate_campaign|officers|reform|attachment|new_order|judicials|navy|train|exercise|break|guilds|el_chest)$/;
 let lastGovt = [];

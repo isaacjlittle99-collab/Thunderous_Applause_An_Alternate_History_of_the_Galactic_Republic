@@ -9,4 +9,4 @@ on-arrival: cis_victory = 1; game_ending = 1
 
 = The Republic Collapses
 
-The Confederacy's droid armies have broken through. The Core Worlds are under siege and Coruscant's shields are failing. [? if sidious_fled : The Sith Lord who once sat in the Senate now commands the fleet above it. ?][? if not sidious_fled : The Senate votes to sue for peace on whatever terms Count Dooku will allow. ?]
+The Confederacy's droid armies have broken through. The Core Worlds are under siege and Coruscant's shields are failing. [? if sidious_fled : The Sith Lord who once sat in the Senate now commands the fleet above it. ?][? if not sidious_fled : The Senate votes to sue for peace on whatever terms [? if dooku_dead or dooku_turned : the Confederacy?][? if not dooku_dead and not dooku_turned : Count Dooku?] will allow. ?]

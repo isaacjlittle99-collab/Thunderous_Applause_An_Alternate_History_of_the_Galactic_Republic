@@ -10,7 +10,7 @@ new-page: true
 
 Viceroy, senator and husband to Alderaan’s queen, Bail Organa is a consensus-builder with friends in every bloc and, unusually, in the Jedi Temple.
 
-[? if advisor_action_timer > 0 : Our advisors can act again in [+ advisor_action_timer +] turn(s). ?]
+[? if advisor_action_timer = 1 : Our advisors can act again next turn. ?][? if advisor_action_timer > 1 : Our advisors can act again in [+ advisor_action_timer +] turns. ?]
 
 - @organa_diplomacy: Alderaanian diplomacy.
 - @organa_inquiries: Quiet inquiries among his Jedi friends.
@@ -27,7 +27,7 @@ on-arrival: mod_relation += 5; ind_relation += 5; rim_relation += 3; advisor_act
 Organa hosts a reception at the Alderaanian embassy. By the end of the evening three blocs believe he is on their side, and he is not entirely lying.
 
 @organa_inquiries
-subtitle: +0.5 evidence, +4 relations with the Jedi.
+subtitle: +0.3 evidence, +4 relations with the Jedi; the Council grows a little more suspicious.
 choose-if: advisor_action_timer <= 0
 unavailable-subtitle: Our advisors have already acted recently.
 on-arrival: evidence += 0.3; jedi_relation += 4; jedi_suspicion += 0.3; advisor_action_timer = 5

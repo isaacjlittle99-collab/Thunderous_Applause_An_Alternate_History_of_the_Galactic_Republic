@@ -8,7 +8,7 @@ face-image: img/ev_chancellery.svg
 
 = The Chancellery Grows
 
-In the name of efficiency, the Chancellor's office has absorbed the staff of six Senate committees, the Senate Bureau of Intelligence's liaison office, and the Senate Guard's command. Each step was small and reasonable. Together they amount to a second government, answerable to [? if pal_chancellor : one man ?][? if not pal_chancellor : one man, and he is not the Chancellor ?]. [? if rc_in_govt : The Caucus sits in this government. Whatever it says now, it says from inside the cabinet room. ?]
+In the name of efficiency, the Chancellor's office has absorbed the staff of six Senate committees, the Senate Bureau of Intelligence's liaison office, and the Senate Guard's command. Each step was small and reasonable. Together they amount to a second government, answerable to [? if pal_chancellor : one man?][? if not pal_chancellor : one man, and he is not the Chancellor?]. [? if rc_in_govt : The Caucus sits in this government. Whatever it says now, it says from inside the cabinet room. ?]
 
 - @resist: [? if rc_in_govt : Object inside the cabinet. ?][? if not rc_in_govt : Resist the transfers in committee. ?]
 - @accept: Accept them. The Senate does need to work better.

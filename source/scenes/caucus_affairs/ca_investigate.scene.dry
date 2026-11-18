@@ -9,9 +9,9 @@ new-page: true
 
 = Shadow Investigation
 
-[? if sith_stage = 0 : Too many of the Republic's crises seem to serve someone. ?][? if sith_stage = 1 : The Jedi say a Sith Lord has returned. If he has, the Republic's crises may be his work, and someone, somewhere, is serving him. ?][? if sith_stage = 2 : One hidden hand is behind the Republic's crises: the same money, the same timing, the same people profiting. It belongs to a Sith Lord[? if gunray_testified or gunray_convicted : the Trade Federation knew as Darth Sidious ?]. ?][? if sith_stage = 3 : The trail leads to Coruscant, and close to power. The Caucus has a shortlist: [+ suspects_open_text +]. ?][? if sith_stage = 4 : Every other door has closed. The Sith Lord is [+ pal_title +]. Knowing it is not proving it. ?] Our proof is **[+ evidence : evidence +]**. Investigations carry risks: the people behind these events do not like being looked at.
+[? if sith_stage = 0 : Too many of the Republic's crises seem to serve someone. ?][? if sith_stage = 1 : The Jedi say a Sith Lord has returned. If he has, the Republic's crises may be his work, and someone, somewhere, is serving him. ?][? if sith_stage = 2 : One hidden hand is behind the Republic's crises: the same money, the same timing, the same people profiting. It belongs to a Sith Lord[? if gunray_testified or gunray_convicted : , the one the Trade Federation knew as Darth Sidious?]. ?][? if sith_stage = 3 : The trail leads to Coruscant, and close to power. The Caucus has a shortlist: [+ suspects_open_text +]. ?][? if sith_stage = 4 : Every other door has closed. The Sith Lord is [+ pal_title +]. Knowing it is not proving it. ?] Our proof is **[+ evidence : evidence +]**. Investigations carry risks: the people behind these events do not like being looked at.
 
-[? if investigators_lost > 0 : We have already lost [+ investigators_lost +] investigator(s). ?]
+[? if investigators_lost = 1 : We have already lost one investigator. ?][? if investigators_lost > 1 : We have already lost [+ investigators_lost +] investigators. ?]
 
 - @look_amedda: Look into Mas Amedda.
 - @look_pestage: Look into Sate Pestage.

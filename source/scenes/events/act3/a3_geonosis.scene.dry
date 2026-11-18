@@ -75,7 +75,9 @@ if (!Q.geo_outcome && Q.kamino_army) {
     if (v2 >= 50) { Q.geo_outcome = 'powers'; Q.emergency_powers += Q.ep_cost; if (Q.rc_chancellor) Q.rc_emergency_taken += Q.ep_cost; }
 }
 if (!Q.geo_outcome) Q.geo_outcome = 'none';
-Q.vote_html = html;
+Q.vote_html = html || ' ';
+// the droid inspections' report finally makes sense
+if (Q.tf_inspections && !Q.tf_lead_used) { Q.tf_lead_used = 1; Q.evidence += 0.5; }
 // the war begins either way: the Confederacy will not stand down now
 Q.war = 1;
 // the Jedi Service Act keeps them out of command until the Senate suspends it
@@ -96,6 +98,8 @@ SW.senateSession(Q);
 
 [+ vote_html +]
 
-[? if geo_outcome = "powers" : The Senate grants [? if rc_chancellor : our ?][? if not rc_chancellor : the ?] Chancellor emergency powers, to thunderous applause. Within hours, [+ chancellor +] authorises the creation of the **Grand Army of the Republic**. Clone troopers led by Master Yoda arrive on Geonosis in time to rescue the surviving Jedi. ?][? if geo_outcome = "oversight" : The Senate itself orders the clones into battle, under a standing oversight committee. The Chancellor receives no new powers. Clone troopers arrive on Geonosis in time to rescue the surviving Jedi. ?][? if geo_outcome = "none" and not kamino_army : With no clone army, the Republic sends what it has. Judicial cruisers and Defence Pact squadrons race to Geonosis and arrive too late for many of the Jedi. The Republic has kept its constitution, but its first battle has been bloody. ?][? if geo_outcome = "none" and kamino_army : The Senate refuses to hand over its authority. Judicial cruisers and Defence Pact squadrons race to Geonosis and arrive too late for many of the Jedi. The Republic has kept its constitution, but its first battle has been bloody. ?]
+[? if geo_outcome = "powers" : The Senate grants [? if rc_chancellor : our ?][? if not rc_chancellor : the ?] Chancellor emergency powers, to thunderous applause. Within hours, [+ chancellor +] authorises the creation of the **Grand Army of the Republic**. Clone troopers led by Master Yoda arrive on Geonosis in time to rescue the surviving Jedi. ?][? if geo_outcome = "oversight" : The Senate itself orders the clones into battle, under a standing oversight committee. The Chancellor receives no new powers. Clone troopers arrive on Geonosis in time to rescue the surviving Jedi. ?][? if geo_outcome = "none" and not kamino_army : With no clone army, the Republic sends what it has. Judicial cruisers [? if pact_formed : and Defence Pact squadrons ?]race to Geonosis and arrive too late for many of the Jedi. The Republic has kept its constitution, but its first battle has been bloody. ?][? if geo_outcome = "none" and kamino_army : The Senate refuses to hand over its authority. Judicial cruisers [? if pact_formed : and Defence Pact squadrons ?]race to Geonosis and arrive too late for many of the Jedi. The Republic has kept its constitution, but its first battle has been bloody. ?]
+
+[? if tf_lead_used : Somewhere in the Judicial Department, an analyst remembers page six hundred of the Trade Federation's droid-inspection report: the Geonosian supplier was building for the Confederacy all along. The Caucus adds it to the file. ?]
 
 The Separatist senators walk out of the rotunda for the last time. The **[+ war_name +]** [? if kamino_army : have ?][? if not kamino_army : has ?]begun.

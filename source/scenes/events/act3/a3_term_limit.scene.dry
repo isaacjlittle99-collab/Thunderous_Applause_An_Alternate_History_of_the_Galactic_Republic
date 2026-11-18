@@ -25,7 +25,7 @@ view-if: term_limits_protected
 on-arrival: pal_can_run = 0; election_due = 1; senate_resolve += 1; faith += 2
 achievement: term_limit_held
 
-The extension motion is ruled out of order. Palpatine bows graciously and announces he will not stand again. His bloc nominates Vice Chair **Mas Amedda** in his place. For the first time, the man behind the curtain will have to work through someone else.
+The extension motion is ruled out of order. Palpatine bows graciously and announces he will not stand again. His bloc nominates [+ pal_standin_title +] in his place. For the first time, the man behind the curtain will have to work through someone else.
 
 @oppose
 view-if: not term_limits_protected
