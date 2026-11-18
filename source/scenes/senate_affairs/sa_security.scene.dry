@@ -44,7 +44,7 @@ on-arrival: {!
 Q.security_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.6, guild: 0.4, rim: 0.6, sec: 0.25, ind: 0.55, pal: 0.1, cis: 0.5}, true);
-Q.ov_vote = SW.vote(Q, st, 1, 'oversight');
+Q.ov_vote = SW.vote(Q, st, 1, ['oversight', 'command']);
 Q.vote_html = SW.voteBanner('Grand Army Oversight Act', Q.ov_vote);
 if (Q.ov_vote >= 50) { Q.army_oversight = 1; Q.navy_loyalty += 10; this.achieve('oversight'); }
 !}
@@ -114,7 +114,7 @@ on-arrival: {!
 Q.security_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.55, guild: 0.4, rim: 0.6, sec: 0.2, ind: 0.55, pal: 0.05, cis: 0.5}, true);
-Q.sc_vote = SW.vote(Q, st, 1, ['oversight', '-army']);
+Q.sc_vote = SW.vote(Q, st, 1, ['oversight', '-army', 'command']);
 Q.vote_html = SW.voteBanner('Senate Command Act', Q.sc_vote);
 if (Q.sc_vote >= 50) { Q.senate_command = 1; Q.navy_loyalty += 15; Q.sec_relation -= 6; Q.pal_relation -= 6; }
 !}

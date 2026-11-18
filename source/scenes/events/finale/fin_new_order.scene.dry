@@ -8,8 +8,14 @@ new-page: true
 face-image: img/ev_senate.svg
 on-arrival: {!
 Q.new_order_seen = 1;
-var adj = -(Q.petition || 0) * 0.05 - (Q.delegation_formed ? 0.05 : 0) - Q.evidence_public * 0.04 - (Q.order66_failed ? 0.2 : 0) - Q.senate_resolve * 0.02 + (Q.fear - 40) / 200;
+var adj = -Math.max(0, (Q.petition || 0) - (Q.petition_lost || 0)) * 0.05 - (Q.delegation_formed ? 0.05 : 0) - Q.evidence_public * 0.04 - (Q.order66_failed ? 0.2 : 0) - Q.senate_resolve * 0.02 + (Q.fear - 40) / 200;
 var st = {pal: 1, sec: 0.9, mod: 0.55, guild: 0.6, ind: 0.5, rim: 0.35, rfc: 0.25};
+// the wings: the Centralists draw the Moderates and Independents with talk of order, the Cult's crowds push everyone,
+// the Human-Firsters bring the Security Bloc whole, the Constitutional Hawks keep it out
+if (Q.pal_wing === 'centralists') { st.mod += 0.1; st.ind += 0.1; }
+if (Q.no_crowd) adj += 0.08;
+if (Q.sec_wing === 'human_first') st.sec = 1;
+if (Q.sec_wing === 'const_hawks' || Q.hawks_called) st.sec = 0.2;
 for (var b in st) if (b !== 'pal') st[b] = SW.clamp(st[b] + adj, 0, 1);
 Q.no_stance = st;
 !}

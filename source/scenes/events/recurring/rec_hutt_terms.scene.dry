@@ -1,0 +1,30 @@
+title: Ryloth's Terms
+subtitle: Orn Free Taa has an offer from Hutt space.
+tags: event
+view-if: hutt_rules = 1 and rc_in_govt and not hutt_terms and not hutt_turned and not hutt_terms_seen and date >= 12 and not finale and not game_ending
+max-visits: 1
+priority: 3
+new-page: true
+face-image: img/ev_rim.svg
+on-arrival: hutt_terms_seen = 1
+
+= Ryloth's Terms
+
+Orn Free Taa receives the Caucus's emissaries in a private box above the Senate floor, surrounded by Twi'lek attendants and the smell of spice. The Hutt-space Machine runs the Rimward Coalition now, and its price is simple.
+
+"The Hutt clans have long memories and deep accounts," he says. "They can open doors for a government that understands the Rim. Their spies know things about Coruscant that your investigators do not. Their credits can be very generous. And my Coalition can always use friends in government." He smiles. "All we ask is that the government leaves the Rim's affairs to the Rim. No crusades over the slave markets. No warships hunting honest traders. No new rules for the guilds. Let commerce breathe."
+
+- @accept: Accept the Hutts' terms.
+- @refuse: Refuse to deal with the cartels.
+
+@accept
+subtitle: The Machine's friendship, for as long as we keep our side of the bargain.
+on-arrival: {! SW.huttAccept(Q); !}
+
+The deal is never written down. Orn Free Taa does not need it to be: everyone in the box knows what was agreed, and the Hutts will be watching.
+
+@refuse
+subtitle: The Rimward Coalition's leaders will turn to someone else.
+on-arrival: {! SW.huttTurn(Q, 'the Caucus refused their terms'); !}
+
+Orn Free Taa's smile does not move. "A pity," he says. "Others in this Senate are more understanding." Within the week, his senators are seen dining with the Chancellor's people.

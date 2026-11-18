@@ -31,7 +31,7 @@ on-arrival: {!
 Q.constitution_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.6, guild: 0.55, rim: 0.65, sec: 0.25, ind: 0.6, pal: 0.15 + (Q.emergency_powers < 1 ? 0.25 : 0), cis: 0.6}, true);
-Q.cr_vote = SW.vote(Q, st, 1, 'oversight');
+Q.cr_vote = SW.vote(Q, st, 1, ['oversight', 'constitution']);
 Q.vote_html = SW.voteBanner('Sunset Amendment', Q.cr_vote, Q.amend_threshold);
 if (Q.cr_vote >= Q.amend_threshold) { Q.emergency_sunset = 1; Q.faith += 1; this.achieve('sunset'); }
 !}
@@ -48,7 +48,7 @@ unavailable-subtitle: Not enough political capital.
 on-arrival: {!
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.65, guild: 0.5, rim: 0.65, sec: 0.35, ind: 0.6, pal: (Q.pal_chancellor ? 0.05 : 0.4), cis: 0.6}, true);
-Q.cr_vote = SW.vote(Q, st, 1, 'oversight');
+Q.cr_vote = SW.vote(Q, st, 1, ['oversight', 'constitution']);
 Q.vote_html = SW.voteBanner('Term Limits Amendment', Q.cr_vote, Q.amend_threshold);
 if (Q.cr_vote >= Q.amend_threshold) { Q.term_limits_protected = 1; Q.faith += 1; }
 !}
@@ -65,7 +65,7 @@ unavailable-subtitle: Not enough political capital.
 on-arrival: {!
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.7, guild: 0.45, rim: 0.45, sec: 0.5, ind: 0.55, pal: 0.3, cis: 0.3}, true);
-Q.cr_vote = SW.vote(Q, st, 1, 'oversight');
+Q.cr_vote = SW.vote(Q, st, 1, ['oversight', 'constitution']);
 Q.vote_html = SW.voteBanner('Constructive No-Confidence Amendment', Q.cr_vote, Q.amend_threshold);
 if (Q.cr_vote >= Q.amend_threshold) { Q.constructive_vonc = 1; Q.coalition_dissent -= 1; }
 !}
@@ -83,7 +83,7 @@ on-arrival: {!
 Q.constitution_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.35, guild: 0.25, rim: 0.95, sec: 0.2, ind: 0.6, pal: 0.35, cis: 0.75}, true);
-Q.cr_vote = SW.vote(Q, st, 1, 'rim');
+Q.cr_vote = SW.vote(Q, st, 1, ['rim', 'representation']);
 Q.vote_html = SW.voteBanner('Rim Representation Amendment', Q.cr_vote, Q.amend_threshold);
 if (Q.cr_vote >= Q.amend_threshold) { Q.rim_enfranchised = 1; Q.outer_sep -= 10; Q.midrim_sep -= 6; Q.rim_relation += 10; Q.outer_rc += 3; this.achieve('enfranchised'); }
 !}
@@ -102,7 +102,7 @@ on-arrival: {!
 Q.constitution_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.6, guild: 0.5, rim: 0.65, sec: 0.2, ind: 0.65, pal: 0.1, cis: 0.6}, true);
-Q.pr_vote = SW.vote(Q, st, 1, ['oversight', '-powers']);
+Q.pr_vote = SW.vote(Q, st, 1, ['oversight', '-powers', 'constitution']);
 Q.vote_html = SW.voteBanner('Powers Review Amendment', Q.pr_vote, Q.amend_threshold);
 if (Q.pr_vote >= Q.amend_threshold) { Q.powers_review = 1; Q.faith += 1; Q.senate_resolve += 0.5; }
 !}
@@ -120,7 +120,7 @@ on-arrival: {!
 Q.constitution_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.65, guild: 0.45, rim: 0.6, sec: 0.35, ind: 0.65, pal: (Q.pal_chancellor ? 0.05 : 0.3), cis: 0.55}, true);
-Q.sp_vote = SW.vote(Q, st, 1, 'oversight');
+Q.sp_vote = SW.vote(Q, st, 1, ['oversight', 'constitution']);
 Q.vote_html = SW.voteBanner('Independent Speaker Amendment', Q.sp_vote, Q.amend_threshold);
 if (Q.sp_vote >= Q.amend_threshold) { Q.independent_speaker = 1; Q.senate_resolve += 0.5; Q.faith += 1; }
 !}

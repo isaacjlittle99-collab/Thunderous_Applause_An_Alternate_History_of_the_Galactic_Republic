@@ -124,7 +124,9 @@ function smartWeight(id, Q) {
     [/^sa_diplomacy$/, Q.war ? 6 : 3],
     // advisors and leadership
     [/let_decide$/, 4], [/\.offer$/, 3],
-    [/^rec_party_congress\.adv$/, 5], [/^rec_party_congress\.back\d$/, Q.capital >= 3 ? 2 : 0.3], [/^rec_party_congress\.stay_out$/, 3], [/^shuffle_leadership$/, (Q.n_advisors || 0) < 3 ? 6 : 0.3],
+    [/^rec_party_congress\.adv$/, 5], [/^rec_party_congress\.back\d$/, Q.capital >= 3 ? 2 : 0.3], [/^rec_party_congress\.stay_out$/, 3],
+    [/^rec_hutt_terms\.accept$/, 2], [/^rec_hutt_terms\.refuse$/, 3], [/^rec_human_militias\.(crackdown|investigate)$/, 5], [/^rec_repeal_rights\.fight$/, 6],
+    [/^ld_hawks$/, 9], [/^shuffle_leadership$/, (Q.n_advisors || 0) < 3 ? 6 : 0.3],
     // the lore events
     [/labyrinth\.judicials$/, Q.judicial_forces >= 4 ? 6 : 1], [/labyrinth\.council$/, 4], [/hostage_crisis\.measured$/, Q.capital >= 2 ? 5 : 1],
     [/loyalist_committee\.join$/, 4], [/\.scatter$/, 6],
@@ -292,6 +294,15 @@ const PREMISES = [
   [/^rec_rim_radicals$/, Q => !SW.rimTackled(Q) && Q.date >= 60, 'the Rim\'s politicians radicalising although the Rim was tackled'],
   [/^rec_party_congress$/, Q => !Q.finale && SW.hasWings(Q, Q.cg_bloc || Q.congress_ready), 'a congress in the finale, or of a bloc without wings'],
   [/^rec_party_congress\.cg_round2$/, Q => Q.cg_deadlock, 'a second round without a deadlock'],
+  // what the ruling wings do
+  [/^rec_hutt_(terms|offer|reprisal|turned)$/, Q => !Q.syndicates_broken, 'a Hutt event after the syndicates were broken'],
+  [/^rec_hutt_(terms|offer)$/, Q => Q.rim_wing === 'hutt_machine', 'the Hutts\' terms while they do not rule the Rim'],
+  [/^rec_hutt_offer$/, Q => Q.hutt_terms && Q.rc_in_govt, 'a Hutt offer without the terms or a seat in government'],
+  [/^rec_human_militias$/, Q => Q.pal_wing === 'new_order', 'human militias without the New Order ruling Palpatine\'s bloc'],
+  [/^rec_repeal_rights$/, Q => Q.pal_chancellor && Q.pal_wing === 'new_order', 'a repeal without the New Order in the Chancellery'],
+  [/^rec_farr_returns$/, Q => SW.TRACKS.rim.level(Q) >= 3 && Q.slavery_enforced && !Q.farr_dead, 'Farr returns before the Rim\'s reforms and abolition'],
+  [/^ld_hawks$/, Q => Q.sec_wing === 'const_hawks', 'the Constitutional Hawks called without them ruling Security'],
+  [/^fin_(purge|militias|crowds)$/, Q => Q.finale && !Q.sidious_defeated, 'a finale move by Palpatine\'s wings outside the finale'],
 ];
 const PREMISE_HITS = {};
 // why each congress met, and where a text problem was seen (TEXTWHERE=1)
@@ -346,6 +357,7 @@ let lastGovt = [];
 const DECREES_TAKEN = {};
 const MINORITY_OVER = new Map();
 const MIC_SEEN = new WeakSet();
+const LD_PLAYED = new WeakMap();
 function checkPremises(id, Q, game, out) {
   const g = (Q.govt_blocs || []).slice();
   const added = g.filter(b => lastGovt.indexOf(b) < 0);
@@ -359,6 +371,12 @@ function checkPremises(id, Q, game, out) {
     for (const [re, ok, label] of PREMISES) if (re.test(id) && !ok(Q)) out[label] = (out[label] || 0) + 1;
     const sc = game.scenes[id];
     if (sc && (sc.tags || []).indexOf('event') >= 0 && Q.sidious_defeated && !Q.finale) out['event after Sidious fell'] = (out['event after Sidious fell'] || 0) + 1;
+  }
+  // a Last Days card is played once a game (biding our time is the one that repeats)
+  if (/^ld_[a-z]+\.do$/.test(id) && id !== 'ld_bide.do') {
+    let seen = LD_PLAYED.get(Q); if (!seen) { seen = {}; LD_PLAYED.set(Q, seen); }
+    seen[id] = (seen[id] || 0) + 1;
+    if (seen[id] > 1) out['a Last Days card played twice: ' + id] = (out['a Last Days card played twice: ' + id] || 0) + 1;
   }
   if (Q.clones > 0 && !Q.kamino_army) out['clones without an army'] = (out['clones without an army'] || 0) + 1;
   // after every-visit, each chair has a minister of its own bloc, and nobody chairs two committees

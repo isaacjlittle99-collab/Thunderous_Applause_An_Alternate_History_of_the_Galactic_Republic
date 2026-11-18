@@ -34,6 +34,8 @@ artwork, music or footage is included; all images are original abstract art.*
 - **Parties have wings.** Every bloc, Palpatine's included, is a coalition of ideological wings whose delegates rise and
   fall with the times. Party congresses, with a second round of bargaining when no wing has a majority, decide which wing
   leads; the Caucus can back a wing with capital, an advisor or a promise. A bloc is strongest where its ruling wing is at home.
+  The ruling wing sets how the bloc votes and what it does: the Hutts offer terms, the Rim Radicals obstruct, the guilds' hardliners
+  walk out to the Confederacy, and Palpatine's wings shape his last moves and the Empire he would build.
 - **The War Council.** When war comes, the Senate sets its war aims, and every other turn the War Council decides
   which of three fronts to push and faces a lore dilemma whose consequences reach far beyond the battlefield.
 - **The Republic's purse.** A yearly budget, debt to the Banking Clan, hyperlane trade, and bacta, Tibanna and spice

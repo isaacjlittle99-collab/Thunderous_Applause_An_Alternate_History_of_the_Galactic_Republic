@@ -1,0 +1,38 @@
+title: Human Militias
+subtitle: Uniformed young humans march on the Core worlds.
+tags: event
+view-if: pal_wing = "new_order" and parties_has_pal and militia_timer <= 0 and date >= 24 and not hhc_discredited and not sidious_defeated and not pal_disgraced and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_shadow.svg
+on-arrival: {! Q.militia_timer = 6 + Math.floor(Math.random() * 3); Q.fear += 3; Q.outer_rc -= 0.5; Q.midrim_rc -= 0.5; Q.rim_relation -= 2; Q.militia_events = (Q.militia_events || 0) + 1; !}
+
+= Human Militias
+
+On Corulag, Coruscant and Kuat, young humans in grey tunics march through the streets in step. They call themselves volunteers for order. They stand outside the offices of Rim and alien senators, chanting, and take down the names of everyone who goes in. Janus Greejatus calls them "the Republic's conscience". Some of the Rim's senators have stopped coming to the rotunda.
+
+- @crackdown: Have the Judicial Forces break up the militias.
+- @investigate: Investigate who is paying for them.
+- @ignore: Let it pass.
+
+@crackdown
+view-if: judicial_forces >= 3 or rc_chancellor or chair_security = "rc"
+choose-if: capital >= 1
+unavailable-subtitle: Needs 1 political capital.
+subtitle: −1 political capital. The Core will call it heavy-handed.
+on-arrival: {! Q.capital -= 1; Q.fear -= 2; SW.wingShift(Q, 'new_order', -5); Q.core_rc -= 0.3; Q.rim_relation += 3; !}
+
+The Judicial Forces disperse the marches and arrest the ringleaders. The militias go quiet, for now, and the Rim's senators come back to the rotunda.
+
+@investigate
+view-if: chair_judiciary = "rc" or evidence >= 3
+subtitle: The trail of credits may lead somewhere interesting.
+on-arrival: {! Q.evidence += 0.5; SW.wingShift(Q, 'new_order', -3); SW.updateSithStage(Q); !}
+
+The militias' funding runs through a dozen charities and a shipping firm on Corulag, and from there into the accounts of men close to the Chancellery. It proves nothing yet. It is not nothing.
+
+@ignore
+subtitle: Their movement will grow.
+on-arrival: {! Q.fear += 2; SW.wingShift(Q, 'new_order', 3); !}
+
+The marches go on. Each week there are a few more of them.
