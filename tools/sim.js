@@ -322,6 +322,33 @@ const PREMISES = [
   [/^chancellery\.ceasefire$/, Q => Q.rc_chancellor && Q.rc_lead === 'pacifist', 'a ceasefire without a Pacifist-led Caucus in the Chancellery'],
 ];
 const PREMISE_HITS = {};
+// the backlash: repeals by reform, walkouts by cause, and checks on the rules
+const BACKLASH = {repeals: {}, walkoutCause: {}};
+const premHit = k => { PREMISE_HITS[k] = (PREMISE_HITS[k] || 0) + 1; };
+{
+  const rr = SW.reformRepealed;
+  SW.reformRepealed = function (Q, f) {
+    const R = SW.REPEALS[f];
+    if (!R || (R.after && Q[R.after]) || !(Q.date - Q['since_' + f] >= 12)) premHit('a repeal outside the rules');
+    BACKLASH.repeals[f] = (BACKLASH.repeals[f] || 0) + 1;
+    return rr.apply(this, arguments);
+  };
+  BACKLASH.repealTries = {};
+  for (const c in SW.MINISTRY_ACTS) for (const A of SW.MINISTRY_ACTS[c]) if (A.repeal) {
+    const v = A.vote;
+    A.vote = function (Q) { BACKLASH.repealTries[A.id] = (BACKLASH.repealTries[A.id] || 0) + 1; return v.apply(this, arguments); };
+  }
+  const gb = SW.guildBankroll;
+  SW.guildBankroll = function (Q) { const w = gb.apply(this, arguments); if (w && !(Q.guild_patience < 35)) premHit('guild money with patience at 35 or more'); return w; };
+  const pc = SW.prepareCongress;
+  SW.prepareCongress = function (Q) {
+    const b = Q.congress_ready;
+    if (b && Q.congress_why === 'revolt' && Q.date < (Q[b + '_congress_hold'] || -99)) premHit('a radical revolt during a congress hold');
+    return pc.apply(this, arguments);
+  };
+  const dw = SW.doWalkout;
+  SW.doWalkout = function (Q) { const k = Q.cg_why === 'revolt' ? 'after a revolt' : 'after a congress'; if (Q.walkout_ready) BACKLASH.walkoutCause[k] = (BACKLASH.walkoutCause[k] || 0) + 1; return dw.apply(this, arguments); };
+}
 // why each congress met, and where a text problem was seen (TEXTWHERE=1)
 const CG_WHY = {};
 { const pc = SW.prepareCongress; SW.prepareCongress = function (Q) { if (Q.congress_ready) CG_WHY[Q.congress_why || '?'] = (CG_WHY[Q.congress_why || '?'] || 0) + 1; return pc.apply(this, arguments); }; }
@@ -384,7 +411,11 @@ function checkPremises(id, Q, game, out) {
   const added = g.filter(b => lastGovt.indexOf(b) < 0);
   if (added.length || g.length !== lastGovt.length) {
     // only a newly added member must clear the bar with everyone (a government that loses a member is not a new government)
-    if (Q.govt_bad_pair && added.length) out['government formed with a pair below the bar'] = (out['government formed with a pair below the bar'] || 0) + 1;
+    if (Q.govt_bad_pair && added.length) {
+      out['government formed with a pair below the bar'] = (out['government formed with a pair below the bar'] || 0) + 1;
+      if (process.env.PREMWHERE) origLog('bad pair @' + id + ' govt ' + g.join(',') + ' (was ' + lastGovt.join(',') + ') leaders ' + g.map(b => b + ':' + (Q[b + '_leader_id'] || '')).join(' ') +
+        ' rels ' + g.map(a => g.filter(m => m !== a).map(m => a + '-' + m + ' ' + Math.round(SW.rel(Q, a, m)) + (SW.relOk(Q, a, m) ? '' : '!')).join(' ')).join(' | ') + ' deal ' + (Q.el_deal_won || 0));
+    }
     lastGovt = g;
   }
   if (id.indexOf('.') >= 0) { for (const [re, ok, label] of PREMISES) if (re.source.indexOf('\\.') >= 0 && re.test(id) && !ok(Q)) out[label] = (out[label] || 0) + 1; }
@@ -486,6 +517,9 @@ function playOne(gameIndex) {
         if (Q.finale && trace.afFinale === undefined) { trace.afFinale = Q.anakin_fall; trace.forces = SW.forces(Q); trace.navy = Q.navy_loyalty; trace.palV = Q.pal_r; trace.corr = Q.corruption; }
         if (Q.war && Q.time !== trace._lt3) { trace._lt3 = Q.time; const ws = SW.warStrength(Q); trace.warTurns = (trace.warTurns || 0) + 1; if (ws.ratio < 1) trace.warWeak = (trace.warWeak || 0) + 1; trace.ratioSum = (trace.ratioSum || 0) + Math.min(3, ws.ratio); trace.balSum = (trace.balSum || 0) + Q.war_balance; trace.minBal = Math.min(trace.minBal === undefined ? 9 : trace.minBal, Q.war_balance); }
         trace.maxDissent = Math.max(trace.maxDissent, Q.inst_dissent || 0, Q.rimward_dissent || 0, Q.pacifist_dissent || 0, Q.hawk_dissent || 0);
+        if (Q.war && !trace.warSnap) trace.warSnap = {pal: Q.pal_wing || '', chanc: (Q.pal_chancellor || Q.puppet_chancellor) ? 1 : 0, rim: Q.rim_wing || ''};
+        if (Q.date >= 60 && !trace.rim60) trace.rim60 = Q.rim_wing || '';
+        if (Q.time !== trace._ltr) { trace._ltr = Q.time; for (const w in SW.WINGS) if (!(Q['rad_' + w] >= 0 && Q['rad_' + w] <= 100)) { premHit('radicalism outside 0-100'); break; } }
         if (game.scenes[eng.state.sceneId] && game.scenes[eng.state.sceneId].isCard) trace.cardPlays[eng.state.sceneId] = (trace.cardPlays[eng.state.sceneId] || 0) + 1;
         if (Q.time === lastTime) sameTimeSteps++; else { sameTimeSteps = 0; lastTime = Q.time; }
         if (sameTimeSteps > 400) { resolve({stuck: 'loop at ' + eng.state.sceneId, Q, steps, visits}); return; }
@@ -603,6 +637,11 @@ function playOne(gameIndex) {
       audit.contests.push(Q.leadership_contests || 0);
       audit.congresses = audit.congresses || []; audit.congresses.push(Q.congresses || 0);
       audit.pork = (audit.pork || 0) + (Q.pork_count || 0);
+      audit.bl = audit.bl || {rim60: {}, rimEnd: {}, palWar: {}, unrest: 0, revolts: 0, stoke: 0, bankrolls: 0, peakRad: {}};
+      if (t.rim60 !== undefined) audit.bl.rim60[t.rim60 || 'none'] = (audit.bl.rim60[t.rim60 || 'none'] || 0) + 1;
+      audit.bl.rimEnd[Q.rim_wing || 'none'] = (audit.bl.rimEnd[Q.rim_wing || 'none'] || 0) + 1;
+      if (t.warSnap) { const k = (t.warSnap.chanc ? 'Chancellor: ' : 'not Chancellor: ') + (t.warSnap.pal || 'none'); audit.bl.palWar[k] = (audit.bl.palWar[k] || 0) + 1; }
+      audit.bl.unrest += Q.unrest_events || 0; audit.bl.revolts += Q.revolts || 0; audit.bl.stoke += Q.scheme_seen_stoke_grievance || 0; audit.bl.bankrolls += Q.guild_bankrolls || 0;
       audit.walkouts = audit.walkouts || {n: 0, games: 0, splinters: 0, where: {}};
       audit.walkouts.n += Q.walkouts || 0; if (Q.walkouts) audit.walkouts.games++; audit.walkouts.splinters += Q.splinters || 0;
       for (const w in SW.WINGS) if (Q['walked_' + w]) audit.walkouts.where[w + '>' + Q['walked_' + w]] = (audit.walkouts.where[w + '>' + Q['walked_' + w]] || 0) + 1;
@@ -694,6 +733,11 @@ function playOne(gameIndex) {
   if (audit.enfWhere) origLog('audit: enfranchised games, where/sep: ' + Object.keys(audit.enfWhere).slice(0, 12).join(' | '));
   origLog('audit: enfranchised before 22 BBY in ' + audit.enf + ' games; avg seceded ' + avg(audit.enfSeceded) + '%; war in ' + audit.enfWar);
   origLog('audit: congresses by reason ' + JSON.stringify(CG_WHY));
+  if (audit.bl) {
+    origLog('audit: backlash: unrest events ' + audit.bl.unrest + ', revolt congresses ' + audit.bl.revolts + ', agitators sent ' + audit.bl.stoke + ', guild-funded congresses ' + audit.bl.bankrolls +
+      '; walkouts ' + JSON.stringify(BACKLASH.walkoutCause) + '; repeals ' + JSON.stringify(BACKLASH.repeals) + ' of tries ' + JSON.stringify(BACKLASH.repealTries));
+    origLog('audit: the Rim\'s ruling wing at month 60 ' + JSON.stringify(audit.bl.rim60) + ', at the end ' + JSON.stringify(audit.bl.rimEnd) + '; Palpatine\'s bloc at the war ' + JSON.stringify(audit.bl.palWar));
+  }
   if (audit.walkouts) origLog('audit: walkouts ' + audit.walkouts.n + ' in ' + audit.walkouts.games + ' games, splinter parties ' + audit.walkouts.splinters + ', by wing ' + JSON.stringify(audit.walkouts.where));
   { const ours = Object.keys(COMMITTEE_HITS).filter(k => /patronage/.test(k)).reduce((a, k) => a + COMMITTEE_HITS[k], 0);
     origLog('audit: committee options chosen ' + JSON.stringify(COMMITTEE_HITS) + '; kinds of patronage we chose ' + Object.keys(PORK_KINDS).filter(k => /patronage/.test(k)).length + ' of 24; patronage by the ministries ' + ((audit.pork || 0) - ours) + ', ' + Object.keys(MIN_PORK_KINDS).length + ' kinds of 24'); }

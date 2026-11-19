@@ -917,6 +917,10 @@ th {
 }
 
 .sb-tag { display: block; font-size: 0.78em; opacity: 0.7; font-style: italic; }
+.sb-tag.rad1, .sb-tag.rad2, .sb-tag.rad3 { display: inline; opacity: 1; font-weight: 600; }
+.sb-tag.rad1 { color: #a07a14; }
+.sb-tag.rad2 { color: #b8521a; }
+.sb-tag.rad3 { color: #b3141b; }
 
 /* light theme: white card tiles with a soft shadow, as on a printed card */
 body:not(.dark-mode) a.card {

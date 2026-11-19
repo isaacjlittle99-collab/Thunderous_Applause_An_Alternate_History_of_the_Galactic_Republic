@@ -1,0 +1,14 @@
+title: A Reform Repealed
+subtitle: A ministry undoes our work.
+tags: event
+view-if: rr_go = 1 and not finale and not game_ending
+priority: 2
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {! Q.rr_go = 0; !}
+
+= [+ rr_name +] Repealed
+
+[+ rr_minister +], who holds the [+ rr_committee +] chair for the [+ rr_bloc +], has put the repeal of [+ rr_name +] to the Senate, and the Senate has passed it. [+ rr_line +]
+
+The Caucus can put it to the Senate again, but the [+ rr_bloc +] will be waiting.

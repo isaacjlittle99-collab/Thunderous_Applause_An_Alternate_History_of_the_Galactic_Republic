@@ -194,9 +194,15 @@
         h += row(bloc(Q, wb), (rw ? SW.wingSpan(rw) : '—') + (who ? ' <span class="sb-tag">' + who + '</span>' : ''));
         h += '<div class="sb-note">' + ws.map(function (w) {
           var s = SW.wingShare(Q, w);
-          return SW.wingSpan(w) + ' ' + (s >= 45 ? 'dominant' : (s >= 30 ? 'strong' : (s >= 15 ? 'middling' : 'weak'))) + (w === rw ? ' (ruling)' : '');
+          var rt = SW.radTier ? SW.radTier(Q, w) : 0, rc = rt ? SW.radClauses(Q, w) : '';
+          return SW.wingSpan(w) + ' ' + (s >= 45 ? 'dominant' : (s >= 30 ? 'strong' : (s >= 15 ? 'middling' : 'weak'))) + (w === rw ? ' (ruling)' : '') +
+            (rt ? ' <span class="sb-tag rad' + rt + '"' + (rc ? ' title="The bloc has ' + rc + '"' : '') + '>' + SW.RAD_WORDS[rt - 1] + '</span>' : '');
         }).join(' · ') + '.' + (Q[wb + '_congress_quiet'] ? ' Its last congress re-elected its leader unopposed.' : '') +
           ' Next congress ' + (Q[wb + '_congress_due'] > Q.date ? 'in ' + (33 - Math.floor(Q[wb + '_congress_due'] / 12)) + ' BBY' : 'soon') + '.</div>';
+        var angry = SW.radTier ? ws.filter(function (w) { return SW.radTier(Q, w) >= 2 && SW.radClauses(Q, w); }) : [];
+        if (angry.length) h += '<div class="sb-note warn">' + angry.map(function (w) {
+          return 'The ' + SW.wingName(w) + ' are ' + SW.RAD_WORDS[SW.radTier(Q, w) - 1] + ': the bloc has ' + SW.radClauses(Q, w);
+        }).join('. ') + '.</div>';
         var gone = (SW.BLOC_WINGS[wb] || []).filter(function (w) { return SW.wingGone(Q, w); });
         if (gone.length) h += '<div class="sb-note warn">' + gone.map(function (w) {
           var d = Q['wing_left_' + w];

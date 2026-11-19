@@ -189,9 +189,9 @@ Every bloc in the Senate is a coalition of wings. Each wing has an ideology, a f
 
 **The Rimward Coalition**
 
-• *Rim Populists* (Ainlee Teem). A place for the Rim inside the Republic: an end to humancentrism and slavery, and seats for the Rim. Strongest in the Mid and Outer Rim.
+• *Hutt-space Machine* (Orn Free Taa). Deals, patronage and the cartels. Leads the Coalition at the start. Grow with corruption and the Hutt deal, and shrink with the slavery ban and the ethics law; breaking the syndicates guts them. Strongest in the Outer Rim.
 
-• *Hutt-space Machine* (Orn Free Taa). Deals, patronage and the cartels. Grow with corruption and the Hutt deal; breaking the syndicates guts them. Strongest in the Outer Rim.
+• *Rim Populists* (Ainlee Teem). A place for the Rim inside the Republic: an end to humancentrism and slavery, and seats for the Rim. They start small, and grow as the Rim's grievances are answered: the Rim Relief Act, the Rim's seats, the slavery report and ban, the Rights of Sentience, corruption below 50 and less hardship. Strongest in the Mid and Outer Rim.
 
 • *Rim Radicals* (Tal Ardana). Reform now: they no longer believe the Republic can change, and many listen to Dooku. Grow when the Rim suffers or its worlds secede, and fade once the Rim is enfranchised. Strongest in the Outer Rim.
 
@@ -219,11 +219,11 @@ Every bloc in the Senate is a coalition of wings. Each wing has an ideology, a f
 
 While he is free, Palpatine leads his bloc whatever its congress decides. The congress chooses the wing that sets its line, and that wing's figure becomes his lieutenant. If he falls, it chooses his successor.
 
-• *Centralists* (Mas Amedda, or Sate Pestage after Amedda falls). His Chommell machine: a strong executive to restore order, clean up the Senate and renew the Republic. The largest wing at first. Strongest in the Core and the Mid Rim.
+• *Centralists* (Mas Amedda, or Sate Pestage after Amedda falls). His Chommell machine: a strong executive to restore order, clean up the Senate and renew the Republic. The largest wing at first, but their hold weakens year by year. Strongest in the Core and the Mid Rim.
 
-• *New Order* (Janus Greejatus). A totalitarian, human Republic. Grow with the High Human Culture, and in reaction to Rim enfranchisement, the Rim Assembly and the Rights of Sentience. Strongest in the Core.
+• *New Order* (Janus Greejatus). A totalitarian, human Republic. Grow year by year, fastest while Palpatine is kept from the Chancellery, with the High Human Culture, and in reaction to Rim enfranchisement, the Rim Assembly and the Rights of Sentience; discrediting the High Human Culture holds them back. Out of office, Palpatine's bloc usually follows their line by the time of the war. Strongest in the Core.
 
-• *Personality Cult* (Ars Dangor). Devotion to Palpatine himself. Grow steadily, much faster once he holds the Chancellery and with each new emergency power, and collapse if he is unmasked or disgraced. Strongest in the Core.
+• *Personality Cult* (Ars Dangor). Devotion to Palpatine himself. Grow year by year, and surge once he holds the Chancellery and with each new emergency power; with him in office they usually lead his bloc. Collapse if he is unmasked or disgraced. Strongest in the Core.
 
 **What the ruling wing changes**
 
@@ -255,11 +255,37 @@ Every bloc votes by its ruling wing's views as well as its leader's. The wings d
 
 • *Palpatine's bloc.* The Centralists can back anti-corruption laws, draw the Moderates toward him, and in the last days purge his critics and win over the Moderates and Independents for his New Order. The New Order sends human militias into the streets, tries to repeal the Rim's rights once he holds the Chancellery, and brings the militias into his forces at the end. The Personality Cult votes down reforms and fills the plazas with crowds in the last days. Whichever wing leads his bloc shapes the Empire, if he wins.
 
+**Radical wings**
+
+A wing turns radical when its own bloc backs what it opposes. Each time the bloc's senators mostly vote for a bill, every wing whose own views (and its figure's) run against the bill's topics grows more radical, more so the more firmly the bloc voted. The same goes for a budget's taxes and spending (a levy on the Core, tariffs, Rim relief, defence, subsidies), for the bloc's own ministers acting against a wing, and for each season in government beside a partner the wing rejects. Radicalism fades by about a twelfth each season, and halves when the wing wins its bloc's congress.
+
+• *Restless* (35): angrier at a lost congress, and ready to walk out even when closer to the winner.
+
+• *Furious* (65): angrier still, and ready to walk out with as little as an eighth of the delegates. The galaxy hears of it.
+
+• *On the brink* (80): if it has somewhere to go, it forces its bloc into an emergency congress, at most once in eighteen months and never in the year and a half after a congress.
+
+Radicalism never wins a wing delegates; it is about splitting, not taking over.
+
+**Others' money at congresses**
+
+• *Palpatine's agitators* fan the grievances of the wing whose walkout would most serve him or Dooku. The more the Caucus reforms, the likelier he is to send them. They can be foreseen and exposed.
+
+• *Bought delegates.* When Palpatine buys a leadership fight, his money goes to the hardline wings of the bloc he chose, preferring a radical one.
+
+• *The guilds' money.* When the guilds' patience is below 35, and they are not led by the Free Traders or the war industry, the Trade Federation and the Banking Clan back the wing most opposed to regulation, trade taxes and the ethics laws at other blocs' congresses: six points of delegates, as our own backing gives. A wing they paid for that loses turns more radical.
+
+**Repeals**
+
+A bloc that chairs a committee can put a reform's repeal to the Senate when its ideology favours it over anything else the committee could do. It must be the latest step of its reform path in force, and must have stood for a year. The Caucus votes against, and blocs friendly to us, faith in the Republic and the Senate's resolve count against it. Repealable: the Rim Relief Act and the Rights of Sentience (Rim Affairs), the Ethics Commission and the Office of Public Integrity (Judiciary), the Sunset Amendment (Constitutional Affairs, by two thirds) and the Anti-Cartel Act (Finance). Reforms whose effects cannot be undone, and those that check the Chancellery's powers, are never repealed. A repealed reform can be passed again.
+
 **Walkouts**
 
-After a congress, a defeated wing with at least a fifth of the delegates, far from the winner in ideology and angry, may walk out. It is angry because it lost, and angrier if its bloc sits in government beside partners it rejects, if we backed its rival, or if the gulf is very wide. Each walkout takes the wing's share of its bloc's support with it.
+After a congress, a defeated wing with at least a fifth of the delegates, far from the winner in ideology and angry, may walk out. It is angry because it lost, and angrier if its bloc sits in government beside partners it rejects, if we backed its rival, if the gulf is very wide, or if it has turned radical. Each walkout takes the wing's share of its bloc's support with it.
 
-• *Old Families* and *Human-Firsters* join Palpatine's bloc.
+• *Old Families*, *Human-Firsters*, the *Hutt-space Machine* and the *Military-Industrial Complex* join Palpatine's bloc.
+
+• *Law and Order Moderates* rarely walk out; if they do, they join the Core Moderates.
 
 • *Ruusan Republicans* join the Ruusan Caucus, bringing us seats and strengthening our Institutionalists.
 
