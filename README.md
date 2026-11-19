@@ -34,6 +34,11 @@ artwork, music or footage is included; all images are original abstract art.*
 - **Parties have wings.** Every bloc, Palpatine's included, is a coalition of ideological wings whose delegates rise and
   fall with the times. Party congresses, with a second round of bargaining when no wing has a majority, decide which wing
   leads; the Caucus can back a wing with capital, an advisor or a promise. A bloc is strongest where its ruling wing is at home.
+  The ruling wing sets how the bloc votes and what it does: the Hutts offer terms, the Rim Radicals obstruct, the guilds' hardliners
+  walk out to the Confederacy, and Palpatine's wings shape his last moves and the Empire he would build. Our own congress chooses
+  the Caucus's leading faction, whose programme, events and home regions become ours; a Pacifist-led Caucus in the Chancellery
+  can try for the Chancellor's Peace. Defeated wings can walk out, to another bloc, to us, to the Separatists, or to
+  found a splinter party of their own.
 - **The War Council.** When war comes, the Senate sets its war aims, and every other turn the War Council decides
   which of three fronts to push and faces a lore dilemma whose consequences reach far beyond the battlefield.
 - **The Republic's purse.** A yearly budget, debt to the Banking Clan, hyperlane trade, and bacta, Tibanna and spice
@@ -66,7 +71,8 @@ artwork, music or footage is included; all images are original abstract art.*
 - **Six committees**, each with its own reform paths: Finance & Commerce, Judiciary & Intelligence, Security & Defence,
   Outer Rim Affairs, Constitutional Affairs and Jedi Affairs. Every new government shares out the chairs afresh.
   Each chair is held by a named minister; the Caucus picks its own, and the committees it does not chair act on
-  their bloc's ideology at the time.
+  their bloc's ideology at the time. Four of them can also hand out patronage, in six forms each, one offered at random
+  whenever a committee's card is played, until the Senate expels its corrupt senators.
 - **The Chancellery** is an office of its own, with its own screen. It gathers twelve named powers over the game, from
   the gavel and the Senate Guard to emergency decrees, the Bureau of Intelligence and the HoloNet; reforms check them
   for good. Our own Chancellor can rule by decree, at a price: the precedent wears away faith, serves the next

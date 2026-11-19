@@ -106,6 +106,20 @@ go-to: menu
 
 Each faction has a **strength**, a **dissent** level and a **leader**. Overall dissent reduces almost every gain the Caucus makes. An advisor from a faction keeps its dissent in check. If a faction's dissent reaches about 60 (70 for the Institutionalists), it will break away: sooner under a firm leader, later under a pragmatist. A faction that breaks takes its senators with it. Under a firm leader it founds its own party; otherwise it joins the nearest bloc (Hawks the Security Bloc, Rimward the Rimward Coalition, Pacifists the Independents, Institutionalists the Core Moderates). Each leader has their own demands, shown in the Status panel when they are not met.
 
+
+**The leading faction and our programme**
+
+After each Senate election, and early if the leading faction loses its delegates' confidence or is outgrown, the Caucus meets in congress. Each faction's strength is its share of the delegates, and every advisor rallies their own faction. The leadership can put its weight behind a faction (1 political capital) or have an advisor rally their faction (the advisors' action). A faction with a majority wins at once; otherwise the two largest bargain, and the others side with the nearer. The winner's leader chairs the Caucus. Its dissent falls, and the faction furthest from it grows restless.
+
+• *Institutionalists:* Caucus bills on oversight and the constitution do better, those on the Rim worse. The bureaucrats warm to us faster.
+
+• *Rimward:* Caucus bills on the Rim do better. The Rim warms to us; the guilds and the bureaucrats cool.
+
+• *Pacifists:* Caucus bills on peace do better, those for the military worse. Our Hawks grow restless in wartime, and the guilds' Corporatists warm to us. A Pacifist-led Caucus that holds the Chancellery in wartime can proclaim a ceasefire from the Chancellery and call a peace conference. Its treaty, if the Senate passes it and it survives sabotage, ends the war.
+
+• *Hawks:* Caucus bills for the army do better, those on peace worse. The Navy's loyalty to the Senate grows.
+
+While a faction leads, its own events come every few turns, one good and one bad in turn: the Institutionalists' committee men and the Rim's resentment of a Core party; the Rim turning out and the ministries pushing back; peace vigils and, in wartime, the charge of appeasement; the officers' confidence and a Hawk's call for a punitive Rim campaign. The Caucus is also strongest where its leading faction comes from.
 @lib_leaders
 is-special: true
 go-to: menu
@@ -210,6 +224,56 @@ While he is free, Palpatine leads his bloc whatever its congress decides. The co
 • *New Order* (Janus Greejatus). A totalitarian, human Republic. Grow with the High Human Culture, and in reaction to Rim enfranchisement, the Rim Assembly and the Rights of Sentience. Strongest in the Core.
 
 • *Personality Cult* (Ars Dangor). Devotion to Palpatine himself. Grow steadily, much faster once he holds the Chancellery and with each new emergency power, and collapse if he is unmasked or disgraced. Strongest in the Core.
+
+**What the ruling wing changes**
+
+Every bloc votes by its ruling wing's views as well as its leader's. The wings differ on slavery, the Rights of Sentience, the Rim's seats, corruption, centralising the Republic, the constitution, command of the army and trade-route taxes, and some do more:
+
+• *Old Families.* The Moderates warm to Palpatine and follow his line on emergency powers, and the human-first movement grows bolder.
+
+• *Corporatists.* Against trade-route taxes and anti-corruption laws, for the Rights of Sentience and constitutional reform. They warm to a Caucus led by its Pacifists.
+
+• *Confederates.* The guilds lose patience faster and regain it slowly. If their escalation reaches its last step after Dooku's declaration, the Confederates and the Corporatists walk out to the Separatists.
+
+• *Free Traders.* For anti-corruption laws and a strong navy. The guilds stop escalating.
+
+• *Military-Industrial Complex.* For a strong Chancellor, the army and war spending; against peace talks, constitutional reform and Senate command of the army. The guilds stop escalating, the clone army grows faster (or the Judicial Forces, without one), corruption rises, and the guilds warm to Palpatine.
+
+• *Hutt-space Machine.* While the Caucus governs, it offers terms: leave slavery alone, put no new rules on the guilds, and stay out of the Rim's affairs. While the terms hold, it offers evidence from its spies, political capital, or the Rimward Coalition in our government. Refusing or breaking the terms turns it to Palpatine, and the Hutts strike back: bounties, cartel money for our rivals, relief blocked in Hutt space, smears. Breaking the syndicates guts the Machine and ends it all.
+
+• *Rim Radicals.* They vote against the government's business except on the Rim, slavery and the Rights of Sentience, and every other government bill loses ground. Each reform on the Rim, slavery or the High Human Culture eases the obstruction and costs them delegates. While they rule, the Rimward Coalition's defection to the Separatists needs warm relations or two new reforms to avert, or a congress that removes them.
+
+• *Law and Order Moderates.* Each step against the pirates and syndicates, and a defence budget, wins them; unchecked raids lose them.
+
+• *Human-Firsters.* In the last days the Security Bloc's forces stand with Palpatine, and it votes for his New Order as one.
+
+• *Constitutional Hawks.* For oversight and Senate command of the army. In the last days the Caucus can call on them once: Kuat's defence fleets join our side and the Security Bloc votes against the New Order. No admirals strike while they rule.
+
+• *Brokers.* For peace talks, but behind the Republic once it fights. *Neutralists.* The Federal Compact comes easier. *Isolationists.* The Independents' ministries put forward only the Rim's seats and the Rights of Sentience.
+
+• *Farr's Pragmatists.* If the Rim's reforms are complete (relief, seats and the Rim Assembly) and slavery has been abolished and enforced, the Rim Freedom Caucus rejoins the Caucus.
+
+• *Palpatine's bloc.* The Centralists can back anti-corruption laws, draw the Moderates toward him, and in the last days purge his critics and win over the Moderates and Independents for his New Order. The New Order sends human militias into the streets, tries to repeal the Rim's rights once he holds the Chancellery, and brings the militias into his forces at the end. The Personality Cult votes down reforms and fills the plazas with crowds in the last days. Whichever wing leads his bloc shapes the Empire, if he wins.
+
+**Walkouts**
+
+After a congress, a defeated wing with at least a fifth of the delegates, far from the winner in ideology and angry, may walk out. It is angry because it lost, and angrier if its bloc sits in government beside partners it rejects, if we backed its rival, or if the gulf is very wide. Each walkout takes the wing's share of its bloc's support with it.
+
+• *Old Families* and *Human-Firsters* join Palpatine's bloc.
+
+• *Ruusan Republicans* join the Ruusan Caucus, bringing us seats and strengthening our Institutionalists.
+
+• *Core Establishment* rarely walk out; if they do, they join the Security Bloc.
+
+• *Corporatists*, *Confederates*, *Rim Radicals*, the Rim Freedom Caucus's *Radicals* and the *Isolationists* go over to the Separatists, once Dooku's movement exists.
+
+• *Free Traders* found the Free Commerce League.
+
+• *Constitutional Hawks* join us if our Hawks lead the Caucus; otherwise they found the Constitutional Defence League.
+
+• *Neutralists* join us if our Pacifists lead the Caucus; otherwise they found the Council of Neutral Systems.
+
+A new party takes the breakaway slot the Rim Freedom Caucus would use, and votes and governs as its old bloc would, by its own wing's views. Only one can exist at a time. If the slot is taken, a would-be founder joins the nearest bloc: the Free Traders and the Constitutional Hawks the Core Moderates, the Neutralists the Rimward Coalition.
 
 @lib_meters
 is-special: true
@@ -768,6 +832,18 @@ go-to: menu
 = Reforms in steps
 
 Many reforms come in steps. Each step needs the one before it and the right committee chair, and most need a Senate vote. A step taken brings its card back after a single turn. There are six committees: **Finance & Commerce**, **Judiciary & Intelligence** (the investigation office), **Security & Defence** (the military office), **Outer Rim Affairs** (the Rim office), **Constitutional Affairs** and **Jedi Affairs**. Every new government shares the chairs out afresh: each partner insists on at least one, and the Caucus buys the rest with leverage from its seats (Finance 20; Judiciary, Security and the Rim office 10 each; Constitutional and Jedi Affairs 5 each).
+
+Four committees also hand out patronage, six kinds each. A committee's card offers one kind at a time, chosen at random whenever the card is played and never the same twice running:
+
+• *Finance & Commerce:* hyperlane subsidies (the Mid Rim), bond fees for Core banks (the Core), the Corellian Run's customs posts (the Colonies), price supports for agriworlds (the Mid Rim), spaceport credits (the Outer Rim) and freight contracts (the Colonies).
+
+• *Judiciary & Intelligence:* Coruscant's judgeships (the Core), closed investigations (the Colonies), listening posts at inflated rents (the Mid Rim), sector magistracies (the Outer Rim), dropped charges against shipping magnates (the Mid Rim) and intelligence contracts (the Core).
+
+• *Security & Defence:* warship contracts for Fondor's yards (the Colonies), new Judicial bases (the Mid Rim), blasters from Core armsmakers (the Core), militias on the payroll (the Outer Rim), fuel contracts (the Outer Rim) and Judicial commissions (the Colonies).
+
+• *Outer Rim Affairs:* relief contracts through friendly governors, hyperspace beacons and recognised claimants (the Outer Rim), colonisation charters and refugee grants (the Mid Rim), and mining charters for Core firms (the Core).
+
+Each buys political capital and support in its region, at a cost in corruption and faith. Any bloc chairing one of those committees uses it when nothing else it cares about is on offer, unless it opposes corruption, and *The Committees Report* names the kind. Expelling the corrupt senators, the corruption track's last step, ends patronage for good.
 
 **Ministers.** Each chair is held by a named senator of the bloc that holds it. The Caucus chooses its own from its senators (each belongs to a faction, which is pleased to see one of its own chosen); other blocs appoint their own. Every three turns, each committee the Caucus does not chair acts on its bloc's ideology at the time: the bloc's own leanings, plus its current leader's views on regulation, the Rim, emergency powers, the army, peace and oversight. Each committee chooses the act that fits that ideology best, or does nothing if none does. Some acts are reforms put to the Senate (the Core Moderates and the Independents put reforms forward only under their reforming wings, Fang Zar and Satine Kryze), which can fail (a failed bill waits three years before it is tried again); none repeal a reform. When a leader changes, so does the committee's course.
 

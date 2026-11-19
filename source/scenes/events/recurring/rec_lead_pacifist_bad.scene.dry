@@ -1,0 +1,12 @@
+title: Appeasers
+subtitle: In wartime, the HoloNet brands the Caucus traitors.
+tags: event
+view-if: lead_event_ready = "pacifist_bad" and war and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_holonet.svg
+on-arrival: {! SW.leadEventDone(Q); Q.core_rc -= 1; Q.colonies_rc -= 0.5; Q.hawk_dissent += 5; Q.fear += 1; !}
+
+= Appeasers
+
+With the Pacifists leading the Caucus, the war's cheerleaders have their story. Every HoloNet panel asks whether the Caucus wants the Republic to win. Families of the dead are put in front of cameras. Our Hawks are furious, and the Core is listening.

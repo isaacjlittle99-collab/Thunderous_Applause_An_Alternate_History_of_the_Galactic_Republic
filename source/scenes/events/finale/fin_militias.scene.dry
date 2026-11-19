@@ -1,0 +1,13 @@
+title: The Militias in the Streets
+subtitle: Grey tunics on Coruscant.
+tags: event
+view-if: finale and pal_wing = "new_order" and not no_militias and finale_day >= 5 and not sidious_defeated and not sidious_fled and not game_ending
+max-visits: 1
+priority: 6
+new-page: true
+face-image: img/ev_shadow.svg
+on-arrival: {! Q.no_militias = 1; Q.petition_lost = (Q.petition_lost || 0) + 0.3; Q.militias = 1; Q.fear += 5; Q.senate_resolve -= 1; Q.rim_relation -= 4; Q.petition_signatures = Math.max(0, (Q.petition_signatures || 0) - 2); !}
+
+= The Militias in the Streets
+
+The human militias are on Coruscant's streets in their thousands. They surround the apartments of Rim and alien senators, and of Caucus members, and there are beatings in the lower levels that the HoloNet does not report. The militias say they stand ready to defend the Chancellor against traitors. Nobody doubts that they will.

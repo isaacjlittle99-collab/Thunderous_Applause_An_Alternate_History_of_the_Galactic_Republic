@@ -1,0 +1,24 @@
+title: The Peace Conference
+subtitle: The Republic and the Confederacy meet to end the war.
+tags: event
+view-if: chan_peace_stage = 1 and chan_peace_timer <= 0 and war and not finale and not game_ending
+max-visits: 1
+priority: 4
+new-page: true
+face-image: img/ev_peace.svg
+on-arrival: chan_peace_stage = 2
+
+= The Peace Conference
+
+[? if satine_friend : Duchess Satine opens Sundari's palace to both sides, and the delegations meet on neutral ground. ?][? if not satine_friend : The delegations meet on a neutral cruiser in deep space, under the flags of neither side. ?] For weeks the guns have been quiet. Now the Chancellor's negotiators and the Confederacy's sit across a table, and a treaty takes shape: an end to the fighting, a federal Republic, and a Senate open to the worlds that left.
+
+It must pass the Senate, and it must survive whoever wants the war to go on.
+
+- @treaty: Put the treaty to the Senate.
+
+@treaty
+on-arrival: {! SW.chanTreaty(Q); !}
+
+[+ vote_html +]
+
+[? if chancellors_peace : The treaty passes, and it holds. The war is over. ?][? if cp_passed and cp_sabotaged : The treaty passes, but within days a massacre on a Rim world, blamed on the Confederacy, ends the ceasefire. The war resumes, angrier than before. ?][? if not cp_passed : The Senate rejects the treaty. The ceasefire collapses, and the guns start again. ?]

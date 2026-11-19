@@ -1,0 +1,22 @@
+title: Call on the Constitutional Hawks
+subtitle: Giddean Danu's officers answer to the Senate.
+is-card: true
+tags: last_days
+card-image: img/card_forces.svg
+view-if: finale and sec_wing = "const_hawks" and parties_has_sec and not ld_hawks_used
+on-arrival: turn_actions += 1; ld_hawks_used = 1; last_card_timer = ""
+new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
+
+= Call on the Constitutional Hawks
+
+The Security Bloc's Constitutional Hawks have always said the Republic's warships belong to the Senate. Kuat's defence fleets are theirs to bring, if the Caucus asks.
+
+- @do: Call on the Constitutional Hawks.
+- @easy_discard
+- @set_aside
+
+@do
+on-arrival: hawks_fleets = 3; hawks_called = 1; senate_resolve += 1; sec_relation += 5
+
+Giddean Danu takes the call himself. Within the day, Kuat's defence squadrons are in orbit over Coruscant, and the Security Bloc's senators let it be known that they will vote with the Senate, not the Chancellor.

@@ -1,0 +1,13 @@
+title: The Crowds
+subtitle: The Chancellor's admirers fill the plazas.
+tags: event
+view-if: finale and pal_wing = "cult" and not no_crowd and finale_day >= 6 and not sidious_defeated and not sidious_fled and not game_ending
+max-visits: 1
+priority: 6
+new-page: true
+face-image: img/ev_holonet.svg
+on-arrival: {! Q.no_crowd = 1; Q.petition_lost = (Q.petition_lost || 0) + 0.5; Q.petition_signatures = Math.floor((Q.petition_signatures || 0) / 2); Q.fear += 2; !}
+
+= The Crowds
+
+The plazas around the Senate are full, day and night, of people holding the Chancellor's portrait. They sing. They cheer every senator who praises him and jeer every one who does not, and the HoloNet broadcasts both. Senators who were ready to sign the Caucus's petition find reasons to wait.

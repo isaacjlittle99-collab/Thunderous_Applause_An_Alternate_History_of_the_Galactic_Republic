@@ -4,7 +4,7 @@ is-card: true
 tags: senate_affairs
 card-image: img/card_forces.svg
 view-if: security_timer <= 0 and chair_security = "rc" and cardok_security
-on-arrival: turn_actions += 1; security_timer = 3; last_card_timer = "security"
+on-arrival: {! Q.turn_actions += 1; Q.security_timer = 3; Q.last_card_timer = 'security'; SW.porkPick(Q, 'security'); !}
 new-page: true
 on-display: {! SW.cardStuck(Q, this); !}
 
@@ -23,6 +23,13 @@ The Caucus chairs the Security & Defence Committee.
 - @pirate_campaign: Launch a campaign against the pirate fleets.
 - @officers: Open the officer corps to every species.
 - @review: Review the Republic's defences.
+- @demobilise: Demobilise part of the Judicial Forces.
+- @patronage_1: Steer warship contracts to friendly yards.
+- @patronage_2: Build new Judicial bases on friendly worlds.
+- @patronage_3: Buy the Judicial Forces' blasters from friendly armsmakers.
+- @patronage_4: Put friendly sector militias on the Republic's payroll.
+- @patronage_5: Buy the Judicial Forces' fuel from friendly refineries.
+- @patronage_6: Hand Judicial commissions to friendly families.
 - @easy_discard
 - @set_aside
 
@@ -44,7 +51,7 @@ on-arrival: {!
 Q.security_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.6, guild: 0.4, rim: 0.6, sec: 0.25, ind: 0.55, pal: 0.1, cis: 0.5}, true);
-Q.ov_vote = SW.vote(Q, st, 1, 'oversight');
+Q.ov_vote = SW.vote(Q, st, 1, ['oversight', 'command']);
 Q.vote_html = SW.voteBanner('Grand Army Oversight Act', Q.ov_vote);
 if (Q.ov_vote >= 50) { Q.army_oversight = 1; Q.navy_loyalty += 10; this.achieve('oversight'); }
 !}
@@ -114,7 +121,7 @@ on-arrival: {!
 Q.security_timer = 1;
 Q.capital -= 1;
 var st = SW.stance(Q, {mod: 0.55, guild: 0.4, rim: 0.6, sec: 0.2, ind: 0.55, pal: 0.05, cis: 0.5}, true);
-Q.sc_vote = SW.vote(Q, st, 1, ['oversight', '-army']);
+Q.sc_vote = SW.vote(Q, st, 1, ['oversight', '-army', 'command']);
 Q.vote_html = SW.voteBanner('Senate Command Act', Q.sc_vote);
 if (Q.sc_vote >= 50) { Q.senate_command = 1; Q.navy_loyalty += 15; Q.sec_relation -= 6; Q.pal_relation -= 6; }
 !}
@@ -161,3 +168,52 @@ unavailable-subtitle: Needs 1 political capital.
 on-arrival: capital -= 1; officer_corps = 1; navy_loyalty += 3; hawk_dissent += 2; sec_relation -= 2; security_timer = 1
 
 The committee orders that commissions and promotions be open to every species of the Republic, and reviews every case of an officer passed over for not being human. A good many admirals are quietly furious. A good many captains are not.
+
+@demobilise
+view-if: judicial_forces >= 1
+subtitle: +1 treasury. −1 Judicial Forces. The Security Bloc and our Hawks will not like it.
+on-arrival: {! Q.treasury += 1; Q.judicial_forces = Math.max(0, Q.judicial_forces - 1); Q.sec_relation -= 2; Q.hawk_dissent += 3; Q.pacifist_dissent -= 2; !}
+
+A squadron of Judicial cruisers is stood down, and its crews go home. The treasury breathes a little easier. The Security Bloc asks, loudly, who will guard the lanes now.
+
+@patronage_1
+view-if: not senators_expelled and pork_v_security = 1
+subtitle: +1 political capital, and support in the Colonies and the Inner Rim. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'security', 'rc', 1); !}
+
+The next round of Judicial cruiser contracts goes to the yards of Fondor, whose senators have been good friends to the Caucus. Kuat's lobbyists cry foul. The shipwrights of the Colonies remember who fed them.
+
+@patronage_2
+view-if: not senators_expelled and pork_v_security = 2
+subtitle: +1 political capital, and support in the Mid Rim and the Expansion Region. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'security', 'rc', 2); !}
+
+The Judicial Forces need new bases, and the committee finds that the best sites are all on Mid Rim worlds whose senators vote with us. Construction contracts follow, then garrisons and their payrolls. Strategists question the map. The worlds on it do not.
+
+@patronage_3
+view-if: not senators_expelled and pork_v_security = 3
+subtitle: +1 political capital, and support in the Core Worlds. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'security', 'rc', 3); !}
+
+The Judicial Forces' new blasters and armour are ordered from Core armsmakers whose owners give generously to the Caucus, at a price the procurement officers decline to discuss. The weapons work, mostly. The donations keep coming.
+
+@patronage_4
+view-if: not senators_expelled and pork_v_security = 4
+subtitle: +1 political capital, and support in the Outer Rim. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'security', 'rc', 4); !}
+
+Sector militias on the Outer Rim, raised by governors who support the Caucus, are enrolled as Judicial auxiliaries and paid from the Republic's purse. Some of them even patrol. Their governors' loyalty is now on the books.
+
+@patronage_5
+view-if: not senators_expelled and pork_v_security = 5
+subtitle: +1 political capital, and support in the Outer Rim. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'security', 'rc', 5); !}
+
+The Judicial Forces' fuel and tibanna contracts go to Outer Rim refineries whose owners are friends of the Caucus. The price is high and the quality uneven. The refinery worlds' senators are steadfast.
+
+@patronage_6
+view-if: not senators_expelled and pork_v_security = 6
+subtitle: +1 political capital, and support in the Colonies and the Inner Rim. Corruption rises and faith in the Republic falls.
+on-arrival: {! SW.porkBarrel(Q, 'security', 'rc', 6); !}
+
+Commissions in the Judicial Forces go to the sons and daughters of great houses in the Colonies that back the Caucus. Some of them will make fine officers. All of them will raise a glass to the Caucus at their parents' tables.

@@ -1,0 +1,12 @@
+title: Nal Hutta's Reach
+subtitle: The Hutt clans settle accounts.
+tags: event
+view-if: hutt_turned = 1 and not syndicates_broken and hutt_rep_timer <= 0 and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_shadow.svg
+on-arrival: {! SW.huttReprisal(Q); !}
+
+= Nal Hutta's Reach
+
+[? if hutt_rep_kind = "bounty" : A bounty notice appears on the Coruscant underworld's boards: a large sum for a Caucus senator from the Outer Rim, alive or otherwise. She goes into hiding with a Judicial Forces escort, and the Caucus spends what it must to keep her safe. Rim senators who might have joined us think again. ?][? if hutt_rep_kind = "cartel" : Cartel money floods the Outer and Mid Rim. Every candidate who stands against the Caucus finds their campaign suddenly well funded, and every Caucus office finds its landlords suddenly unwilling to renew. ?][? if hutt_rep_kind = "relief" : Relief convoys bound for the Outer Rim are held at the borders of Hutt space "for inspection", and the inspections never end. Shortages spread down the trade lanes, and the Rim knows whom to blame. ?][? if hutt_rep_kind = "smear" : A HoloNet exposé, sourced from "a respected trading family of Nal Hutta", accuses the Caucus of taking Hutt money while condemning it. Most of it is lies. Enough of it sticks. ?]
