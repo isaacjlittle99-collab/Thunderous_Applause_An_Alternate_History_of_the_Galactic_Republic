@@ -172,7 +172,7 @@
       chancellor: 'Valorum', chancellor_bloc: 'mod', chancellor_title: 'Supreme Chancellor',
       vice_chair: 'Mas Amedda', puppet_chancellor: 0,
       rc_leader: 'Bail Antilles', mod_leader: 'Finis Valorum', pal_leader: 'Palpatine',
-      guild_leader: 'Lott Dod', rim_leader: 'Ainlee Teem', sec_leader: 'Orvos Hask',
+      guild_leader: 'Lott Dod', rim_leader: 'Orn Free Taa', sec_leader: 'Orvos Hask',
       ind_leader: 'Tamsar Vell', cis_leader: 'Count Dooku', rfc_leader: 'Onaconda Farr',
       pal_name: 'Chommell Circle',
       cis_formed: 0, rfc_formed: 0,
@@ -269,6 +269,14 @@
     for (var wds = 0; wds < WDS.length; wds++) D[WDS[wds]] = '';
     var WDN = ['walkout_go', 'walkouts', 'splinters', 'wk_us', 'wk_cis', 'wk_govt', 'wk_govt_w'];
     for (var wdn = 0; wdn < WDN.length; wdn++) D[WDN[wdn]] = 0;
+    // radicalism: per wing, and the unrest it causes
+    for (var rdw in SW.WINGS) { D['rad_' + rdw] = 0; D['rad_why_' + rdw] = ''; D['rad_why2_' + rdw] = ''; D['rad_warned_' + rdw] = -99; }
+    for (var rdb = 0; rdb < SW.CONGRESS_BLOCS.length; rdb++) D[SW.CONGRESS_BLOCS[rdb] + '_rad_crisis'] = -99;
+    D.rr_go = 0; D.reforms_repealed = 0; D.rr_name = ' '; D.rr_line = ' '; D.rr_bloc = ' '; D.rr_minister = ' '; D.rr_committee = ' ';
+    for (var rpf in SW.REPEALS) { D['since_' + rpf] = -1; D['repealed_' + rpf] = 0; }
+    D.stoke_target = ''; D.contest_rigged_bloc = ''; D.cg_rigged = ''; D.cg_guild_wing = ''; D.guild_bankrolls = 0;
+    D.unrest_go = 0; D.unrest_events = 0; D.unrest_has_dest = 0; D.revolts = 0; D.unrest_wing = ''; D.cg_revolt_wing = '';
+    D.unrest_wing_name = ' '; D.unrest_bloc_name = ' '; D.unrest_mood = ' '; D.unrest_grievance = ' '; D.unrest_dest = ' '; D.unrest_title = ' ';
     // the Caucus congress and its programme
     var WCN = ['rc_congress_ready', 'rc_congress_elections', 'rc_congress_hold', 'rc_congresses', 'rcg_adv_ok', 'rcg_can_pay', 'rcg_deadlock', 'rcg_changed',
       'rcg_c1', 'rcg_c2', 'rcg_c3', 'rcg_c4', 'lead_events', 'committee_smooth', 'chan_ceasefire', 'chan_peace_stage', 'chan_peace_ok', 'cp_vote', 'cp_passed',
@@ -1055,7 +1063,7 @@
   };
 
   SW.LEADER_START = {
-    rim: 'teem', guild: 'dod', mod: 'valorum', sec: 'hask', ind: 'vell', rfc: 'farr',
+    rim: 'orn_free_taa', guild: 'dod', mod: 'valorum', sec: 'hask', ind: 'vell', rfc: 'farr',
     inst: 'ryder', rimward: 'tills', pacifist: 'venn', hawk: 'kelt'
   };
   SW.CONTEST_BLOCS = ['mod', 'guild', 'rim', 'sec', 'ind', 'rfc'];
@@ -1467,11 +1475,18 @@
       hidden: function (Q) { return !(Q.war || (Q.corporate_seceded || 0) >= 0.3); },
       grow: function (Q) { return SW.LEADERS.brask.rise(Q) + 0.5 * on(SW.wingGone(Q, 'confederates') && SW.wingGone(Q, 'corporatists')); }},
     // the Rimward Coalition
-    populists: {bloc: 'rim', name: 'Rim Populists', leaders: ['teem'], color: '#e8843f', ink: '#c4520f', lit: '#f0985a', base: 44,
-      home: {midrim: 1, outer: 0.7}, creed: 'a place for the Rim inside the Republic: an end to humancentrism and slavery, and seats for the Rim'},
-    hutt_machine: {bloc: 'rim', name: 'Hutt-space Machine', leaders: ['orn_free_taa'], color: '#a06a38', ink: '#86552a', lit: '#c99260', base: 30,
+    // the Rim starts in the Hutt-space Machine's hands; the Populists win it as the Rim's grievances are answered
+    populists: {bloc: 'rim', name: 'Rim Populists', leaders: ['teem'], color: '#e8843f', ink: '#c4520f', lit: '#f0985a', base: 30,
+      home: {midrim: 1, outer: 0.7}, creed: 'a place for the Rim inside the Republic: an end to humancentrism and slavery, and seats for the Rim',
+      grow: function (Q) {
+        return 0.1 + 0.1 * on(Q.rim_relief_act) + 0.1 * on(Q.rim_enfranchised) + 0.08 * on(Q.slavery_report) + 0.08 * on(Q.slavery_abolished) +
+          0.06 * on(Q.sentience_rights) + 0.08 * on(Q.corruption < 50) + 0.05 * on(Q.rim_hardship < 45);
+      }},
+    hutt_machine: {bloc: 'rim', name: 'Hutt-space Machine', leaders: ['orn_free_taa'], color: '#a06a38', ink: '#86552a', lit: '#c99260', base: 44,
       home: {outer: 1.2}, creed: 'deals, patronage and the cartels',
-      grow: function (Q) { return SW.LEADERS.orn_free_taa.rise(Q) + 0.1 * on(Q.hutt_deal) - 0.5 * on(Q.syndicates_broken); }},
+      grow: function (Q) {
+        return 0.35 + 0.15 * on(Q.corruption > 55) + 0.1 * on(Q.hutt_deal) - 0.15 * on(Q.slavery_abolished) - 0.1 * on(Q.anti_corruption) - 0.5 * on(Q.syndicates_broken);
+      }},
     radicals: {bloc: 'rim', name: 'Rim Radicals', leaders: ['ardana'], color: '#b63d1c', ink: '#9c3214', lit: '#e0603c', base: 16,
       home: {outer: 1.2}, creed: 'reform now: they no longer believe the Republic can change, and many listen to Dooku'},
     // the Security Bloc
@@ -1501,11 +1516,16 @@
     // Palpatine's bloc
     centralists: {bloc: 'pal', name: 'Centralists', leaders: ['amedda', 'pestage'], color: '#b3141b', ink: '#b3141b', lit: '#e0474f', base: 55,
       home: {core: 0.8, midrim: 0.5}, creed: 'a strong executive, the only way to restore order, clean up the Senate and renew the Republic',
-      grow: function (Q) { return 0.45; }},
+      // the respectable face of his bloc wears thin as the years pass: its extremes grow around it
+      grow: function (Q) { return 0.45 - 0.0028 * Math.min(140, Q.date || 0); }},
     new_order: {bloc: 'pal', name: 'New Order', leaders: ['greejatus'], color: '#7a1218', ink: '#5e0a0f', lit: '#c0505a', base: 15,
-      home: {core: 1, colonies: 0.6}, creed: 'a totalitarian, human Republic: the Rim\'s rights undone, and human militias in the streets'},
+      home: {core: 1, colonies: 0.6}, creed: 'a totalitarian, human Republic: the Rim\'s rights undone, and human militias in the streets',
+      // it grows over the years, and fastest while Palpatine is kept from the Chancellery
+      grow: function (Q) { return SW.LEADERS.greejatus.rise(Q) + 0.005 * Math.min(140, Q.date || 0) + (Q.pal_chancellor || Q.puppet_chancellor ? 0 : 0.2 * on((Q.date || 0) >= 24)); }},
     cult: {bloc: 'pal', name: 'Personality Cult', leaders: ['dangor'], color: '#e0646e', ink: '#b8404a', lit: '#ee8a92', base: 15,
-      home: {core: 1.2}, creed: 'devotion to Palpatine himself, and to whatever serves him'}
+      home: {core: 1.2}, creed: 'devotion to Palpatine himself, and to whatever serves him',
+      // it grows over the years, and surges while he holds the Chancellery (Dangor's rise)
+      grow: function (Q) { return SW.LEADERS.dangor.rise(Q) + 0.002 * Math.min(140, Q.date || 0); }}
   };
   SW.BLOC_WINGS = {};
   SW.LEADER_WING = {};
@@ -1523,7 +1543,7 @@
   SW.CONGRESS_HOLD = 18;       // months after a congress before an outgrown ruling wing can be challenged again
   SW.WING_PULL = 0.3;          // how strongly a wing lifts its bloc in its home regions
   SW.WING_SWING = 2.5;         // how strongly the times move delegates between the wings
-  SW.CONGRESS_RANK = {fallen: 4, crisis: 3, scandal: 3, overtaken: 2, regular: 1};
+  SW.CONGRESS_RANK = {fallen: 4, crisis: 3, scandal: 3, revolt: 3, overtaken: 2, regular: 1};
 
   SW.wingGone = function (Q, id) { return !!Q['wing_gone_' + id]; };
   SW.wingActive = function (Q, id) {
@@ -1655,6 +1675,8 @@
       var v = Q['wingpush_' + p];
       if (v) Q['wingpush_' + p] = Math.abs(v) < 0.2 ? 0 : v * Math.pow(0.8, rf);
     }
+    if (SW.radTick) SW.radTick(Q, rf);
+    if (SW.repealTick) SW.repealTick(Q);
   };
   SW.wingShare = function (Q, w) { return Q['wing_' + w] || 0; };
   // a wing with a candidate that has outgrown the ruling wing
@@ -1686,6 +1708,7 @@
       var why = SW.leaderOut(Q, b) ? 'fallen' : (Q[b + '_congress_why'] || '');
       if (!why && Q.date >= Q[b + '_congress_due']) why = 'regular';
       if (why && why !== 'fallen' && why !== 'overtaken' && SW.congressSettled(Q, b)) { if (why === 'regular') SW.quietCongress(Q, b); Q[b + '_congress_why'] = ''; why = ''; }
+      if ((!why || why === 'regular') && SW.radRevolt && SW.radRevolt(Q, b)) why = 'revolt';
       if (!why && SW.wingOvertaken(Q, b)) why = 'overtaken';
       if (why && (SW.CONGRESS_RANK[why] || 0) > bestR) { best = b; bestR = SW.CONGRESS_RANK[why]; bestWhy = why; }
     }
@@ -1719,7 +1742,8 @@
       for (var j = 0; j < ws.length; j++) {
         var c = SW.wingCandidate(Q, ws[j]);
         if (ws[j] === Q[b + '_wing'] || !c || SW.LEADERS[c].firm < 0.7) continue;
-        if (SW.wingShare(Q, ws[j]) > bestS) { bestS = SW.wingShare(Q, ws[j]); best = b; }
+        var sc = SW.wingShare(Q, ws[j]) * (1 + 0.5 * (SW.radTier ? SW.radTier(Q, ws[j]) : 0));
+        if (sc > bestS) { bestS = sc; best = b; }
       }
     }
     return best;
@@ -1824,12 +1848,20 @@
     Q.cg_ruling = rw; Q.cg_ruling_name = SW.wingName(rw);
     Q.cg_old_leader = b === 'pal' ? 'Palpatine' : (Q[b + '_leader'] || '');
     var ov = SW.wingOvertaken(Q, b);
+    Q.cg_revolt_wing = '';
+    if (Q.cg_why === 'revolt') {
+      Q.cg_revolt_wing = SW.radRevolt(Q, b) || '';
+      if (!Q.cg_revolt_wing) Q.cg_why = 'crisis';
+      else { Q[b + '_rad_crisis'] = Q.date + SW.RAD_CRISIS_GAP; Q.revolts = (Q.revolts || 0) + 1; }
+    }
     var lead = Q.cg_old_leader, bn = sp(Q, b, 'the ' + Q.cg_bloc_name), Bn = sp(Q, b, 'The ' + Q.cg_bloc_name), pl = SW.blocPlural(Q, b);
     var why = {
       fallen: b === 'pal' ? 'With Palpatine gone, ' + bn + ' convenes to choose who will lead it now, with its wings vying for control.' :
         lead + ' can no longer lead ' + bn + '. The bloc\'s congress convenes to choose a successor, with the wings vying for control.',
       crisis: 'After a bad season for ' + bn + ', its leaders call an emergency congress. The wings are vying for control.',
       scandal: 'A bribery scandal has shaken ' + bn + ', and its congress convenes amid recriminations. The wings are vying for control.',
+      revolt: Q.cg_revolt_wing ? 'The ' + SW.wingSpan(Q.cg_revolt_wing) + ' have forced an emergency congress. Furious that ' + bn + (pl ? ' have ' : ' has ') + (SW.radClauses(Q, Q.cg_revolt_wing) || 'lost its way') +
+        ', they demand a change of course, or they will go.' : ' ',
       overtaken: 'The ' + SW.wingSpan(rw) + ' no longer speak for most of ' + bn + '. ' + (pl ? 'Their' : 'Its') + ' congress convenes early, with the ' + SW.wingSpan(ov || rw) + ' demanding a change of course.',
       regular: Q.cg_pal_free ? Bn + (pl ? ' gather for their congress. Palpatine will lead them' : ' gathers for its congress. Palpatine will lead it') + ' whatever happens, but his wings are vying to set the bloc\'s line.' :
         Bn + (pl ? ' gather for their congress, as they do' : ' gathers for its congress, as it does') + ' every four years. The wings are vying for control.'
@@ -1877,10 +1909,16 @@
     // our help, and a bribed hardliner's, move delegates from the other wings
     var moves = {};
     if (backed && sh[backed] !== undefined) moves[backed] = bump;
-    if (Q.contest_rigged && b !== 'pal') {
-      for (i = 0; i < ws.length; i++) { var hc = SW.wingCandidate(Q, ws[i]); if (hc && SW.LEADERS[hc].firm >= 0.7 && ws[i] !== Q[b + '_wing']) moves[ws[i]] = (moves[ws[i]] || 0) + 8; }
-      Q.contest_rigged = 0;
+    Q.cg_rigged = ''; Q.cg_guild_wing = '';
+    if (Q.contest_rigged && b !== 'pal' && (!Q.contest_rigged_bloc || Q.contest_rigged_bloc === b)) {
+      var rg = [];
+      for (i = 0; i < ws.length; i++) { var hc = SW.wingCandidate(Q, ws[i]); if (hc && SW.LEADERS[hc].firm >= 0.7 && ws[i] !== Q[b + '_wing']) { moves[ws[i]] = (moves[ws[i]] || 0) + 8; rg.push(ws[i]); } }
+      Q.contest_rigged = 0; Q.contest_rigged_bloc = '';
+      Q.cg_rigged = rg.length ? rg[0] : '';
     }
+    // the guilds' money, when their patience is gone
+    var gw = SW.guildBankroll ? SW.guildBankroll(Q, b) : '';
+    if (gw) { moves[gw] = (moves[gw] || 0) + 6; Q.cg_guild_wing = gw; Q.guild_bankrolls = (Q.guild_bankrolls || 0) + 1; }
     for (w in moves) {
       var take = moves[w], others = 0;
       for (i = 0; i < ws.length; i++) if (ws[i] !== w) others += sh[ws[i]];
@@ -1980,6 +2018,8 @@
     else if (wc !== wasLeader || SW.leaderOut(Q, b)) SW.setLeader(Q, b, wc);
     Q[b + '_wing'] = winner;
     Q['wingpush_' + winner] = (Q['wingpush_' + winner] || 0) + 4;
+    // a wing that wins its congress has less to be radical about
+    Q['rad_' + winner] = (Q['rad_' + winner] || 0) / 2;
     Q.cg_changed = winner !== was || wc !== wasLeader ? 1 : 0;
     Q.cg_winner = SW.LEADERS[wc].name; Q.cg_winner_id = wc; Q.cg_winner_wing = winner; Q.cg_winner_wing_name = SW.wingName(winner);
     var won = backed && backed === winner, lost = backed && backed !== winner;
@@ -2001,6 +2041,12 @@
     else t = '<b>' + Q.cg_winner + '</b> holds on to the leadership of ' + bn + ', and the ' + wn + ' keep control' + (terms ? ', on the ' + SW.wingSpan(terms) + '\'s terms' : '') + '.';
     if (won) t += ' Our help did not go unnoticed.';
     if (lost) t += ' Our meddling did not go unnoticed either, and the winners will remember it.';
+    if (Q.cg_guild_wing && SW.WINGS[Q.cg_guild_wing] && SW.WINGS[Q.cg_guild_wing].bloc === b) {
+      t += ' Trade Federation and Banking Clan credits flowed to the ' + SW.wingSpan(Q.cg_guild_wing) + ' delegates' + (Q.cg_guild_wing === winner ? ', and they paid off.' : ', for nothing.');
+      if (Q.cg_guild_wing !== winner) SW.addRad(Q, Q.cg_guild_wing, 10, Q['rad_why_' + Q.cg_guild_wing] || '');
+    }
+    if (Q.cg_rigged && SW.WINGS[Q.cg_rigged] && SW.WINGS[Q.cg_rigged].bloc === b) t += ' It is whispered that Palpatine\'s people paid for the votes of the ' + SW.wingSpan(Q.cg_rigged) + ' delegates.';
+    Q.cg_guild_wing = ''; Q.cg_rigged = '';
     Q.cg_result = t;
     Q.cg_effect = (palFree ? '' : SW.leaderEffect(Q, b, wc)) || ' ';
     Q.contest_group = '';
@@ -2043,13 +2089,13 @@
   // corruption, centralise (powers for Coruscant and its Chancellor), constitution, command (the Senate's control of the army) and trade_tax.
   SW.WING_VIEWS = {
     ruusan: {corruption: 0.1, constitution: 0.1, xenos: 0.05, representation: 0.05},
-    establishment: {constitution: -0.05, representation: -0.05, trade_tax: -0.05},
-    old_families: {xenos: -0.2, representation: -0.15, centralise: 0.1},
+    establishment: {constitution: -0.05, representation: -0.05, trade_tax: -0.05, core_tax: -0.15},
+    old_families: {xenos: -0.2, representation: -0.15, centralise: 0.1, core_tax: -0.2},
     corporatists: {trade_tax: -0.3, corruption: -0.2, xenos: 0.1, constitution: 0.1},
     confederates: {centralise: -0.2, trade_tax: -0.2, corruption: -0.1, xenos: 0.1},
     free_traders: {corruption: 0.2, army: 0.1, command: 0.05},
     mic: {centralise: 0.2, constitution: -0.2, command: -0.25, army: 0.15, peace: -0.15},
-    populists: {xenos: 0.2, slavery: 0.2, representation: 0.25, constitution: 0.1, army: -0.1, regulate: 0.05},
+    populists: {xenos: 0.2, slavery: 0.2, representation: 0.25, constitution: 0.1, army: -0.1, regulate: 0.05, core_tax: 0.05},
     hutt_machine: {slavery: -0.3, corruption: -0.2, regulate: -0.1},
     radicals: {representation: 0.25, slavery: 0.25, xenos: 0.2, centralise: -0.1},
     law_order: {army: 0.05, centralise: 0.05},
@@ -2057,7 +2103,7 @@
     const_hawks: {command: 0.25, constitution: 0.15, centralise: -0.1},
     brokers: {peace: 0.1, constitution: 0.1, corruption: 0.05},
     neutralists: {peace: 0.15, army: -0.05},
-    isolationists: {representation: 0.2, xenos: 0.15, slavery: -0.2, corruption: -0.15, centralise: -0.3, army: -0.05},
+    isolationists: {representation: 0.2, xenos: 0.15, slavery: -0.2, corruption: -0.15, centralise: -0.3, army: -0.05, core_tax: 0.05},
     rfc_pragmatists: {representation: 0.1},
     rfc_radicals: {representation: 0.2, slavery: 0.2},
     centralists: {corruption: 0.2, centralise: 0.25, constitution: -0.1},
@@ -2186,7 +2232,9 @@
     else if (kind === 'capital') { Q.capital += 2; Q.corruption += 1; }
     else {
       Q.rim_relation += 12; Q.rim_favour = (Q.rim_favour || 0) + 2;
-      if (Q.rc_chancellor && (Q.govt_blocs || []).indexOf('rim') < 0 && Q.parties.indexOf('rim') >= 0) { SW.setGovt(Q, (Q.govt_blocs || []).concat(['rim'])); Q.hutt_joined = 1; }
+      // the Coalition takes its seats only if every partner already in government will sit beside it
+      if (Q.rc_chancellor && (Q.govt_blocs || []).indexOf('rim') < 0 && Q.parties.indexOf('rim') >= 0 &&
+          (Q.govt_blocs || []).every(function (m) { return SW.relOk(Q, 'rim', m); })) { SW.setGovt(Q, (Q.govt_blocs || []).concat(['rim'])); Q.hutt_joined = 1; }
     }
   };
 
@@ -2499,7 +2547,10 @@
     human_first: {join: 'pal', rejects: ['rim', 'rfc', 'rc']},
     const_hawks: {found: 'Constitutional Defence League', near: 'mod', usJoin: 'hawk', faction: 'hawk', rejects: ['pal']},
     isolationists: {join: 'cis', rejects: ['pal', 'sec']},
-    neutralists: {found: 'Council of Neutral Systems', near: 'rim', usJoin: 'pacifist', faction: 'pacifist', rejects: ['sec']}
+    neutralists: {found: 'Council of Neutral Systems', near: 'rim', usJoin: 'pacifist', faction: 'pacifist', rejects: ['sec']},
+    hutt_machine: {join: 'pal', rejects: []},
+    mic: {join: 'pal', rejects: ['rfc']},
+    law_order: {join: 'mod', rare: true, rejects: []}
   };
   SW.WALKOUT_MIN = 20;          // a wing needs this share of its bloc's delegates to walk out
   // where a walking-out wing would go, now: '' if nowhere
@@ -2522,7 +2573,9 @@
     if (backed && backed === winner) a += 1;
     var d = SW.ideoDistance(SW.wingIdeo(Q, w), SW.wingIdeo(Q, winner));
     if (d >= 0.35) a += 1;
-    return {anger: a, dist: d};
+    var rt = SW.radTier(Q, w);
+    a += (rt >= 1 ? 1 : 0) + (rt >= 2 ? 1 : 0);
+    return {anger: a, dist: d, rad: rt};
   };
   // after a congress: does a defeated wing walk out?
   SW.walkoutCheck = function (Q, b, winner, backed) {
@@ -2531,11 +2584,12 @@
     var ws = SW.blocWings(Q, b), pick = '', pickA = 0;
     for (var i = 0; i < ws.length; i++) {
       var w = ws[i];
-      if (w === winner || !SW.WALKOUT[w] || SW.wingShare(Q, w) < SW.WALKOUT_MIN) continue;
+      var rt = SW.radTier(Q, w);
+      if (w === winner || !SW.WALKOUT[w] || SW.wingShare(Q, w) < (rt >= 2 ? 12 : SW.WALKOUT_MIN)) continue;
       Q.wk_govt = 0;
       var an = SW.walkoutAnger(Q, w, winner, backed);
-      if (an.dist < 0.2 || an.anger < 2 || !SW.walkoutDest(Q, w)) continue;
-      var chance = (0.45 + 0.15 * (an.anger - 2)) * (SW.WALKOUT[w].rare ? 0.3 : 1);
+      if (an.dist < (rt >= 1 ? 0.1 : 0.2) || an.anger < 2 || !SW.walkoutDest(Q, w)) continue;
+      var chance = Math.min(0.95, 0.45 + 0.15 * (an.anger - 2) + 0.1 * rt) * (SW.WALKOUT[w].rare ? 0.3 : 1);
       if (SW.rnd() < chance && an.anger > pickA) { pick = w; pickA = an.anger; Q.wk_govt_w = Q.wk_govt; }
     }
     if (!pick) return '';
@@ -2549,8 +2603,9 @@
     Q.wk_us = dest.join === 'rc' ? 1 : 0;
     Q.wk_cis = dest.join === 'cis' ? 1 : 0;
     var rej = (SW.WALKOUT[pick].rejects || []).filter(function (x) { return (Q.govt_blocs || []).indexOf(x) >= 0; });
-    Q.wk_grievance = Q.wk_govt_w && rej.length ? 'And now the ' + Q.wk_bloc_name + (SW.blocPlural(Q, b) ? ' sit' : ' sits') + ' in government beside the ' + rej.map(function (x) { return x === 'rc' ? 'Ruusan Caucus' : SW.name(Q, x); }).join(' and the ') +
-      ', a government the ' + Q.wk_wing_name + ' call a betrayal of everything the bloc stands for.' : 'Their delegates leave the hall convinced that the ' + Q.wk_bloc_name + (SW.blocPlural(Q, b) ? ' have' : ' has') + ' no room for them any more.';
+    var rc0 = SW.radTier(Q, pick) >= 1 ? SW.radClauses(Q, pick) : '';
+    Q.wk_grievance = (rc0 ? 'The ' + Q.wk_wing_name + ' have never forgiven the ' + Q.wk_bloc_name + ' for having ' + rc0 + '. ' : '') + (Q.wk_govt_w && rej.length ? 'And now the ' + Q.wk_bloc_name + (SW.blocPlural(Q, b) ? ' sit' : ' sits') + ' in government beside the ' + rej.map(function (x) { return x === 'rc' ? 'Ruusan Caucus' : SW.name(Q, x); }).join(' and the ') +
+      ', a government the ' + Q.wk_wing_name + ' call a betrayal of everything the bloc stands for.' : 'Their delegates leave the hall convinced that the ' + Q.wk_bloc_name + (SW.blocPlural(Q, b) ? ' have' : ' has') + ' no room for them any more.');
     return pick;
   };
   // the walkout itself
@@ -2576,11 +2631,154 @@
     }
     Q.walkouts = (Q.walkouts || 0) + 1;
     Q['walked_' + w] = dest.found ? 'found' : dest.join;
+    Q['rad_' + w] = 0;
     Q[b + '_relation'] = (Q[b + '_relation'] || 0) - (dest.join === 'rc' ? 8 : 0);
     SW.computeSupport(Q);
   };
   // a breakaway party that is a wing's: it votes and governs by that wing's ideology, under its bloc's baseline
   SW.splinterWing = function (Q) { return Q.rfc_kind && SW.WINGS[Q.rfc_kind] ? Q.rfc_kind : ''; };
+
+  // the wing whose walkout would serve Palpatine or Dooku best, for his agitators: the most radical, then the largest
+  SW.stokeTarget = function (Q) {
+    var best = '', bs = -1;
+    for (var w in SW.WINGS) {
+      var b = SW.WINGS[w].bloc;
+      if (b === 'pal' || !SW.wingActive(Q, w) || !SW.hasWings(Q, b) || w === Q[b + '_wing']) continue;
+      var d = SW.walkoutDest(Q, w);
+      if (!d || (d.join !== 'pal' && d.join !== 'cis')) continue;
+      var sc = (Q['rad_' + w] || 0) + SW.wingShare(Q, w) / 10;
+      if (sc > bs) { bs = sc; best = w; }
+    }
+    return best;
+  };
+  // the guilds, at the end of their patience, pay for the wing at another bloc's congress most opposed to regulation, trade taxes and the ethics laws
+  SW.guildBankroll = function (Q, b) {
+    if (['guild', 'pal', 'rc', 'cis'].indexOf(b) >= 0 || Q.finale || !(Q.guild_patience < 35) || !SW.guildEscalates(Q) || (Q.parties || []).indexOf('guild') < 0) return '';
+    var ws = SW.blocWings(Q, b), best = '', bs = 0.05;
+    for (var i = 0; i < ws.length; i++) {
+      if (!SW.wingCandidate(Q, ws[i])) continue;
+      var sc = -(SW.wingOwnView(ws[i], 'regulate') + SW.wingOwnView(ws[i], 'trade_tax') + SW.wingOwnView(ws[i], 'corruption'));
+      if (sc > bs) { bs = sc; best = ws[i]; }
+    }
+    return best;
+  };
+
+  // ------------------------------------------------------------------ radicalism
+  // A wing grows radical when its own bloc backs what it opposes: in a Senate vote, in the budget, through the bloc's own
+  // ministers, or by governing beside a partner the wing rejects. Radicalism never wins a wing delegates. It makes the
+  // wing far likelier to walk out after a congress it loses, and on the brink it forces a congress of its own.
+  SW.RAD_TIERS = [35, 65, 80];
+  SW.RAD_WORDS = ['restless', 'furious', 'on the brink'];
+  SW.RAD_DECAY = 0.92;          // per quarter
+  SW.RAD_CRISIS_GAP = 18;       // months between the crisis congresses one bloc's radicals can force
+  SW.radTier = function (Q, w) { var r = Q['rad_' + w] || 0; return r >= SW.RAD_TIERS[2] ? 3 : (r >= SW.RAD_TIERS[1] ? 2 : (r >= SW.RAD_TIERS[0] ? 1 : 0)); };
+  // what backing a topic (or, with '-', opposing it) looks like to the wing that resents it
+  SW.TOPIC_PHRASES = {
+    rim: ['help for the Rim', 'cuts to the Rim'], slavery: ['the slavery ban', 'leaving slavery alone'],
+    xenos: ['rights for aliens', 'the human-first agenda'], representation: ['seats for the Rim', 'taking the Rim\'s seats away'],
+    corruption: ['the ethics laws', 'cover for the corrupt'], centralise: ['more power for Coruscant', 'less power for Coruscant'],
+    powers: ['more power for the Chancellor', 'curbs on the Chancellor'], constitution: ['constitutional reform', 'undoing the constitution\'s checks'],
+    command: ['putting the army under the Senate', 'freeing the army from the Senate'], oversight: ['more oversight', 'less oversight'],
+    trade_tax: ['taxes on trade', 'tax breaks for the guilds'], core_tax: ['taxes on the Core', 'tax breaks for the Core'],
+    regulate: ['regulating the guilds', 'deregulating the guilds'], army: ['a bigger army', 'cuts to the army'], peace: ['peace talks', 'the war']
+  };
+  SW.topicPhrase = function (t) {
+    var neg = t.charAt(0) === '-', k = neg ? t.slice(1) : t, P = SW.TOPIC_PHRASES[k];
+    return P ? P[neg ? 1 : 0] : '';
+  };
+  // a wing's own view on a topic: its own views and its figure's (its bloc's baseline is shared by all its wings)
+  SW.wingOwnView = function (w, tp) {
+    var W = SW.WINGS[w], v = (SW.WING_VIEWS[w] || {})[tp] || 0, L = W ? SW.LEADERS[W.leaders[0]] : null;
+    return v + ((L && L.views && L.views[tp]) || 0);
+  };
+  SW.addRad = function (Q, w, gain, why) {
+    if (!SW.WINGS[w] || !(gain > 0)) return;
+    Q['rad_' + w] = SW.clamp((Q['rad_' + w] || 0) + gain, 0, 100);
+    if (why && Q['rad_why_' + w] !== why) { Q['rad_why2_' + w] = Q['rad_why_' + w] || ''; Q['rad_why_' + w] = why; }
+  };
+  // bloc b has backed these topics (signed, e.g. '-powers'), with strength 0..1: the wings that oppose them grow radical
+  SW.radicalise = function (Q, b, topics, strength) {
+    if (!b || b === 'rc' || b === 'cis' || !SW.hasWings(Q, b) || !topics || !topics.length || !(strength > 0)) return;
+    if (Q.finale || Q.game_ending || Q.sidious_defeated) return;
+    var ws = SW.blocWings(Q, b);
+    for (var i = 0; i < ws.length; i++) {
+      var w = ws[i], o = 0, worst = '', wv = 0;
+      for (var t = 0; t < topics.length; t++) {
+        var tp = topics[t], sg = 1;
+        if (!tp) continue;
+        if (tp.charAt(0) === '-') { sg = -1; tp = tp.slice(1); }
+        var v = sg * SW.wingOwnView(w, tp);
+        o += v;
+        if (v < wv && SW.topicPhrase(topics[t])) { wv = v; worst = topics[t]; }
+      }
+      if (o > -0.1) continue;
+      SW.addRad(Q, w, Math.min(15, 60 * -o * strength), worst);
+    }
+  };
+  // what a radical wing holds against its bloc, as a clause after "has" or "for having": e.g. "backed rights for aliens and taxes on the Core"
+  SW.radClauses = function (Q, w) {
+    var whys = [Q['rad_why_' + w], Q['rad_why2_' + w]].filter(function (x, i, a) { return x && a.indexOf(x) === i; });
+    var backs = [], gov = [];
+    for (var i = 0; i < whys.length; i++) {
+      if (whys[i].indexOf('gov:') === 0) { var g = whys[i].slice(4); if (Q.parties.indexOf(g) >= 0 || g === 'rc') gov.push(g === 'rc' ? 'the Ruusan Caucus' : 'the ' + SW.name(Q, g)); }
+      else if (SW.topicPhrase(whys[i])) backs.push(SW.topicPhrase(whys[i]));
+    }
+    var c = [];
+    if (backs.length) c.push('backed ' + backs.join(' and '));
+    if (gov.length) c.push('gone into government beside ' + gov.join(' and '));
+    return c.join(' and ');
+  };
+  // where a wing on the brink would go, in a sentence for the unrest event
+  SW.radDestNote = function (Q, w) {
+    var d = SW.walkoutDest(Q, w), c = SW.wingCandidate(Q, w) || SW.WINGS[w].leaders[0], who = SW.LEADERS[c] ? SW.LEADERS[c].name : 'Their leaders';
+    if (!d) return '';
+    if (d.found) return 'There is talk of founding a party of their own, the ' + d.found + '.';
+    if (d.join === 'rc') return who + ' has been asking what the Ruusan Caucus would offer them.';
+    if (d.join === 'cis') return 'Dooku\'s agents are courting them openly.';
+    if (d.join === 'pal') return who + ' has been seen dining with Palpatine\'s people.';
+    return 'The ' + SW.name(Q, d.join) + ' have quietly offered them a home.';
+  };
+  // a wing on the brink, out of power and with somewhere to go, can force its bloc into a congress
+  SW.radRevolt = function (Q, b) {
+    if (b === 'pal' || !SW.hasWings(Q, b) || Q.date < (Q[b + '_congress_hold'] || -99) || Q.date < (Q[b + '_rad_crisis'] || -99)) return '';
+    var ws = SW.blocWings(Q, b), best = '', br = 0;
+    for (var i = 0; i < ws.length; i++) {
+      var w = ws[i];
+      if (w === Q[b + '_wing'] || SW.radTier(Q, w) < 3 || !SW.walkoutDest(Q, w) || !SW.wingCandidate(Q, w)) continue;
+      if (Q['rad_' + w] > br) { br = Q['rad_' + w]; best = w; }
+    }
+    return best;
+  };
+  // each quarter: radicalism fades; partners a wing rejects feed it; a wing newly furious is news
+  SW.radTick = function (Q, rf) {
+    var gov = Q.govt_blocs || [], f = Math.pow(SW.RAD_DECAY, rf);
+    for (var w in SW.WINGS) {
+      if (!(Q['rad_' + w] > 0) && !SW.WALKOUT[w]) continue;
+      if (!SW.wingActive(Q, w)) { Q['rad_' + w] = 0; continue; }
+      Q['rad_' + w] = (Q['rad_' + w] || 0) * f;
+      if (Q['rad_' + w] < 0.5) Q['rad_' + w] = 0;
+      var R = SW.WALKOUT[w], b = SW.WINGS[w].bloc;
+      if (R && gov.indexOf(b) >= 0 && !Q.finale) {
+        var rej = (R.rejects || []).filter(function (x) { return gov.indexOf(x) >= 0; });
+        if (rej.length) SW.addRad(Q, w, 3 * rf, 'gov:' + rej[0]);
+      }
+    }
+    if (Q.unrest_go || Q.finale || Q.game_ending) return;
+    var pick = '', pr = 0;
+    for (var x in SW.WINGS) {
+      if (!SW.wingActive(Q, x) || !SW.hasWings(Q, SW.WINGS[x].bloc) || SW.radTier(Q, x) < 2 || Q.date < (Q['rad_warned_' + x] || -99) + 12 || !SW.radClauses(Q, x)) continue;
+      if (Q['rad_' + x] > pr) { pr = Q['rad_' + x]; pick = x; }
+    }
+    if (!pick) return;
+    var bb = SW.WINGS[pick].bloc, pl = SW.blocPlural(Q, bb), note = SW.radDestNote(Q, pick);
+    Q['rad_warned_' + pick] = Q.date;
+    Q.unrest_go = 1; Q.unrest_events = (Q.unrest_events || 0) + 1;
+    Q.unrest_wing = pick; Q.unrest_wing_name = SW.wingName(pick); Q.unrest_bloc_name = SW.name(Q, bb);
+    Q.unrest_mood = SW.radTier(Q, pick) >= 3 ? 'on the brink' : 'furious';
+    Q.unrest_title = SW.radTier(Q, pick) >= 3 ? 'The ' + SW.wingName(pick) + ' on the Brink' : 'Rumblings among the ' + SW.wingName(pick);
+    Q.unrest_grievance = 'They cannot forgive the ' + Q.unrest_bloc_name + ' for having ' + SW.radClauses(Q, pick) + '.';
+    Q.unrest_dest = note || ' '; Q.unrest_has_dest = note ? 1 : 0;
+  };
 
   // ------------------------------------------------------------------ support / seats
   SW.computeSupport = function (Q) {
@@ -3042,6 +3240,44 @@
   };
   // Each scandal the Caucus turned into a demand for ethics enforcement builds the case for an Ethics Commission.
   SW.ethicsPush = function (Q) { return Math.min(0.09, 0.03 * (Q.ethics_push || 0)); };
+  // Reforms an anti-reform ministry can repeal: only the latest step of its track, only once it has stood for a year.
+  // (Reforms whose effects cannot be undone, and those that check the Chancellery's powers, are never repealed.)
+  SW.REPEALS = {
+    rim_relief_act: {name: 'the Rim Relief Act', line: 'Relief convoys bound for the Outer Rim are recalled at the hyperlane beacons.'},
+    sentience_rights: {name: 'the Rights of Sentience', line: 'Aliens across the Republic lose the protections the Rights of Sentience gave them.'},
+    anti_corruption: {name: 'the Ethics Commission', line: 'The Ethics Commission\'s investigators clear their desks.', after: 'integrity_office'},
+    integrity_office: {name: 'the Office of Public Integrity', line: 'The Office of Public Integrity is shut, and its files are sealed.', after: 'senators_expelled'},
+    emergency_sunset: {name: 'the Sunset Amendment', line: 'The emergency powers no longer expire.', after: 'powers_review'},
+    anti_cartel: {name: 'the Anti-Cartel Act', line: 'The guilds\' cartels are legal again.', after: 'tf_broken_up'}
+  };
+  SW.repealable = function (Q, f) {
+    var R = SW.REPEALS[f];
+    return !!(R && Q[f] && !(R.after && Q[R.after]) && !Q.finale && !Q.game_ending && Q['since_' + f] >= 0 && Q.date - Q['since_' + f] >= 12);
+  };
+  // a repeal goes to the Senate with the Caucus against it: blocs friendly to us, faith in the Republic and the Senate's resolve all count against it
+  SW.repealStance = function (Q, base) {
+    var st = {};
+    for (var i = 0; i < Q.parties.length; i++) {
+      var b = Q.parties[i];
+      if (b === 'rc') continue;
+      var p = base[b] !== undefined ? base[b] : 0.4;
+      if (b !== 'pal' && b !== 'cis') p -= ((Q[b + '_relation'] || 40) - 45) / 150 * (1.4 - 0.8 * SW.firm(Q, b));
+      p -= (Q.faith - 50) / 250 + Q.senate_resolve * 0.02;
+      st[b] = SW.clamp(p, 0, 1);
+    }
+    return st;
+  };
+  SW.repealVoteFor = function (Q, base, topics, need) { return SW.vote(Q, SW.repealStance(Q, base), 0, topics) >= (need || 50); };
+  SW.reformRepealed = function (Q, f, b, c) {
+    Q[f] = 0; Q['since_' + f] = -1;
+    Q.reforms_repealed = (Q.reforms_repealed || 0) + 1;
+    Q['repealed_' + f] = (Q['repealed_' + f] || 0) + 1;
+    Q.rr_go = 1; Q.rr_name = SW.REPEALS[f].name; Q.rr_line = SW.REPEALS[f].line; Q.rr_bloc = SW.name(Q, b);
+    Q.rr_minister = Q['minister_' + c + '_name'] || 'The minister'; Q.rr_committee = SW.COMMITTEE_NAMES[c];
+  };
+  SW.repealTick = function (Q) {
+    for (var f in SW.REPEALS) { if (Q[f]) { if (!(Q['since_' + f] >= 0)) Q['since_' + f] = Q.date; } else Q['since_' + f] = -1; }
+  };
   SW.MINISTRY_ACTS = {
     finance: [
       {id: 'bank_audit', text: 'audited the Banking Clan', reform: 1, vec: {regulate: 0.8, oversight: 0.5}, ok: function (Q) { return !Q.banking_audit; },
@@ -3054,6 +3290,9 @@
         fx: function (Q) { Q.treasury -= 1; Q.rim_hardship -= 1.5; }},
       {id: 'war', text: 'paid for the war', vec: {army: 1, peace: -0.5}, ok: function (Q) { return Q.war && Q.treasury >= 1; },
         fx: function (Q) { Q.treasury -= 1; Q.war_balance += 0.4; }},
+      {id: 'repeal_anticartel', repeal: 1, text: 'repealed the Anti-Cartel Act', bill: 'the repeal of the Anti-Cartel Act', vec: {regulate: -1}, ok: function (Q) { return SW.repealable(Q, 'anti_cartel'); },
+        vote: function (Q) { return SW.repealVoteFor(Q, {mod: 0.45, guild: 0.85, rim: 0.4, sec: 0.45, ind: 0.4, pal: 0.6, cis: 0.6}, '-regulate'); },
+        fx: function (Q, b) { SW.reformRepealed(Q, 'anti_cartel', b, 'finance'); Q.guild_relation += 3; SW.guildPatience(Q, 5); }},
       {id: 'pork_finance', text: SW.PORK.finance[0].act, said: function (Q) { return Q.pork_said; }, pork: 1, vec: {}, ok: function (Q) { return SW.porkOk(Q); }, score: function (Q, ideo) { return SW.porkScore(Q, ideo); }, fx: function (Q, b) { SW.porkBarrel(Q, 'finance', b); }}
     ],
     judiciary: [
@@ -3064,6 +3303,12 @@
       {id: 'look_away', text: 'looked the other way', vec: {regulate: -0.6, oversight: -0.4}, fx: function (Q) { Q.corruption += 1.5; }},
       {id: 'critics', text: 'investigated the government\'s critics', vec: {powers: 1, oversight: -0.5},
         fx: function (Q) { Q.grand_plan += 1; if (!Q.evidence_secured && !Q.compor) Q.evidence = Math.max(0, Q.evidence - 0.3); }},
+      {id: 'repeal_ethics', repeal: 1, text: 'repealed the Ethics Commission', bill: 'the repeal of the Ethics Commission', vec: {corruption: -1, regulate: -0.5}, ok: function (Q) { return SW.repealable(Q, 'anti_corruption'); },
+        vote: function (Q) { return SW.repealVoteFor(Q, {mod: 0.3, guild: 0.65, rim: 0.45, sec: 0.4, ind: 0.3, pal: 0.45, cis: 0.5}, ['-corruption', '-oversight']); },
+        fx: function (Q, b) { SW.reformRepealed(Q, 'anti_corruption', b, 'judiciary'); Q.corruption += 3; Q.faith -= 1; }},
+      {id: 'repeal_integrity', repeal: 1, text: 'shut the Office of Public Integrity', bill: 'the closure of the Office of Public Integrity', vec: {corruption: -1, oversight: -0.5}, ok: function (Q) { return SW.repealable(Q, 'integrity_office'); },
+        vote: function (Q) { return SW.repealVoteFor(Q, {mod: 0.3, guild: 0.65, rim: 0.45, sec: 0.4, ind: 0.3, pal: 0.5, cis: 0.5}, ['-corruption', '-oversight']); },
+        fx: function (Q, b) { SW.reformRepealed(Q, 'integrity_office', b, 'judiciary'); Q.corruption += 2; }},
       {id: 'pork_judiciary', text: SW.PORK.judiciary[0].act, said: function (Q) { return Q.pork_said; }, pork: 1, vec: {}, ok: function (Q) { return SW.porkOk(Q); }, score: function (Q, ideo) { return SW.porkScore(Q, ideo); }, fx: function (Q, b) { SW.porkBarrel(Q, 'judiciary', b); }}
     ],
     security: [
@@ -3082,6 +3327,12 @@
       {id: 'relief', text: 'sent relief to the Rim', vec: {rim: 1}, fx: function (Q) { Q.rim_hardship -= 2; Q.treasury -= 0.5; }},
       {id: 'hutt', text: 'protected the Hutt trade', vec: {regulate: -0.8, rim: -0.5}, fx: function (Q) { Q.guild_relation += 2; Q.rim_hardship += 1; }},
       {id: 'crackdown', text: 'cracked down on unrest in the Rim', vec: {army: 0.7, rim: -1}, fx: function (Q) { Q.fear += 1; Q.rim_relation -= 3; Q.outer_sep += 1; }},
+      {id: 'repeal_relief', repeal: 1, text: 'repealed the Rim Relief Act', bill: 'the repeal of the Rim Relief Act', vec: {rim: -1}, ok: function (Q) { return SW.repealable(Q, 'rim_relief_act'); },
+        vote: function (Q) { return SW.repealVoteFor(Q, {mod: 0.4, guild: 0.6, rim: 0.1, sec: 0.5, ind: 0.35, pal: 0.6, cis: 0.5}, '-rim'); },
+        fx: function (Q, b) { SW.reformRepealed(Q, 'rim_relief_act', b, 'rimaffairs'); Q.rim_relief = Math.max(0, (Q.rim_relief || 0) - 1); Q.rim_hardship += 2; Q.rim_relation -= 4; }},
+      {id: 'repeal_sentience', repeal: 1, text: 'repealed the Rights of Sentience', bill: 'the repeal of the Rights of Sentience', vec: {xenos: -1, rim: -0.5}, ok: function (Q) { return SW.repealable(Q, 'sentience_rights'); },
+        vote: function (Q) { return SW.repealVoteFor(Q, {mod: 0.35, guild: 0.4, rim: 0.05, sec: 0.5, ind: 0.2, pal: 0.7, cis: 0.3}, ['-xenos', '-rim']); },
+        fx: function (Q, b) { SW.reformRepealed(Q, 'sentience_rights', b, 'rimaffairs'); Q.rim_relation -= 4; }},
       {id: 'pork_rimaffairs', text: SW.PORK.rimaffairs[0].act, said: function (Q) { return Q.pork_said; }, pork: 1, vec: {}, ok: function (Q) { return SW.porkOk(Q); }, score: function (Q, ideo) { return SW.porkScore(Q, ideo); }, fx: function (Q, b) { SW.porkBarrel(Q, 'rimaffairs', b); }}
     ],
     constitution: [
@@ -3089,7 +3340,10 @@
         vote: function (Q) { return SW.vote(Q, SW.stance(Q, {mod: 0.6, guild: 0.55, rim: 0.65, sec: 0.25, ind: 0.6, pal: 0.15 + (Q.emergency_powers < 1 ? 0.25 : 0), cis: 0.6}, true), 0.5, 'oversight') >= 66.7; },
         fx: function (Q) { Q.emergency_sunset = 1; Q.faith += 1; }},
       {id: 'ease', text: 'eased the emergency powers\' passage', vec: {powers: 1, oversight: -0.5}, fx: function (Q) { Q.grand_plan += 1.5; Q.senate_resolve -= 0.3; }},
-      {id: 'defend', text: 'defended the constitution', vec: {oversight: 1, powers: -1}, fx: function (Q) { Q.senate_resolve += 0.3; Q.faith += 0.5; }}
+      {id: 'defend', text: 'defended the constitution', vec: {oversight: 1, powers: -1}, fx: function (Q) { Q.senate_resolve += 0.3; Q.faith += 0.5; }},
+      {id: 'repeal_sunset', repeal: 1, text: 'repealed the Sunset Amendment', bill: 'the repeal of the Sunset Amendment', vec: {powers: 1, oversight: -1}, ok: function (Q) { return SW.repealable(Q, 'emergency_sunset'); },
+        vote: function (Q) { return SW.repealVoteFor(Q, {mod: 0.3, guild: 0.4, rim: 0.3, sec: 0.6, ind: 0.3, pal: 0.9, cis: 0.3}, ['powers', '-constitution'], 66.7); },
+        fx: function (Q, b) { SW.reformRepealed(Q, 'emergency_sunset', b, 'constitution'); Q.faith -= 1; Q.senate_resolve -= 0.3; }}
     ],
     jedi: [
       {id: 'independence', text: 'guaranteed the Jedi Order\'s independence', bill: 'the Jedi Independence Amendment', vec: {oversight: 0.8, powers: -0.8}, ok: function (Q) { return !Q.jedi_independence; },
@@ -3122,12 +3376,14 @@
     for (var i = 0; i < acts.length; i++) {
       var A = acts[i];
       if (A.ok && !A.ok(Q)) continue;
-      if ((A.bill || A.reform) && !reforms && !SW.wingBill(Q, b, A.id)) continue;
+      if ((A.bill || A.reform) && !A.repeal && !reforms && !SW.wingBill(Q, b, A.id)) continue;
       // a bill the Senate voted down waits a few years before it is tried again
       if ((Q['mfail_' + A.id] || 0) > Q.time) continue;
       var sc = 0;
       if (A.score) sc = A.score(Q, ideo);
       else for (var k in A.vec) sc += A.vec[k] * (ideo[k] || 0);
+      // a reform it hates, on the books: undoing it comes first
+      if (A.repeal && sc > 0) sc *= 1.3;
       if (sc > bestS + 1e-9) { best = A; bestS = sc; }
     }
     return best;
@@ -3144,7 +3400,8 @@
       var A = SW.ministryChoice(Q, c);
       if (!A) continue;
       var passed = A.vote ? A.vote(Q) : true;
-      if (passed) A.fx(Q, b); else Q['mfail_' + A.id] = Q.time + 12;
+      if (passed) { A.fx(Q, b); SW.radicalise(Q, b, A.pork ? ['-corruption'] : Object.keys(A.vec || {}).map(function (k) { return A.vec[k] >= 0 ? k : '-' + k; }), 0.5); }
+      else Q['mfail_' + A.id] = Q.time + 12;
       var did = passed ? (A.said && A.said(Q)) || A.text : 'put ' + A.bill + ' to the Senate, which voted it down';
       Q['ministry_act_' + c] = did; Q['ministry_act_by_' + c] = b;
       Q.ministry_acts_total = (Q.ministry_acts_total || 0) + 1;
@@ -4051,6 +4308,24 @@
         return 'A droid bomber strikes Coruscant on the eve of the peace talks. The Senate, in panic, abandons the peace initiative and votes to deregulate the banks to pay for the war.';
       }
     },
+    // his agents fan a radical wing's grievances against its own bloc, where its walkout would serve him or Dooku
+    stoke_grievance: {
+      weight: function (Q) { var t = SW.stokeTarget(Q); return t ? 0.3 + SW.reformCount(Q) * 0.08 + 0.15 * SW.radTier(Q, t) : 0; },
+      foresee: function (Q) {
+        Q.stoke_target = SW.stokeTarget(Q);
+        return 'Agitators are working the delegates of the ' + SW.wingName(Q.stoke_target) + ', fanning every grievance they hold against their own bloc.';
+      },
+      counter: 'Expose the agitators',
+      foiled: 'The Caucus exposes the agitators before the delegates take the bait. Nobody admits to having paid them.',
+      apply: function (Q) {
+        var w = SW.wingActive(Q, Q.stoke_target) ? Q.stoke_target : SW.stokeTarget(Q);
+        Q.stoke_target = '';
+        if (!w) return 'Agitators work the corridors of the Senate for a season, but find no one ready to listen.';
+        SW.addRad(Q, w, 20, Q['rad_why_' + w] || '');
+        return 'Agitators work the delegates of the ' + SW.wingName(w) + ' for a season, and their grievances against the ' + SW.name(Q, SW.WINGS[w].bloc) +
+          ' grow louder by the week.';
+      }
+    },
     buy_leader: {
       weight: function (Q) { return 0.6 + SW.reformCount(Q) * 0.1; },
       foresee: 'Credits are changing hands among the leaders of another bloc. Someone is buying a leadership fight.',
@@ -4059,6 +4334,7 @@
       apply: function (Q) {
         Q.contest_rigged = 1;
         var rb = SW.rigTarget(Q);
+        Q.contest_rigged_bloc = rb || '';
         if (rb) SW.callCongress(Q, rb, 'crisis');
         return 'Credits change hands among the leaders of another bloc. A hardliner is being groomed to take over.';
       }
@@ -4297,7 +4573,8 @@
     }
     var palLine = stance.pal !== undefined ? stance.pal : (topics.indexOf('powers') >= 0 ? 1 : 0);
     if (topics.indexOf('powers') >= 0 && rcYes >= 0.75) Q.powers_rc_yes = 1;
-    var lobbied = 0;
+    var lobbied = 0, backers = [];
+    SW._lastP = {};
     for (var i = 0; i < Q.parties.length; i++) {
       var b = Q.parties[i];
       var s = Q[b + '_r'] || 0;
@@ -4322,8 +4599,15 @@
         if (bought > 0 && b !== 'pal' && b !== 'cis') p = p * (1 - bought) + palLine * bought;
       }
       p = SW.clamp(p, 0, 1);
+      SW._lastP[b] = p;
+      if (b !== 'rc' && p >= 0.5) backers.push([b, p]);
       yes += s * p;
       total += s;
+    }
+    // a bloc that backs what one of its wings opposes radicalises that wing
+    if (live && vtopics.length) {
+      var rt = vtopics.filter(function (x) { return x !== 'confidence'; });
+      for (var bk = 0; bk < backers.length; bk++) SW.radicalise(Q, backers[bk][0], rt, 0.3 + 1.4 * (backers[bk][1] - 0.5));
     }
     if (lobbied) SW._notes.push('guild lobbying');
     if (total <= 0) total = 1;
@@ -5005,6 +5289,8 @@
     pri: {relief: {rim: 0.3, rfc: 0.3, mod: -0.1}, defence: {sec: 0.3, ind: -0.05}, subsidies: {mod: 0.15, guild: 0.25, rim: -0.15, rfc: -0.15},
       repay: {mod: 0.1, guild: 0.1}, none: {rim: -0.1, sec: -0.1}}
   };
+  // what a budget's taxes and spending mean to the wings that resent them (for radicalism; the budget's odds have their own leans)
+  SW.BUDGET_TOPICS = {rev: {tariffs: 'trade_tax', levy: 'core_tax'}, pri: {relief: 'rim', defence: 'army', subsidies: '-regulate'}};
   SW.budgetStance = function (Q, rev, pri) {
     var st = {}, why = {};
     for (var i = 0; i < Q.parties.length; i++) {
@@ -5027,6 +5313,12 @@
     Q._owns = (writer || rcYes) ? 1 : 0;
     var st = SW.budgetStance(Q, rev, pri), why = Q._budget_why;
     Q.bd_vote = SW.vote(Q, st, rcYes);
+    var bt = [SW.BUDGET_TOPICS.rev[rev], SW.BUDGET_TOPICS.pri[pri]].filter(function (x) { return !!x; });
+    // a budget that passes is the whole government's: its partners own its taxes and spending, whatever their senators voted
+    if (bt.length) for (var bb in SW._lastP) {
+      var bp = SW._lastP[bb], gv = Q.bd_vote >= 50 && (Q.govt_blocs || []).indexOf(bb) >= 0;
+      if (bb !== 'rc' && (bp >= 0.5 || gv)) SW.radicalise(Q, bb, bt, Math.max(gv ? 0.6 : 0, 0.3 + 1.4 * (bp - 0.5)));
+    }
     Q.vote_html = SW.voteBanner('The budget: ' + SW.REVENUE[rev || 'none'].name + ', spending on ' + SW.PRIORITY[pri || 'none'].name, Q.bd_vote);
     // how the blocs lined up, and coalition partners' red lines
     var lines = [];

@@ -1,0 +1,14 @@
+title: Unrest in a Wing
+subtitle: A wing turns on its own bloc.
+tags: event
+view-if: unrest_go = 1 and not finale and not game_ending and not walkout_go
+priority: 2
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {! Q.unrest_go = 0; !}
+
+= [+ unrest_title +]
+
+The [+ unrest_wing_name +] of the [+ unrest_bloc_name +] are [+ unrest_mood +]. [+ unrest_grievance +] Their delegates have stopped attending the bloc's caucus meetings, and their senators vote as they please.
+
+[? if unrest_has_dest : [+ unrest_dest +] ?][? if not unrest_has_dest : They have nowhere else to go, so they mean to make the bloc's leaders pay for it at the next congress. ?]

@@ -73,6 +73,10 @@ artwork, music or footage is included; all images are original abstract art.*
   Each chair is held by a named minister; the Caucus picks its own, and the committees it does not chair act on
   their bloc's ideology at the time. Four of them can also hand out patronage, in six forms each, one offered at random
   whenever a committee's card is played, until the Senate expels its corrupt senators.
+- **Backlash.** A wing turns radical when its own bloc backs what it opposes, and radical wings split off, sometimes
+  forcing an emergency congress first. Palpatine's agents and the guilds' money work the grievances, anti-reform
+  ministries can repeal reforms, the Rim starts under the Hutt-space Machine, and Palpatine's own bloc drifts to its
+  New Order or its Personality Cult.
 - **The Chancellery** is an office of its own, with its own screen. It gathers twelve named powers over the game, from
   the gavel and the Senate Guard to emergency decrees, the Bureau of Intelligence and the HoloNet; reforms check them
   for good. Our own Chancellor can rule by decree, at a price: the precedent wears away faith, serves the next
