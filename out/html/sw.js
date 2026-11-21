@@ -3178,6 +3178,8 @@
     Q.minority_govt = Q.govt_seats < 50 ? 1 : 0;
     Q.rc_in_govt = blocs.indexOf('rc') >= 0 ? 1 : 0;
     Q.rc_chancellor = Q.chancellor_bloc === 'rc' ? 1 : 0;
+    // a ceasefire our Chancellor called lapses if the Caucus loses the office before the conference meets
+    if (Q.chan_peace_stage === 1 && !Q.rc_chancellor) { Q.chan_peace_stage = 3; Q.chan_ceasefire_failed = 1; }
     Q.pal_chancellor = Q.chancellor === 'Palpatine' ? 1 : 0;
     Q.puppet_chancellor = (Q.chancellor_bloc === 'pal' && Q.chancellor !== 'Palpatine') ? 1 : 0;
     var chairs = 0;

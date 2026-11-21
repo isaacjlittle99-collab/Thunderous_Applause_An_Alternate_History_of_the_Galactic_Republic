@@ -1,7 +1,7 @@
 title: The Peace Conference
 subtitle: The Republic and the Confederacy meet to end the war.
 tags: event
-view-if: chan_peace_stage = 1 and chan_peace_timer <= 0 and war and not finale and not game_ending
+view-if: chan_peace_stage = 1 and chan_peace_timer <= 0 and war and rc_chancellor and not finale and not game_ending
 max-visits: 1
 priority: 4
 new-page: true
