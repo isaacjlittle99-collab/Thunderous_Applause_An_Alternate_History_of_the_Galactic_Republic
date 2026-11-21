@@ -2615,7 +2615,7 @@
   // our wings grow with what we do: a natural size, and what has lately happened to them
   SW.CAUCUS_BASE = {inst: 40, rimward: 25, pacifist: 20, hawk: 15};
   SW.CAUCUS_GROW = {
-    hawk: function (Q) { return 0.09 * Math.min(6, Q.mil_invest || 0) + 0.2 * on(Q.chair_security === 'rc') + 0.08 * Math.min(4, Q.rc_powers_votes || 0) + 0.45 * on(Q.war); },
+    hawk: function (Q) { return 0.1 * Math.min(6, Q.mil_invest || 0) + 0.2 * on(Q.chair_security === 'rc') + 0.1 * Math.min(4, Q.rc_powers_votes || 0) + 0.45 * on(Q.war); },
     pacifist: function (Q) {
       return 0.15 * on((Q.jedi_relation || 0) >= 60) + 0.1 * on((Q.jedi_relation || 0) >= 75) + 0.06 * Math.min(4, Q.peace_talks || 0) +
         0.1 * on(Q.dooku_contact || Q.chan_ceasefire) + 0.04 * Math.min(5, Q.mil_cuts || 0) + 0.45 * on(Q.war);
