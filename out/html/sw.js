@@ -2550,9 +2550,9 @@
     var gov = Q.govt_blocs || [], fd = Math.pow(SW.RAD_DECAY || 0.92, rf), live = !Q.finale && !Q.game_ending && !Q.sidious_defeated;
     var ws = Q.war && SW.warScore ? SW.warScore(Q) : 0;
     var push = {
-      hawk: [['fear', Math.max(0, (Q.fear || 0) - 35) / 10], ['losing', Q.war ? (ws < 0 ? 2 : 0) + (ws <= -2 ? 2 : 0) : 0]],
+      hawk: [['fear', Math.max(0, (Q.fear || 0) - 45) / 10], ['losing', Q.war ? (ws < 0 ? 1.5 : 0) + (ws <= -2 ? 1.5 : 0) : 0]],
       pacifist: [['weariness', Math.max(0, (Q.war_weariness || 0) - 30) / 10], ['powers', 0.4 * Math.min(8, Q.emergency_powers || 0)]],
-      rimward: [['hardship', Math.max(0, (Q.rim_hardship || 0) - 40) / 10], ['secession', 3 * ((Q.outer_seceded || 0) + (Q.midrim_seceded || 0))]],
+      rimward: [['hardship', Math.max(0, (Q.rim_hardship || 0) - 45) / 12], ['secession', 1.5 * ((Q.outer_seceded || 0) + (Q.midrim_seceded || 0))]],
       inst: [['corruption', Math.max(0, (Q.corruption || 0) - 60) / 8], ['scandal', Q.scandal_ours_until > Q.date ? 2 : 0]]
     };
     for (var i = 0; i < SW.FACTIONS.length; i++) {
@@ -2615,12 +2615,12 @@
   // our wings grow with what we do: a natural size, and what has lately happened to them
   SW.CAUCUS_BASE = {inst: 40, rimward: 25, pacifist: 20, hawk: 15};
   SW.CAUCUS_GROW = {
-    hawk: function (Q) { return 0.04 * Math.min(6, Q.mil_invest || 0) + 0.15 * on(Q.chair_security === 'rc') + 0.45 * on(Q.war); },
+    hawk: function (Q) { return 0.06 * Math.min(6, Q.mil_invest || 0) + 0.2 * on(Q.chair_security === 'rc') + 0.05 * Math.min(4, Q.rc_powers_votes || 0) + 0.45 * on(Q.war); },
     pacifist: function (Q) {
       return 0.15 * on((Q.jedi_relation || 0) >= 60) + 0.1 * on((Q.jedi_relation || 0) >= 75) + 0.06 * Math.min(4, Q.peace_talks || 0) +
         0.1 * on(Q.dooku_contact || Q.chan_ceasefire) + 0.04 * Math.min(5, Q.mil_cuts || 0) + 0.45 * on(Q.war);
     },
-    rimward: function (Q) { return 0.04 * Math.min(8, Q.rim_card_acts || 0) + 0.25 * on(Q.rim_enfranchised) + 0.2 * on(Q.sentience_rights); },
+    rimward: function (Q) { return 0.06 * Math.min(10, Q.rim_card_acts || 0) + 0.1 * on(Q.rim_relief_act) + 0.1 * on(Q.slavery_abolished) + 0.25 * on(Q.rim_enfranchised) + 0.2 * on(Q.sentience_rights); },
     inst: function (Q) {
       return 0.06 * (on(Q.anti_corruption) + on(Q.integrity_office) + on(Q.senators_expelled) + on(Q.intel_oversight)) + 0.025 * Math.min(8, Q.emergency_powers || 0) +
         0.06 * (on(Q.emergency_sunset) + on(Q.term_limits_protected) + on(Q.constructive_vonc) + on(Q.independent_speaker) + on(Q.powers_review));
@@ -2628,10 +2628,12 @@
   };
   // the moments that lift a wing at once (each counted once, as it happens)
   SW.CAUCUS_MOMENTS = [
-    ['war', ['hawk', 6], ['pacifist', 6]], ['rim_enfranchised', ['rimward', 8]], ['sentience_rights', ['rimward', 8]],
+    ['war', ['hawk', 6], ['pacifist', 6]], ['rim_enfranchised', ['rimward', 8]], ['sentience_rights', ['rimward', 8]], ['rim_relief_act', ['rimward', 4]], ['slavery_abolished', ['rimward', 4]],
     ['anti_corruption', ['inst', 3]], ['integrity_office', ['inst', 3]], ['senators_expelled', ['inst', 3]], ['intel_oversight', ['inst', 3]],
     ['emergency_sunset', ['inst', 3]], ['term_limits_protected', ['inst', 3]], ['constructive_vonc', ['inst', 3]], ['independent_speaker', ['inst', 3]], ['powers_review', ['inst', 3]]
   ];
+  // meeting a wing's cause calms it, once, as it happens
+  SW.CAUCUS_CALM = {rim_relief_act: ['rimward', 10], slavery_abolished: ['rimward', 10], rim_enfranchised: ['rimward', 10], sentience_rights: ['rimward', 10]};
   SW.caucusPush = function (Q, f, d) { if (SW.FACTIONS.indexOf(f) >= 0 && d) Q['cpush_' + f] = (Q['cpush_' + f] || 0) + d; };
   SW.caucusTargets = function (Q) {
     var raw = {}, sum = 0, t = {}, f;
@@ -2658,7 +2660,10 @@
     }
     for (i = 0; i < SW.CAUCUS_MOMENTS.length; i++) {
       var M = SW.CAUCUS_MOMENTS[i], k = M[0];
-      if (Q[k] && !Q['cmom_' + k]) { Q['cmom_' + k] = 1; for (var j = 1; j < M.length; j++) SW.caucusPush(Q, M[j][0], M[j][1]); }
+      if (Q[k] && !Q['cmom_' + k]) {
+        Q['cmom_' + k] = 1; for (var j = 1; j < M.length; j++) SW.caucusPush(Q, M[j][0], M[j][1]);
+        var C = SW.CAUCUS_CALM[k]; if (C) Q['rad_' + C[0]] = Math.max(0, (Q['rad_' + C[0]] || 0) - C[1]);
+      }
       else if (!Q[k] && Q['cmom_' + k]) Q['cmom_' + k] = 0;
     }
     // peace talks that open lift the Pacifists; each vote for emergency powers lifts the Hawks
@@ -5622,7 +5627,7 @@
           var dk = prevPri === pri ? 0.5 : 1;
           if (pri === 'relief') SW.deliver(Q, Q.parties.indexOf('rim') >= 0 ? 'rim' : 'rfc', 10 * dk, 'relief for the Rim');
           if (pri === 'defence') SW.deliver(Q, 'sec', 10 * dk, 'money for the fleet');
-          if (pri === 'defence') Q.mil_invest = (Q.mil_invest || 0) + 1;
+          if (pri === 'defence') { Q.mil_invest = (Q.mil_invest || 0) + 1; Q.rad_hawk = Math.max(0, (Q.rad_hawk || 0) - 4); }
           if (pri === 'subsidies') { SW.deliver(Q, 'guild', 8 * dk, 'subsidies for trade'); SW.deliver(Q, 'mod', 5 * dk, 'subsidies for the Core'); }
           if (pri === 'repay') { SW.deliver(Q, 'mod', 6 * dk, 'a sound treasury'); SW.deliver(Q, 'ind', 4 * dk, 'a sound treasury'); }
         }
