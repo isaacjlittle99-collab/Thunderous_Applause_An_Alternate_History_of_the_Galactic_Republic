@@ -27,7 +27,7 @@ The HoloNet has another scandal: a senator of the [+ scandal_name +] took bribes
 
 @punish
 subtitle: Less corruption; the bloc is offended.
-on-arrival: {! Q.corruption -= 1.5; Q.faith += 0.5; if (!Q.scandal_ours) Q[Q.scandal_bloc + '_relation'] -= 5; else { Q.inst_dissent += 5; Q.faith += 1; } !}
+on-arrival: {! Q.corruption -= 1.5; Q.faith += 0.5; if (!Q.scandal_ours) Q[Q.scandal_bloc + '_relation'] -= 5; else { Q.rad_inst += 5; Q.faith += 1; } !}
 
 The senator is expelled. [? if scandal_ours : The Caucus's willingness to punish its own earns grudging respect. ?]
 

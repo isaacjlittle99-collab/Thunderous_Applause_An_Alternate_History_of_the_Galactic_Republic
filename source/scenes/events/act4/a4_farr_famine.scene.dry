@@ -19,7 +19,7 @@ The war has cut Rodia off from its food supplies. Onaconda Farr, desperate, admi
 subtitle: −2 political capital. Rodia is fed, and Farr is grateful.
 choose-if: capital >= 2
 unavailable-subtitle: Needs 2 political capital.
-on-arrival: capital -= 2; farr_protected = 1; rimward_dissent -= 6; rim_relation += 5
+on-arrival: capital -= 2; farr_protected = 1; rad_rimward -= 6; rim_relation += 5
 
 Caucus grain ships break the blockade around Rodia. Farr weeps openly in the Senate.
 
@@ -32,6 +32,6 @@ Farr opens a quiet line to Raxus. He tells almost no one, not even his own aide,
 @report
 view-if: not rc_chancellor
 subtitle: The Chancellor is grateful; Farr is humiliated.
-on-arrival: {! Q[Q.chancellor_bloc + '_relation'] += 4; Q.rimward_dissent += 10; Q.adv_farr = 0; Q.farr_relation_broken = 1; !}
+on-arrival: {! Q[Q.chancellor_bloc + '_relation'] += 4; Q.rad_rimward += 10; Q.adv_farr = 0; Q.farr_relation_broken = 1; !}
 
 Farr is summoned to the Chancellor's office. He leaves the Caucus's leadership circle that week.

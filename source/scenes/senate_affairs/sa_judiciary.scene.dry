@@ -152,7 +152,7 @@ view-if: bureau_reform_timer <= 0 and bureau_relation < 70 and not bureau_reform
 subtitle: −1 political capital. Clears out the guilds' placemen: the bureaucracy warms to us considerably, the guilds less so.
 choose-if: capital >= 1
 unavailable-subtitle: Needs 1 political capital.
-on-arrival: capital -= 1; bureau_relation += 30; bureau_dossier = 0; guild_relation -= 5; inst_dissent -= 3; bureau_reform_timer = 6; bureau_reviewed = 1; judiciary_timer = 1
+on-arrival: capital -= 1; bureau_relation += 30; bureau_dossier = 0; guild_relation -= 5; rad_inst -= 3; bureau_reform_timer = 6; bureau_reviewed = 1; judiciary_timer = 1
 
 The Committee audits the Senate's payroll. Forty officials on retainer to the Trade Federation are quietly retired; their replacements owe their jobs to the reform. For a while, at least, the Caucus's bills reach the floor on time.
 

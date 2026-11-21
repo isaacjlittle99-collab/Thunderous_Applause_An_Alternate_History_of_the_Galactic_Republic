@@ -51,7 +51,7 @@ The Caucus carries on. Its bills will have to win without the guilds' friends.
 @concede_slow
 view-if: gs_step = 2
 subtitle: The freighters move again; the Rimward wing is disappointed.
-on-arrival: {! Q.tariff_ban_until = Math.max(Q.tariff_ban_until, Q.date + 12); SW.guildPatience(Q, 15); Q.rimward_dissent += 3; Q.trade += 6; !}
+on-arrival: {! Q.tariff_ban_until = Math.max(Q.tariff_ban_until, Q.date + 12); SW.guildPatience(Q, 15); Q.rad_rimward += 3; Q.trade += 6; !}
 
 The Caucus lets it be known that no new tariffs are coming this year. Neimoidian freighters discover their maintenance is complete.
 
@@ -74,7 +74,7 @@ The Caucus waits. Prices on the Rim keep climbing.
 @negotiate_strike
 view-if: gs_step = 3
 subtitle: The strike ends: the trade tax goes and no tariffs for two years. The Rimward wing is furious.
-on-arrival: {! Q.trade_tax = 0; Q.tariff_ban_until = Math.max(Q.tariff_ban_until, Q.date + 24); SW.guildPatience(Q, 20); Q.rimward_dissent += 6; Q.guild_embargo = Math.max(0, Q.guild_embargo - 2); !}
+on-arrival: {! Q.trade_tax = 0; Q.tariff_ban_until = Math.max(Q.tariff_ban_until, Q.date + 24); SW.guildPatience(Q, 20); Q.rad_rimward += 6; Q.guild_embargo = Math.max(0, Q.guild_embargo - 2); !}
 
 The guilds get their concessions in writing. Credit flows again.
 

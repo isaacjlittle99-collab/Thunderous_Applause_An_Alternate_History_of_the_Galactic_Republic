@@ -23,7 +23,7 @@ Judicial strike teams raid spice dens from Nar Shaddaa to Coruscant's lower leve
 
 @legalise
 subtitle: The violence ebbs and a new tax becomes possible; corruption grows, and the Rimward and Pacifist wings are uneasy.
-on-arrival: spice_legal = 1; corruption += 2; spice -= 40; rimward_dissent += 4; pacifist_dissent += 3
+on-arrival: spice_legal = 1; corruption += 2; spice -= 40; rad_rimward += 4; rad_pacifist += 3
 
 Spice becomes a regulated commodity. The syndicates go into business; the Republic collects its cut. (The yearly budget can now include a spice duty.)
 

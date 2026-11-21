@@ -25,7 +25,7 @@ on-arrival: {!
 var st = SW.stance(Q, {pal: 0.8, sec: 0.95, mod: 0.4 + Q.fear / 200, guild: 0.45, ind: 0.4 + Q.fear / 250, rim: 0.3, rfc: 0.25, cis: 0.05}, false);
 Q.mca_vote = SW.vote(Q, st, 0, 'army');
 Q.mca_result = Q.mca_vote >= 50 ? 'passed' : 'failed';
-Q.pacifist_dissent -= 6; Q.hawk_dissent += 8;
+Q.rad_pacifist -= 6; Q.rad_hawk += 8;
 !}
 go-to: mca_result_scene
 
@@ -35,7 +35,7 @@ on-arrival: {!
 var st = SW.stance(Q, {pal: 0.8, sec: 0.95, mod: 0.4 + Q.fear / 200, guild: 0.45, ind: 0.4 + Q.fear / 250, rim: 0.3, rfc: 0.25, cis: 0.05}, false);
 Q.mca_vote = SW.vote(Q, st, 1, 'army');
 Q.mca_result = Q.mca_vote >= 50 ? 'passed' : 'failed';
-Q.hawk_dissent -= 6; Q.pacifist_dissent += 8;
+Q.rad_hawk -= 6; Q.rad_pacifist += 8;
 !}
 go-to: mca_result_scene
 
@@ -49,7 +49,7 @@ var st = SW.stance(Q, {pal: 0.35, sec: 0.6, mod: 0.6 + Q.fear / 250, guild: 0.45
 Q.mca_vote = SW.vote(Q, st, 1, ['army', 'oversight']);
 Q.mca_result = Q.mca_vote >= 50 ? 'oversight' : 'failed';
 if (Q.mca_result === 'oversight') { Q.army_oversight = 1; Q.navy_loyalty += 10; }
-Q.hawk_dissent -= 2; Q.pacifist_dissent += 2;
+Q.rad_hawk -= 2; Q.rad_pacifist += 2;
 !}
 go-to: mca_result_scene
 

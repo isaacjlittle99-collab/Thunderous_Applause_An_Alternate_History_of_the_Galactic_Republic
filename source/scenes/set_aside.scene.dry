@@ -1,4 +1,4 @@
 title: Set this card aside.
 view-if: card_stuck = 1
 go-to: root
-on-arrival: {! if (!(Q.turn_actions >= 1)) Q.turn_actions = 1; Q.card_stuck = 0; Q.cards_set_aside = (Q.cards_set_aside || 0) + 1; !}
+on-arrival: {! if (!(Q.turn_actions >= 1)) Q.turn_actions = 1; Q.card_stuck = 0; if (Q.last_card_timer === 'rim_outreach' || Q.last_card_timer === 'rimaffairs') Q.rim_card_acts = Math.max(0, (Q.rim_card_acts || 0) - 1); Q.cards_set_aside = (Q.cards_set_aside || 0) + 1; !}

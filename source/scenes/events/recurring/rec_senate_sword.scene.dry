@@ -1,0 +1,11 @@
+title: The Senate's Sword
+new-page: true
+face-image: img/ev_war.svg
+
+= The Senate's Sword
+
+At midnight, without a Chancellor's order, the Senate's own forces move: Judicial cruisers over the Senate district, sworn officers at every door of the Chancellery. They come for [+ pal_title +], as the Sith Lord Darth Sidious. [? if officer_oath : The clone companies guarding the Chancellery stand aside, as their officers swore they would. ?]
+
+[? if cha_arrest_result = "fled" : The Chancellery is empty, and its files are burned. His shuttle left Coruscant an hour before the cruisers arrived. Three days later he appears with the Confederacy, no longer pretending to be anything but what he is. ?][? if cha_arrest_result = "arrested" : He is taken without a shot fired. [? if sidious_method = "trial" : The evidence is ready for a court. ?][? if sidious_method = "held" : There is not yet a case a court would accept. He is held in the Senate's custody while one is built, and the Republic must decide what it thinks of a Senate that arrests without a trial. ?] ?][? if cha_arrest_result = "resisted" : He was ready. His guards open fire, and the Senate's forces are fighting their way through the Chancellery when the news reaches the rest of the galaxy. [+ cha_arrest_missing +] ?]
+
+[? if cha_arrest_result != "fled" : The game now moves day by day. ?]

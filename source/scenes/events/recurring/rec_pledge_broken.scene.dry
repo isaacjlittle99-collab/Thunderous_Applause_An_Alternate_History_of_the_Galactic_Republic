@@ -24,6 +24,6 @@ The Caucus's leaders spend an evening in [+ pb_leader +]'s offices. Nothing is f
 
 @shrug
 subtitle: No cost now. They will remember.
-on-arrival: {! Q.inst_dissent += 1; !}
+on-arrival: {! Q.rad_inst += 1; !}
 
 The Caucus explains that governing is not campaigning. The HoloNet's commentators are unimpressed.

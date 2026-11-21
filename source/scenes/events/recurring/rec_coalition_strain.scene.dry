@@ -30,6 +30,6 @@ A few committee posts and a friendly speech settle things down, for now.
 
 @hold
 subtitle: The Caucus is pleased; the coalition is not.
-on-arrival: {! Q[Q.strain_bloc + '_relation'] -= 4; Q.inst_dissent -= 2; !}
+on-arrival: {! Q[Q.strain_bloc + '_relation'] -= 4; Q.rad_inst -= 2; !}
 
 The Caucus holds its ground.

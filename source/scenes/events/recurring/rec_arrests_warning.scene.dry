@@ -19,7 +19,7 @@ A clerk in the Senate Bureau of Intelligence, risking her career, brings us a co
 
 @tame
 subtitle: The Delegation backs down; the arrests are called off, at a cost.
-on-arrival: arrests_tamed = 1; senate_resolve -= 1; pacifist_dissent += 4; faith -= 1
+on-arrival: arrests_tamed = 1; senate_resolve -= 1; rad_pacifist += 4; faith -= 1
 
 The Delegation issues a second, humbler statement. The lists go back into a drawer. They are not destroyed.
 

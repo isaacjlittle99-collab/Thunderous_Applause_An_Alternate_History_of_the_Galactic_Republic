@@ -27,10 +27,10 @@ on-arrival: mod_relation += 8; ind_relation += 3; advisor_action_timer = 5
 Over a long lunch in the Senate dining hall, Antilles reminds the Core Moderates how much they have in common with the Caucus.
 
 @antilles_discipline
-subtitle: Reduces dissent in every faction.
+subtitle: Calms every wing of the Caucus.
 choose-if: advisor_action_timer <= 0
 unavailable-subtitle: Our advisors have already acted recently.
-on-arrival: inst_dissent -= 8; rimward_dissent -= 5; pacifist_dissent -= 5; hawk_dissent -= 5; advisor_action_timer = 5
+on-arrival: rad_inst -= 8; rad_rimward -= 5; rad_pacifist -= 5; rad_hawk -= 5; advisor_action_timer = 5
 
 Antilles reminds the Caucus, politely and at length, that a divided opposition is no opposition at all.
 

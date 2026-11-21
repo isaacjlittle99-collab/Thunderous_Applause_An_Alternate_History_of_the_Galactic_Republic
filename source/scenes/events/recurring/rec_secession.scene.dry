@@ -30,12 +30,12 @@ Q.secession_who = who || ' ';
 
 @appeal
 subtitle: Cools separatism; the Hawks object.
-on-arrival: outer_sep -= 3; midrim_sep -= 2; corporate_sep -= 2; hawk_dissent += 3; pacifist_dissent -= 2
+on-arrival: outer_sep -= 3; midrim_sep -= 2; corporate_sep -= 2; rad_hawk += 3; rad_pacifist -= 2
 
 The Caucus's appeal is broadcast on every Separatist world. A few systems pause.
 
 @condemn
 subtitle: The Hawks approve; separatists dig in.
-on-arrival: hawk_dissent -= 4; outer_sep += 1; sec_relation += 3; cis_relation -= 6
+on-arrival: rad_hawk -= 4; outer_sep += 1; sec_relation += 3; cis_relation -= 6
 
 "There is no secession from the Ruusan constitution," Garm Bel Iblis declares.

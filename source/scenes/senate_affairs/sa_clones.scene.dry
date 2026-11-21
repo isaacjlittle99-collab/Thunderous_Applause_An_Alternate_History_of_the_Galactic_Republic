@@ -59,6 +59,6 @@ on-arrival: {! Q.treasury -= 3; Q.chip_removal += 1; if (Q.chip_removal >= 3) { 
 @limit
 view-if: clones > 6
 subtitle: Fewer clones, less risk, and a harder war.
-on-arrival: clones -= 1; fear += 2; war_balance -= 1; pacifist_dissent -= 4; hawk_dissent += 5
+on-arrival: clones -= 1; fear += 2; war_balance -= 1; rad_pacifist -= 4; rad_hawk += 5
 
 The Senate caps the army's size. The Chancellor calls it "a gift to the Separatists".

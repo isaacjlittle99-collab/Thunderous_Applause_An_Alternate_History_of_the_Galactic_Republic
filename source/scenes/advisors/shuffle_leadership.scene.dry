@@ -8,7 +8,7 @@ new-page: true
 
 = Shuffle Leadership
 
-The Caucus can have up to three senior advisors at a time. Each one keeps their own faction's dissent in check and offers special actions. Dismissing an advisor angers their faction; appointing one pleases it.
+The Caucus can have up to three senior advisors at a time. Each one brings their wing's support at our congress and offers special actions. Dismissing an advisor angers their faction; appointing one pleases it.
 
 Advisors appointed: [+ n_advisors +] of 3.
 
@@ -35,13 +35,13 @@ view-if: adv_antilles = 0 and not antilles_gone
 choose-if: n_advisors < 3
 unavailable-subtitle: We already have three advisors.
 subtitle: The Institutionalists will be pleased.
-on-arrival: adv_antilles = 1; n_advisors += 1; inst_strength += 4; inst_dissent -= 6; shuffle_changed = 1
+on-arrival: adv_antilles = 1; n_advisors += 1; inst_strength += 4; shuffle_changed = 1
 go-to: shuffle_leadership
 
 @rm_antilles
 view-if: adv_antilles = 1
 subtitle: The Institutionalists will resent it.
-on-arrival: adv_antilles = 0; n_advisors -= 1; inst_dissent += 10; shuffle_changed = 1
+on-arrival: adv_antilles = 0; n_advisors -= 1; rad_inst += 10; shuffle_changed = 1
 go-to: shuffle_leadership
 
 @add_organa
@@ -49,13 +49,13 @@ view-if: adv_organa = 0 and date >= 18 or antilles_gone
 choose-if: n_advisors < 3
 unavailable-subtitle: We already have three advisors.
 subtitle: The Institutionalists will be pleased.
-on-arrival: adv_organa = 1; n_advisors += 1; inst_strength += 4; inst_dissent -= 6; shuffle_changed = 1
+on-arrival: adv_organa = 1; n_advisors += 1; inst_strength += 4; shuffle_changed = 1
 go-to: shuffle_leadership
 
 @rm_organa
 view-if: adv_organa = 1
 subtitle: The Institutionalists will resent it.
-on-arrival: adv_organa = 0; n_advisors -= 1; inst_dissent += 10; shuffle_changed = 1
+on-arrival: adv_organa = 0; n_advisors -= 1; rad_inst += 10; shuffle_changed = 1
 go-to: shuffle_leadership
 
 @add_bel_iblis
@@ -63,13 +63,13 @@ view-if: adv_bel_iblis = 0 and not hawks_split
 choose-if: n_advisors < 3
 unavailable-subtitle: We already have three advisors.
 subtitle: The Hawks will be pleased.
-on-arrival: adv_bel_iblis = 1; n_advisors += 1; hawk_strength += 4; hawk_dissent -= 6; shuffle_changed = 1
+on-arrival: adv_bel_iblis = 1; n_advisors += 1; hawk_strength += 4; shuffle_changed = 1
 go-to: shuffle_leadership
 
 @rm_bel_iblis
 view-if: adv_bel_iblis = 1
 subtitle: The Hawks will resent it.
-on-arrival: adv_bel_iblis = 0; n_advisors -= 1; hawk_dissent += 10; shuffle_changed = 1
+on-arrival: adv_bel_iblis = 0; n_advisors -= 1; rad_hawk += 10; shuffle_changed = 1
 go-to: shuffle_leadership
 
 @add_farr
@@ -77,13 +77,13 @@ view-if: adv_farr = 0 and not farr_dead and not rimward_split
 choose-if: n_advisors < 3
 unavailable-subtitle: We already have three advisors.
 subtitle: The Rimward wing will be pleased.
-on-arrival: adv_farr = 1; n_advisors += 1; rimward_strength += 4; rimward_dissent -= 6; shuffle_changed = 1
+on-arrival: adv_farr = 1; n_advisors += 1; rimward_strength += 4; shuffle_changed = 1
 go-to: shuffle_leadership
 
 @rm_farr
 view-if: adv_farr = 1
 subtitle: The Rimward wing will resent it.
-on-arrival: adv_farr = 0; n_advisors -= 1; rimward_dissent += 10; shuffle_changed = 1
+on-arrival: adv_farr = 0; n_advisors -= 1; rad_rimward += 10; shuffle_changed = 1
 go-to: shuffle_leadership
 
 @add_mothma
@@ -91,13 +91,13 @@ view-if: adv_mothma = 0 and date >= 36 and not pacifists_resigned
 choose-if: n_advisors < 3
 unavailable-subtitle: We already have three advisors.
 subtitle: The Pacifists will be pleased.
-on-arrival: adv_mothma = 1; n_advisors += 1; pacifist_strength += 4; pacifist_dissent -= 6; shuffle_changed = 1
+on-arrival: adv_mothma = 1; n_advisors += 1; pacifist_strength += 4; shuffle_changed = 1
 go-to: shuffle_leadership
 
 @rm_mothma
 view-if: adv_mothma = 1
 subtitle: The Pacifists will resent it.
-on-arrival: adv_mothma = 0; n_advisors -= 1; pacifist_dissent += 10; shuffle_changed = 1
+on-arrival: adv_mothma = 0; n_advisors -= 1; rad_pacifist += 10; shuffle_changed = 1
 go-to: shuffle_leadership
 
 @add_amidala
@@ -105,13 +105,13 @@ view-if: adv_amidala = 0 and padme_senator and padme_alive
 choose-if: n_advisors < 3
 unavailable-subtitle: We already have three advisors.
 subtitle: The Institutionalists will be pleased.
-on-arrival: adv_amidala = 1; n_advisors += 1; inst_strength += 4; inst_dissent -= 6; shuffle_changed = 1
+on-arrival: adv_amidala = 1; n_advisors += 1; inst_strength += 4; shuffle_changed = 1
 go-to: shuffle_leadership
 
 @rm_amidala
 view-if: adv_amidala = 1
 subtitle: The Institutionalists will resent it.
-on-arrival: adv_amidala = 0; n_advisors -= 1; inst_dissent += 10; shuffle_changed = 1
+on-arrival: adv_amidala = 0; n_advisors -= 1; rad_inst += 10; shuffle_changed = 1
 go-to: shuffle_leadership
 
 @add_valorum
@@ -119,13 +119,13 @@ view-if: adv_valorum = 0 and valorum_fallen and date < 150 and not valorum_leads
 choose-if: n_advisors < 3
 unavailable-subtitle: We already have three advisors.
 subtitle: The Institutionalists will be pleased.
-on-arrival: adv_valorum = 1; n_advisors += 1; inst_strength += 4; inst_dissent -= 6; shuffle_changed = 1
+on-arrival: adv_valorum = 1; n_advisors += 1; inst_strength += 4; shuffle_changed = 1
 go-to: shuffle_leadership
 
 @rm_valorum
 view-if: adv_valorum = 1
 subtitle: The Institutionalists will resent it.
-on-arrival: adv_valorum = 0; n_advisors -= 1; inst_dissent += 10; shuffle_changed = 1
+on-arrival: adv_valorum = 0; n_advisors -= 1; rad_inst += 10; shuffle_changed = 1
 go-to: shuffle_leadership
 
 @add_chuchi
@@ -133,13 +133,13 @@ view-if: adv_chuchi = 0 and date >= 144 and not rimward_split
 choose-if: n_advisors < 3
 unavailable-subtitle: We already have three advisors.
 subtitle: The Rimward wing will be pleased.
-on-arrival: adv_chuchi = 1; n_advisors += 1; rimward_strength += 4; rimward_dissent -= 6; shuffle_changed = 1
+on-arrival: adv_chuchi = 1; n_advisors += 1; rimward_strength += 4; shuffle_changed = 1
 go-to: shuffle_leadership
 
 @rm_chuchi
 view-if: adv_chuchi = 1
 subtitle: The Rimward wing will resent it.
-on-arrival: adv_chuchi = 0; n_advisors -= 1; rimward_dissent += 10; shuffle_changed = 1
+on-arrival: adv_chuchi = 0; n_advisors -= 1; rad_rimward += 10; shuffle_changed = 1
 go-to: shuffle_leadership
 
 @shuffle_done

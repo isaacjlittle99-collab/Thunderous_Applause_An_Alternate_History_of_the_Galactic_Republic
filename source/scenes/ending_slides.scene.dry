@@ -19,7 +19,7 @@ Q.summary_html = ((typeof SW.summaryHTML === 'function') ? SW.summaryHTML(Q) : '
 Q.game_ach_html = ((typeof SW.achievementsHTML === 'function') ? SW.achievementsHTML(Q, true) : '') || ' ';
 Q.game_over_reached = 1;
 !}
-go-to: ep_reborn if ending = "reborn"; ep_endures if ending = "endures"; ep_blood if ending = "blood"; ep_divided if ending = "divided"; ep_protectorate if ending = "protectorate"; ep_admirals if ending = "admirals"; ep_hollow if ending = "hollow_crown"; ep_confederacy if ending = "confederacy"; ep_sith_confederacy if ending = "sith_confederacy"; ep_republic_falls if ending = "republic_falls"; ep_dissolved if ending = "dissolved"; ep_endless if ending = "endless_war"; ep_empire if ending = "empire"
+go-to: ep_reborn if ending = "reborn"; ep_endures if ending = "endures"; ep_second_reformation if ending = "second_reformation"; ep_republic_whole if ending = "republic_whole"; ep_long_peace if ending = "long_peace"; ep_senate_sword if ending = "senate_sword"; ep_blood if ending = "blood"; ep_divided if ending = "divided"; ep_protectorate if ending = "protectorate"; ep_admirals if ending = "admirals"; ep_hollow if ending = "hollow_crown"; ep_confederacy if ending = "confederacy"; ep_sith_confederacy if ending = "sith_confederacy"; ep_republic_falls if ending = "republic_falls"; ep_dissolved if ending = "dissolved"; ep_endless if ending = "endless_war"; ep_empire if ending = "empire"
 
 @ep_reborn
 go-to: legacy
@@ -132,6 +132,42 @@ The [+ war_name +] [? if kamino_army : do ?][? if not kamino_army : does ?]not e
 [? if sidious_defeated : The Sith Lord is gone, but the war he started has outlived him. The guilds that profit from it on both sides have no reason to let it stop. ?][? if not sidious_defeated : In the Chancellery, the man who started it waits. Every year of war makes the Senate more afraid, and every frightened Senate gives him a little more. He has time. ?]
 
 The Republic survives as a war state: rationing on the Rim, recruiting posters on Coruscant, and a Senate that meets mostly to renew the emergency. Children are born who have never known peace. The Caucus fights on, for budgets and for ceasefires that never hold.
+
+@ep_second_reformation
+go-to: legacy
+
+= The Second Reformation
+
+Darth Sidious fell against a Republic that had already taken his tools away. The Second Ruusan Charter, ratified world by world, had put a clock on every emergency power and made any Chancellor who reached beyond it an outlaw in his own office. When he moved, the guards and governors he had counted on looked at the Charter and stood aside.
+
+The Institutionalists' Convention did not catch the Sith Lord. It made him unnecessary to catch. The Chancellery that remains is small, slow and accountable, and the next ambitious Chancellor will find nothing in it worth seizing.
+
+@ep_republic_whole
+go-to: legacy
+
+= The Republic Whole
+
+The Sith Lord fell in a Republic that had brought its lost worlds home. The Rim Charter wrote the Rim's rights into the Republic's law, and one by one the worlds that had followed Dooku came back[? if rim_home_peace : , and the war Dooku promised never came?][? if not rim_home_peace : , bringing their harbours and their fleets home with them?].
+
+The Rimward wing never trusted the Core to save the Republic. They saved it by making it worth belonging to. The Senate that meets now has more Rim senators than ever, and Coruscant has had to learn to listen.
+
+@ep_long_peace
+go-to: legacy
+
+= The Long Peace
+
+The Sith Lord fell in a Republic that had sent its armies home. The Disarmament Accord stood the clone legions down and broke up the droid armies under neutral inspectors, and when he reached for an army bred to obey him, there was almost none left to answer.
+
+The Pacifists are mocked in the Senate's bars for having trusted the Confederacy. They answer that they trusted no one: they simply took the weapons away. The galaxy is quieter than it has been in a generation, and the Republic's next crisis will have to be settled by argument.
+
+@ep_senate_sword
+go-to: legacy
+
+= The Senate's Sword
+
+The Sith Lord fell to the Senate's own forces, sworn to the Senate and sent by its senators. [? if sidious_method = "trial" : His trial is the longest in the Republic's history, and the evidence is overwhelming. ?][? if sidious_method = "held" : He was held for months before a case could be brought, and the Senate's critics have not let it forget that it arrested a Chancellor without one. ?]
+
+The Republic endures, and it has learned that it can defend itself. It has also learned that it has an army that will obey the Senate against a Chancellor. The Hawks say that is the point. Some of their colleagues lie awake wondering who will command that army next.
 
 @ep_empire
 go-to: legacy

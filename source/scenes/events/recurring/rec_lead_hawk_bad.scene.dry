@@ -5,7 +5,7 @@ view-if: lead_event_ready = "hawk_bad" and not finale and not game_ending
 priority: 1
 new-page: true
 face-image: img/ev_war.svg
-on-arrival: {! SW.leadEventDone(Q); Q.rim_relation -= 5; Q.pacifist_dissent += 5; Q.outer_sep += 2; !}
+on-arrival: {! SW.leadEventDone(Q); Q.rim_relation -= 5; Q.rad_pacifist += 5; Q.outer_sep += 2; !}
 
 = Hawks over the Rim
 

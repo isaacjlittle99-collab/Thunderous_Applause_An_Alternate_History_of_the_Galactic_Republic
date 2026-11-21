@@ -1,0 +1,12 @@
+title: The War Party's Riposte
+subtitle: The war's champions turn on the peace movement.
+tags: event
+view-if: road_event_ready = "pacifist_setback" and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_war.svg
+on-arrival: {! SW.roadEventDone(Q); Q.fear += 3; SW.addCaucusRad(Q, 'hawk', 6, 'fear'); !}
+
+= The War Party's Riposte
+
+The Security Bloc's speakers call the Caucus's peace movement a gift to the Confederacy, and a bombing on a Colonies world gives them their proof. Fear rises, and our own Hawks wonder aloud whose side the leadership is on.

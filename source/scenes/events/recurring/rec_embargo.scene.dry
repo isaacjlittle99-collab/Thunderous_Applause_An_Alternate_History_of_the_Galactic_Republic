@@ -23,7 +23,7 @@ for (var i = 0; i < SW.REGIONS.length; i++) Q[SW.REGIONS[i] + '_rc'] -= Q.embarg
 
 @stand
 subtitle: The Rimward wing approves; the pain continues.
-on-arrival: rimward_dissent -= 4; inst_dissent += 3; guild_embargo -= 1
+on-arrival: rad_rimward -= 4; rad_inst += 3; guild_embargo -= 1
 
 The Caucus refuses to bend. The strike drags on.
 
@@ -31,7 +31,7 @@ The Caucus refuses to bend. The strike drags on.
 subtitle: −1 political capital. The embargo eases; the Rimward wing is unhappy.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
-on-arrival: capital -= 1; guild_embargo -= 3; guild_relation += 6; rimward_dissent += 5; guild_patience += 8
+on-arrival: capital -= 1; guild_embargo -= 3; guild_relation += 6; rad_rimward += 5; guild_patience += 8
 
 A quiet compromise ends the strike. Some call it a surrender.
 

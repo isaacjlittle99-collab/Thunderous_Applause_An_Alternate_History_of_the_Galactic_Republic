@@ -1,0 +1,12 @@
+title: Dooku's Answer
+subtitle: Count Dooku's agents strike back on the Rim.
+tags: event
+view-if: road_event_ready = "rimward_setback" and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_separatist.svg
+on-arrival: {! SW.roadEventDone(Q); SW.addCaucusRad(Q, 'rimward', 6, 'secession'); Q.outer_sep += 4; !}
+
+= Dooku's Answer
+
+Dooku answers the Caucus's overtures with his own: a Rim world that had been listening to us is torn apart by riots his agents started, and its leaders declare for the Confederacy. Our Rimward wing blames the Caucus for moving too slowly.

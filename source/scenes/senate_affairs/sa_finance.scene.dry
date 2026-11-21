@@ -133,7 +133,7 @@ if (Q.rb_vote >= 50) { Q.republic_bonds = 1; Q.faith += 1; Q.guild_relation -= 3
 @books
 view-if: treasury < 6
 subtitle: +2 treasury; the Rim feels the cuts.
-on-arrival: treasury += 2; rim_hardship += 1.5; mod_relation += 2; rimward_dissent += 3
+on-arrival: treasury += 2; rim_hardship += 1.5; mod_relation += 2; rad_rimward += 3
 
 Spending is trimmed across the board. The Rim, as always, feels it first.
 

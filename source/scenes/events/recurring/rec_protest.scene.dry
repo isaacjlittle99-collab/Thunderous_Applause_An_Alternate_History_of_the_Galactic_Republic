@@ -16,16 +16,16 @@ Millions have died. The war has no end in sight. Protesters fill the plazas of C
 
 @join
 subtitle: The Pacifists and the public cheer; the Hawks are furious.
-on-arrival: pacifist_dissent -= 8; hawk_dissent += 6; faith += 1; core_rc += 1; colonies_rc += 1; senate_resolve += 0.3
+on-arrival: rad_pacifist -= 8; rad_hawk += 6; faith += 1; core_rc += 1; colonies_rc += 1; senate_resolve += 0.3
 
 Mon Mothma speaks to a million people on the Senate Plaza.
 
 @channel
 subtitle: Builds peace channels.
-on-arrival: peace_talks += 0.5; pacifist_dissent -= 3; war_weariness -= 3
+on-arrival: peace_talks += 0.5; rad_pacifist -= 3; war_weariness -= 3
 
 The Caucus collects a billion signatures for a negotiated peace.
 
 @order
 subtitle: The Hawks and the Security Bloc approve.
-on-arrival: hawk_dissent -= 4; sec_relation += 3; pacifist_dissent += 5; fear += 1
+on-arrival: rad_hawk -= 4; sec_relation += 3; rad_pacifist += 5; fear += 1

@@ -21,7 +21,7 @@ The **Trade Federation** is outraged. Its delegate, Lott Dod, warns of "conseque
 
 @support
 subtitle: The Core Moderates will appreciate it; the guilds will not.
-on-arrival: tax_stance = 1; mod_relation += 6; guild_relation -= 10; rim_relation -= 2; inst_dissent -= 3; rimward_dissent += 3
+on-arrival: tax_stance = 1; mod_relation += 6; guild_relation -= 10; rim_relation -= 2; rad_inst -= 3; rad_rimward += 3
 
 The Caucus announces its support for the Chancellor's bill. Valorum sends a warm note of thanks. Lott Dod does not.
 
@@ -29,7 +29,7 @@ The Caucus announces its support for the Chancellor's bill. Valorum sends a warm
 subtitle: −1 political capital. The Rim will notice; so will the guilds.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
-on-arrival: capital -= 1; tax_stance = 2; rim_relation += 8; mod_relation += 2; guild_relation -= 12; rimward_dissent -= 6
+on-arrival: capital -= 1; tax_stance = 2; rim_relation += 8; mod_relation += 2; guild_relation -= 12; rad_rimward -= 6
 
 The Caucus's amendment, drafted by Onaconda Farr, ties every credit of the new revenue to patrols and relief in the Rim. It turns a tax into a promise. The Rimward Coalition takes notice.
 
@@ -43,6 +43,6 @@ The Caucus backs the bill, and Bail Antilles asks the Finance Committee an awkwa
 
 @oppose
 subtitle: The guilds will be grateful. The Chancellor will not.
-on-arrival: tax_stance = 0; guild_relation += 8; rim_relation += 4; mod_relation -= 8; inst_dissent += 5; rimward_dissent -= 2
+on-arrival: tax_stance = 0; guild_relation += 8; rim_relation += 4; mod_relation -= 8; rad_inst += 5; rad_rimward -= 2
 
 The Caucus declares that the Rim should not pay for the Core's failure to police its own trade lanes. The guilds are surprised and delighted. Chancellor Valorum is merely surprised.

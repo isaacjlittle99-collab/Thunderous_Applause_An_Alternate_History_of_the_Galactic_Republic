@@ -16,12 +16,12 @@ A Judicial Department report leaks to the HoloNet. It documents the slave market
 
 @publicise
 subtitle: Faith rises, the Rim notices; the Hutts retaliate.
-on-arrival: faith += 1; rim_relation += 4; slavery_campaign += 0.5; rim_hardship += 1; rimward_dissent -= 4
+on-arrival: faith += 1; rim_relation += 4; slavery_campaign += 0.5; rim_hardship += 1; rad_rimward -= 4
 
 The Caucus reads the report into the Senate record, every page of it. It takes three days.
 
 @quiet
 subtitle: Avoids trouble; changes little.
-on-arrival: guild_relation += 2; rimward_dissent += 3
+on-arrival: guild_relation += 2; rad_rimward += 3
 
 Quiet diplomacy secures the release of a few hundred slaves. The markets carry on.

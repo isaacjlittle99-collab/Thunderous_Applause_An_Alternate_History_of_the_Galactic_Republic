@@ -1,0 +1,50 @@
+title: The Constitutional Convention
+subtitle: The Institutionalists' road: bind the office, whoever holds it.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_law.svg
+view-if: wroad_timer <= 0 and road_card_ok and rc_lead = "inst"
+on-arrival: turn_actions += 1; wroad_timer = 2; last_card_timer = "wroad"
+new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
+
+= The Constitutional Convention
+
+The Institutionalists believe the Republic cannot be saved by unmasking one man. It must be saved by making the office itself too small to be dangerous, whoever holds it. A thousand years after Ruusan, they mean to write a second charter.
+
+- @convene: Call a Constitutional Convention.
+- @charter: Put the Second Ruusan Charter to the Senate.
+- @ratify: Send the Charter to the member worlds.
+- @easy_discard
+- @set_aside
+
+@convene
+view-if: road_inst = 0
+subtitle: −1 political capital. Needs two constitutional or anti-corruption reforms in force.
+choose-if: capital >= 1 and road_inst_ok
+unavailable-subtitle: [? if not road_inst_ok : The Convention needs two constitutional or anti-corruption reforms to build on. ?][? if road_inst_ok : Not enough political capital. ?]
+on-arrival: {! SW.roadStep(Q, 'inst', 1); !}
+
+Jurists, clerks and senators of every bloc gather in the old Ruusan chamber beneath the Senate. The bureaucrats, who have waited a generation for someone to tidy the constitution, are delighted.
+
+@charter
+view-if: road_inst = 1
+subtitle: −2 political capital. A three-fifths vote. Emergency powers would lapse every two years unless renewed.
+choose-if: capital >= 2 and date >= road_wait_inst
+unavailable-subtitle: [? if date < road_wait_inst : The Senate turned the Charter down; it will not hear it again so soon. ?][? if date >= road_wait_inst : Needs 2 political capital. ?]
+on-arrival: {! SW.roadStep(Q, 'inst', 2); !}
+
+[+ vote_html +]
+
+[? if road_ok : The Second Ruusan Charter passes. No emergency power will outlive two years without the Senate's renewal. The Chancellor's office has been given a clock. ?][? if not road_ok : The Charter falls short of three fifths. The Convention will have to try again. ?]
+
+@ratify
+view-if: road_inst = 2
+subtitle: −1 political capital. If the member worlds ratify it, any move against the Charter becomes unconstitutional.
+choose-if: capital >= 1 and date >= road_wait_inst
+unavailable-subtitle: [? if date < road_wait_inst : The worlds have just turned it down. ?][? if date >= road_wait_inst : Not enough political capital. ?]
+on-arrival: {! SW.roadStep(Q, 'inst', 3); !}
+
+[+ vote_html +]
+
+[? if road_ok : The member worlds ratify the Charter one by one, until it is the supreme law of the Republic. Any Chancellor who tries to rule beyond it will be acting outside the law, and every guard and governor will know it. ?][? if not road_ok : Too many worlds hold back. The Charter stands, but unratified. ?]

@@ -23,7 +23,7 @@ The Clan's lending rules are relaxed "for the duration". Credits flow, and so do
 
 @seat
 subtitle: The Finance & Commerce chair goes to the guilds; the debt is eased a little.
-on-arrival: {! if (Q.chair_finance === 'rc') Q.lost_finance = 1; Q.chair_finance = 'guild'; Q.guild_relation += 8; Q.debt -= 2; Q.rimward_dissent += 4; !}
+on-arrival: {! if (Q.chair_finance === 'rc') Q.lost_finance = 1; Q.chair_finance = 'guild'; Q.guild_relation += 8; Q.debt -= 2; Q.rad_rimward += 4; !}
 
 The Finance & Commerce Committee passes to the guilds' nominee. [? if lost_finance : The Caucus loses the chair, and with it the right to write the budget. ?]
 

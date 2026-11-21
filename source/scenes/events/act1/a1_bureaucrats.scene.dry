@@ -26,7 +26,7 @@ on-arrival: pal_relation += 4
 
 @defend
 subtitle: The bureaucracy warms to us; the Rimward wing is unimpressed.
-on-arrival: bureau_relation += 8; rimward_dissent += 2
+on-arrival: bureau_relation += 8; rad_rimward += 2
 
 The Caucus praises the Senate's "dedicated public servants". The committee secretaries notice. So do the Rimward senators, who have waited years for those servants to process a single Rim petition.
 

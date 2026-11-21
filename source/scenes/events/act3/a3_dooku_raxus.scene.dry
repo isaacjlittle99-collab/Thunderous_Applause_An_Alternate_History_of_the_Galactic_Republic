@@ -35,13 +35,13 @@ On the industrial world of Raxus, **Count Dooku**, the former Jedi Master, deliv
 
 @condemn
 subtitle: The Hawks approve; the disaffected feel unheard.
-on-arrival: hawk_dissent -= 5; cis_relation -= 10; sec_relation += 4; outer_sep += 2; midrim_sep += 1
+on-arrival: rad_hawk -= 5; cis_relation -= 10; sec_relation += 4; outer_sep += 2; midrim_sep += 1
 
 The Caucus denounces secession in the strongest terms. Dooku's followers call the Caucus "the Core's polite face".
 
 @dialogue
 subtitle: The Pacifists approve; a door opens.
-on-arrival: pacifist_dissent -= 5; peace_talks += 0.5; cis_relation += 5; hawk_dissent += 4; dooku_doubt += 1 if dooku_contact; dooku_contact = 1
+on-arrival: rad_pacifist -= 5; peace_talks += 0.5; cis_relation += 5; rad_hawk += 4; dooku_doubt += 1 if dooku_contact; dooku_contact = 1
 
 The Caucus offers to hear the grievances of every world that is considering secession. Some accept.
 
@@ -49,6 +49,6 @@ The Caucus offers to hear the grievances of every world that is considering sece
 subtitle: −2 political capital. Cools separatism quickly; the Institutionalists worry it rewards blackmail.
 choose-if: capital >= 2
 unavailable-subtitle: Needs 2 political capital.
-on-arrival: capital -= 2; outer_sep -= 5; midrim_sep -= 4; corporate_sep -= 2; rimward_dissent -= 5; inst_dissent += 4; rim_relation += 5
+on-arrival: capital -= 2; outer_sep -= 5; midrim_sep -= 4; corporate_sep -= 2; rad_rimward -= 5; rad_inst += 4; rim_relation += 5
 
 The Caucus pushes through emergency relief, a moratorium on guild debt collection, and a promise of fair Rim representation. It is not enough to stop the movement. It may be enough to slow it.

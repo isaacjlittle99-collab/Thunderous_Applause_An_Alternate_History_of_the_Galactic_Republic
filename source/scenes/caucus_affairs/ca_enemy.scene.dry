@@ -29,26 +29,26 @@ The Caucus declares war on graft. Half the Senate applauds; the other half check
 
 @guilds
 subtitle: The Rim will cheer; the guilds will retaliate.
-on-arrival: main_enemy = "guilds"; guild_relation -= 10; rim_relation += 5; rimward_strength += 4; rimward_dissent -= 4; guild_embargo += 0.5
+on-arrival: main_enemy = "guilds"; guild_relation -= 10; rim_relation += 5; rimward_strength += 4; rad_rimward -= 4; guild_embargo += 0.5
 
 The Caucus names the guilds as the root of the Republic's sickness. The guilds hear it.
 
 @militarists
 subtitle: The Pacifists approve; the Hawks are furious.
-on-arrival: main_enemy = "militarists"; sec_relation -= 8; pacifist_strength += 4; pacifist_dissent -= 4; hawk_dissent += 8
+on-arrival: main_enemy = "militarists"; sec_relation -= 8; pacifist_strength += 4; rad_pacifist -= 4; rad_hawk += 8
 
 The Caucus warns that a Republic with an army will soon be an army with a Republic.
 
 @separatists
 view-if: dooku_movement
 subtitle: The Hawks approve; Rim moderates feel abandoned.
-on-arrival: main_enemy = "separatists"; cis_relation -= 10; sec_relation += 4; hawk_strength += 4; hawk_dissent -= 5; outer_sep += 2; rimward_dissent += 5
+on-arrival: main_enemy = "separatists"; cis_relation -= 10; sec_relation += 4; hawk_strength += 4; rad_hawk -= 5; outer_sep += 2; rad_rimward += 5
 
 The Caucus declares that secession is treason against the Ruusan constitution.
 
 @overreach
 view-if: date >= 21 and not rc_chancellor and not rc_in_govt
 subtitle: [? if emergency_powers >= 1 or evidence >= 3 : The danger is real and visible. ?][? if emergency_powers < 1 and evidence < 3 : Many will think we are chasing shadows. ?]
-on-arrival: main_enemy = "overreach"; pal_relation -= 8; senate_resolve += 0.5; inst_dissent += 4 if emergency_powers < 1 and evidence < 3; faith -= 0.5 if emergency_powers < 1 and evidence < 3
+on-arrival: main_enemy = "overreach"; pal_relation -= 8; senate_resolve += 0.5; rad_inst += 4 if emergency_powers < 1 and evidence < 3; faith -= 0.5 if emergency_powers < 1 and evidence < 3
 
 The Caucus declares that the greatest threat to the Republic is the steady growth of power in the Chancellor's office, whoever holds it.

@@ -39,7 +39,7 @@ view-if: difficulty < 1
 subtitle: +1 political capital; each use irritates the Institutionalists more.
 choose-if: advisor_action_timer <= 0
 unavailable-subtitle: Our advisors have already acted recently.
-on-arrival: capital += 1; inst_dissent += 3 + organa_funds * 3; organa_funds += 1; advisor_action_timer = 5
+on-arrival: capital += 1; rad_inst += 3 + organa_funds * 3; organa_funds += 1; advisor_action_timer = 5
 
 The royal house of Alderaan is generous. It is also keeping count.
 

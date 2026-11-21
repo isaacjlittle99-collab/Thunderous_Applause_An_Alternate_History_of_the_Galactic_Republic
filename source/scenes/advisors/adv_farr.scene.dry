@@ -37,6 +37,6 @@ Rodian freighters, Caucus money and a great deal of goodwill: the convoy will no
 subtitle: +1 political capital; calms the Rimward wing.
 choose-if: advisor_action_timer <= 0
 unavailable-subtitle: Our advisors have already acted recently.
-on-arrival: capital += 1; rimward_dissent -= 5; advisor_action_timer = 5
+on-arrival: capital += 1; rad_rimward -= 5; advisor_action_timer = 5
 
 Farr trades a vote nobody cares about for a favour everybody will. He has done this before.

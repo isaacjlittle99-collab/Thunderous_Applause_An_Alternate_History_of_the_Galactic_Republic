@@ -1,0 +1,48 @@
+title: Bring the Rim Home
+subtitle: The Rimward road: win back the worlds the Confederacy promised to free.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_rim.svg
+view-if: wroad_timer <= 0 and road_card_ok and rc_lead = "rimward"
+on-arrival: turn_actions += 1; wroad_timer = 2; last_card_timer = "wroad"
+new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
+
+= Bring the Rim Home
+
+The Rimward wing knows that Dooku's Confederacy is not a fortress but a promise: that the Rim will never be heard on Coruscant. Keep the Republic's promise instead, and the Confederacy can be emptied world by world.
+
+- @congress: Convene an Outer Rim Congress.
+- @charter: Put the Rim Charter to the Senate.
+- @homecoming: Invite the seceded worlds home.
+- @easy_discard
+- @set_aside
+
+@congress
+view-if: road_rimward = 0
+subtitle: −1 political capital. Rim relations +8, hardship −3, separatism in the Outer and Mid Rim −5.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! SW.roadStep(Q, 'rimward', 1); !}
+
+Delegates from four hundred Rim worlds meet on Ord Mantell, many of them for the first time in a hall where the Republic is listening. They leave with a list of demands, and with the sense that someone wrote them down.
+
+@charter
+view-if: road_rimward = 1
+subtitle: −2 political capital. Needs the Rim enfranchised or the Rim Relief Act. Separatism −10, and Dooku's cause grows at half speed.
+choose-if: capital >= 2 and (rim_enfranchised or rim_relief_act) and date >= road_wait_rimward
+unavailable-subtitle: [? if not rim_enfranchised and not rim_relief_act : The Rim will not believe a charter until it has its seats or its relief. ?][? if rim_enfranchised or rim_relief_act : [? if date < road_wait_rimward : The Senate has just voted it down. ?][? if date >= road_wait_rimward : Needs 2 political capital. ?] ?]
+on-arrival: {! SW.roadStep(Q, 'rimward', 2); !}
+
+[+ vote_html +]
+
+[? if road_ok : The Rim Charter passes: the Rim's rights written into the Republic's law, beyond the reach of the next Chancellor. On a hundred Rim worlds, Dooku's recruiters find their halls emptier. ?][? if not road_ok : The Charter fails. The Rim notes who voted against it. ?]
+
+@homecoming
+view-if: road_rimward = 2
+subtitle: −1 political capital. Needs the Rim Charter and slavery abolished. The seceded worlds return over a year.
+choose-if: capital >= 1 and rim_charter and slavery_abolished
+unavailable-subtitle: [? if not slavery_abolished : No world will come home to a Republic that still tolerates slavery. ?][? if slavery_abolished : Not enough political capital. ?]
+on-arrival: {! SW.roadStep(Q, 'rimward', 3); !}
+
+The Caucus sends its envoys to every world that left: no reprisals, the Charter's rights, and a seat waiting in the Senate. [? if war : Some answer the same week, and the Confederacy's fleets lose their harbours. ?][? if not war : Some answer the same week. Dooku's movement has never looked so thin. ?]

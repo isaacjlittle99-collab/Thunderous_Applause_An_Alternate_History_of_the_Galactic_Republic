@@ -95,19 +95,19 @@ go-to: el_campaign
 @el_back_rim
 view-if: el_has_rim
 subtitle: A Rim Chancellor would be a revolution. The Core will not like it.
-on-arrival: {! SW.elBack(Q, 'rim'); Q.rim_relation += 6; Q.rimward_dissent -= 5; Q.inst_dissent += 4; !}
+on-arrival: {! SW.elBack(Q, 'rim'); Q.rim_relation += 6; Q.rad_rimward -= 5; Q.rad_inst += 4; !}
 go-to: el_campaign
 
 @el_back_sec
 view-if: el_has_sec
 subtitle: The Hawks will approve; the Pacifists will not.
-on-arrival: {! SW.elBack(Q, 'sec'); Q.sec_relation += 6; Q.hawk_dissent -= 5; Q.pacifist_dissent += 8; !}
+on-arrival: {! SW.elBack(Q, 'sec'); Q.sec_relation += 6; Q.rad_hawk -= 5; Q.rad_pacifist += 8; !}
 go-to: el_campaign
 
 @el_back_pal
 view-if: el_has_pal
 subtitle: [? if not sith_named : He seems a decent, sensible man. ?][? if sith_named : We know what he is. Endorsing him now would be unforgivable. ?]
-on-arrival: {! SW.elBack(Q, 'pal'); Q.pal_relation += 8; Q.faith -= 1; if (Q.sith_named) { Q.inst_dissent += 4; Q.pacifist_dissent += 8; Q.rimward_dissent += 4; } !}
+on-arrival: {! SW.elBack(Q, 'pal'); Q.pal_relation += 8; Q.faith -= 1; if (Q.sith_named) { Q.rad_inst += 4; Q.rad_pacifist += 8; Q.rad_rimward += 4; } !}
 go-to: el_campaign
 
 @el_campaign
@@ -167,7 +167,7 @@ go-to: el_campaign
 @pl_defence
 view-if: plo_defence
 subtitle: The Security Bloc will back us. Every budget we support must fund the fleet. The Pacifists will grumble.
-on-arrival: {! SW.makePledge(Q, 'defence', '', 12); Q.el_pledges_made += 1; Q.pacifist_dissent += 2; !}
+on-arrival: {! SW.makePledge(Q, 'defence', '', 12); Q.el_pledges_made += 1; Q.rad_pacifist += 2; !}
 go-to: el_campaign
 
 @pl_no_powers
@@ -215,7 +215,7 @@ view-if: el_backing != "rim" and not el_courted_rim and parties_has_rim
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 subtitle: −1 political capital. Promises to the Rim make the Institutionalists nervous.
-on-arrival: {! Q.capital -= 1; Q.el_courted_rim = 1; Q.inst_dissent += 2; Q['bonus_rim_for_' + Q.el_backing] = (Q['bonus_rim_for_' + Q.el_backing] || 0) + 14 + Q.rim_relation / 10; !}
+on-arrival: {! Q.capital -= 1; Q.el_courted_rim = 1; Q.rad_inst += 2; Q['bonus_rim_for_' + Q.el_backing] = (Q['bonus_rim_for_' + Q.el_backing] || 0) + 14 + Q.rim_relation / 10; !}
 go-to: el_campaign
 
 @el_court_sec
@@ -223,7 +223,7 @@ view-if: el_backing != "sec" and not el_courted_sec and parties_has_sec
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
 subtitle: −1 political capital. The Pacifists will grumble.
-on-arrival: {! Q.capital -= 1; Q.el_courted_sec = 1; Q.pacifist_dissent += 3; Q['bonus_sec_for_' + Q.el_backing] = (Q['bonus_sec_for_' + Q.el_backing] || 0) + 14 + Q.sec_relation / 10; !}
+on-arrival: {! Q.capital -= 1; Q.el_courted_sec = 1; Q.rad_pacifist += 3; Q['bonus_sec_for_' + Q.el_backing] = (Q['bonus_sec_for_' + Q.el_backing] || 0) + 14 + Q.sec_relation / 10; !}
 go-to: el_campaign
 
 @el_court_guild
@@ -231,13 +231,13 @@ view-if: not el_courted_guild and parties_has_guild
 choose-if: capital >= 2
 unavailable-subtitle: The guilds are expensive. We need 2 political capital.
 subtitle: −2 political capital. The Rimward wing will be furious.
-on-arrival: {! Q.capital -= 2; Q.el_courted_guild = 1; Q.rimward_dissent += 8; Q.guild_relation += 5; Q['bonus_guild_for_' + Q.el_backing] = (Q['bonus_guild_for_' + Q.el_backing] || 0) + 16 + Q.guild_relation / 10; !}
+on-arrival: {! Q.capital -= 2; Q.el_courted_guild = 1; Q.rad_rimward += 8; Q.guild_relation += 5; Q['bonus_guild_for_' + Q.el_backing] = (Q['bonus_guild_for_' + Q.el_backing] || 0) + 16 + Q.guild_relation / 10; !}
 go-to: el_campaign
 
 @el_chest
 view-if: el_chest_offer and not el_chest_taken and not integrity_office
 subtitle: +1 political capital and the guilds' votes. The guilds will expect something in return.
-on-arrival: {! Q.el_chest_taken = 1; Q.capital += 1; Q.corruption += 1; Q.guild_hold += 1; Q.guild_money += 1; Q['bonus_guild_for_' + Q.el_backing] = (Q['bonus_guild_for_' + Q.el_backing] || 0) + 8; Q['bonus_ind_for_' + Q.el_backing] = (Q['bonus_ind_for_' + Q.el_backing] || 0) + 3; Q.rimward_dissent += 4; !}
+on-arrival: {! Q.el_chest_taken = 1; Q.capital += 1; Q.corruption += 1; Q.guild_hold += 1; Q.guild_money += 1; Q['bonus_guild_for_' + Q.el_backing] = (Q['bonus_guild_for_' + Q.el_backing] || 0) + 8; Q['bonus_ind_for_' + Q.el_backing] = (Q['bonus_ind_for_' + Q.el_backing] || 0) + 3; Q.rad_rimward += 4; !}
 go-to: el_campaign
 
 @el_attack_pal
@@ -255,7 +255,7 @@ if (Q.evidence >= 5) {
     Q.premature_accusations += 1;
     Q.pal_relation -= 20;
     Q.faith -= 1;
-    Q.inst_dissent += 5;
+    Q.rad_inst += 5;
     Q.el_attack_ok = 0;
 }
 !}
@@ -306,13 +306,13 @@ go-to: el_second
 @eb_deal_a
 view-if: eb_ours_out and not eb_a_rc
 subtitle: In return: the [+ eb_a_chair_name +] chair and a place in the government. [? if eb_a = "pal" : The Pacifists will be appalled. ?]
-on-arrival: {! SW.kingmaker(Q, 'a'); if (Q.eb_a === 'pal') { Q.pacifist_dissent += 6; Q.inst_dissent += 3; } !}
+on-arrival: {! SW.kingmaker(Q, 'a'); if (Q.eb_a === 'pal') { Q.rad_pacifist += 6; Q.rad_inst += 3; } !}
 go-to: el_second
 
 @eb_deal_b
 view-if: eb_ours_out and not eb_b_rc
 subtitle: In return: the [+ eb_b_chair_name +] chair and a place in the government. [? if eb_b = "pal" : The Pacifists will be appalled. ?]
-on-arrival: {! SW.kingmaker(Q, 'b'); if (Q.eb_b === 'pal') { Q.pacifist_dissent += 6; Q.inst_dissent += 3; } !}
+on-arrival: {! SW.kingmaker(Q, 'b'); if (Q.eb_b === 'pal') { Q.rad_pacifist += 6; Q.rad_inst += 3; } !}
 go-to: el_second
 
 @eb_firm
@@ -454,7 +454,7 @@ SW.assignChairs(Q);
 @el_join
 view-if: el_invited
 subtitle: [? if el_pal_won : Palpatine's coalition gives us chairs and access, but ties our name to his. ?][? if not el_pal_won : Committee chairs, and a share of responsibility. ?] [+ el_join_bureau +]
-on-arrival: {! SW.joinGovernment(Q); if (Q.el_pal_won) { Q.pacifist_dissent += 4; Q.pal_relation += 5; } !}
+on-arrival: {! SW.joinGovernment(Q); if (Q.el_pal_won) { Q.rad_pacifist += 4; Q.pal_relation += 5; } !}
 go-to: el_chairs
 
 @el_oppose

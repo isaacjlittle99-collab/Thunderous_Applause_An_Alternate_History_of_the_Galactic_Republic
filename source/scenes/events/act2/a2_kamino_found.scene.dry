@@ -40,7 +40,7 @@ on-arrival: {!
 var st = SW.stance(Q, {mod: 0.45, guild: 0.55, rim: 0.6, sec: 0.1, ind: 0.55, pal: 0.2, cis: 0.6}, true);
 Q.kd_vote = SW.vote(Q, st, 1, '-army');
 Q.vote_html = SW.voteBanner('Kamino Decommissioning Act', Q.kd_vote);
-if (Q.kd_vote >= 50) { Q.kamino_army = 0; Q.sec_relation -= 10; Q.hawk_dissent += 10; Q.grand_plan -= 8; this.achieve('no_army'); }
+if (Q.kd_vote >= 50) { Q.kamino_army = 0; Q.sec_relation -= 10; Q.rad_hawk += 10; Q.grand_plan -= 8; this.achieve('no_army'); }
 Q.evidence_public += 1; Q.fear += 3;
 !}
 

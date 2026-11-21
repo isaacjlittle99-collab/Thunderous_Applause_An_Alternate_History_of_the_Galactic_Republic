@@ -213,7 +213,10 @@
     if ((m = /^since_([a-z_]+)$/.exec(id))) return 'When a reform came into force (month), for repeals: ' + m[1];
     if ((m = /^([a-z]+)_relation$/.exec(id)) && BLOCS[m[1]]) return 'Relations with ' + BLOCS[m[1]];
     if ((m = /^([a-z]+)_favour$/.exec(id)) && BLOCS[m[1]]) return 'Favour of the leader of ' + BLOCS[m[1]];
-    if ((m = /^([a-z]+)_dissent$/.exec(id)) && FACTIONS[m[1]]) return FACTIONS[m[1]] + ' faction dissent';
+    if ((m = /^rad_([a-z]+)$/.exec(id)) && FACTIONS[m[1]]) return 'How radical our ' + FACTIONS[m[1]] + ' wing is (0-100)';
+    if ((m = /^rad_why2?_([a-z]+)$/.exec(id)) && FACTIONS[m[1]]) return 'What our ' + FACTIONS[m[1]] + ' wing resents';
+    if ((m = /^cpush_([a-z]+)$/.exec(id)) && FACTIONS[m[1]]) return 'A lingering push to our ' + FACTIONS[m[1]] + ' wing\'s delegates';
+    if ((m = /^road_([a-z]+)$/.exec(id)) && FACTIONS[m[1]]) return 'Steps taken on our ' + FACTIONS[m[1]] + ' wing\'s road (0-3)';
     if ((m = /^([a-z]+)_strength$/.exec(id)) && FACTIONS[m[1]]) return FACTIONS[m[1]] + ' faction strength';
     if ((m = /^([a-z]+)_sep$/.exec(id)) && REGIONS[m[1]]) return 'Separatism in ' + REGIONS[m[1]];
     if ((m = /^cm_presence_([a-z]+)$/.exec(id)) && REGIONS[m[1]]) return 'Caucus campaign presence in ' + REGIONS[m[1]];

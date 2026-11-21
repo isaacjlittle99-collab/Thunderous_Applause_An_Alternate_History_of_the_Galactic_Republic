@@ -95,7 +95,7 @@
     var chairs = [];
     for (var i = 0; i < SW.COMMITTEES.length; i++) if (Q['chair_' + SW.COMMITTEES[i]] === 'rc') chairs.push(SW.COMMITTEE_NAMES[SW.COMMITTEES[i]]);
     if (chairs.length) h += row('Our chairs', chairs.join(', '));
-    h += row('Caucus mood', SW.label('dissent', Q.dissent_percent));
+    h += row('Caucus mood', SW.label('dissent', Q.unrest_percent || 0));
     h += head('The Republic');
     h += row('Chancellor', '<span style="color:' + SW.textColor(Q.chancellor_bloc) + '">' + Q.chancellor + '</span>');
     h += row('Faith in the Republic', SW.label('faith', Q.faith)) + bar(Q.faith, 100, 'good-fill');
@@ -110,9 +110,13 @@
     }
     for (var j = 0; j < SW.FACTIONS.length; j++) {
       var f = SW.FACTIONS[j];
-      h += row(SW.FACTION_NAMES[f], Math.round(Q[f + '_strength']) + '% · ' + SW.label('dissent', Q[f + '_dissent']));
-      var led = (Q[f + '_leader'] && SW.firmLabel) ? 'Led by ' + Q[f + '_leader'] + ' (' + SW.firmLabel(Q, f) + '): ' + (SW.leaderLine ? SW.leaderLine(Q, f).replace(' · ', ', ') : '') + '.' : '';
-      if (Q[f + '_unmet']) h += '<div class="sb-note warn">' + led + ' Restless: they want ' + Q[f + '_demand'] + '.</div>';
+      var rv = Q['rad_' + f] || 0, rt = rv >= 80 ? 3 : (rv >= 65 ? 2 : (rv >= 35 ? 1 : 0)), gone = SW.factionActive && !SW.factionActive(Q, f);
+      h += row(SW.factionSpan ? SW.factionSpan(f, SW.FACTION_NAMES[f]) : SW.FACTION_NAMES[f], Math.round(Q[f + '_strength']) + '% of delegates' +
+        (rt && !gone ? ' <span class="sb-tag rad' + rt + '">' + SW.RAD_WORDS[rt - 1] + '</span>' : '') + (SW.roadWord && SW.roadWord(Q, f) ? ' · ' + SW.roadWord(Q, f) : ''));
+      var led = (Q[f + '_leader'] && SW.firmLabel && !gone) ? 'Led by ' + Q[f + '_leader'] + ' (' + SW.firmLabel(Q, f) + ').' : '';
+      var gr = rt && SW.caucusGrievance ? SW.caucusGrievance(Q, f) : '';
+      if (rt >= 2 && !gone) h += '<div class="sb-note warn">' + led + (gr ? ' Furious ' + gr + '.' : '') + '</div>';
+      else if (rt && !gone) h += '<div class="sb-note">' + led + (gr ? ' Restless ' + gr + '.' : '') + '</div>';
       else if (led) h += '<div class="sb-note">' + led + '</div>';
       if (f === 'rimward' && Q.rim_radical_word && !Q.rimward_split) h += '<div class="sb-note ' + ((Q.rim_radical || 0) >= 2 ? 'bad' : 'warn') + '">' + Q.rim_radical_word + '.</div>';
     }
@@ -423,6 +427,10 @@
   SW.ACHIEVEMENTS = [
     ['ending_reborn', 'The Republic Reborn', 'Stop the Sith and restore the Senate\'s authority.'],
     ['ending_endures', 'The Republic Endures', 'Stop the Sith, even if the Republic is left fragile.'],
+    ['ending_second_reformation', 'The Second Reformation', 'Stop the Sith with the Second Ruusan Charter ratified.'],
+    ['ending_republic_whole', 'The Republic Whole', 'Stop the Sith after bringing the Rim home.'],
+    ['ending_long_peace', 'The Long Peace', 'Stop the Sith after standing down the armies.'],
+    ['ending_senate_sword', 'The Senate\'s Sword', 'Take the Sith Lord with the Senate\'s own forces.'],
     ['ending_blood', 'Victory in Blood', 'Win the war for the Republic.'],
     ['ending_divided', 'The Galaxy Divided', 'Keep a Free Republic alive against the Empire.'],
     ['ending_protectorate', 'The Jedi Protectorate', 'See the Jedi rule the Republic.'],

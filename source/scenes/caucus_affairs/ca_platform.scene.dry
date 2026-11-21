@@ -21,24 +21,24 @@ Every few years the Caucus gathers to decide what it stands for. The platform sh
 
 @clean
 subtitle: Strengthens the Institutionalists; the Core Moderates approve.
-on-arrival: {! if (Q.platform && Q.platform !== 'clean') { Q.inst_dissent += 3; Q.rimward_dissent += 3; Q.pacifist_dissent += 3; Q.hawk_dissent += 3; } Q.platform = 'clean'; Q.inst_strength += 8; Q.inst_dissent -= 5; Q.mod_relation += 4; Q.corruption -= 1; !}
+on-arrival: {! if (Q.platform && Q.platform !== 'clean') { Q.rad_inst += 3; Q.rad_rimward += 3; Q.rad_pacifist += 3; Q.rad_hawk += 3; } Q.platform = 'clean'; Q.inst_strength += 8; Q.rad_inst -= 5; Q.mod_relation += 4; Q.corruption -= 1; !}
 
 The convention adopts a platform of honest government and constitutional renewal.
 
 @rim
 subtitle: Strengthens the Rimward wing; the Rim is grateful; the Institutionalists worry.
-on-arrival: {! if (Q.platform && Q.platform !== 'rim') { Q.inst_dissent += 3; Q.rimward_dissent += 3; Q.pacifist_dissent += 3; Q.hawk_dissent += 3; } Q.platform = 'rim'; Q.rimward_strength += 8; Q.rimward_dissent -= 6; Q.rim_relation += 5; Q.inst_dissent += 4; Q.outer_sep -= 2; Q.midrim_sep -= 1; !}
+on-arrival: {! if (Q.platform && Q.platform !== 'rim') { Q.rad_inst += 3; Q.rad_rimward += 3; Q.rad_pacifist += 3; Q.rad_hawk += 3; } Q.platform = 'rim'; Q.rimward_strength += 8; Q.rad_rimward -= 6; Q.rim_relation += 5; Q.rad_inst += 4; Q.outer_sep -= 2; Q.midrim_sep -= 1; !}
 
 The convention commits the Caucus to full representation, relief and an end to slavery in the Outer Rim.
 
 @peace
 subtitle: Strengthens the Pacifists; the Hawks are unhappy.
-on-arrival: {! if (Q.platform && Q.platform !== 'peace') { Q.inst_dissent += 3; Q.rimward_dissent += 3; Q.pacifist_dissent += 3; Q.hawk_dissent += 3; } Q.platform = 'peace'; Q.pacifist_strength += 8; Q.pacifist_dissent -= 6; Q.hawk_dissent += 6; Q.fear -= 1; !}
+on-arrival: {! if (Q.platform && Q.platform !== 'peace') { Q.rad_inst += 3; Q.rad_rimward += 3; Q.rad_pacifist += 3; Q.rad_hawk += 3; } Q.platform = 'peace'; Q.pacifist_strength += 8; Q.rad_pacifist -= 6; Q.rad_hawk += 6; Q.fear -= 1; !}
 
 The convention declares that the Republic's strength is its law, not its fleets.
 
 @defence
 subtitle: Strengthens the Hawks; the Security Bloc approves; the Pacifists are unhappy.
-on-arrival: {! if (Q.platform && Q.platform !== 'defence') { Q.inst_dissent += 3; Q.rimward_dissent += 3; Q.pacifist_dissent += 3; Q.hawk_dissent += 3; } Q.platform = 'defence'; Q.hawk_strength += 8; Q.hawk_dissent -= 6; Q.sec_relation += 5; Q.pacifist_dissent += 6; Q.member_forces += 0.3; !}
+on-arrival: {! if (Q.platform && Q.platform !== 'defence') { Q.rad_inst += 3; Q.rad_rimward += 3; Q.rad_pacifist += 3; Q.rad_hawk += 3; } Q.platform = 'defence'; Q.hawk_strength += 8; Q.rad_hawk -= 6; Q.sec_relation += 5; Q.rad_pacifist += 6; Q.member_forces += 0.3; !}
 
 The convention declares that the Republic must be able to defend itself, under the Senate's control and nobody else's.

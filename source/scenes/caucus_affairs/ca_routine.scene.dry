@@ -38,6 +38,6 @@ Your staff answer every petition from the [+ petition_region +], however small. 
 
 @dinner
 subtitle: Calms the Caucus a little.
-on-arrival: inst_dissent -= 3; rimward_dissent -= 3; pacifist_dissent -= 3; hawk_dissent -= 3
+on-arrival: rad_inst -= 3; rad_rimward -= 3; rad_pacifist -= 3; rad_hawk -= 3
 
 Over Alderaanian wine and Chandrilan cheese, old grudges soften, at least for an evening.

@@ -1,0 +1,45 @@
+title: The Senate's Sword
+subtitle: The Hawks' road: an army that answers to the Senate, and the will to use it.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_forces.svg
+view-if: wroad_timer <= 0 and road_card_ok and rc_lead = "hawk"
+on-arrival: turn_actions += 1; wroad_timer = 2; last_card_timer = "wroad"
+new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
+
+= The Senate's Sword
+
+The Hawks trust no Chancellor, and least of all the one who keeps asking for more powers. If the Republic's enemy sits in its own government, they say, the Senate will need soldiers of its own to remove him.
+
+- @raise: Raise a Senate army.
+- @oath: Bind the officer corps by oath to the Senate.
+- @seize: Send the Senate's forces to seize [+ pal_title +].
+- @easy_discard
+- @set_aside
+
+@raise
+view-if: road_hawk = 0
+subtitle: −1 political capital. Judicial Forces +2, Navy loyalty +5.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! SW.roadStep(Q, 'hawk', 1); !}
+
+Two new Judicial cruiser squadrons are commissioned, crewed by volunteers who swear to the Senate and to no one else.
+
+@oath
+view-if: road_hawk = 1
+subtitle: Needs Judicial Forces 4 or more. Navy loyalty +10, and the clone officers answer to the Senate.
+choose-if: judicial_forces >= 4
+unavailable-subtitle: The officers will not swear to a Senate with no forces of its own.
+on-arrival: {! SW.roadStep(Q, 'hawk', 2); !}
+
+On the parade ground before the Senate, the Republic's officers swear a new oath: to the Senate and its laws, before any Chancellor. The clone commanders swear it too, in perfect unison.
+
+@seize
+view-if: road_hawk = 2
+subtitle: −2 political capital. Needs the Sith Lord named, or a Chancellor with six or more powers. The Senate's forces move before he does.
+choose-if: capital >= 2 and road_strike_ok
+unavailable-subtitle: [? if not road_strike_ok : The Hawks need a name, or a Chancellor who has plainly gone too far. ?][? if road_strike_ok : Needs 2 political capital. ?]
+on-arrival: {! SW.roadStep(Q, 'hawk', 3); !}
+go-to: rec_senate_sword

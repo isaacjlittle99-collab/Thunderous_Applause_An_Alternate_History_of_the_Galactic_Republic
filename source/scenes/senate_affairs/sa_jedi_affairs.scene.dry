@@ -79,7 +79,7 @@ var st = SW.stance(Q, {mod: 0.55, guild: 0.4, rim: 0.6, sec: 0.15, ind: 0.65, pa
 Q.js_vote = SW.vote(Q, st, 1, 'peace');
 Q.vote_html = SW.voteBanner('Jedi Service Act', Q.js_vote);
 if (Q.js_vote >= 50) {
-    Q.jedi_service_act = 1; Q.jedi_service_suspended = 0; Q.jedi_generals = 0; Q.jedi_strength += 1; Q.jedi_relation += 6; Q.jedi_standing += 3; Q.hawk_dissent += 4;
+    Q.jedi_service_act = 1; Q.jedi_service_suspended = 0; Q.jedi_generals = 0; Q.jedi_strength += 1; Q.jedi_relation += 6; Q.jedi_standing += 3; Q.rad_hawk += 4;
     if (Q.war && Q.js_had_generals) Q.war_balance -= 1;
 }
 !}
