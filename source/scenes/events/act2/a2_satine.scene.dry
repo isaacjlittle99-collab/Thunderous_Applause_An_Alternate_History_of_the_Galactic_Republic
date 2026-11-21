@@ -15,7 +15,7 @@ The warrior world of **Mandalore** has a new ruler: Duchess **Satine Kryze**, le
 
 @welcome
 subtitle: The Independents approve; a future mediator.
-on-arrival: ind_relation += 6; satine_friend = 1; pacifist_dissent -= 3
+on-arrival: ind_relation += 6; satine_friend = 1; rad_pacifist -= 3
 
 Satine and Mon Mothma become friends, as far as two such reserved women can.
 

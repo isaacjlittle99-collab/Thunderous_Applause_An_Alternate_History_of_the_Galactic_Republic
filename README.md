@@ -73,6 +73,9 @@ artwork, music or footage is included; all images are original abstract art.*
   Each chair is held by a named minister; the Caucus picks its own, and the committees it does not chair act on
   their bloc's ideology at the time. Four of them can also hand out patronage, in six forms each, one offered at random
   whenever a committee's card is played, until the Senate expels its corrupt senators.
+- **Our own wings.** The Caucus's Institutionalists, Rimward wing, Pacifists and Hawks grow with what we do, turn radical
+  with the galaxy and with our choices, and contest our congress. Each, when it leads, has its own road to victory, its
+  own events, its own use of the Chancellery and its own ending.
 - **Backlash.** A wing turns radical when its own bloc backs what it opposes, and radical wings split off, sometimes
   forcing an emergency congress first. Palpatine's agents and the guilds' money work the grievances, anti-reform
   ministries can repeal reforms, the Rim starts under the Hutt-space Machine, and Palpatine's own bloc drifts to its

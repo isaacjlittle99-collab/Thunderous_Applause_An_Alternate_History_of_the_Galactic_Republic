@@ -1,7 +1,7 @@
 title: The Battle of Geonosis
 subtitle: Jedi are trapped on Geonosis. The Senate must decide whether to go to war.
 tags: event
-view-if: date >= 135 and dooku_movement and not war and not geonosis_seen and ((seceded_total >= 5 and (outer_seceded > 0.02 or midrim_seceded > 0.02)) or seceded_total >= 10 or outer_sep >= 55 or midrim_sep >= 55 or (force_war and date >= 141 and not federal_compact and not (rim_enfranchised and peace_talks >= 2 and dooku_turned)))
+view-if: date >= 135 and dooku_movement and not war and not geonosis_seen and not rim_home_peace and ((seceded_total >= 5 and (outer_seceded > 0.02 or midrim_seceded > 0.02)) or seceded_total >= 10 or outer_sep >= 55 or midrim_sep >= 55 or (force_war and date >= 141 and not federal_compact and not (rim_enfranchised and peace_talks >= 2 and dooku_turned)))
 max-visits: 1
 priority: 5
 new-page: true
@@ -33,13 +33,13 @@ Q.ep_cost = 2 + (Q.mca_result === 'passed' ? 1 : 0);
 @powers_no
 view-if: kamino_army
 subtitle: The Pacifists will be proud.
-on-arrival: geo_choice = "no"; pacifist_dissent -= 5; hawk_dissent += 5
+on-arrival: geo_choice = "no"; rad_pacifist -= 5; rad_hawk += 5
 go-to: geo_vote
 
 @powers_yes
 view-if: kamino_army
 subtitle: [? if rc_chancellor : The powers would be ours. The Hawks will be relieved; the Pacifists will remember. ?][? if not rc_chancellor : The Hawks will be relieved. ?]
-on-arrival: geo_choice = "yes"; hawk_dissent -= 5; pacifist_dissent += 8
+on-arrival: geo_choice = "yes"; rad_hawk -= 5; rad_pacifist += 8
 go-to: geo_vote
 
 @oversight
@@ -53,7 +53,7 @@ go-to: geo_vote
 @judicials
 view-if: judicial_forces >= 4 or pact_formed or not kamino_army
 subtitle: The Senate keeps control, but our forces are thin.
-on-arrival: geo_choice = "judicials"; hawk_dissent -= 2
+on-arrival: geo_choice = "judicials"; rad_hawk -= 2
 go-to: geo_vote
 
 @geo_vote

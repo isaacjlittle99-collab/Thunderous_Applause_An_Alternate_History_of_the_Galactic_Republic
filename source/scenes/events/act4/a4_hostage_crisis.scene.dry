@@ -26,6 +26,6 @@ The Caucus demands an inquiry into the Senate Guard's failure. It finds that thr
 
 @crackdown
 subtitle: The Hawks approve; the Security Act will be fast-tracked.
-on-arrival: security_fast = 1; hawk_dissent -= 3; pacifist_dissent += 3
+on-arrival: security_fast = 1; rad_hawk -= 3; rad_pacifist += 3
 
 The Senate votes for "whatever it takes". The Chancellor's office has a bill ready.

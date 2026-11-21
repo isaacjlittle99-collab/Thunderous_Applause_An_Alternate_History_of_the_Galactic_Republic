@@ -33,6 +33,6 @@ Republic engineers take over the refineries in Bespin's clouds. The Mining Guild
 
 @cut
 subtitle: Prices ease; the Republic's forces are thinner.
-on-arrival: {! Q.tibanna -= 25; Q.judicial_forces -= 0.5; if (Q.war) Q.war_balance -= 0.5; Q.hawk_dissent += 3; !}
+on-arrival: {! Q.tibanna -= 25; Q.judicial_forces -= 0.5; if (Q.war) Q.war_balance -= 0.5; Q.rad_hawk += 3; !}
 
 Patrols are cut back and ships stay in dock. The Hawks are appalled.

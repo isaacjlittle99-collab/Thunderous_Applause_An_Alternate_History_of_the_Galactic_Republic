@@ -18,7 +18,7 @@ Member worlds across the [+ recall_region_name +] are recalling their Caucus sen
 subtitle: −1 political capital. Fewer seats lost, and the grievance is cleared. The Institutionalists wince.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
-on-arrival: {! SW.recallResolve(Q, 'apologise'); Q.inst_dissent += 2; !}
+on-arrival: {! SW.recallResolve(Q, 'apologise'); Q.rad_inst += 2; !}
 
 The Caucus's leaders tour the [+ recall_region_name +], listening more than talking. Some worlds keep their Caucus senators. We still lose about [+ recall_lost +] points of support there.
 

@@ -32,6 +32,9 @@ on-arrival: {! SW.chancelleryStrings(Q); SW.decreeScan(Q, this); !}
 - @d_rival: Turn the Bureau on a rival bloc.
 - @d_investigate: Set the Bureau to investigate.
 - @ceasefire: Proclaim a ceasefire and call a peace conference.
+- @w_review: Refer the emergency powers to the Supreme Court.
+- @w_councillors: Seat Rim councillors in the Chancellery.
+- @w_navy: Reshape the Navy's high command.
 - @giveback: Return a power to the Senate.
 - @go_back: Back.
 
@@ -301,6 +304,27 @@ subtitle: The Navy and our Hawks will resent it, and the Security Bloc will not 
 on-arrival: {! SW.chanCeasefire(Q); !}
 
 The Chancellor orders the Republic's forces to hold their fire and invites the Confederacy to talk. The Navy obeys, with bad grace. The Confederacy, after three days of silence, accepts.
+
+@w_review
+view-if: rc_chancellor and rc_lead = "inst" and not w_review_done and not finale
+subtitle: Once. Emergency powers −2, faith +2, and the record of how they were used made public. Takes the turn.
+on-arrival: {! SW.wingChancellery(Q, 'review'); !}
+
+Our Chancellor asks the Supreme Court to review every emergency power the office holds. The Court strikes down two that no statute ever authorised, and its judgment sets out, in public, exactly how each power has been used and by whom.
+
+@w_councillors
+view-if: rc_chancellor and rc_lead = "rimward" and not w_council_done and not finale
+subtitle: Once. Rim relations +8, separatism in the Outer and Mid Rim −6, our Rimward wing calmer. The Core and its Old Families resent it. Takes the turn.
+on-arrival: {! SW.wingChancellery(Q, 'councillors'); !}
+
+For the first time, the Chancellor's council has members from the Outer Rim: a Twi'lek administrator, a Rodian judge, a farmer's daughter from Ord Mantell. The Core's old houses call it a circus. The Rim calls it overdue.
+
+@w_navy
+view-if: rc_chancellor and rc_lead = "hawk" and not w_navy_done and not finale
+subtitle: Once. Navy loyalty +8. The Security Bloc, its Human-Firsters and our Pacifists resent it, and fear rises. Takes the turn.
+on-arrival: {! SW.wingChancellery(Q, 'navy'); !}
+
+Our Chancellor retires a dozen admirals whose first loyalty was to the Chancellery's old masters, and promotes officers who have sworn to the Senate. The Security Bloc calls it a purge. The Navy calls it overdue.
 
 @d_address
 view-if: chan_can_decree and chp_holonet_state = "held"

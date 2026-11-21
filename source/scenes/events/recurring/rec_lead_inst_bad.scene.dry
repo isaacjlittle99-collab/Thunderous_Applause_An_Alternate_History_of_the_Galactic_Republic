@@ -5,7 +5,7 @@ view-if: lead_event_ready = "inst_bad" and not finale and not game_ending
 priority: 1
 new-page: true
 face-image: img/ev_rim.svg
-on-arrival: {! SW.leadEventDone(Q); Q.rim_relation -= 5; Q.rimward_dissent += 5; Q.outer_rc -= 0.5; Q.midrim_rc -= 0.3; !}
+on-arrival: {! SW.leadEventDone(Q); Q.rim_relation -= 5; Q.rad_rimward += 5; Q.outer_rc -= 0.5; Q.midrim_rc -= 0.3; !}
 
 = Coruscant's Party
 

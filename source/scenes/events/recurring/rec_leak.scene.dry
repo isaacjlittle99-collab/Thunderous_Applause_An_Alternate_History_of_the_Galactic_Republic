@@ -22,7 +22,7 @@ else { Q.evidence -= 0.3; }
 
 @careful
 subtitle: Slower investigations for a while.
-on-arrival: investigate_timer += 2; inst_dissent -= 2
+on-arrival: investigate_timer += 2; rad_inst -= 2
 
 The Caucus moves its files to an Alderaanian diplomatic vault.
 

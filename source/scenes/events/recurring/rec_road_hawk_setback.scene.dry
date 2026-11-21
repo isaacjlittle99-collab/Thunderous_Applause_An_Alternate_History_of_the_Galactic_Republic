@@ -1,0 +1,12 @@
+title: Saber-Rattling
+subtitle: Our Hawks' talk of force alarms the neutral worlds.
+tags: event
+view-if: road_event_ready = "hawk_setback" and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {! SW.roadEventDone(Q); SW.addCaucusRad(Q, 'pacifist', 6, ''); Q.ind_relation -= 4; Q.rim_relation -= 4; !}
+
+= Saber-Rattling
+
+A Hawk senator tells the HoloNet that the Senate's forces are ready to deal with 'traitors anywhere, including in the Chancellery'. The Independents and the Rim hear a Caucus planning a coup. Our Pacifists hear it too.

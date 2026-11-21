@@ -1,0 +1,12 @@
+title: A Governor Changes Sides
+subtitle: A Rim governor who joined the Confederacy wants to come back.
+tags: event
+view-if: road_event_ready = "rimward_chance" and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_rim.svg
+on-arrival: {! SW.roadEventDone(Q); if ((Q.outer_seceded || 0) > 0.02) Q.outer_seceded = Math.max(0, Q.outer_seceded - 0.05); else Q.outer_sep = Math.max(0, Q.outer_sep - 4); Q.rim_relation += 4; !}
+
+= A Governor Changes Sides
+
+The governor of a dozen worlds in the Outer Rim, who took them into the Confederacy two years ago, sends word through the Caucus's Rim delegates: he would rather be heard on Coruscant than ruled from Raxus. His worlds' flags go back up over their capitols within the month.

@@ -11,6 +11,7 @@ if (card && this.state.currentHands && this.state.currentHands[handId]) {
     if (this.state.visits[card.id]) this.state.visits[card.id] -= 1;
 }
 if (Q.last_card_timer) {
+    if (Q.last_card_timer === 'rim_outreach' || Q.last_card_timer === 'rimaffairs') Q.rim_card_acts = Math.max(0, (Q.rim_card_acts || 0) - 1);
     Q[Q.last_card_timer + '_timer'] = 0;
     Q.last_card_timer = '';
 }

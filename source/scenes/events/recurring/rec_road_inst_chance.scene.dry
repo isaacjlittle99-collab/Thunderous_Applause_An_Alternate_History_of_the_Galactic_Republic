@@ -1,0 +1,12 @@
+title: The Jurists' Petition
+subtitle: The legal profession rallies behind the Convention.
+tags: event
+view-if: road_event_ready = "inst_chance" and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_law.svg
+on-arrival: {! SW.roadEventDone(Q); Q.senate_resolve += 1; Q.capital += 1; !}
+
+= The Jurists' Petition
+
+Four thousand jurists from across the Republic sign a petition supporting the Convention, among them two former judges of the Supreme Court. Senators who had been wavering find their courage, and a few donors find their purses.

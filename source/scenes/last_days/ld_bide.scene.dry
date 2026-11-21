@@ -17,6 +17,6 @@ Sometimes the wisest move is not to move.
 - @set_aside
 
 @do
-on-arrival: capital += 1; inst_dissent -= 4; rimward_dissent -= 4; pacifist_dissent -= 4; hawk_dissent -= 4
+on-arrival: capital += 1; rad_inst -= 4; rad_rimward -= 4; rad_pacifist -= 4; rad_hawk -= 4
 
 The Caucus waits, and steadies its nerves.

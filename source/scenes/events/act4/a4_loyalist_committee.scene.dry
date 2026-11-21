@@ -18,12 +18,12 @@ A seat at that table means briefings, documents and the Chancellor's own words, 
 
 @join
 subtitle: Access to the Chancellery's papers every year, at the price of our reputation and the Pacifists' patience.
-on-arrival: loyalist_member = 1; evidence += 0.8; faith -= 1; pacifist_dissent += 5; pal_relation += 6
+on-arrival: loyalist_member = 1; evidence += 0.8; faith -= 1; rad_pacifist += 5; pal_relation += 6
 
 The Caucus takes its seats. The briefings are long, polished and carefully incomplete, but now and then a document crosses the table that was never meant to.
 
 @refuse
 subtitle: The Senate notes our independence; the Hawks call it disloyal.
-on-arrival: pal_relation -= 8; senate_resolve += 0.5; hawk_dissent += 3
+on-arrival: pal_relation -= 8; senate_resolve += 0.5; rad_hawk += 3
 
 The Caucus declines with thanks. The Chancellor accepts with regret. His allies call the Caucus "fair-weather patriots".

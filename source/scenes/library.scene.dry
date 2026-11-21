@@ -13,7 +13,7 @@ is-special: true
 - @lib_republic: How the Republic governs itself
 - @lib_blocs: The blocs of the Senate
 - @lib_regions: The regions of the galaxy
-- @lib_factions: The factions of the Ruusan Caucus
+- @lib_factions: The wings of the Ruusan Caucus
 - @lib_leaders: Leaders and their views
 - @lib_wings: Parties and their wings
 - @lib_meters: The state of the Republic, explained
@@ -94,22 +94,28 @@ When worlds secede, their delegations leave, and the region shrinks. The Senate 
 is-special: true
 go-to: menu
 
-= The factions of the Ruusan Caucus
+= The wings of the Ruusan Caucus
 
-**Institutionalists**: proceduralists devoted to the Ruusan constitution. The Caucus's backbone.
+The Caucus is a coalition of four wings, and like every bloc's wings they hold its delegates, put up its leaders and can turn radical.
 
-**Rimward**: champions of the Outer Rim, of enfranchisement and of abolition. They split away to form the Rim Freedom Caucus if they are ignored for too long.
+**Institutionalists**: proceduralists devoted to the Ruusan constitution. They grow with anti-corruption reforms (the Ethics Commission, the Office of Public Integrity, the expulsions, intelligence oversight), with constitutional reforms (sunset clauses, term limits, the constructive no-confidence vote, the independent Speaker, the Powers Review) and with every emergency power the Chancellery holds. Corruption and scandal radicalise them.
 
-**Pacifists**: believers in law over arms. They resign their posts if pushed too far toward war.
+**Rimward**: champions of the Outer Rim, of enfranchisement and of abolition. They grow with every action on the Rim Outreach and Outer Rim Affairs cards, and far more with Rim enfranchisement and the Rights of Sentience. Rim hardship and the Rim worlds lost to secession radicalise them.
 
-**Hawks**: defenders of the Republic by force if need be. Distrustful of every Chancellor, they defect to the Security Bloc if the Caucus seems weak.
+**Pacifists**: believers in law over arms. They grow with good relations with the Jedi, with peace talks and contact with Dooku, with cuts to the military, and with the outbreak of war. War weariness and emergency powers radicalise them.
 
-Each faction has a **strength**, a **dissent** level and a **leader**. Overall dissent reduces almost every gain the Caucus makes. An advisor from a faction keeps its dissent in check. If a faction's dissent reaches about 60 (70 for the Institutionalists), it will break away: sooner under a firm leader, later under a pragmatist. A faction that breaks takes its senators with it. Under a firm leader it founds its own party; otherwise it joins the nearest bloc (Hawks the Security Bloc, Rimward the Rimward Coalition, Pacifists the Independents, Institutionalists the Core Moderates). Each leader has their own demands, shown in the Status panel when they are not met.
+**Hawks**: defenders of the Republic by force if need be. They grow with investment in the military, with our holding the Security & Defence chair, with each Caucus vote for emergency powers, and with the outbreak of war. Fear and a war being lost radicalise them.
+
+Each wing's share drifts every season toward where these things push it, and what our cards do to a wing's strength lingers for a while. The outbreak of war lifts the Hawks and the Pacifists both.
+
+**Radicalism.** A wing turns radical when the Caucus backs a bill it opposes, when we govern beside a partner it rejects (Institutionalists: Palpatine's bloc; Rimward: Palpatine's bloc and the guilds; Pacifists: the Security Bloc; Hawks: the Rimward Coalition), and with the state of the galaxy above. It fades by about a twelfth a season and halves when the wing wins our congress. *Restless* at 35, *furious* at 65 (*A Divided Caucus* appears), *on the brink* at 80 (it forces our congress). Appointing one of a wing's senators as a committee minister calms it by 4, one of our advisors by 8. The Caucus's unity (its delegates' average calm) sets the yearly capital bonus, its natural size and the reach of its campaigns.
+
+**Walkouts.** After our congress, a defeated wing that has turned radical, holds a fifth of the delegates (an eighth if furious), is far from the winner and angry may walk out: the Hawks to the Security Bloc, the Pacifists to the Independents, the Institutionalists (rarely) to the Core Moderates, the Rimward wing to the Rimward Coalition. Under a firm leader a wing founds a party of its own instead, if the breakaway slot is free: under Jessa Corvane, the Rimward wing founds the Rim Freedom Caucus.
 
 
-**The leading faction and our programme**
+**The leading wing and our programme**
 
-After each Senate election, and early if the leading faction loses its delegates' confidence or is outgrown, the Caucus meets in congress. Each faction's strength is its share of the delegates, and every advisor rallies their own faction. The leadership can put its weight behind a faction (1 political capital) or have an advisor rally their faction (the advisors' action). A faction with a majority wins at once; otherwise the two largest bargain, and the others side with the nearer. The winner's leader chairs the Caucus. Its dissent falls, and the faction furthest from it grows restless.
+After each Senate election, early when another wing outgrows the leading one by ten points, and when a wing is on the brink, the Caucus meets in congress. Each wing's strength is its share of the delegates, every advisor rallies their own wing, and each wing puts up its strongest figure. The leadership can put its weight behind a wing (1 political capital) or have an advisor rally their wing (the advisors' action). A wing with a majority wins at once; otherwise the two largest bargain: the others side with the nearer in ideology, though the angrier a wing is with the leadership the more it leans to the challenger, and the uncommitted delegates follow the larger of the two (the one that led before, if it is within three points). The winner's leader chairs the Caucus. Its radicalism halves, and the wing furthest from it grows restless.
 
 • *Institutionalists:* Caucus bills on oversight and the constitution do better, those on the Rim worse. The bureaucrats warm to us faster.
 
@@ -119,7 +125,23 @@ After each Senate election, and early if the leading faction loses its delegates
 
 • *Hawks:* Caucus bills for the army do better, those on peace worse. The Navy's loyalty to the Senate grows.
 
-While a faction leads, its own events come every few turns, one good and one bad in turn: the Institutionalists' committee men and the Rim's resentment of a Core party; the Rim turning out and the ministries pushing back; peace vigils and, in wartime, the charge of appeasement; the officers' confidence and a Hawk's call for a punitive Rim campaign. The Caucus is also strongest where its leading faction comes from.
+While a wing leads, its own events come every few turns, one good and one bad in turn: the Institutionalists' committee men and the Rim's resentment of a Core party; the Rim turning out and the ministries pushing back; peace vigils and, in wartime, the charge of appeasement; the officers' confidence and a Hawk's call for a punitive Rim campaign. The Caucus is also strongest where its leading wing comes from.
+
+**The roads to victory**
+
+While a wing leads, its own card offers three steps, each needing the one before. Progress is kept if the wing loses the lead, and the card returns when it leads again. Once a road has begun, its own events follow, a chance and then a setback, about once a year.
+
+• *The Constitutional Convention* (Institutionalists). Call a Convention (1 capital; needs two constitutional or anti-corruption reforms in force). Put the Second Ruusan Charter to the Senate (2 capital; three fifths): emergency powers then lapse, one every two years. Send it to the member worlds (1 capital) for ratification. **Payoff:** at his final move, the ratified Charter makes it unconstitutional: the Senate Guard and the sector governors stand aside, and the Restoration vote gains support. Events: *The Jurists' Petition*, *Procedure Over Purpose*.
+
+• *Bring the Rim Home* (Rimward). An Outer Rim Congress (1 capital): Rim relations up, hardship and separatism down. The Rim Charter (2 capital; needs Rim enfranchisement or the Rim Relief Act): separatism down, and Dooku's cause grows at half speed. Homecoming (1 capital; needs the Charter and slavery abolished): the seceded worlds come back over a year; in wartime each region that returns turns the war, and before the war, if separatism falls below 20, the war never begins. **Payoff:** without a war the emergency powers stop at two, and at his final move the returned worlds fight for the Senate. Events: *A Governor Changes Sides*, *Dooku's Answer*.
+
+• *Stand Down the Armies* (Pacifists). Campaign for disarmament (1 capital): faith, momentum, a channel for talks. Ask the neutral worlds to mediate (needs Duchess Satine's friendship or the neutral systems organised). The Disarmament Accord (2 capital; needs the war over or a ceasefire): half the clone army stood down at once, the rest within a year. **Payoff:** at his final move he has little or no clone army, and Order 66 has no one to command. Events: *Satine's Envoy*, *The War Party's Riposte*.
+
+• *The Senate's Sword* (Hawks). Raise a Senate army (1 capital): Judicial Forces +2, Navy loyalty +5. Bind the officer corps by oath (needs Judicial Forces 4): Navy loyalty +10, and the clone army splits as if the Senate commanded it. Seize him (2 capital; needs the Sith Lord named, or a Chancellor with six or more emergency powers): the Senate's forces move without a Chancellor's order, judged as an arrest with the oath's weight behind it. Without the evidence for a trial (7), he is held rather than tried. Events: *A Fleet Declares*, *Saber-Rattling*.
+
+**Each wing's Chancellery.** While our Chancellor holds the office, the leading wing has its own option there, once: the Institutionalists refer the emergency powers to the Supreme Court (two struck down, faith up, the record made public); the Rimward wing seats Rim councillors (the Rim warms, separatism falls, the Core and its Old Families resent it); the Pacifists have the Chancellor's Peace; the Hawks reshape the Navy's high command (Navy loyalty up; the Security Bloc, its Human-Firsters and our Pacifists resent it).
+
+
 @lib_leaders
 is-special: true
 go-to: menu
@@ -145,7 +167,7 @@ Every Senate bloc and every faction of the Caucus has a leader, and leaders chan
 
 • *What they care about.* Every leader has a motive and a list of things that please or anger them: tariffs, Rim relief, the war, emergency powers, who sits in government. The sidebar shows each leader's current stance and the main reason for it.
 
-• *Anger hardens, goodwill softens.* An angry leader holds their bloc's line harder: in votes, in coalition talks and in how long they bear a grudge. A pleased leader bends. Inside the Caucus, an angry faction leader makes the faction restless sooner.
+• *Anger hardens, goodwill softens.* An angry leader holds their bloc's line harder: in votes, in coalition talks and in how long they bear a grudge. A pleased leader bends. Inside the Caucus, each wing puts up its strongest figure at every congress.
 
 • *Memory.* Leaders remember whether we backed them or their rival at a congress or in a leadership fight, whether we met or refused their demands, and whether their bloc walked out of our government. Memories fade over a few years.
 
@@ -159,7 +181,7 @@ Every Senate bloc and every faction of the Caucus has a leader, and leaders chan
 
 • *The Senate's blocs.* Each bloc's leader comes from its ruling wing. The *Parties and their wings* page lists every wing, what grows it, and who leads it. Tal Ardana of the Rim Radicals will not govern with the Core Moderates, the guilds or the Security Bloc, and stokes separatism.
 
-• *Caucus factions.* Each faction starts under a mainstream leader. Corruption and emergency powers raise a firm Institutionalist, Chi Eekway Papanoida. Rim hardship raises a radical Rimward leader, Jessa Corvane. War-weariness raises an absolutist Pacifist, Tamra Shen. Fear and defeats raise a militarist Hawk, Darra Voss. A faction whose demands are met turns to pragmatists: Terr Taneel, Hollin Rusk, Orrin Dask and Talia Morn.
+• *Our wings.* Each wing starts under a mainstream leader, and at each congress puts up whichever of its figures the times favour. Corruption and emergency powers raise a firm Institutionalist, Chi Eekway Papanoida. Rim hardship raises a radical Rimward leader, Jessa Corvane. War-weariness raises an absolutist Pacifist, Tamra Shen. Fear and defeats raise a militarist Hawk, Darra Voss. When a wing's cause is going well, its pragmatists rise: Terr Taneel, Hollin Rusk, Orrin Dask and Talia Morn.
 
 @lib_wings
 is-special: true
@@ -340,7 +362,7 @@ Every number in the Status panel feeds several others, so a problem left alone i
 
 • The calendar advances, and card and advisor cooldowns tick down.
 
-• Each faction's dissent drifts, and relations with other blocs fade toward their natural level.
+• Our wings' strengths drift with what we have done, their radicalism fades, and relations with other blocs fade toward their natural level.
 
 • Corruption, fear, faith, Rim hardship, separatism and the Sith's hidden plan update.
 
@@ -360,7 +382,7 @@ is-special: true
 - @lib_sys_powers: Emergency powers and the Sith's plan
 - @lib_sys_proof: Evidence and Senate resolve
 - @lib_sys_senate: Seats, elections and relations
-- @lib_sys_caucus: Capital, factions and dissent
+- @lib_sys_caucus: Capital, wings and unity
 - @lib_sys_war: The war, Anakin and the final reckoning
 - @library: Back to the Holocron's contents
 
@@ -504,6 +526,8 @@ The game ends in 19 BBY, after the Last Days, unless it ends sooner.
 
 **Endings must be earned.** Surviving to the end is not enough. If Darth Sidious has not been unmasked and stopped, he proclaims the Empire, unless his powers have been stripped to 2 or fewer, the evidence against him is public, and term limits are entrenched, in which case the Republic endures with a shadow over it.
 
+**The roads' endings.** If the Sith Lord is defeated and the Republic Reborn is out of reach, a completed road gives its own ending instead of *The Republic Endures*: *The Senate's Sword* (taken by the Senate's own forces), *The Second Reformation* (the Charter ratified), *The Republic Whole* (the Rim brought home) or *The Long Peace* (the armies stood down).
+
 **The best ending**, *The Republic Reborn*, needs all of these: Sidious defeated and tried (not killed), the Restoration Act passed, faith of 50 or more, corruption under control (below 65, or an Ethics Commission), and at least one lasting safeguard in place.
 
 **The arrest** needs preparation: see *How the systems interact*. A raid without a warrant, a loyal Senate Guard, Judicial Forces, conclusive evidence and a strong Jedi Order usually fails. Only a warrant prepared beforehand (Judiciary & Intelligence) counts: there is no rushing one through in the Last Days.
@@ -618,7 +642,7 @@ go-to: lib_sys_menu
 
 = Seats, elections and relations
 
-Every bloc's support in every region drifts toward a natural level. Faith grows the Caucus, and your own dissent shrinks it. Low corruption grows the Core Moderates. Palpatine's bloc grows a little every year whatever happens, and corruption, fear, the Sith's plan and holding office make it grow faster. Fear and the war grow the Security Bloc, and Rim hardship grows the Rimward Coalition. Campaigns push support away from these levels for a while.
+Every bloc's support in every region drifts toward a natural level. Faith grows the Caucus, and a divided Caucus shrinks it. Low corruption grows the Core Moderates. Palpatine's bloc grows a little every year whatever happens, and corruption, fear, the Sith's plan and holding office make it grow faster. Fear and the war grow the Security Bloc, and Rim hardship grows the Rimward Coalition. Campaigns push support away from these levels for a while.
 
 **Chancellor elections.** Each bloc backs the candidate it likes most: its own leader, an endorsed ally, or the candidate it leans toward, weighed by how strong that candidate's bloc really is. Without a majority, the top two go to a second ballot, and the Caucus can bargain between the ballots. Capital spent courting a bloc buys a large lean toward your candidate; a pledge buys a larger one, at a price later. The nominee, the rivals' strengths, momentum and money all count. In 32 BBY only, Naboo's plight gives Palpatine a sympathy vote. See *Elections and campaigns*.
 
@@ -643,21 +667,11 @@ is-special: true
 new-page: true
 go-to: lib_sys_menu
 
-= Capital, factions and dissent
+= Capital, wings and unity
 
-**Political capital** arrives each January: 2 on Senator, 3 on Story, 1 on Jedi Master. You get 1 more if Caucus dissent is low, 1 more while the Caucus sits in government, and 1 less if dissent is high. Patron Contributions, some advisors and Routine Senate Business (only when you are nearly broke) add a little more. Courting blocs at elections, the Defence Pact, Rim enfranchisement, the Federal Compact and laying charges cost the most.
+**Political capital** arrives each January: 2 on Senator, 3 on Story, 1 on Jedi Master. You get 1 more if the Caucus is united (its wings' average radicalism below 8), 1 more while the Caucus sits in government, and 1 less if it is divided (above 25). Patron Contributions, some advisors and Routine Senate Business (only when you are nearly broke) add a little more. Courting blocs at elections, the Defence Pact, Rim enfranchisement, the Federal Compact and laying charges cost the most.
 
-**The factions** each have a strength, a dissent level and a leader. Every turn, a faction's dissent rises if it has no advisor in the leadership and if its cause is neglected, and falls while its cause is being met. A firm leader makes every grievance count for more and every concession for less; a pragmatist the reverse. Advisors slow dissent but don't erase it. The Status panel shows what a restless faction wants. Under their first, mainstream leaders, they want:
-
-• Institutionalists: corruption no higher than 62, or an Ethics Commission.
-
-• Rimward: Rim hardship no higher than 40 or the Rim enfranchised, and a campaign against slavery from 28 BBY.
-
-• Pacifists: peace talks while Dooku's movement grows and during the war, and no Chancellor but yours with 4 or more powers.
-
-• Hawks: a Defence Pact or forces of our own once Dooku moves, and a war that isn't being lost.
-
-Each new leader brings different demands. Overall dissent shrinks most of the Caucus's gains and its natural size, and changes the yearly capital bonus. At about 60 (70 for the Institutionalists), a faction breaks, sooner under a firm leader and later under a pragmatist. A faction that breaks takes its senators with it, to the nearest bloc or, under a firm leader, to a party of its own. The event says how many leave. Without advisors from a faction, its dissent climbs quickly, so keep the leadership balanced.
+**Our wings** each have a strength, a radicalism and a leader (see *The wings of the Ruusan Caucus*). A divided Caucus shrinks most of its gains: its natural size, the reach of its campaigns and the yearly capital bonus. Calm a wing by giving its senators committee chairs, by meeting its cause, or with *A Divided Caucus*; a radical wing that loses our congress may walk out with its senators.
 
 @lib_sys_war
 is-special: true
@@ -834,13 +848,13 @@ go-to: menu
 
 • *The Rim Freedom Caucus*, if our Rimward wing has split away, goes over to the Separatists under Tandeth or Corvane once separatism passes 45, or at the last stage of radicalisation.
 
-• *Our own Rimward wing* goes over to the Separatists when Corvane leads it and either its dissent is 35 or more and separatism has passed 50, or the Rim's politicians have reached the last stage of radicalisation. Farr and Chuchi leave with it.
+• *Our own Rimward wing* goes over to the Separatists when Corvane leads it and either its radicalism is 35 or more and separatism has passed 50, or the Rim's politicians have reached the last stage of radicalisation. Farr and Chuchi leave with it.
 
 • *The Security Bloc* folds into Palpatine's bloc when Tarkin leads it, its relations with us are cold and Palpatine is in power, fear is 45 or more, or his plan is well advanced. The Navy's loyalty to the Senate falls with it.
 
 **A warning comes first**, and the group's next leadership challenge comes early. There is no price to pay to stop it. Within four turns, one of these must happen, or the group goes:
 
-• relations with the bloc reach *cordial* (for our own wing: its dissent falls by 12, or below 30);
+• relations with the bloc reach *cordial* (for our own wing: its radicalism falls by 12, or below 30);
 
 • the Caucus takes a step on a track that matters to it: the Rim, Slavery or Syndicates tracks for the Rimward groups, the Military track for the Security Bloc;
 

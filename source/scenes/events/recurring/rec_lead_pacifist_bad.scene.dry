@@ -5,7 +5,7 @@ view-if: lead_event_ready = "pacifist_bad" and war and not finale and not game_e
 priority: 1
 new-page: true
 face-image: img/ev_holonet.svg
-on-arrival: {! SW.leadEventDone(Q); Q.core_rc -= 1; Q.colonies_rc -= 0.5; Q.hawk_dissent += 5; Q.fear += 1; !}
+on-arrival: {! SW.leadEventDone(Q); Q.core_rc -= 1; Q.colonies_rc -= 0.5; Q.rad_hawk += 5; Q.fear += 1; !}
 
 = Appeasers
 

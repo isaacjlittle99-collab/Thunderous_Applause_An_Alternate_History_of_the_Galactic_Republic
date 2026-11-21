@@ -23,7 +23,7 @@ on-display: {! SW.cardStuck(Q, this); !}
 
 @alarm
 subtitle: +1 Senate resolve. Some will think we are overreacting.
-on-arrival: senate_resolve += 1; faith -= 0.5 if evidence < 2 and emergency_powers < 1; inst_dissent += 2; hawk_dissent -= 2; pacifist_dissent -= 2
+on-arrival: senate_resolve += 1; faith -= 0.5 if evidence < 2 and emergency_powers < 1; rad_inst += 2; rad_hawk -= 2; rad_pacifist -= 2
 
 The Caucus leadership circulates a sober memorandum: the Republic's constitution is being hollowed out one emergency at a time.
 
@@ -45,6 +45,6 @@ go-to: rec_vonc_chancellor
 
 @downplay
 subtitle: Calms the Institutionalists; resolve falls.
-on-arrival: senate_resolve -= 0.5; inst_dissent -= 4; pacifist_dissent += 2
+on-arrival: senate_resolve -= 0.5; rad_inst -= 4; rad_pacifist += 2
 
 The Caucus decides to wait for clearer evidence. Waiting is always the easiest choice.

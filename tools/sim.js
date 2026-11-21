@@ -58,7 +58,24 @@ const REFORM_PREFS = [
 //   keep: keep Palpatine from power (win Chancellor races, move no confidence, never back him)
 //   unmask: build the case and lay charges before the Senate
 //   peace: end the war through peace channels and a Federal Compact, or turn Count Dooku
+//   inst, rimward, pacifist, hawk: grow that wing of the Caucus, back it at our congress, and walk its road
+// a wing strategist: its road card and steps, its Chancellery option, backing it at our congress, and what grows it
+const wingStrat = (f, steps, chanc, grow) => [
+  [new RegExp('^ca_road_' + f + '$'), () => 25], [new RegExp('^ca_road_' + f + '\\.(' + steps + ')$'), () => 30],
+  [new RegExp('^chancellery\\.' + chanc + '$'), () => 20], [/^chancellery$/, Q => Q.rc_chancellor && Q.rc_lead === f ? 8 : null],
+  [/^rec_caucus_congress\.(back|adv)[1-4]$/, (Q, id) => Q['rcg_c' + id.slice(-1) + '_f'] === f ? 40 : 0.05], [/^rec_caucus_congress\.stay_out$/, () => 0.05],
+  [/^ca_contributions$/, Q => Q.capital <= 1 ? 8 : null]
+].concat(grow);
 const STRATEGIES = {
+  inst: wingStrat('inst', 'convene|charter|ratify', 'w_review', [[/^sa_judiciary$/, () => 12], [/^sa_judiciary\.(ethics|integrity|expel|oversight_act|prosecute)$/, () => 14],
+    [/^sa_constitution$/, () => 12], [/^sa_constitution\.(sunset|terms|vonc|speaker|powers_review|groundwork)$/, () => 14]]),
+  rimward: wingStrat('rimward', 'congress|charter|homecoming', 'w_councillors', [[/^ca_rim$/, () => 14], [/^ca_rim\.(relief|slavery|listen|moderates)$/, () => 6],
+    [/^sa_rimaffairs$/, () => 14], [/^sa_rimaffairs\.(relief_act|enfranchise|sentience|abolition|enforce|slavery_report|assembly)$/, () => 16], [/^sa_constitution\.rim$/, () => 14], [/\.db_rim$/, () => 10]]),
+  pacifist: wingStrat('pacifist', 'movement|mediation|accord', 'ceasefire', [[/^ca_jedi$/, () => 12], [/^ca_jedi\.(visit|defend)$/, () => 6], [/^ca_peace$/, () => 12],
+    [/^ca_peace\.(channel|corridors|rallies)$/, () => 6], [/^sa_diplomacy$/, () => 12], [/^sa_diplomacy\.(talks|neutrals)$/, () => 10], [/^sa_diplomacy\.recognise$/, () => 0.01],
+    [/^sa_security\.demobilise$/, Q => (Q.judicial_forces || 0) > 0 ? 8 : null], [/^a2_satine\.welcome$/, () => 20], [/^a4_war_aims\.peace$/, () => 9]]),
+  hawk: wingStrat('hawk', 'raise|oath|seize', 'w_navy', [[/^sa_security$/, () => 14], [/^sa_security\.(judicials|navy|charter|command|patrols|pirate_campaign)$/, () => 12],
+    [/^sa_security\.demobilise$/, () => 0.01], [/^ca_pact$/, () => 10], [/\.db_security$/, () => 10], [/^sa_emergency\.request$/, () => 4]]),
   // a player who campaigns whenever the card comes up, and raises the capital to do it
   campaign: [[/^ca_campaign$/, () => 25], [/^ca_contributions$/, Q => Q.capital <= 1 ? 12 : 2], [/^ca_campaign\.shoestring$/, Q => Q.capital < 1 ? 5 : 0.2]],
   keep: [[/el_back_pal$/, () => 0.01], [/\.el_run$/, () => 12], [/\.el_court_\w+$/, () => 6], [/\.el_pledge$/, () => 5], [/\.el_expose$/, () => 12],
@@ -72,7 +89,7 @@ const STRATEGIES = {
     [/^a3_bonteri\.answer$/, () => 9], [/^a1_dooku_leaves\.meet$/, () => 9], [/^a4_dooku_doubt\.accept$/, () => 20], [/^ca_rim$/, () => 5]]
 };
 function strategyWeight(id, Q) {
-  for (const [re, f] of STRATEGIES[STRAT] || []) if (re.test(id)) { if (!f) return null; const w = f(Q); if (w !== null && w !== undefined) return w; }
+  for (const [re, f] of STRATEGIES[STRAT] || []) if (re.test(id)) { if (!f) return null; const w = f(Q, id); if (w !== null && w !== undefined) return w; }
   return null;
 }
 // the careful player's choice in each war dilemma
@@ -132,6 +149,7 @@ function smartWeight(id, Q) {
     [/^ld_hawks$/, 9],
     [/^rec_caucus_congress\.adv\d$/, 4], [/^rec_caucus_congress\.back\d$/, Q.capital >= 3 ? 1.5 : 0.2], [/^rec_caucus_congress\.stay_out$/, 3],
     [/^chancellery\.ceasefire$/, Q.war && (Q.war_ratio || 2) < 0.9 ? 6 : 2],
+    [/^ca_road_\w+\.\w+$/, 6], [/^ca_disunity\.\w+$/, 3], [/^chancellery\.w_\w+$/, 2],
     [/^sa_(finance|judiciary|security|rimaffairs)\.patronage_\d$/, Q.capital <= 1 ? 4 : 0.5], [/^sa_security\.demobilise$/, Q.treasury <= 0 ? 3 : 0.2], [/^shuffle_leadership$/, (Q.n_advisors || 0) < 3 ? 6 : 0.3],
     // the lore events
     [/labyrinth\.judicials$/, Q.judicial_forces >= 4 ? 6 : 1], [/labyrinth\.council$/, 4], [/hostage_crisis\.measured$/, Q.capital >= 2 ? 5 : 1],
@@ -249,7 +267,14 @@ function pick(list, idf) {
 // Premises: an event or card must not appear once an earlier outcome has made it impossible.
 // Each rule is [scene id regex, condition that must hold on arrival, label].
 const PAL_OFFICE = Q => Q.pal_chancellor || Q.puppet_chancellor;
+const ROAD_STEPS = {convene: 1, charter: 2, ratify: 3, congress: 1, homecoming: 3, movement: 1, mediation: 2, accord: 3, raise: 1, oath: 2, seize: 3};
+const ROAD_STEP_OF = (f, st) => (f === 'rimward' && st === 'charter') ? 2 : ROAD_STEPS[st];
 const PREMISES = [
+  [/^ca_road_(inst|rimward|pacifist|hawk)$/, Q => true, ''],
+  [/^ca_road_(inst|rimward|pacifist|hawk)\.(\w+)$/, Q => { const m = /^ca_road_(\w+)\.(\w+)$/.exec(Q._sim_scene || ''); return !m || !ROAD_STEP_OF(m[1], m[2]) || [ROAD_STEP_OF(m[1], m[2]) - 1, ROAD_STEP_OF(m[1], m[2])].indexOf(Q['road_' + m[1]]) >= 0; }, 'a road step before the one it needs'],
+  [/^chancellery\.w_review$/, Q => Q.rc_lead === 'inst', 'a wing\'s Chancellery option under another wing'],
+  [/^chancellery\.w_councillors$/, Q => Q.rc_lead === 'rimward', 'a wing\'s Chancellery option under another wing'],
+  [/^chancellery\.w_navy$/, Q => Q.rc_lead === 'hawk', 'a wing\'s Chancellery option under another wing'],
   [/^(sa_clones|a4_fives)$/, Q => Q.kamino_army, 'clone scene without a clone army'],
   [/^a2_tf_sanctions$/, Q => !Q.tf_broken_up, 'sanctions after the Trade Federation was broken up'],
   [/^a2_hutt_report$/, Q => !Q.slavery_abolished, 'slavery report after abolition'],
@@ -324,6 +349,8 @@ const PREMISES = [
 const PREMISE_HITS = {};
 // the backlash: repeals by reform, walkouts by cause, and checks on the rules
 const BACKLASH = {repeals: {}, walkoutCause: {}};
+const CW_WALK = {};
+{ const fs0 = SW.factionSplit; SW.factionSplit = function (Q, f) { CW_WALK[f] = (CW_WALK[f] || 0) + 1; return fs0.apply(this, arguments); }; }
 const premHit = k => { PREMISE_HITS[k] = (PREMISE_HITS[k] || 0) + 1; };
 {
   const rr = SW.reformRepealed;
@@ -406,6 +433,9 @@ const PORK_AT_EXPEL = new WeakMap();
 // the committees' patronage and demobilisation, as chosen by the Caucus
 const COMMITTEE_HITS = {}, PORK_KINDS = {};
 function checkPremises(id, Q, game, out) {
+  Q._sim_scene = id;
+  { const m = /^ca_road_(inst|rimward|pacifist|hawk)$/.exec(id); if (m && Q.rc_lead !== m[1]) out['a road card under another wing'] = (out['a road card under another wing'] || 0) + 1; }
+  for (const k in Q) if (/^(inst|rimward|pacifist|hawk)_dissent$/.test(k) && Q[k] !== undefined) { out['faction dissent written'] = (out['faction dissent written'] || 0) + 1; delete Q[k]; break; }
   if (/^sa_\w+\.(patronage_\d|demobilise)$/.test(id)) { const k = id.replace(/_\d$/, ''); COMMITTEE_HITS[k] = (COMMITTEE_HITS[k] || 0) + 1; PORK_KINDS[id] = 1; }
   const g = (Q.govt_blocs || []).slice();
   const added = g.filter(b => lastGovt.indexOf(b) < 0);
@@ -516,7 +546,10 @@ function playOne(gameIndex) {
         if (Q.time !== trace._lt2) { trace._lt2 = Q.time; trace.chairs = trace.chairs || {}; for (const c of SW.COMMITTEES) if (Q['chair_' + c] === 'rc') trace.chairs[c] = (trace.chairs[c] || 0) + 1; if (Q.rc_in_govt) trace.govt = (trace.govt || 0) + 1; }
         if (Q.finale && trace.afFinale === undefined) { trace.afFinale = Q.anakin_fall; trace.forces = SW.forces(Q); trace.navy = Q.navy_loyalty; trace.palV = Q.pal_r; trace.corr = Q.corruption; }
         if (Q.war && Q.time !== trace._lt3) { trace._lt3 = Q.time; const ws = SW.warStrength(Q); trace.warTurns = (trace.warTurns || 0) + 1; if (ws.ratio < 1) trace.warWeak = (trace.warWeak || 0) + 1; trace.ratioSum = (trace.ratioSum || 0) + Math.min(3, ws.ratio); trace.balSum = (trace.balSum || 0) + Q.war_balance; trace.minBal = Math.min(trace.minBal === undefined ? 9 : trace.minBal, Q.war_balance); }
-        trace.maxDissent = Math.max(trace.maxDissent, Q.inst_dissent || 0, Q.rimward_dissent || 0, Q.pacifist_dissent || 0, Q.hawk_dissent || 0);
+        trace.maxDissent = Math.max(trace.maxDissent, Q.rad_inst || 0, Q.rad_rimward || 0, Q.rad_pacifist || 0, Q.rad_hawk || 0);
+        if (Q.date >= 60 && !trace.lead60) trace.lead60 = Q.rc_lead || 'none';
+        if (Q.war && !trace.leadWar) trace.leadWar = Q.rc_lead || 'none';
+        if (Q.rc_lead) { trace.led = trace.led || {}; trace.led[Q.rc_lead] = 1; if (!Q.war && !Q.geonosis_seen) { trace.ledPre = trace.ledPre || {}; trace.ledPre[Q.rc_lead] = 1; } }
         if (Q.war && !trace.warSnap) trace.warSnap = {pal: Q.pal_wing || '', chanc: (Q.pal_chancellor || Q.puppet_chancellor) ? 1 : 0, rim: Q.rim_wing || ''};
         if (Q.date >= 60 && !trace.rim60) trace.rim60 = Q.rim_wing || '';
         if (Q.time !== trace._ltr) { trace._ltr = Q.time; for (const w in SW.WINGS) if (!(Q['rad_' + w] >= 0 && Q['rad_' + w] <= 100)) { premHit('radicalism outside 0-100'); break; } }
@@ -637,6 +670,15 @@ function playOne(gameIndex) {
       audit.contests.push(Q.leadership_contests || 0);
       audit.congresses = audit.congresses || []; audit.congresses.push(Q.congresses || 0);
       audit.pork = (audit.pork || 0) + (Q.pork_count || 0);
+      audit.cw = audit.cw || {lead60: {}, leadWar: {}, leadEnd: {}, led: {}, ledPre: {}, roads: {}, roadEnd: {}, walk: {}, walkN: 0};
+      { const c = audit.cw, inc = (o, k) => { o[k] = (o[k] || 0) + 1; };
+        if (t.lead60) inc(c.lead60, t.lead60); if (t.leadWar) inc(c.leadWar, t.leadWar); inc(c.leadEnd, Q.rc_lead || 'none');
+        for (const f in t.led || {}) inc(c.led, f); for (const f in t.ledPre || {}) inc(c.ledPre, f);
+        for (const f of SW.FACTIONS) if (Q['road_' + f] >= 1) inc(c.roads, f + ':' + Q['road_' + f]);
+        if (['second_reformation', 'republic_whole', 'long_peace', 'senate_sword'].indexOf(Q.ending) >= 0) inc(c.roadEnd, Q.ending);
+        const need = {second_reformation: Q.charter_ratified, republic_whole: Q.road_rimward >= 3, long_peace: Q.road_pacifist >= 3, senate_sword: Q.sword_success};
+        if (need[Q.ending] === 0 || need[Q.ending] === false || need[Q.ending] === undefined && Q.ending in need) premHit('a road ending without its road');
+        c.walkN += Q.caucus_walkouts || 0; }
       audit.bl = audit.bl || {rim60: {}, rimEnd: {}, palWar: {}, unrest: 0, revolts: 0, stoke: 0, bankrolls: 0, peakRad: {}};
       if (t.rim60 !== undefined) audit.bl.rim60[t.rim60 || 'none'] = (audit.bl.rim60[t.rim60 || 'none'] || 0) + 1;
       audit.bl.rimEnd[Q.rim_wing || 'none'] = (audit.bl.rimEnd[Q.rim_wing || 'none'] || 0) + 1;
@@ -685,7 +727,7 @@ function playOne(gameIndex) {
         (r.visits && r.visits.fin_coruscant ? 'Jedi arrest (' + (Q.known_by || 'none') + ')' : 'lost before the finale')));
       audit.routes = audit.routes || {};
       const ra = audit.routes[route] = audit.routes[route] || {n: 0, beaten: 0, good: 0};
-      ra.n++; if (Q.sidious_defeated) ra.beaten++; if (Q.ending === 'reborn' || Q.ending === 'endures') ra.good++;
+      ra.n++; if (Q.sidious_defeated) ra.beaten++; if (['reborn', 'endures', 'second_reformation', 'republic_whole', 'long_peace', 'senate_sword'].indexOf(Q.ending) >= 0) ra.good++;
       audit.routeFlags = audit.routeFlags || {charges: 0, chargesOk: 0, compact: 0, peace: 0, dooku: 0, palOut: 0};
       const rf = audit.routeFlags; if (Q.premature_accusations >= 1 || Q.gambit_kind === 'exposed') rf.charges++; if (Q.gambit_kind === 'exposed') rf.chargesOk++;
       if (Q.fc_vote) rf.compact++; if (Q.peace_achieved) rf.peace++; if (Q.dooku_turned) rf.dooku++; if (!Q.pal_was_chancellor || (Q.pal_office_months || 0) < 24) rf.palOut++;
@@ -733,6 +775,8 @@ function playOne(gameIndex) {
   if (audit.enfWhere) origLog('audit: enfranchised games, where/sep: ' + Object.keys(audit.enfWhere).slice(0, 12).join(' | '));
   origLog('audit: enfranchised before 22 BBY in ' + audit.enf + ' games; avg seceded ' + avg(audit.enfSeceded) + '%; war in ' + audit.enfWar);
   origLog('audit: congresses by reason ' + JSON.stringify(CG_WHY));
+  if (audit.cw) origLog('audit: our wings: leading at month 60 ' + JSON.stringify(audit.cw.lead60) + ', at the war ' + JSON.stringify(audit.cw.leadWar) + ', at the end ' + JSON.stringify(audit.cw.leadEnd) + '; ever led (games) ' + JSON.stringify(audit.cw.led) + ', before the war ' + JSON.stringify(audit.cw.ledPre) +
+    '; roads ' + JSON.stringify(audit.cw.roads) + '; road endings ' + JSON.stringify(audit.cw.roadEnd) + '; our walkouts ' + audit.cw.walkN + ' ' + JSON.stringify(CW_WALK));
   if (audit.bl) {
     origLog('audit: backlash: unrest events ' + audit.bl.unrest + ', revolt congresses ' + audit.bl.revolts + ', agitators sent ' + audit.bl.stoke + ', guild-funded congresses ' + audit.bl.bankrolls +
       '; walkouts ' + JSON.stringify(BACKLASH.walkoutCause) + '; repeals ' + JSON.stringify(BACKLASH.repeals) + ' of tries ' + JSON.stringify(BACKLASH.repealTries));
@@ -783,7 +827,7 @@ function playOne(gameIndex) {
   if (process.env.STEPS) origLog('audit: steps offered/affordable/taken: ' + Object.keys(STEP_SEEN).sort().map(k => k + ' ' + STEP_SEEN[k].seen + '/' + STEP_SEEN[k].can + '/' + STEP_SEEN[k].took).join(', '));
   origLog('audit: bureaucrat purges ' + audit.purges + ' (in ' + audit.purgeGames + ' games), Vice Chair gavels ' + audit.gavels);
   origLog('audit: leaders at the end: ' + Object.entries(audit.endLeaders).sort().map(([k, v]) => k + '=' + v).join(' '));
-  origLog('audit: avg peak faction dissent ' + avg(audit.maxDissent) + '; cards played 6+ times (games): ' + JSON.stringify(audit.repeatCards));
+  origLog('audit: avg peak radicalism of our wings ' + avg(audit.maxDissent) + '; cards played 6+ times (games): ' + JSON.stringify(audit.repeatCards));
   origLog('paths:'); Object.keys(paths).sort((a, b) => paths[b] - paths[a]).slice(0, 18).forEach(k => origLog('  ' + paths[k] + 'x ' + k));
   origLog('errors', Object.keys(errCount).length);
   for (const k of Object.keys(errCount).slice(0, 25)) origLog('  ' + errCount[k] + 'x ' + k);

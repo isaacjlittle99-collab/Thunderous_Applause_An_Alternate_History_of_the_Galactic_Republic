@@ -17,13 +17,13 @@ The Core worlds that built the Caucus (Alderaan, Chandrila, Corellia and their n
 
 @repeal
 subtitle: The patrons are mollified; the treasury loses its most reliable tax.
-on-arrival: {! Q.levy_ban_until = Q.date + 24; Q.patrons_goodwill += 20; Q.inst_dissent -= 3; !}
+on-arrival: {! Q.levy_ban_until = Q.date + 24; Q.patrons_goodwill += 20; Q.rad_inst -= 3; !}
 
 The levy goes. The Core's great houses send polite notes of thanks, and, eventually, donations.
 
 @hold
 subtitle: The Institutionalists are furious, and our Core support erodes.
-on-arrival: {! Q.inst_dissent += 6; Q.core_rc -= 2; Q.colonies_rc -= 1; Q.mod_relation -= 6; !}
+on-arrival: {! Q.rad_inst += 6; Q.core_rc -= 2; Q.colonies_rc -= 1; Q.mod_relation -= 6; !}
 
 The Caucus stands by the levy. Several Core senators stop attending Caucus meetings.
 
@@ -31,6 +31,6 @@ The Caucus stands by the levy. Several Core senators stop attending Caucus meeti
 subtitle: −2 treasury. The patrons calm down a little; the Rimward wing grumbles.
 choose-if: treasury >= 2
 unavailable-subtitle: The treasury cannot afford it.
-on-arrival: {! Q.treasury -= 2; Q.patrons_goodwill += 10; Q.rimward_dissent += 3; !}
+on-arrival: {! Q.treasury -= 2; Q.patrons_goodwill += 10; Q.rad_rimward += 3; !}
 
 Contracts for Corellian shipyards and Alderaanian firms soften the blow, at the treasury's expense.

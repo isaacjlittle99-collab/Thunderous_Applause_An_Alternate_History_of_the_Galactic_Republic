@@ -1,0 +1,48 @@
+title: Stand Down the Armies
+subtitle: The Pacifists' road: take away the army a tyrant would need.
+is-card: true
+tags: caucus_affairs
+card-image: img/card_peace.svg
+view-if: wroad_timer <= 0 and road_card_ok and rc_lead = "pacifist"
+on-arrival: turn_actions += 1; wroad_timer = 2; last_card_timer = "wroad"
+new-page: true
+on-display: {! SW.cardStuck(Q, this); !}
+
+= Stand Down the Armies
+
+The Pacifists have watched the Republic acquire an army it never voted for, grown in vats and loyal to no one knows whom. Ending the war is not enough for them. They mean to send the armies home, both of them.
+
+- @movement: Campaign for disarmament.
+- @mediation: Ask the neutral worlds to mediate.
+- @accord: Put the Disarmament Accord to the Senate.
+- @easy_discard
+- @set_aside
+
+@movement
+view-if: road_pacifist = 0
+subtitle: −1 political capital. Faith +2, momentum, and a channel for peace talks.
+choose-if: capital >= 1
+unavailable-subtitle: Not enough political capital.
+on-arrival: {! SW.roadStep(Q, 'pacifist', 1); !}
+
+Mon Mothma's speech on the Senate steps, "an army without a vote is a weapon without a hand", is replayed on every HoloNet channel for a week.
+
+@mediation
+view-if: road_pacifist = 1
+subtitle: Needs Duchess Satine's friendship or the neutral systems organised. Another channel for talks; neutral worlds step back from both sides.
+choose-if: road_satine_ok
+unavailable-subtitle: The neutral worlds have no voice yet that both sides would trust.
+on-arrival: {! SW.roadStep(Q, 'pacifist', 2); !}
+
+The neutral systems agree to carry messages that neither side will admit to sending, and dozens of their worlds withdraw their volunteers from both armies.
+
+@accord
+view-if: road_pacifist = 2
+subtitle: −2 political capital. Needs the war over or a ceasefire. Half the clone army stood down at once, all of it within a year.
+choose-if: capital >= 2 and road_accord_ok and date >= road_wait_pacifist
+unavailable-subtitle: [? if not road_accord_ok : No one will disarm while the war is still being fought. ?][? if road_accord_ok : [? if date < road_wait_pacifist : The Senate has just voted it down. ?][? if date >= road_wait_pacifist : Needs 2 political capital. ?] ?]
+on-arrival: {! SW.roadStep(Q, 'pacifist', 3); !}
+
+[+ vote_html +]
+
+[? if road_ok : The Disarmament Accord passes. Half the clone legions are stood down this year, the rest by the next, and the droid armies are broken up under neutral inspectors. Whoever rules the Republic now will have to do it without an army bred to obey. ?][? if not road_ok : The Accord fails. The armies stay. ?]

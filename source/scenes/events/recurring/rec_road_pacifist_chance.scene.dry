@@ -1,0 +1,12 @@
+title: Satine's Envoy
+subtitle: The Duchess of Mandalore offers her help.
+tags: event
+view-if: road_event_ready = "pacifist_chance" and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_peace.svg
+on-arrival: {! SW.roadEventDone(Q); if (Q.dooku_movement || Q.war) Q.satine_friend = 1; else Q.peace_talks = (Q.peace_talks || 0) + 0.5; Q.faith += 1; !}
+
+= Satine's Envoy
+
+An envoy from Duchess Satine Kryze arrives at the Caucus's offices: the Council of Neutral Systems will stand with anyone who means to end the war and not merely win it. The neutral worlds have found a party in the Senate to speak to.

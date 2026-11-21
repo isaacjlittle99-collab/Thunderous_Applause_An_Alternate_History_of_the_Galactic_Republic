@@ -18,7 +18,7 @@ The Trade Federation has asked the Commerce Committee for permission to expand i
 subtitle: −1 political capital. The guilds will not forget.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
-on-arrival: capital -= 1; guild_relation -= 8; tf_droids_limited = 1; hawk_dissent -= 3; rc_momentum += 0.5
+on-arrival: capital -= 1; guild_relation -= 8; tf_droids_limited = 1; rad_hawk -= 3; rc_momentum += 0.5
 
 The Caucus forces the request into a long, embarrassing public hearing. The final authorisation is a fraction of what the Federation wanted. Someone at the Federation's headquarters on Neimoidia is said to have broken a desk.
 
@@ -30,6 +30,6 @@ The Federation agrees to inspections through gritted teeth. The Judicial Departm
 
 @accept
 subtitle: The guilds will be grateful; the Rim may be safer.
-on-arrival: guild_relation += 6; rim_hardship -= 1; tf_droids = 1; rimward_dissent += 3; hawk_dissent += 4
+on-arrival: guild_relation += 6; rim_hardship -= 1; tf_droids = 1; rad_rimward += 3; rad_hawk += 4
 
 The authorisation passes without debate. Federation battleships soon patrol the Rim's trade lanes, and the pirates retreat. The Hawks mutter that the Caucus has just paid for someone else's army.

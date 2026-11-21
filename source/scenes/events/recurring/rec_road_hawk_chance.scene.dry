@@ -1,0 +1,12 @@
+title: A Fleet Declares
+subtitle: A sector fleet pledges itself to the Senate.
+tags: event
+view-if: road_event_ready = "hawk_chance" and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_war.svg
+on-arrival: {! SW.roadEventDone(Q); Q.navy_loyalty = Math.min(100, Q.navy_loyalty + 5); Q.judicial_forces += 1; !}
+
+= A Fleet Declares
+
+The commander of a Colonies sector fleet announces that his ships will answer to the Senate's Judicial Department in any constitutional crisis. Two more follow within the week.

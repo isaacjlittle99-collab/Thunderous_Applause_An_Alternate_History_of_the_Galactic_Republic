@@ -21,7 +21,7 @@ on-display: {! SW.cardStuck(Q, this); !}
 
 @rallies
 subtitle: Calms fear and the Pacifists; the Hawks are irritated.
-on-arrival: pacifist_dissent -= 6; faith += 1; fear -= 2; hawk_dissent += 3; war_weariness -= 1
+on-arrival: rad_pacifist -= 6; faith += 1; fear -= 2; rad_hawk += 3; war_weariness -= 1
 
 Millions march on Coruscant. [? if rc_chancellor : The Security Bloc calls them "well-meaning but naive". ?][? if not rc_chancellor : The Chancellery calls them "well-meaning but naive". ?]
 
@@ -30,7 +30,7 @@ view-if: peace_talks < 3
 subtitle: −1 political capital. Builds the path to a negotiated peace.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
-on-arrival: capital -= 1; peace_talks += 1; cis_relation += 5; sec_relation -= 4; hawk_dissent += 3
+on-arrival: capital -= 1; peace_talks += 1; cis_relation += 5; sec_relation -= 4; rad_hawk += 3
 
 Through neutral Mandalorian intermediaries, a message reaches the Separatist Parliament on Raxus. Someone answers.
 

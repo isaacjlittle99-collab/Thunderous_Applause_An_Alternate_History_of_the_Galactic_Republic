@@ -1,12 +1,13 @@
 title: The Caucus Splits
-subtitle: A faction has had enough.
+subtitle: A defeated wing walks out of our congress.
 tags: event
-view-if: hawk_split_ready or rimward_split_ready or pacifist_split_ready or inst_split_ready
+view-if: caucus_walkout_go = 1 and not finale and not game_ending
 priority: 7
 new-page: true
 face-image: img/ev_senate.svg
 on-arrival: {!
-var f = Q.hawk_split_ready ? 'hawk' : (Q.rimward_split_ready ? 'rimward' : (Q.pacifist_split_ready ? 'pacifist' : 'inst'));
+var f = Q.caucus_walkout || 'hawk';
+Q.caucus_walkout_go = 0; Q.caucus_walkouts = (Q.caucus_walkouts || 0) + 1;
 if (f === 'hawk') Q.adv_bel_iblis = 0;
 if (f === 'rimward') { Q.adv_farr = 0; Q.adv_chuchi = 0; }
 if (f === 'pacifist') { Q.adv_mothma = 0; Q.faith -= 2; }
@@ -17,8 +18,10 @@ SW.countAdvisors(Q);
 
 = The Caucus Splits
 
+The congress has given the lead to the [+ cw_winner +], and the losers will not accept it. [? if cw_grievance != " " : They are furious [+ cw_grievance +]. ?]
+
 [? if split_kind = "hawk" : The Hawks have had enough of what they call the Caucus's "endless talk while the Republic burns". Garm Bel Iblis is not among them, but he resigns as an advisor in protest at the way they were treated. ?][? if split_kind = "rimward" : The Rimward wing walks out. They have waited too long for the Core to keep its promises. ?][? if split_kind = "pacifist" : The Pacifists will not follow the Caucus any further down the road to war. ?][? if split_kind = "inst" : The Institutionalists, the Caucus's backbone, have lost faith in its leadership. ?]
 
 Led by **[+ split_leader +]**, [? if split_own : the [+ split_faction_name +] found a party of their own, the **[+ split_dest_name +]**. ?][? if not split_own : the [+ split_faction_name +] cross the floor to join the **[+ split_dest_name +]**. ?] They take **[+ split_senators +] senators** with them: [+ split_seats +]% of the Senate's seats, about [+ split_share_pct +]% of the Caucus.
 
-[? if split_own : The new party still talks to us, for now. It can be a partner in a coalition, but it will not take orders. ?][? if not split_own : Their new bloc welcomes them, and owes us nothing. ?] *Firm faction leaders found their own parties; others join the nearest bloc. Only one breakaway party can exist at a time.*
+[? if split_own : The new party still talks to us, for now. It can be a partner in a coalition, but it will not take orders. ?][? if not split_own : Their new bloc welcomes them, and owes us nothing. ?]

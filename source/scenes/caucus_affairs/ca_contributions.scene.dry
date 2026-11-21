@@ -21,7 +21,7 @@ Politics in the Galactic Senate runs on favours and credits. The Caucus has frie
 
 @core
 subtitle: +2 political capital. The Rimward wing dislikes it.
-on-arrival: capital += 2; rimward_dissent += 7; pacifist_dissent += 2
+on-arrival: capital += 2; rad_rimward += 7; rad_pacifist += 2
 
 Alderaanian nobles and Chandrilan bankers write generous cheques. The Rimward wing grumbles about "the Caucus of the comfortable".
 
@@ -34,7 +34,7 @@ Small donations pour in from a hundred worlds. It is not much money, but it is a
 @guilds
 view-if: difficulty < 1 and not integrity_office
 subtitle: +3 political capital. The guilds will expect something; the Caucus will not like it.
-on-arrival: capital += 3; guild_relation += 4; corruption += 1.5; rimward_dissent += 12; pacifist_dissent += 4; inst_dissent += 3; guild_money += 1; guild_hold += 1
+on-arrival: capital += 3; guild_relation += 4; corruption += 1.5; rad_rimward += 12; rad_pacifist += 4; rad_inst += 3; guild_money += 1; guild_hold += 1
 
 The money arrives through three intermediaries and a charitable foundation on Muunilinst. Nobody asks too many questions. That is rather the point.
 
@@ -46,7 +46,7 @@ unavailable-subtitle: Needs 2 political capital.
 on-arrival: {!
 Q.capital -= 2; Q.guild_hold = 0; Q.guild_breaks = (Q.guild_breaks || 0) + 1;
 Q.guild_relation -= 15; SW.guildPatience(Q, -15, 'the Caucus broke with its guild donors');
-Q.rimward_dissent -= 5; Q.pacifist_dissent -= 3;
+Q.rad_rimward -= 5; Q.rad_pacifist -= 3;
 Q.guild_leak = Math.random() < 0.35 ? 1 : 0;
 if (Q.guild_leak) { Q.faith -= 0.5; Q.scandal_ours_until = Q.date + 12; SW.momentum(Q, -0.8, 'the guilds leaking our donations'); }
 !}

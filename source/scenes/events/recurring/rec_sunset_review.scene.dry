@@ -34,7 +34,7 @@ if (Q.sr_vote < 50) { Q.emergency_powers = Math.max(0, Q.emergency_powers - 2); 
 on-arrival: {!
 Q.sr_vote = SW.vote(Q, Q.renew_st, 1, 'powers');
 Q.vote_html = SW.voteBanner('Renewal of emergency powers', Q.sr_vote);
-Q.pacifist_dissent += 4;
+Q.rad_pacifist += 4;
 !}
 
 [+ vote_html +]

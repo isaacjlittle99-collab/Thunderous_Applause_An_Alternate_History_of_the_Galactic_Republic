@@ -1,0 +1,12 @@
+title: Procedure Over Purpose
+subtitle: The Rim tires of a Caucus that talks about procedure.
+tags: event
+view-if: road_event_ready = "inst_setback" and not finale and not game_ending
+priority: 1
+new-page: true
+face-image: img/ev_senate.svg
+on-arrival: {! SW.roadEventDone(Q); SW.momentum(Q, -0.5, 'a Caucus lost in procedure'); SW.addCaucusRad(Q, 'rimward', 6, 'hardship'); !}
+
+= Procedure Over Purpose
+
+The Convention's committees argue for a month over the wording of a single clause. On the Rim, where children still go hungry, the HoloNet runs the transcripts as comedy. Our own Rimward wing is not laughing.

@@ -21,6 +21,10 @@ var sith = f.sith, rep = f.rep;
 if (Q.gambit_kind === 'exposed') sith -= P.security_bloc * 0.5 + P.guard * 0.5 + P.governors + 1;
 // a coup from outside office (or a fight against our arrest): only as many follow him as his years in power bought
 if (outside) sith -=(P.clones + P.navy + P.security_bloc + P.secret_army) * (1 - reach) + 1;
+// the ratified Charter makes his move unconstitutional: his guards and governors stand aside
+if (Q.charter_ratified && Q.gambit_kind !== 'exposed') sith -= (P.guard || 0) + (P.governors || 0);
+// a Republic made whole: the worlds that came home stand with the Senate
+if ((Q.road_rimward || 0) >= 3) rep += (Q.member_forces || 0) * 0.5 + 1;
 // after a peace there is no war to justify him, the army is going home, and the returned worlds stand with the Senate
 if (Q.peace_achieved) { sith -= 1.5 + P.clones * 0.4; if (!Q.pact_formed) rep += Q.member_forces * 0.5; }
 if (sith < 0.5) sith = 0.5;

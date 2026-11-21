@@ -16,13 +16,13 @@ on-arrival: bonteri_contact = 1
 
 @answer
 subtitle: +1 peace channel.
-on-arrival: peace_talks += 1; cis_relation += 5; pacifist_dissent -= 3; dooku_contact = 1; dooku_doubt += 1
+on-arrival: peace_talks += 1; cis_relation += 5; rad_pacifist -= 3; dooku_contact = 1; dooku_doubt += 1
 
 Bonteri and Caucus envoys begin to meet, quietly, on neutral worlds. Through her, word of what the Caucus stands for reaches Count Dooku himself.
 
 @report
 view-if: not rc_chancellor
 subtitle: The Chancellor's office will be grateful.
-on-arrival: {! Q[Q.chancellor_bloc + '_relation'] += 5; Q.cis_relation -= 8; Q.hawk_dissent -= 3; !}
+on-arrival: {! Q[Q.chancellor_bloc + '_relation'] += 5; Q.cis_relation -= 8; Q.rad_hawk -= 3; !}
 
 The Chancellor thanks the Caucus for its loyalty. Bonteri never writes again.

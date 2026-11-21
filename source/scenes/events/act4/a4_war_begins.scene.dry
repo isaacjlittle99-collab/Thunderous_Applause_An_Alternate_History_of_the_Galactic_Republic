@@ -27,7 +27,7 @@ The Jedi become generals. Within a year, a tenth of the Order has died in battle
 @advisors
 view-if: not jedi_service_act
 subtitle: The Order stays itself. The war will be harder.
-on-arrival: jedi_generals = 0; war_balance -= 1; jedi_relation += 8; jedi_standing += 3; hawk_dissent += 4
+on-arrival: jedi_generals = 0; war_balance -= 1; jedi_relation += 8; jedi_standing += 3; rad_hawk += 4
 
 The Senate keeps the Jedi out of the chain of command. They serve as negotiators, scouts and protectors of civilians. The Order is grateful. The Security Bloc is not.
 
@@ -42,7 +42,7 @@ for (var b in keep) st[b] = 1 - keep[b];
 Q.ws_vote = SW.vote(Q, st, 0, 'army');
 Q.vote_html = SW.voteBanner('Suspension of the Jedi Service Act', Q.ws_vote);
 if (Q.ws_vote >= 50) { Q.ws_held = 0; SW.suspendServiceAct(Q); }
-else { Q.ws_held = 1; Q.jedi_generals = 0; Q.war_balance -= 1; Q.jedi_relation += 8; Q.jedi_standing += 3; Q.hawk_dissent += 4; }
+else { Q.ws_held = 1; Q.jedi_generals = 0; Q.war_balance -= 1; Q.jedi_relation += 8; Q.jedi_standing += 3; Q.rad_hawk += 4; }
 !}
 
 [+ vote_html +]
@@ -52,6 +52,6 @@ else { Q.ws_held = 1; Q.jedi_generals = 0; Q.war_balance -= 1; Q.jedi_relation +
 @suspend
 view-if: jedi_service_act
 subtitle: The war will go better. The Order will pay a heavy price, and it will remember who let it happen.
-on-arrival: {! SW.suspendServiceAct(Q); Q.jedi_relation -= 6; Q.hawk_dissent -= 2; !}
+on-arrival: {! SW.suspendServiceAct(Q); Q.jedi_relation -= 6; Q.rad_hawk -= 2; !}
 
 The Caucus lets the motion pass without a fight. The Act is suspended for the duration of the war, and the Jedi become generals. The Council does not say anything in public. In private, Master Windu says a great deal.

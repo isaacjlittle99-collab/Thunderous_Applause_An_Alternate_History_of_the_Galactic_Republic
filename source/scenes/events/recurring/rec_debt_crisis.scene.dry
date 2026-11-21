@@ -16,7 +16,7 @@ The Republic owes [+ debt_txt +], and this year's interest alone would empty the
 
 @austerity
 subtitle: The debt shrinks; the Rim and faith in the Republic pay for it.
-on-arrival: debt -= 6; rim_hardship += 5; faith -= 3; mod_relation += 4; rimward_dissent += 6
+on-arrival: debt -= 6; rim_hardship += 5; faith -= 3; mod_relation += 4; rad_rimward += 6
 
 Relief convoys are cancelled, patrols grounded, pensions frozen. The books balance. The Rim goes hungry.
 

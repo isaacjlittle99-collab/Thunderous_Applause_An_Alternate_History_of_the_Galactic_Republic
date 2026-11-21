@@ -38,7 +38,7 @@ view-if: judicial_forces < 8
 subtitle: −2 treasury. +1 Judicial Forces, loyal to the Senate.
 choose-if: treasury >= 2
 unavailable-subtitle: The treasury cannot afford it.
-on-arrival: treasury -= 2; judicial_forces += 1; judicial_expansion = 1; sec_relation += 2; hawk_dissent -= 3; mil_invest += 1
+on-arrival: treasury -= 2; judicial_forces += 1; judicial_expansion = 1; sec_relation += 2; rad_hawk -= 3; mil_invest += 1
 
 New Judicial cruisers are commissioned, crewed by volunteers sworn to the Senate.
 
@@ -110,7 +110,7 @@ The audit finds that the Republic has paid for the same frigate four times.
 
 @review
 subtitle: Free. The Hawks appreciate it.
-on-arrival: hawk_dissent -= 3; judicial_forces += 0.1
+on-arrival: rad_hawk -= 3; judicial_forces += 0.1
 
 @command
 view-if: army_oversight and not senate_command
@@ -165,14 +165,14 @@ view-if: not officer_corps
 subtitle: −1 political capital. An officer corps that looks like the Republic.
 choose-if: capital >= 1
 unavailable-subtitle: Needs 1 political capital.
-on-arrival: capital -= 1; officer_corps = 1; navy_loyalty += 3; hawk_dissent += 2; sec_relation -= 2; security_timer = 1
+on-arrival: capital -= 1; officer_corps = 1; navy_loyalty += 3; rad_hawk += 2; sec_relation -= 2; security_timer = 1
 
 The committee orders that commissions and promotions be open to every species of the Republic, and reviews every case of an officer passed over for not being human. A good many admirals are quietly furious. A good many captains are not.
 
 @demobilise
 view-if: judicial_forces >= 1
 subtitle: +1 treasury. −1 Judicial Forces. The Security Bloc and our Hawks will not like it.
-on-arrival: {! Q.treasury += 1; Q.judicial_forces = Math.max(0, Q.judicial_forces - 1); Q.sec_relation -= 2; Q.hawk_dissent += 3; Q.pacifist_dissent -= 2; !}
+on-arrival: {! Q.treasury += 1; Q.mil_cuts = (Q.mil_cuts || 0) + 1; Q.judicial_forces = Math.max(0, Q.judicial_forces - 1); Q.sec_relation -= 2; Q.rad_hawk += 3; Q.rad_pacifist -= 2; !}
 
 A squadron of Judicial cruisers is stood down, and its crews go home. The treasury breathes a little easier. The Security Bloc asks, loudly, who will guard the lanes now.
 

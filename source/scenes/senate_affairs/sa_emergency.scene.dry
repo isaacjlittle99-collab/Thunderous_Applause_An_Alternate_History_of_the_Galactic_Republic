@@ -22,14 +22,14 @@ The Chancellor currently holds [+ emergency_powers : powers +] emergency powers.
 
 @request
 subtitle: +2 emergency powers. The war goes better; the Pacifists are horrified.
-on-arrival: emergency_powers += 2; war_balance += 1 if war; fear -= 4; pacifist_dissent += 10; rc_emergency_taken += 2; faith -= 1
+on-arrival: emergency_powers += 2; war_balance += 1 if war; fear -= 4; rad_pacifist += 10; rc_emergency_taken += 2; faith -= 1
 
 The Senate grants our Chancellor sweeping emergency powers, with thunderous applause.
 
 @return
 view-if: emergency_powers > 0
 subtitle: −2 emergency powers. Faith rises; the Hawks worry.
-on-arrival: emergency_powers -= 2; faith += 2; fear += 2; hawk_dissent += 4; rc_emergency_taken -= 2; senate_resolve += 0.5
+on-arrival: emergency_powers -= 2; faith += 2; fear += 2; rad_hawk += 4; rc_emergency_taken -= 2; senate_resolve += 0.5
 
 The Chancellor returns powers to the Senate. Some call it weakness. History may call it something else.
 

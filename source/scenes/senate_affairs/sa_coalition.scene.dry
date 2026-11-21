@@ -23,7 +23,7 @@ The [+ coalition_name +] is [+ coalition_mood_v : coalition_dissent +]. [? if mi
 subtitle: −1 political capital. −2 coalition dissent; the Caucus grumbles.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
-on-arrival: capital -= 1; coalition_dissent -= 2; rimward_dissent += 3; pacifist_dissent += 2
+on-arrival: capital -= 1; coalition_dissent -= 2; rad_rimward += 3; rad_pacifist += 2
 
 A carefully worded joint statement papers over the cracks.
 
@@ -49,6 +49,6 @@ on-arrival: {! SW.confidenceVote(Q); !}
 
 @collapse
 subtitle: The Senate will choose a new Chancellor.
-on-arrival: election_due = 1; govt_fell_now = 1; fall_reason = "withdrew"; rc_momentum += 0.5; inst_dissent += 4
+on-arrival: election_due = 1; govt_fell_now = 1; fall_reason = "withdrew"; rc_momentum += 0.5; rad_inst += 4
 
 The Caucus withdraws from the government. A new Chancellor election will follow.

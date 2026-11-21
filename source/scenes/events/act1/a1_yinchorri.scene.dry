@@ -26,7 +26,7 @@ The Jedi Masters end the uprising within weeks. Master Yoda sends the Caucus a s
 subtitle: −1 political capital. Slower, but under Senate control.
 choose-if: capital >= 1
 unavailable-subtitle: Not enough political capital.
-on-arrival: capital -= 1; judicial_forces += 0.5; sec_relation += 4; hawk_dissent -= 4; jedi_relation -= 2
+on-arrival: capital -= 1; judicial_forces += 0.5; sec_relation += 4; rad_hawk -= 4; jedi_relation -= 2
 
 The Caucus wins a vote to expand and deploy the Judicial Forces. They arrive after the Jedi have already done most of the work, but the principle has been established: the Senate's security is the Senate's business.
 
